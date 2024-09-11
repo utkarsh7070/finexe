@@ -1,0 +1,15 @@
+{
+  "welcome_finexe": "Welcome to Finexe!",
+  "username": "Username",
+  "password": "Password",
+  "employee": "Employee",
+  "vendor": "Vendor",
+  "lender": "Lender",
+  "remember": "Remember Me",
+  "forgot password": "Forgot Password",
+  "login": "Login",
+  "username_required": "username is a required field",
+  "password_required": "password is a required field",
+  "footer_title": "© 2024 - Fincoopers Capital Private Limited *All Rights Reserved"
+
+}
