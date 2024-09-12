@@ -1,7 +1,6 @@
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
-import 'package:finexe/feature/ui/authenticate/view/remember.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,13 +20,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  var usernameFoc = FocusNode();
-  var passwordFoc = FocusNode();
 
   @override
   Widget build(BuildContext context) {
+    final focusStates = ref.watch(dualFocusProvider);
+    final focusViewModel = ref.read(dualFocusProvider.notifier);
     final loginState = ref.watch(loginViewModelProvider);
-    final selectedValue = ref.watch(radioProvider);
+    // final selectedValue = ref.watch(radioProvider);
     final obscureValue = ref.watch(obscureTextProvider);
     final passwordValidations = ref.watch(passwordValidationProvider);
     final userValidations = ref.watch(userValidationProvider);
@@ -37,6 +36,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
+            // autovalidateMode: AutovalidateMode.onUserInteraction,
             key: _formKey,
             child: SizedBox(
               width: displayWidth(context),
@@ -61,12 +61,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   SizedBox(
                     height: displayHeight(context) * 0.04,
                   ),
-                  AppLoginTextField(
-                    focusNode: usernameFoc,
+                  AppFloatTextField(
+                    focusNode: focusViewModel.userFocusNode,
+                    currentState: focusStates['userFocusNode'],
+                    // focusNode: ,
                     inerHint: 'Enter Your ID',
-                    height: userValidations
-                        ? displayHeight(context) * 0.09
-                        : null,
+                    height:
+                        userValidations ? displayHeight(context) * 0.09 : null,
                     onFiledSubmitted: (value) {
                       ref
                           .read(userValidationProvider.notifier)
@@ -85,11 +86,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     textInputAction: TextInputAction.next,
                   ),
                   SizedBox(height: displayHeight(context) * 0.04),
-                  AppLoginTextField(
+
+                  AppFloatTextField(
+                    focusNode: focusViewModel.passFocusNode,
+                    currentState: focusStates['passFocusNode'],
                     height: passwordValidations
                         ? displayHeight(context) * 0.09
                         : null,
-                    focusNode: passwordFoc,
+                    // focusNode: FocusNode(),
                     onValidate: (value) {
                       print(value);
                       if (value!.isEmpty) {
@@ -168,7 +172,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     error: (error, _) => _errorMessage(error.toString()),
                   ),
                   SizedBox(
-                    height: displayHeight(context)* 0.05,
+                    height: displayHeight(context) * 0.05,
                   ),
                   Center(
                     child: SizedBox(
@@ -231,7 +235,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ref
               .read(passwordValidationProvider.notifier)
               .checkPassword(_passwordController.text);
-        } else {}
+        } else {
+          Navigator.pushNamed(context, AppRoutes.dashBoard);
+        }
         print('$user, $pass');
         // final isValid = _formKey.currentState?.validate();
         // if (!isValid!) {

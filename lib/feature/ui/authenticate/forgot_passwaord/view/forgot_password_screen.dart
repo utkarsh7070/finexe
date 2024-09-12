@@ -31,7 +31,7 @@ class ForgotPasswordScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      UploadBox(iconData: Icons.add,title: 'sjdbs',subTitle: 'skmxs',),
+                      // UploadBox(iconData: Icons.add,title: 'sjdbs',subTitle: 'skmxs',),
                       SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: Text(
@@ -47,7 +47,7 @@ class ForgotPasswordScreen extends ConsumerWidget {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.02,
                       ),
-                      AppLoginTextField(
+                      AppFloatTextField(
                         inerHint: 'Email',
                         controller: _emailController,
                       ),

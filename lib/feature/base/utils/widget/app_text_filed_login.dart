@@ -3,7 +3,7 @@ import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
 
-class AppLoginTextField extends StatelessWidget {
+class AppFloatTextField extends StatelessWidget {
   final String? hint;
   final String? inerHint;
   final String? errorText;
@@ -24,8 +24,9 @@ class AppLoginTextField extends StatelessWidget {
   final bool obscureText;
   final VoidCallback? prefixOnTap;
   final double? height;
+  final bool? currentState;
 
-  const AppLoginTextField(
+  const AppFloatTextField(
       {super.key,
       this.hint,
       this.obscureText = false,
@@ -46,7 +47,7 @@ class AppLoginTextField extends StatelessWidget {
       this.isPrefix = false,
       this.onFiledSubmitted,
       this.inerHint,
-      this.focusNode});
+      this.focusNode, this.currentState});
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +69,8 @@ class AppLoginTextField extends StatelessWidget {
         decoration: InputDecoration(
           // hintText: inerHint,
           hintStyle: const TextStyle(color: AppColors.textGray),
-          floatingLabelStyle:
-              AppStyles.subHeading.copyWith(color: AppColors.primery),
+          floatingLabelStyle:currentState! ?
+              AppStyles.subHeading.copyWith(color: AppColors.primery):AppStyles.subHeading,
           label: Text(
             '$inerHint',
             // style: const TextStyle(color: AppColors.textGray),
