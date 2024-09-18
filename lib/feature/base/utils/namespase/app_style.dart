@@ -16,11 +16,29 @@ extension AppStyles on Never {
     fontWeight: FontWeight.w400,
     fontSize: FontSize.fontSizeS,
   );
+  static TextStyle termsConditionText = TextStyle(
+    color: AppColors.textDarkGray,
+    fontFamily: Fonts.appFonts,
+    fontWeight: FontWeight.w400,
+    fontSize: FontSize.fontSizeXSs,
+  );
+  static TextStyle subTextStyle = TextStyle(
+    color: AppColors.subTextColor,
+    fontFamily: Fonts.appFonts,
+    fontWeight: FontWeight.w400,
+    fontSize: FontSize.fontSizeXS,
+  );
 
   static TextStyle buttonLightTextStyle = TextStyle(
     color: AppColors.white,
     fontFamily: Fonts.appFonts,
     fontWeight: FontWeight.w300,
+    fontSize: FontSize.fontSize16,
+  );
+  static TextStyle cardTextStyle16 = TextStyle(
+    color: AppColors.grayCardContentColor,
+    fontFamily: Fonts.appFonts,
+    fontWeight: FontWeight.w600,
     fontSize: FontSize.fontSize16,
   );
 

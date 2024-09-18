@@ -66,7 +66,8 @@ class AppFloatTextField extends StatelessWidget {
         cursorColor: Colors.blue,
         textInputAction: textInputAction,
         keyboardType: textInputType,
-        decoration: InputDecoration(
+        decoration:
+        InputDecoration(
           // hintText: inerHint,
           hintStyle: const TextStyle(color: AppColors.textGray),
           floatingLabelStyle:currentState! ?

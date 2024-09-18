@@ -43,16 +43,12 @@ class RadioButton extends ConsumerWidget {
               value: Roles.Incomplete,
               selectedValue: selectedValue,
               title: 'Incomplete'),
-          Flexible(
-            fit: FlexFit.tight,
-            flex: 1,
-            child: radios(
-                context: context,
-                ref: ref,
-                value: Roles.Rejected,
-                selectedValue: selectedValue,
-                title: 'Rejected'),
-          ),
+          radios(
+              context: context,
+              ref: ref,
+              value: Roles.Rejected,
+              selectedValue: selectedValue,
+              title: 'Rejected'),
         ],
       ),
     );

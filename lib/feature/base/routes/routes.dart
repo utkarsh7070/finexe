@@ -1,3 +1,6 @@
+import 'package:finexe/feature/Punch_In_Out/Attendance/vew/attendance.dart';
+import 'package:finexe/feature/ui/Collection/cases/view/cases_screen.dart';
+import 'package:finexe/feature/ui/Sales/NewLone/view/new_loan_screen.dart';
 import 'package:flutter/material.dart';
 import '../../ui/Sales/DashBoard/view/dash_board.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/sales_on_boarding_form.dart';
@@ -11,17 +14,26 @@ class AppRoutes {
   static const String forgot = '/forgot';
   static const String dashBoard = '/dashBoard';
   static const String saleForm = '/saleForm';
+  static const String newLone = '/newLone';
+  static const String attendance = '/attendance';
+  static const String cases = '/cases';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case login:
-        return MaterialPageRoute(builder: (_) =>   LoginScreen());
+        return MaterialPageRoute(builder: (_) =>   const LoginScreen());
       case forgot:
         return MaterialPageRoute(builder: (_) => ForgotPasswordScreen());
         case dashBoard:
-        return MaterialPageRoute(builder: (_) => DashBoardScreen());
+        return MaterialPageRoute(builder: (_) => const DashBoardScreen());
         case saleForm:
-        return MaterialPageRoute(builder: (_) =>  SalesOnBoardingForm());
+        return MaterialPageRoute(builder: (_) =>  const SalesOnBoardingForm());
+        case newLone:
+        return MaterialPageRoute(builder: (_) =>  NewLoanScreen());
+        case attendance:
+        return MaterialPageRoute(builder: (_) =>   const AttendanceScreen());
+        case cases:
+        return MaterialPageRoute(builder: (_) =>   CasesScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

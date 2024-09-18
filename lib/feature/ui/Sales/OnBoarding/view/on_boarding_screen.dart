@@ -8,17 +8,14 @@ import 'widget/list_of_form.dart';
 import 'widget/radio_button.dart';
 
 class OnBoardingScreen extends ConsumerWidget{
+  const OnBoardingScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
+    return SizedBox(
       height: displayHeight(context),
       width: displayWidth(context),
-      child: const Column(
-        children: [
-          RadioButton(),
-          DashBoardFormList()
-        ],
-      ),
+      child: DashBoardFormList(),
     );
   }
 

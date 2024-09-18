@@ -23,11 +23,7 @@ final dualFocusProvider =
   return FocusViewModel();
 });
 
-final rememberProvider = StateProvider<bool>(
-  (ref) {
-    return false;
-  },
-);
+
 
 final obscureTextProvider = StateProvider<bool>(
   (ref) {

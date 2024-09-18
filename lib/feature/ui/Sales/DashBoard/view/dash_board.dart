@@ -9,11 +9,14 @@ import 'dash_board_bottom_navigation_bar.dart';
 import 'dashboard_drawer.dart';
 
 class DashBoardScreen extends ConsumerWidget {
+  const DashBoardScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final stageProvider = ref.watch(stepStageProvider);
     final data = ref.read(stepStageProvider.notifier).state.trim();
     final tabViewModel = ref.watch(tabViewModelProvider);
+    final tabState = ref.read(tabViewModelProvider.notifier);
     return Scaffold(
         floatingActionButton:tabViewModel.selectedIndex==0? FloatingActionButton(
           onPressed: () {
@@ -29,7 +32,8 @@ class DashBoardScreen extends ConsumerWidget {
         body: IndexedStack(
           index: tabViewModel.selectedIndex,
           children: <Widget>[
-            OnBoardingScreen(),
+             OnBoardingScreen(),
+
             Container(
               child: const Text('sdmfb'),
             ),

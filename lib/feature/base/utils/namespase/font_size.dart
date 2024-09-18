@@ -10,5 +10,6 @@ extension FontSize on Never {
   static const double fontSizeXL = 21.0;
   static const double fontSizeXXL = 24.0;
   static const double fontSizeXXXL = 28.0;
+  static const double fontSize30 = 30.0;
   static const double fontSizeXXXXL = 34.0;
 }

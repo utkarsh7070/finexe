@@ -1,7 +1,10 @@
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
+import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
 import 'package:mobkit_dashed_border/mobkit_dashed_border.dart';
+
+import '../namespase/font_size.dart';
 
 class UploadBox extends StatelessWidget {
   final IconData? iconData;
@@ -20,7 +23,9 @@ class UploadBox extends StatelessWidget {
       this.subTitle,
       this.color,
       this.height,
-      this.width, this.subTextColor, this.textColor});
+      this.width,
+      this.subTextColor,
+      this.textColor});
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +51,13 @@ class UploadBox extends StatelessWidget {
             SizedBox(
               height: displayHeight(context) * 0.01,
             ),
-            Text(title!,style: TextStyle(color: textColor),),
+            Text(title!,
+                style: AppStyles.subTextStyle.copyWith(
+                    fontSize: FontSize.fontSizeXSs, color: textColor)),
             SizedBox(
               height: displayHeight(context) * 0.01,
             ),
-            Text(subTitle!,style: TextStyle(color: subTextColor)),
+            Text(subTitle!, style: AppStyles.subTextStyle.copyWith(color: subTextColor)),
           ],
         ),
       ),

@@ -8,6 +8,8 @@ class AppButton extends StatelessWidget {
     VoidCallback? onTap,
     bool? isFill,
     double? height,
+    Color? bgColor,
+    Color? borderColor,
     double? width,
     TextStyle? textStyle,
     bool? isDisabled,
@@ -18,7 +20,9 @@ class AppButton extends StatelessWidget {
         _height = height,
         _width = width,
         _textStyle = textStyle,
-        _isDisabled = false;
+        _isDisabled = false,
+        _bgColor = bgColor,
+        _borderColor = borderColor;
 
   final String? _label;
   final VoidCallback? _onTap;
@@ -27,6 +31,8 @@ class AppButton extends StatelessWidget {
   final double? _width;
   final TextStyle? _textStyle;
   final bool? _isDisabled;
+  final Color? _bgColor;
+  final Color? _borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -34,18 +40,20 @@ class AppButton extends StatelessWidget {
       height: _height,
       width: _width,
       child: ElevatedButton(
-        style: _isFill!
+        style: _isFill
             ? ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        )
+                backgroundColor: _bgColor,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: _borderColor!),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              )
             : ElevatedButton.styleFrom(
-          padding: const EdgeInsets.only(top: 10, bottom: 10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
+                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
         onPressed: _isDisabled! ? null : _onTap,
         child: Text(
           _label!,
@@ -54,18 +62,18 @@ class AppButton extends StatelessWidget {
       ),
     );
   }
-  // @override
-  // Widget build(BuildContext context) {
-  //   return SizedBox(
-  //     width: MediaQuery.of(context).size.width,
-  //     child: ElevatedButton(
-  //         style: ElevatedButton.styleFrom(),
-  //   onPressed: _isDisabled! ? null : _onTap,
-  //         child: Text(
-  //           _label!,
-  //           style: _isFill! ? AppStyles.buttonLightTextStyle : _textStyle,
-  //         ),
-  //         // child: Text('$text',style: AppStyles.buttonLightTextStyle,)),
-  //   );
-  // }
+// @override
+// Widget build(BuildContext context) {
+//   return SizedBox(
+//     width: MediaQuery.of(context).size.width,
+//     child: ElevatedButton(
+//         style: ElevatedButton.styleFrom(),
+//   onPressed: _isDisabled! ? null : _onTap,
+//         child: Text(
+//           _label!,
+//           style: _isFill! ? AppStyles.buttonLightTextStyle : _textStyle,
+//         ),
+//         // child: Text('$text',style: AppStyles.buttonLightTextStyle,)),
+//   );
+// }
 }
