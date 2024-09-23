@@ -1,7 +1,6 @@
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
-import 'package:finexe/feature/base/utils/widget/app_text_filed_login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -98,19 +97,22 @@ class NewLoanScreen extends ConsumerWidget {
               //     : null       borderRadius: const BorderRadius.all(Radius.circular(10)),
             ),
           ),
-          SizedBox(height: displayHeight(context)*0.04,),
+          SizedBox(
+            height: displayHeight(context) * 0.04,
+          ),
           Container(
-            decoration:  BoxDecoration(
-          border: Border.all(color: AppColors.boxBorderGray),
-          borderRadius: const BorderRadius.all(Radius.circular(10))),
+            decoration: BoxDecoration(
+                border: Border.all(color: AppColors.boxBorderGray),
+                borderRadius: const BorderRadius.all(Radius.circular(10))),
             padding: const EdgeInsets.all(16),
             height: displayHeight(context) * 0.60,
             child: Column(
               children: [
                 Container(
-            decoration:  BoxDecoration(
-            border: Border.all(color: AppColors.boxBorderGray),
-              borderRadius: const BorderRadius.all(Radius.circular(10))),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.boxBorderGray),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10))),
                   child: Card(
                     elevation: 0,
                     child: Column(
@@ -138,13 +140,14 @@ class NewLoanScreen extends ConsumerWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              amount(title: 'Loan Amount',amount: '₹ 20,000.00'),
+                              amount(
+                                  title: 'Loan Amount', amount: '₹ 20,000.00'),
                               VerticalDivider(
                                 width: displayWidth(context) * 0.05,
                                 color: AppColors.grayColor4,
                                 thickness: 2,
                               ),
-                              amount(title: 'Interest',amount: '₹ 45,000.00'),
+                              amount(title: 'Interest', amount: '₹ 45,000.00'),
                             ],
                           ),
                         ),
@@ -152,7 +155,6 @@ class NewLoanScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-
                 SizedBox(
                   height: displayHeight(context) * 0.02,
                 ),
@@ -162,7 +164,7 @@ class NewLoanScreen extends ConsumerWidget {
                     orientation: LinearGaugeOrientation.horizontal,
                     majorTickStyle: const LinearTickStyle(length: 20),
                     axisLabelStyle:
-                    const TextStyle(fontSize: 12.0, color: Colors.black),
+                        const TextStyle(fontSize: 12.0, color: Colors.black),
                     axisTrackStyle: const LinearAxisTrackStyle(
                         color: Colors.cyan,
                         edgeStyle: LinearEdgeStyle.bothFlat,
@@ -171,7 +173,6 @@ class NewLoanScreen extends ConsumerWidget {
               ],
             ),
           ),
-
         ],
       )),
     );
@@ -181,15 +182,18 @@ class NewLoanScreen extends ConsumerWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-         Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             const Icon(
               Icons.circle,
-              color: AppColors.primery,size: 16,
+              color: AppColors.primery,
+              size: 16,
             ),
-            Text(title,style: AppStyles.cardTextStyle16
-        .copyWith(color: AppColors.grayColor3,fontSize: FontSize.fontSize16)),
+            Text(title,
+                style: AppStyles.cardTextStyle16.copyWith(
+                    color: AppColors.grayColor3,
+                    fontSize: FontSize.fontSize16)),
           ],
         ),
         Text(

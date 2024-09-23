@@ -2,12 +2,11 @@ import 'package:finexe/feature/Punch_In_Out/Attendance/vew/attendance.dart';
 import 'package:finexe/feature/ui/Collection/cases/view/cases_screen.dart';
 import 'package:finexe/feature/ui/Sales/NewLone/view/new_loan_screen.dart';
 import 'package:flutter/material.dart';
+import '../../ui/Collection/cases/view/UpdateVisit/update_ visit_screen.dart';
 import '../../ui/Sales/DashBoard/view/dash_board.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/sales_on_boarding_form.dart';
 import '../../ui/authenticate/forgot_passwaord/view/forgot_password_screen.dart';
 import '../../ui/authenticate/view/login_screen.dart';
-// import 'package:your_project_name/views/login_screen.dart';
-// import 'package:your_project_name/views/user_screen.dart';
 
 class AppRoutes {
   static const String login = '/login';
@@ -17,6 +16,7 @@ class AppRoutes {
   static const String newLone = '/newLone';
   static const String attendance = '/attendance';
   static const String cases = '/cases';
+  static const String updateVisit = '/updateVisit';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -30,10 +30,12 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) =>  const SalesOnBoardingForm());
         case newLone:
         return MaterialPageRoute(builder: (_) =>  NewLoanScreen());
-        case attendance:
-        return MaterialPageRoute(builder: (_) =>   const AttendanceScreen());
+        // case attendance:
+        // return MaterialPageRoute(builder: (_) =>   const AttendanceScreen());
         case cases:
         return MaterialPageRoute(builder: (_) =>   CasesScreen());
+        case updateVisit:
+        return MaterialPageRoute(builder: (_) =>   UpdateVisit());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

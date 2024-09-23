@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'CollectionDue/collection_due_screen.dart';
+import 'visitPending/visit_pending_screen.dart';
 
 class CasesScreen extends ConsumerWidget {
+  const CasesScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return DefaultTabController(
-        initialIndex: 1,
+        initialIndex: 0,
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            bottom: TabBar(
+            bottom: const TabBar(
               tabs: <Widget>[
-                Tab(text: 'Visit Pending',
-
+                Tab(
+                  text: 'Visit Pending',
                 ),
                 Tab(
                   text: 'Collection Due',
@@ -22,13 +26,14 @@ class CasesScreen extends ConsumerWidget {
               ],
             ),
           ),
-          body:const TabBarView(
+          body: const TabBarView(
+            key: Key('Key1'),
             children: <Widget>[
               Center(
-                child: Text("It's cloudy here"),
+                child: VisitPendingScreen(),
               ),
               Center(
-                child: Text("It's rainy here"),
+                child: CollectionDue(),
               ),
             ],
           ),

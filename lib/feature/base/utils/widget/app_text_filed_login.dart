@@ -25,9 +25,11 @@ class AppFloatTextField extends StatelessWidget {
   final VoidCallback? prefixOnTap;
   final double? height;
   final bool? currentState;
+  final int? maxLine;
 
   const AppFloatTextField(
       {super.key,
+        this.maxLine,
       this.hint,
       this.obscureText = false,
       this.errorText,
@@ -51,10 +53,11 @@ class AppFloatTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       // decoration: const BoxDecoration(color: AppColors.white),
       height: height ?? displayHeight(context) * 0.06,
       child: TextFormField(
+        maxLines: maxLine,
         focusNode: focusNode,
         onFieldSubmitted: onFiledSubmitted,
         validator: onValidate,
@@ -68,6 +71,8 @@ class AppFloatTextField extends StatelessWidget {
         keyboardType: textInputType,
         decoration:
         InputDecoration(
+
+          isDense: false,
           // hintText: inerHint,
           hintStyle: const TextStyle(color: AppColors.textGray),
           floatingLabelStyle:currentState! ?
