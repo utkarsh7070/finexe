@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 class AppFloatTextField extends StatelessWidget {
   final String? hint;
   final String? inerHint;
+  final double? width;
   final String? errorText;
   final TextEditingController? controller;
   final IconData? suffixIcon;
@@ -26,10 +27,12 @@ class AppFloatTextField extends StatelessWidget {
   final double? height;
   final bool? currentState;
   final int? maxLine;
+  final String initialValue;
 
   const AppFloatTextField(
       {super.key,
-        this.maxLine,
+      this.maxLine,
+      this.width,
       this.hint,
       this.obscureText = false,
       this.errorText,
@@ -42,6 +45,7 @@ class AppFloatTextField extends StatelessWidget {
       this.isSuffix = false,
       this.textInputAction = TextInputAction.done,
       this.textInputType = TextInputType.text,
+      this.initialValue = '',
       this.prefixIcon,
       this.prefixOnTap,
       this.onValidate,
@@ -49,19 +53,24 @@ class AppFloatTextField extends StatelessWidget {
       this.isPrefix = false,
       this.onFiledSubmitted,
       this.inerHint,
-      this.focusNode, this.currentState});
+      this.focusNode,
+      this.currentState = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: width ?? displayWidth(context),
       // decoration: const BoxDecoration(color: AppColors.white),
       height: height ?? displayHeight(context) * 0.06,
+
+      alignment: Alignment.center,
       child: TextFormField(
+        initialValue: initialValue,
         maxLines: maxLine,
         focusNode: focusNode,
         onFieldSubmitted: onFiledSubmitted,
         validator: onValidate,
-        autofocus: true,
+        // autofocus: true,
         obscureText: obscureText,
         onTap: onTap,
         onChanged: onChange,
@@ -69,17 +78,18 @@ class AppFloatTextField extends StatelessWidget {
         cursorColor: Colors.blue,
         textInputAction: textInputAction,
         keyboardType: textInputType,
-        decoration:
-        InputDecoration(
-
+        style: const TextStyle(fontSize: 12),
+        decoration: InputDecoration(
           isDense: false,
           // hintText: inerHint,
           hintStyle: const TextStyle(color: AppColors.textGray),
-          floatingLabelStyle:currentState! ?
-              AppStyles.subHeading.copyWith(color: AppColors.primery):AppStyles.subHeading,
+          floatingLabelStyle: currentState!
+              ? AppStyles.subHeading.copyWith(color: AppColors.primary)
+              : AppStyles.subHeading,
           label: Text(
             '$inerHint',
-            // style: const TextStyle(color: AppColors.textGray),
+            style: const TextStyle(
+                fontSize: 14, color: AppColors.buttonBorderGray),
           ),
           prefixIcon: isPrefix!
               ? InkWell(
@@ -95,19 +105,19 @@ class AppFloatTextField extends StatelessWidget {
                 )
               : null,
           enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.gray, width: 2),
+              borderSide: BorderSide(color: AppColors.gray, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(10))),
           // filled: true,
           // fillColor: AppColors.gray,
           border: const OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.gray, width: 2),
-            borderRadius: BorderRadius.all(Radius.circular(10)),),
+            borderSide: BorderSide(color: AppColors.gray, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
 
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-                color: isError! ? Colors.red : Colors.blue,
-                width:2),
-            borderRadius:const BorderRadius.all(Radius.circular(10))),
+              borderSide: BorderSide(
+                  color: isError! ? Colors.red : Colors.blue, width: 2),
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
           // ),
           // focusedErrorBorder: isError!
           //     ? const OutlineInputBorder(
@@ -117,6 +127,5 @@ class AppFloatTextField extends StatelessWidget {
         ),
       ),
     );
-
   }
 }

@@ -1,55 +1,99 @@
+import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../base/routes/routes.dart';
 import '../../OnBoarding/view/on_boarding_screen.dart';
+import '../../OnBoarding/view/sales_cases/sales_cases_screen.dart';
 import '../view_model/dashboard_view_model.dart';
 import 'dash_board_bottom_navigation_bar.dart';
 import 'dashboard_drawer.dart';
 
-class DashBoardScreen extends ConsumerWidget {
-  const DashBoardScreen({super.key});
+class MyDashBoardWidget extends ConsumerStatefulWidget {
+  const MyDashBoardWidget({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _DashBoardScreen createState() => _DashBoardScreen();
+}
+
+class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+// class DashBoardScreen extends ConsumerWidget {
+//   const DashBoardScreen({super.key});
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final stageProvider = ref.watch(stepStageProvider);
     final data = ref.read(stepStageProvider.notifier).state.trim();
     final tabViewModel = ref.watch(tabViewModelProvider);
     final tabState = ref.read(tabViewModelProvider.notifier);
     return Scaffold(
-        floatingActionButton:tabViewModel.selectedIndex==0? FloatingActionButton(
-          onPressed: () {
-            Navigator.pushNamed(context, AppRoutes.saleForm);
-          },
-          child: const Center(child: Text('New Loan',textAlign: TextAlign.center,)),
-        ):null,
-        bottomNavigationBar: const DashBoardBottomNavigationBar(),
-        appBar: AppBar(
-          title: const Icon(CupertinoIcons.moon),
-        ),
+        floatingActionButton: tabViewModel.selectedIndex == 1
+            ? FloatingActionButton(
+                foregroundColor: AppColors.black,
+                backgroundColor: AppColors.white,
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50)),
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.newLone);
+                },
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.black,
+                ),
+              )
+            : null,
+        bottomNavigationBar:
+            DashBoardBottomNavigationBar(tabController: _tabController),
+        // appBar: AppBar(
+        //   // leading: Icon(CupertinoIcons),
+        //   backgroundColor: AppColors.primary,
+        //   title: const Icon(CupertinoIcons.moon),
+        // ),
         drawer: const DrawerScreen(),
-        body: IndexedStack(
+        body:
+            // Container(
+            //   padding: const EdgeInsets.all(16),
+            //   child: Column(
+            //     children: [
+            //       AppButton(
+            //         label: 'New Loan',
+            //         textStyle: const TextStyle(color: AppColors.white),
+            //         onTap: () {
+            //           Navigator.pushNamed(context, AppRoutes.saleForm);
+            //         },
+            //         width: displayWidth(context),
+            //       ),
+            //       Expanded(
+            //         child: SizedBox(
+            //             child: ListView.builder(
+            //           itemCount: 5,
+            //           itemBuilder: (context, index) {
+            //             return const Card(
+            //               child: Text('Loan Details'),
+            //             );
+            //           },
+            //         )),
+            //       )
+            //     ],
+            //   ),
+            // )
+            IndexedStack(
           index: tabViewModel.selectedIndex,
           children: <Widget>[
-             OnBoardingScreen(),
-
-            Container(
-              child: const Text('sdmfb'),
-            ),
-            Container(
-              child: const Text('jhsdalj'),
-            ),
-            Container(
-              child: const Text('ljoil'),
-            )
+            const SalesCasesScreen(),
+            const OnBoardingScreen(),
+            Container(child: const Text('jhsdalj')),
           ],
-        )
-        // switch(data.runtimeType){
-        //   // TODO: Handle this case.
-        //   Type() => throw UnimplementedError(),
-        // }
-
-        );
+        ));
   }
 }

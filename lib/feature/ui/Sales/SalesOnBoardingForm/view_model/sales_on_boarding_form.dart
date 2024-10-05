@@ -1,7 +1,7 @@
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/Aadhaar_Model/aadhaar_form_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../view/Personal Details/view/personal_details.dart';
+import '../view/Sales_on_boarding_form/co_applicant_form.dart';
 import '../view/widget/stepper_content.dart';
 
 final checkBoxTermsCondition = StateProvider(
@@ -9,9 +9,7 @@ final checkBoxTermsCondition = StateProvider(
     return false;
   },
 );
-final stepperProvider = StateNotifierProvider<StepperViewModel, int>((ref) {
-  return StepperViewModel();
-});
+
 // class TermsConditionCheckboxViewModel extends StateNotifier<bool> {
 //   TermsConditionCheckboxViewModel() : super(false);
 //
@@ -23,29 +21,6 @@ final stepperProvider = StateNotifierProvider<StepperViewModel, int>((ref) {
 //     }
 //   }
 // }
-
-class StepperViewModel extends StateNotifier<int> {
-  StepperViewModel() : super(0);
-
-  // Increment step
-  void nextStep(int totalSteps) {
-    if (state < totalSteps - 1) {
-      state = state + 1;
-    }
-  }
-
-  // Decrement step
-  void previousStep() {
-    if (state > 0) {
-      state = state - 1;
-    }
-  }
-
-  // Set the current step explicitly
-  void setStep(int step) {
-    state = step;
-  }
-}
 
 final optionRoleProvider =
     StateNotifierProvider<OptionRoleNotifier, OptionRole>((ref) {
@@ -67,7 +42,7 @@ final aadhaarFocusProvider =
   return AadhaarFocusViewModel();
 });
 
-class AadhaarFocusViewModel extends StateNotifier<Map<String, bool>> {
+class AadhaarFocusViewModel extends StateNotifier<Map<String, bool>>{
   final FocusNode aadhaarFocusNode;
 
   AadhaarFocusViewModel()
@@ -167,6 +142,7 @@ class AadhaarFormState {
     );
   }
 }
+enum OptionRole { Yes, NO, NON }
 
 // // // ViewModel to manage the text field values and validation
 // // class TextFieldsViewModel extends StateNotifier<List<TextFieldModel>> {

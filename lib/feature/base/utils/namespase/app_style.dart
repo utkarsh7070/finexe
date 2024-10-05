@@ -16,6 +16,12 @@ extension AppStyles on Never {
     fontWeight: FontWeight.w400,
     fontSize: FontSize.fontSizeS,
   );
+  static TextStyle subHeadingW500 = TextStyle(
+    color: AppColors.titleGray,
+    fontFamily: Fonts.appFonts,
+    fontWeight: FontWeight.w500,
+    fontSize: FontSize.fontSizeS,
+  );
   static TextStyle termsConditionText = TextStyle(
     color: AppColors.textDarkGray,
     fontFamily: Fonts.appFonts,
@@ -35,6 +41,8 @@ extension AppStyles on Never {
     fontWeight: FontWeight.w300,
     fontSize: FontSize.fontSize16,
   );
+
+
   static TextStyle cardTextStyle16 = TextStyle(
     color: AppColors.grayCardContentColor,
     fontFamily: Fonts.appFonts,
@@ -74,7 +82,7 @@ extension AppStyles on Never {
     fontSize: FontSize.fontSizeXSs,
   );
   static TextStyle smallTextStyleRich = TextStyle(
-    color: AppColors.primery,
+    color: AppColors.primary,
     fontFamily: Fonts.appFonts,
     fontWeight: FontWeight.w100,
     fontSize: FontSize.fontSizeXSs,

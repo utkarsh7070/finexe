@@ -6,13 +6,13 @@ import '../base/routes/routes.dart';
 
 class MyApp extends HookWidget {
   const MyApp({super.key});
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: AppRoutes.cases, // Define initial route
+      initialRoute: AppRoutes.login, // Define initial route
       onGenerateRoute: AppRoutes.generateRoute,
+
       // supportedLocales: AppLocalizations.supportedLocales,
       // localizationsDelegates: AppLocalizations.localizationsDelegate,
       title: 'Flutter Demo',

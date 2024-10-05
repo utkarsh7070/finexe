@@ -50,7 +50,7 @@ class CollectionDue extends ConsumerWidget {
                 listPadding: ListPadding(top: 20),
                 enableSearch: false,
                 dropDownList: dropDownData,
-                listTextStyle: const TextStyle(color: AppColors.primery),
+                listTextStyle: const TextStyle(color: AppColors.primary),
                 dropDownItemCount: 4,
                 onChanged: (val) {
                   // paymentViewModel.updatePaymentStatus(val);
@@ -62,7 +62,7 @@ class CollectionDue extends ConsumerWidget {
                   floatingLabelStyle:
                   paymentFocusStates['paymentStatusFocusNode']!
                       ? AppStyles.subHeading
-                      .copyWith(color: AppColors.primery)
+                      .copyWith(color: AppColors.primary)
                       : AppStyles.subHeading,
                   label: const Text(
                     'Payment Status',

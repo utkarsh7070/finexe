@@ -40,7 +40,7 @@ class DrawerScreen extends ConsumerWidget {
                     }
                     return Container(
 
-                      color: index==0?AppColors.primery:null,
+                      color: index==0?AppColors.primary:null,
                       child: ListTile(
                         leading: Icon(items[index].iconData,color: AppColors.white,),
                         title:Text(items[index].title!) ,

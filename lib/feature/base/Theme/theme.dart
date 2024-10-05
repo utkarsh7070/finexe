@@ -17,17 +17,17 @@ class AppTheme extends Themeable {
   ThemeData light() {
     return ThemeData(
       elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(backgroundColor: AppColors.primery)),
+          style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary)),
       scaffoldBackgroundColor: AppColors.white,
       colorScheme: ColorScheme.fromSwatch(
-        accentColor: AppColors.primery,
+        accentColor: AppColors.primary,
         backgroundColor: AppColors.white,
       ),
       useMaterial3: true,
       brightness: Brightness.light,
-      dialogTheme: const DialogTheme(
-        backgroundColor: AppColors.black,
-      ),
+      // dialogTheme: const DialogTheme(
+      //   backgroundColor: AppColors.black,
+      // ),
     );
   }
 }
