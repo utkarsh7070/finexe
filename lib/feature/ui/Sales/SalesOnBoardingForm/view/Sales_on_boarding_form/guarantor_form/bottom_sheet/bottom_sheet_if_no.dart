@@ -98,7 +98,9 @@ class GuarantorPhotoBottomSheet extends ConsumerWidget {
             isFill: true,
             bgColor: AppColors.primaryLight,
             borderColor: AppColors.primary,
-            onTap: () {},
+            onTap: () {
+              applicantFormViewModel.fetchAadhaarWithPhoto();
+            },
             label: 'Confirm',
             textStyle: AppStyles.smallTextStyleRich.copyWith(
                 color: AppColors.white,

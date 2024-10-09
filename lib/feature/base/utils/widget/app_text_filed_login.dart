@@ -27,7 +27,7 @@ class AppFloatTextField extends StatelessWidget {
   final double? height;
   final bool? currentState;
   final int? maxLine;
-  final String initialValue;
+  // final String? initialValue;
 
   const AppFloatTextField(
       {super.key,
@@ -45,7 +45,7 @@ class AppFloatTextField extends StatelessWidget {
       this.isSuffix = false,
       this.textInputAction = TextInputAction.done,
       this.textInputType = TextInputType.text,
-      this.initialValue = '',
+      // this.initialValue,
       this.prefixIcon,
       this.prefixOnTap,
       this.onValidate,
@@ -65,7 +65,7 @@ class AppFloatTextField extends StatelessWidget {
 
       alignment: Alignment.center,
       child: TextFormField(
-        initialValue: initialValue,
+        // initialValue: initialValue,
         maxLines: maxLine,
         focusNode: focusNode,
         onFieldSubmitted: onFiledSubmitted,

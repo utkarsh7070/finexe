@@ -1,9 +1,18 @@
 
 
+import 'package:dio/dio.dart';
+import 'package:finexe/feature/base/api/api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../../../../base/api/dio.dart';
+import '../model/request_model/aadhaar_number_request_model.dart';
+import '../model/request_model/aadhaar_otp_request_model.dart';
+import '../model/request_model/pan_request_model.dart';
+import '../model/responce_model/aadhaar_otp_responce_model.dart';
+import '../model/responce_model/aadhar_number_response_model.dart';
 
 
 final getOptGuarantor = StateProvider(
@@ -20,6 +29,17 @@ final uploadGuarantorDoc = StateProvider(
 );
 
 final checkBoxTermsConditionGuarantor = StateProvider(
+      (ref) {
+    return false;
+  },
+);
+
+final isGuarantorPanLoading = StateProvider(
+      (ref) {
+    return false;
+  },
+);
+final isGuarantorTickColorChange = StateProvider(
       (ref) {
     return false;
   },
@@ -70,10 +90,17 @@ StateNotifierProvider<GuarantorFocusProvider, Map<String, bool>>(
 
 final guarantorViewModelProvider =
 StateNotifierProvider<GuarantorViewModel, GuarantorKycFormState>(
-        (ref) => GuarantorViewModel());
+        (ref) {
+          final dio = ref.read(dioProvider);
+         return GuarantorViewModel(dio);
+        });
 
 class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
-  GuarantorViewModel() : super(GuarantorKycFormState());
+  final Dio dio;
+  GuarantorViewModel(this.dio) : super(GuarantorKycFormState());
+
+  AadhaarNumberResponseModel? aadhaarNumberResponseModel;
+  AadhaarOtpResponseModel? aadhaarOtpResponseModel;
   final ImagePicker picker = ImagePicker();
 // Add a new text field
 
@@ -90,6 +117,120 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
   //   }
   // }
   // Update email field
+
+  void setAutoValueByAadhaar(GuarantorDataController formListController){
+    if(aadhaarOtpResponseModel!=null){
+      formListController.fullNameController.text = aadhaarOtpResponseModel!.items.msg.name;
+      formListController.dobController.text = aadhaarOtpResponseModel!.items.msg.dob;
+      formListController.communicationAddress1Controller.text =  '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!.items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark}';
+      formListController.communicationAddress2Controller.text = aadhaarOtpResponseModel!.items.msg.locality;
+      formListController.communicationDistrictController.text = aadhaarOtpResponseModel!.items.msg.district;
+      formListController.communicationCityController.text = aadhaarOtpResponseModel!.items.msg.villageTownCity;
+      formListController.communicationPinCodeController.text = aadhaarOtpResponseModel!.items.msg.pincode;
+      formListController.communicationStateController.text = aadhaarOtpResponseModel!.items.msg.state;
+      formListController.genderController.text = aadhaarOtpResponseModel!.items.msg.gender;
+    }
+  }
+
+
+  Future<bool> fetchAadhaarNumber() async {
+    print(state.aadhaar);
+    final aadhaarNumberRequestModel = AadhaarNumberRequestModel(
+        aadharNo: state.aadhaar.trim().toString(),
+        transId: '12345',
+        docType: '211',
+        formName: 'guarantor');
+    try {
+      final response = await dio.post(Api.aadhaarNumber,
+          data: aadhaarNumberRequestModel.toJson());
+      if (response.statusCode == 200) {
+        aadhaarNumberResponseModel =
+            AadhaarNumberResponseModel.fromJson(response.data);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<bool> fetchOtp() async {
+    print(state.otp);
+    final aadhaarOtpResquestModel = AadhaarOtpRequestModel(
+        transId: aadhaarNumberResponseModel!.items.tsTransId,
+        otp: int.parse(state.otp));
+    print(int.parse(state.otp));
+    print(
+      aadhaarNumberResponseModel!.items.tsTransId,
+    );
+
+    try {
+      final response = await dio.post(Api.aadhaarOtpVerify,
+          data: aadhaarOtpResquestModel.toJson());
+      if (response.statusCode == 200) {
+        aadhaarOtpResponseModel =
+            AadhaarOtpResponseModel.fromJson(response.data);
+        state = state.copyWith(
+          fullName: aadhaarOtpResponseModel!.items.msg.name,
+          dob: aadhaarOtpResponseModel!.items.msg.dob,
+          communicationAddress1:
+          '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!.items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark}',
+          communicationAddress2: aadhaarOtpResponseModel!.items.msg.locality,
+          communicationDistrict: aadhaarOtpResponseModel!.items.msg.district,
+          communicationCity: aadhaarOtpResponseModel!.items.msg.villageTownCity,
+          communicationPinCode: aadhaarOtpResponseModel!.items.msg.pincode,
+          communicationState: aadhaarOtpResponseModel!.items.msg.state,
+          gender: aadhaarOtpResponseModel!.items.msg.gender,
+        );
+        // AadhaarNumberResponseModel.fromJson(response.data);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<bool> fetchAadhaarWithPhoto() async {
+    var formData = FormData.fromMap({
+      'front_image': await MultipartFile.fromFile(state.aadhaarPhotoFilePath1),
+      'back_image': await MultipartFile.fromFile(state.aadhaarPhotoFilePath2),
+      'formName':'guarantor'
+    });
+
+    try {
+      final response = await dio.post(Api.aadhaarPhoto, data: formData);
+      if (response.statusCode == 200) {
+        //=============  response pending set value and auto set value is pending ===============
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<bool> fetchPanVerify() async {
+    print(state.otp);
+    final panRequestModel = PanRequestModel(
+        docType: 523, panNumber: state.pan, transId: "111XXXXX");
+    try {
+      final response =
+      await dio.post(Api.panVerify, data: panRequestModel.toJson());
+      if (response.statusCode == 200) {
+        print(response.data);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
 
   Future<void> pickImages() async {
 
@@ -823,6 +964,7 @@ class GuarantorKycFormState {
   final String aadhaarPhotoFilePath1;
   final String aadhaarPhotoFilePath2;
 
+  final String otp;
   final String aadhaar;
   final String kycDocument;
   final String pan;
@@ -888,6 +1030,7 @@ class GuarantorKycFormState {
   final bool isPermanentPinCodeValid;
 
   GuarantorKycFormState({
+    this.otp='',
     this.applicantPhotoFilePath = '',
     this.aadhaarPhotoFilePath1 = '',
     this.aadhaarPhotoFilePath2 = '',
@@ -951,6 +1094,7 @@ class GuarantorKycFormState {
 
   GuarantorKycFormState copyWith(
       {
+        String? otp,
          String? applicantPhotoFilePath,
          String? aadhaarPhotoFilePath1,
          String? aadhaarPhotoFilePath2,
@@ -1010,6 +1154,7 @@ class GuarantorKycFormState {
         bool? isAgeValid,
         bool? isRelationWithApplicantValid}) {
     return GuarantorKycFormState(
+      otp: otp??this.otp,
       applicantPhotoFilePath: applicantPhotoFilePath??this.applicantPhotoFilePath,
         aadhaarPhotoFilePath1: aadhaarPhotoFilePath1??this.aadhaarPhotoFilePath1,
         aadhaarPhotoFilePath2: aadhaarPhotoFilePath2??this.aadhaarPhotoFilePath2,
@@ -1086,6 +1231,130 @@ class GuarantorKycFormState {
         isRelationWithApplicantValid:
         isRelationWithApplicantValid ?? this.isRelationWithApplicantValid);
   }
+}
+
+final guarantorController =
+StateNotifierProvider<FormDataControllerNotifier, GuarantorDataController>(
+        (ref) {
+      return FormDataControllerNotifier();
+    });
+
+class FormDataControllerNotifier
+    extends StateNotifier<GuarantorDataController> {
+  FormDataControllerNotifier()
+      : super(
+      GuarantorDataController(
+        aadhaarController: TextEditingController(),
+        kycDocumentController: TextEditingController(),
+        contactController: TextEditingController(),
+        ageController: TextEditingController(),
+        dobController: TextEditingController(),
+        communicationAddress1Controller: TextEditingController(),
+        communicationAddress2Controller: TextEditingController(),
+        communicationCityController: TextEditingController(),
+        communicationDistrictController: TextEditingController(),
+        communicationPinCodeController: TextEditingController(),
+        communicationStateController: TextEditingController(),
+        emailController: TextEditingController(),
+        fatherNameController: TextEditingController(),
+        fullNameController: TextEditingController(),
+        genderController: TextEditingController(),
+        otpController: TextEditingController(),
+        panController: TextEditingController(),
+        permanentAddress1Controller: TextEditingController(),
+        permanentAddress2Controller: TextEditingController(),
+        permanentCityController: TextEditingController(),
+        permanentDistrictController: TextEditingController(),
+        permanentPinCodeController: TextEditingController(),
+        permanentStateController: TextEditingController(),
+      )
+  );
+
+  @override
+  void dispose() {
+    state.panController.dispose();
+    state.aadhaarController.dispose();
+    state.kycDocumentController.dispose();
+    state.contactController.dispose();
+    state.emailController.dispose();
+    state.otpController.dispose();
+    state.genderController.dispose();
+    state.communicationAddress2Controller.dispose();
+    state.communicationCityController.dispose();
+    state.communicationStateController.dispose();
+    state.communicationDistrictController.dispose();
+    state.communicationPinCodeController.dispose();
+    state.communicationAddress1Controller.dispose();
+    state.ageController.dispose();
+    state.dobController.dispose();
+    state.fatherNameController.dispose();
+    state.fullNameController.dispose();
+    state.permanentAddress1Controller.dispose();
+    state.permanentAddress2Controller.dispose();
+    state.permanentCityController.dispose();
+    state.permanentStateController.dispose();
+    state.permanentDistrictController.dispose();
+    state.permanentPinCodeController.dispose();
+    super.dispose();
+  }
+}
+
+class GuarantorDataController {
+  final TextEditingController aadhaarController;
+  final TextEditingController kycDocumentController;
+  final TextEditingController panController;
+  final TextEditingController contactController;
+  final TextEditingController emailController;
+  final TextEditingController otpController;
+
+  final TextEditingController genderController;
+  final TextEditingController fullNameController;
+  final TextEditingController fatherNameController;
+  final TextEditingController dobController;
+  final TextEditingController ageController;
+
+  final TextEditingController communicationAddress1Controller;
+  final TextEditingController communicationAddress2Controller;
+  final TextEditingController communicationCityController;
+  final TextEditingController communicationStateController;
+  final TextEditingController communicationDistrictController;
+  final TextEditingController communicationPinCodeController;
+
+  final TextEditingController permanentAddress1Controller;
+  final TextEditingController permanentAddress2Controller;
+  final TextEditingController permanentCityController;
+  final TextEditingController permanentStateController;
+  final TextEditingController permanentDistrictController;
+  final TextEditingController permanentPinCodeController;
+
+  // final TextEditingController titleController;
+  // final TextEditingController descriptionController;
+
+  GuarantorDataController({
+    required this.kycDocumentController,
+    required this.contactController,
+    required this.emailController,
+    required this.fatherNameController,
+    required this.ageController,
+    required this.communicationAddress1Controller,
+    required this.communicationAddress2Controller,
+    required this.communicationCityController,
+    required this.communicationStateController,
+    required this.communicationDistrictController,
+    required this.communicationPinCodeController,
+    required this.permanentAddress1Controller,
+    required this.permanentAddress2Controller,
+    required this.permanentCityController,
+    required this.permanentStateController,
+    required this.permanentDistrictController,
+    required this.permanentPinCodeController,
+    required this.fullNameController,
+    required this.aadhaarController,
+    required this.panController,
+    required this.dobController,
+    required this.genderController,
+    required this.otpController,
+  });
 }
 
 enum GuarantorOptionRole { Yes, NO, NON }

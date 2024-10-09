@@ -23,7 +23,10 @@ final getAllProductsList =  StateProvider<List<Item>?>((ref) {
   return null;
   // Initial value is null (or you can set a default value)
 });
-
+final list =  StateProvider<Item?>((ref) {
+  return Item(loanAmount: LoanAmount(min: 0, max: 0), roi: LoanAmount(min: 0, max: 0), tenure: LoanAmount(min: 0, max: 0), id: '0', productName: 'productName', loginFees: 0, status: 'status', createdAt: DateTime(000), updatedAt: DateTime(000), v: 0, permissionFormId: 'permissionFormId', productFinId: 'productFinId');
+  // Initial value is null (or you can set a default value)
+});
 
 final newLoanFocusProvider =
     StateNotifierProvider<NewLoanFocusProvider, Map<String, bool>>((ref) {

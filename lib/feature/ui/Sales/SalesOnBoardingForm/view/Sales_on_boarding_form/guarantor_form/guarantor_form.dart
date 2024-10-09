@@ -21,6 +21,12 @@ class GuarantorDetails extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //----------------controller-------------------------------------------------------
+    final formListController = ref.watch(guarantorController);
+    final formNotifierController = ref.read(guarantorController.notifier);
+//---------------------------------------------------------------------------------
+    final isPanIconChange = ref.watch(isGuarantorPanLoading);
+    final colorChangeState = ref.watch(isGuarantorTickColorChange);
     final upload = ref.watch(uploadGuarantorDoc);
     final checkBoxTerms = ref.watch(checkBoxTermsConditionGuarantor);
     final selectedValue = ref.watch(guarantorRoleProvider);
@@ -170,7 +176,7 @@ class GuarantorDetails extends ConsumerWidget {
                                     width: displayWidth(context) * 0.71,
                                     focusNode: personalFocusViewModel.panFocusNode,
                                     currentState: personalFocusStates['panFocusNode'],
-                                    // controller: contactController,
+                                    controller: formListController.panController,
                                     onChange: (value) {
                                       personalFormViewModel.updatePan(value);
                                     },
@@ -193,11 +199,38 @@ class GuarantorDetails extends ConsumerWidget {
                                       height: displayHeight(context) * 0.07,
                                       width: displayWidth(context) * 0.15,
                                       child: IconButton(
-                                          onPressed: () {},
-                                          icon: Icon(
+                                          onPressed: () {
+                                            ref.read(isGuarantorPanLoading.notifier).state =
+                                            true;
+                                            personalFormViewModel
+                                                .fetchPanVerify()
+                                                .then(
+                                                  (value) {
+                                                if (value) {
+                                                  ref
+                                                      .read(
+                                                      isGuarantorTickColorChange.notifier)
+                                                      .state = true;
+                                                  ref
+                                                      .read(isGuarantorPanLoading.notifier)
+                                                      .state = false;
+                                                } else {
+                                                  ref
+                                                      .read(
+                                                      isGuarantorTickColorChange.notifier)
+                                                      .state = false;
+                                                }
+                                              },
+                                            );
+                                          },
+                                          icon: isPanIconChange
+                                              ? const CircularProgressIndicator()
+                                              : Icon(
                                             Icons.check_circle_rounded,
                                             size: 25,
-                                            color: AppColors.black,
+                                            color: colorChangeState
+                                                ?Colors.green: AppColors.black
+                                            ,
                                           ))
                                   )
                                 ]),

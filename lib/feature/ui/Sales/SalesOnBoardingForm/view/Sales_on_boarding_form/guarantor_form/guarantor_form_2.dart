@@ -14,6 +14,10 @@ class GuarantorForm2 extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //----------------controller-------------------------------------------------------
+    final formListController = ref.watch(guarantorController);
+    final formNotifierController = ref.read(guarantorController.notifier);
+//---------------------------------------------------------------------------------
     final personalFormState = ref.watch(guarantorViewModelProvider);
     final personalFormViewModel = ref.read(guarantorViewModelProvider.notifier);
     final personalFocusStates = ref.watch(guarantorFocusProvider);
@@ -69,7 +73,7 @@ class GuarantorForm2 extends ConsumerWidget {
                                 .communicationAddress1FocusNode,
                             currentState: personalFocusStates[
                                 'communicationAddress1FocusNode'],
-                            // controller: educationOfApplicantController,
+                            controller: formListController.communicationAddress1Controller,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationAddress1(value);
@@ -92,7 +96,7 @@ class GuarantorForm2 extends ConsumerWidget {
                                 .communicationAddress2FocusNode,
                             currentState: personalFocusStates[
                                 'communicationAddress2FocusNode'],
-                            // controller: motherController,
+                            controller: formListController.communicationAddress2Controller,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationAddress2(value);
@@ -114,7 +118,7 @@ class GuarantorForm2 extends ConsumerWidget {
                                 .communicationCityFocusNode,
                             currentState: personalFocusStates[
                                 'communicationCityFocusNode'],
-                            // controller: contactController,
+                            controller: formListController.communicationCityController,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationCity(value);
@@ -136,7 +140,7 @@ class GuarantorForm2 extends ConsumerWidget {
                                 .communicationStateFocusNode,
                             currentState: personalFocusStates[
                                 'communicationStateFocusNode'],
-                            // controller: emailController,
+                            controller: formListController.communicationStateController,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationState(value);
@@ -158,7 +162,7 @@ class GuarantorForm2 extends ConsumerWidget {
                                 .communicationDistrictFocusNode,
                             currentState: personalFocusStates[
                                 'communicationDistrictFocusNode'],
-                            // controller: maritalController,
+                            controller: formListController.communicationDistrictController,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationDistrict(value);
@@ -181,7 +185,7 @@ class GuarantorForm2 extends ConsumerWidget {
                                 .communicationPinCodeFocusNode,
                             currentState: personalFocusStates[
                                 'communicationPinCodeFocusNode'],
-                            // controller: religionController,
+                            controller: formListController.communicationPinCodeController,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationPinCode(value);
@@ -264,7 +268,7 @@ class GuarantorForm2 extends ConsumerWidget {
                                         .permanentAddress1FocusNode,
                                     currentState: personalFocusStates[
                                         'permanentAddress1FocusNode'],
-                                    // controller: educationOfApplicantController,
+                                    controller: formListController.permanentAddress1Controller,
                                     onChange: (value) {
                                       personalFormViewModel
                                           .updatePermanentAddress1(value);
@@ -287,7 +291,7 @@ class GuarantorForm2 extends ConsumerWidget {
                                         .permanentAddress2FocusNode,
                                     currentState: personalFocusStates[
                                         'permanentAddress2FocusNode'],
-                                    // controller: motherController,
+                                    controller: formListController.permanentAddress2Controller,
                                     onChange: (value) {
                                       personalFormViewModel
                                           .updatePermanentAddress2(value);
@@ -310,7 +314,7 @@ class GuarantorForm2 extends ConsumerWidget {
                                         .permanentCityFocusNode,
                                     currentState: personalFocusStates[
                                         'permanentCityFocusNode'],
-                                    // controller: contactController,
+                                    controller: formListController.permanentCityController,
                                     onChange: (value) {
                                       personalFormViewModel
                                           .updatePermanentCity(value);
@@ -333,7 +337,7 @@ class GuarantorForm2 extends ConsumerWidget {
                                         .permanentStateFocusNode,
                                     currentState: personalFocusStates[
                                         'permanentStateFocusNode'],
-                                    // controller: emailController,
+                                    controller: formListController.permanentStateController,
                                     onChange: (value) {
                                       personalFormViewModel
                                           .updatePermanentState(value);
@@ -356,7 +360,7 @@ class GuarantorForm2 extends ConsumerWidget {
                                         .permanentDistrictFocusNode,
                                     currentState: personalFocusStates[
                                         'permanentDistrictFocusNode'],
-                                    // controller: maritalController,
+                                    controller: formListController.permanentDistrictController,
                                     onChange: (value) {
                                       personalFormViewModel
                                           .updatePermanentDistrict(value);
@@ -379,7 +383,7 @@ class GuarantorForm2 extends ConsumerWidget {
                                         .permanentPinCodeFocusNode,
                                     currentState: personalFocusStates[
                                         'permanentPinCodeFocusNode'],
-                                    // controller: religionController,
+                                    controller: formListController.permanentPinCodeController,
                                     onChange: (value) {
                                       personalFormViewModel
                                           .updatePermanentPinCode(value);

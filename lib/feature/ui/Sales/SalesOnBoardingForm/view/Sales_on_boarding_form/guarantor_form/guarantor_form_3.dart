@@ -14,6 +14,10 @@ class GuarantorForm3 extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //----------------controller-------------------------------------------------------
+    final formListController = ref.watch(guarantorController);
+    final formNotifierController = ref.read(guarantorController.notifier);
+//---------------------------------------------------------------------------------
     final personalFormState = ref.watch(guarantorViewModelProvider);
     final personalFormViewModel = ref.read(guarantorViewModelProvider.notifier);
     final personalFocusStates = ref.watch(guarantorFocusProvider);
@@ -62,7 +66,7 @@ class GuarantorForm3 extends ConsumerWidget {
                       personalFocusViewModel.emailFocusNode,
                       currentState:
                       personalFocusStates['emailFocusNode'],
-                      // controller: emailController,
+                      controller: formListController.emailController,
                       onChange: (value) {
                         personalFormViewModel.updateEmail(value);
                       },
@@ -82,7 +86,7 @@ class GuarantorForm3 extends ConsumerWidget {
                       personalFocusViewModel.contactFocusNode,
                       currentState:
                       personalFocusStates['contactFocusNode'],
-                      // controller: contactController,
+                      controller: formListController.contactController,
                       onChange: (value) {
                         personalFormViewModel.updateContact(value);
                       },
@@ -102,7 +106,7 @@ class GuarantorForm3 extends ConsumerWidget {
                       personalFocusViewModel.fullNameFocusNode,
                       currentState:
                       personalFocusStates['fullNameFocusNode'],
-                      // controller: contactController,
+                      controller: formListController.fullNameController,
                       onChange: (value) {
                         personalFormViewModel.updateFullName(value);
                       },
@@ -122,7 +126,7 @@ class GuarantorForm3 extends ConsumerWidget {
                       personalFocusViewModel.fatherNameFocusNode,
                       currentState:
                       personalFocusStates['fatherNameFocusNode'],
-                      // controller: emailController,
+                      controller: formListController.fatherNameController,
                       onChange: (value) {
                         personalFormViewModel.updateEmail(value);
                       },
@@ -141,7 +145,7 @@ class GuarantorForm3 extends ConsumerWidget {
                       focusNode: personalFocusViewModel.dobFocusNode,
                       currentState:
                       personalFocusStates['dobFocusNode'],
-                      // controller: maritalController,
+                      controller: formListController.dobController,
                       onChange: (value) {
                         personalFormViewModel.updateDob(value);
                       },
@@ -160,7 +164,7 @@ class GuarantorForm3 extends ConsumerWidget {
                       focusNode: personalFocusViewModel.ageFocusNode,
                       currentState:
                       personalFocusStates['ageFocusNode'],
-                      // controller: religionController,
+                      controller: formListController.ageController,
                       onChange: (value) {
                         personalFormViewModel.updateAge(value);
                       },
@@ -180,7 +184,7 @@ class GuarantorForm3 extends ConsumerWidget {
                       personalFocusViewModel.genderFocusNode,
                       currentState:
                       personalFocusStates['genderFocusNode'],
-                      // controller: motherController,
+                      controller: formListController.genderController,
                       onChange: (value) {
                         personalFormViewModel.updateGender(value);
                       },

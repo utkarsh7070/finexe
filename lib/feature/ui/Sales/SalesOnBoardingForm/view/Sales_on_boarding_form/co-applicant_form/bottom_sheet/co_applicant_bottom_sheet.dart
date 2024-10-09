@@ -17,6 +17,10 @@ class CoApplicationBottomSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //---------------------controller--------------------
+    final formListController = ref.watch(coApplicantController);
+    final formNotifierController = ref.read(coApplicantController.notifier);
+    //----------------------------------------------[
     final checkBoxTerms = ref.watch(checkBoxTermsConditionCoApplicant);
     final getOtpClicked = ref.watch(getOptCoApp);
     final coApplicationFormState = ref.watch(coApplicantViewModelProvider);
@@ -73,7 +77,13 @@ class CoApplicationBottomSheet extends ConsumerWidget {
                 AppButton(
                   textStyle: const TextStyle(color: AppColors.white),
                   onTap: () {
+                    coApplicationFormViewModel.fetchOtp(index).then((value) {
+                      if(value) {
+                        coApplicationFormViewModel.setAutoValueByAadhaar(formListController,index);
+                        Navigator.pop(context);
+                      }
 
+                    },);
                   },
                   label: 'Continue',
                   width: displayWidth(context),
@@ -143,7 +153,12 @@ class CoApplicationBottomSheet extends ConsumerWidget {
                 AppButton(
                   textStyle: const TextStyle(color: AppColors.white),
                   onTap: () {
-                    ref.read(getOptCoApp.notifier).state = true;
+                    coApplicationFormViewModel.fetchAadhaarNumber(index).then((value) {
+                        ref.read(getOptCoApp.notifier).state = value;
+
+                    },);
+
+
                   },
                   label: 'Get OTP',
                   width: displayWidth(context),

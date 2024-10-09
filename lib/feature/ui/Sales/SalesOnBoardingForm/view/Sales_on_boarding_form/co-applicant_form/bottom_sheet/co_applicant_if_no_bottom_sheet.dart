@@ -99,7 +99,9 @@ class CoApplicationPhotoBottomSheet extends ConsumerWidget {
             isFill: true,
             bgColor: AppColors.primaryLight,
             borderColor: AppColors.primary,
-            onTap: () {},
+            onTap: () {
+              applicantFormViewModel.fetchAadhaarWithPhoto(index);
+            },
             label: 'Confirm',
             textStyle: AppStyles.smallTextStyleRich.copyWith(
                 color: AppColors.white,

@@ -16,6 +16,10 @@ class CoApplicantForm2 extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //----------------controller-------------------------------------------------------
+    final formListController = ref.watch(coApplicantController);
+    final formNotifierController = ref.read(coApplicantController.notifier);
+//---------------------------------------------------------------------------------
     // final formList = ref.watch(formDataProvider);
     // final formNotifier = ref.read(formDataProvider.notifier);
 
@@ -78,7 +82,7 @@ class CoApplicantForm2 extends ConsumerWidget {
                                 .communicationAddress1FocusNode,
                             currentState: coApplicationFocusStates[
                                 'communicationAddress1FocusNode'],
-                            // controller: educationOfApplicantController,
+                            controller: formListController[index].communicationAddress1Controller,
                             onChange: (value) {
                               coApplicationFormViewModel
                                   .updateCommunicationAddress1(value, index);
@@ -101,7 +105,7 @@ class CoApplicantForm2 extends ConsumerWidget {
                                 .communicationAddress2FocusNode,
                             currentState: coApplicationFocusStates[
                                 'communicationAddress2FocusNode'],
-                            // controller: motherController,
+                            controller: formListController[index].communicationAddress2Controller,
                             onChange: (value) {
                               coApplicationFormViewModel
                                   .updateCommunicationAddress2(value, index);
@@ -123,7 +127,7 @@ class CoApplicantForm2 extends ConsumerWidget {
                                 .communicationCityFocusNode,
                             currentState: coApplicationFocusStates[
                                 'communicationCityFocusNode'],
-                            // controller: contactController,
+                            controller: formListController[index].communicationCityController,
                             onChange: (value) {
                               coApplicationFormViewModel
                                   .updateCommunicationCity(value, index);
@@ -146,7 +150,7 @@ class CoApplicantForm2 extends ConsumerWidget {
                                 .communicationStateFocusNode,
                             currentState: coApplicationFocusStates[
                                 'communicationStateFocusNode'],
-                            // controller: emailController,
+                            controller: formListController[index].communicationStateController,
                             onChange: (value) {
                               coApplicationFormViewModel
                                   .updateCommunicationState(value, index);
@@ -169,7 +173,7 @@ class CoApplicantForm2 extends ConsumerWidget {
                                 .communicationDistrictFocusNode,
                             currentState: coApplicationFocusStates[
                                 'communicationDistrictFocusNode'],
-                            // controller: maritalController,
+                            controller: formListController[index].communicationDistrictController,
                             onChange: (value) {
                               coApplicationFormViewModel
                                   .updateCommunicationDistrict(value, index);
@@ -192,7 +196,7 @@ class CoApplicantForm2 extends ConsumerWidget {
                                 .communicationPinCodeFocusNode,
                             currentState: coApplicationFocusStates[
                                 'communicationPinCodeFocusNode'],
-                            // controller: religionController,
+                            controller: formListController[index].communicationPinCodeController,
                             onChange: (value) {
                               coApplicationFormViewModel
                                   .updateCommunicationPinCode(value, index);
@@ -275,7 +279,7 @@ class CoApplicantForm2 extends ConsumerWidget {
                                         .permanentAddress1FocusNode,
                                     currentState: coApplicationFocusStates[
                                         'permanentAddress1FocusNode'],
-                                    // controller: educationOfApplicantController,
+                                    controller: formListController[index].permanentAddress1Controller,
                                     onChange: (value) {
                                       coApplicationFormViewModel
                                           .updatePermanentAddress1(
@@ -299,7 +303,7 @@ class CoApplicantForm2 extends ConsumerWidget {
                                         .permanentAddress2FocusNode,
                                     currentState: coApplicationFocusStates[
                                         'permanentAddress2FocusNode'],
-                                    // controller: motherController,
+                                    controller: formListController[index].permanentAddress2Controller,
                                     onChange: (value) {
                                       coApplicationFormViewModel
                                           .updatePermanentAddress2(
@@ -323,7 +327,7 @@ class CoApplicantForm2 extends ConsumerWidget {
                                         .permanentCityFocusNode,
                                     currentState: coApplicationFocusStates[
                                         'permanentCityFocusNode'],
-                                    // controller: contactController,
+                                    controller: formListController[index].permanentCityController,
                                     onChange: (value) {
                                       coApplicationFormViewModel
                                           .updatePermanentCity(value, index);
@@ -346,7 +350,7 @@ class CoApplicantForm2 extends ConsumerWidget {
                                         .permanentStateFocusNode,
                                     currentState: coApplicationFocusStates[
                                         'permanentStateFocusNode'],
-                                    // controller: emailController,
+                                    controller: formListController[index].permanentStateController,
                                     onChange: (value) {
                                       coApplicationFormViewModel
                                           .updatePermanentState(value, index);
@@ -369,7 +373,7 @@ class CoApplicantForm2 extends ConsumerWidget {
                                         .permanentDistrictFocusNode,
                                     currentState: coApplicationFocusStates[
                                         'permanentDistrictFocusNode'],
-                                    // controller: maritalController,
+                                    controller: formListController[index].permanentDistrictController,
                                     onChange: (value) {
                                       coApplicationFormViewModel
                                           .updatePermanentDistrict(
@@ -393,7 +397,7 @@ class CoApplicantForm2 extends ConsumerWidget {
                                         .permanentPinCodeFocusNode,
                                     currentState: coApplicationFocusStates[
                                         'permanentPinCodeFocusNode'],
-                                    // controller: religionController,
+                                    controller: formListController[index].permanentPinCodeController  ,
                                     onChange: (value) {
                                       coApplicationFormViewModel
                                           .updatePermanentPinCode(value, index);
@@ -412,15 +416,17 @@ class CoApplicantForm2 extends ConsumerWidget {
                               )),
                           InkWell(
                             onTap: () {
-                              coApplicationFormViewModel.addForm();
-                              // print(formList);
-                              // print(coApplicationFormViewModel);
-                              // formNotifier.addFormData();
                               indexAdd.state = index + 1;
+                              coApplicationFormViewModel.addForm();
+                              formNotifierController.addFormData();
+
+                              // print(formList);
+                              coAddressRadioViewModel.selectAddress(CoApplicantOptionRole.NON);
+                              print(coApplicationFormState.length);
+                              print(coApplicationFormState.toList());
+                              // formNotifier.addFormData();
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => const CoApplicantForm1()));
-                              // Navigator.pushNamed(
-                              //     context, AppRoutes.saleCoApplicationForm1);
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,

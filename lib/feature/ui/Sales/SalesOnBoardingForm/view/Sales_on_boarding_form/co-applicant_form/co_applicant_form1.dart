@@ -19,13 +19,15 @@ import 'co_applicant_form3.dart';
 
 class CoApplicantForm1 extends ConsumerWidget {
   const CoApplicantForm1({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
 //----------------controller-------------------------------------------------------
-//     final formList = ref.watch(formDataProvider);
-//     final formNotifier = ref.read(formDataProvider.notifier);
+    final formListController = ref.watch(coApplicantController);
+    final formNotifierController = ref.read(coApplicantController.notifier);
 //---------------------------------------------------------------------------------
+    final isPanIconChange = ref.watch(isCoPanLoading);
+    final colorChangeState = ref.watch(isCoTickColorChange);
     final uploadCoDocs = ref.watch(uploadCoDoc);
     final checkBoxTerms = ref.watch(checkBoxTermsConditionCoApplicant);
     final selectedValue = ref.watch(coApplicantRoleProvider);
@@ -94,11 +96,15 @@ class CoApplicantForm1 extends ConsumerWidget {
                         coApplicationFormViewModel.pickImages(index);
                       },
                       child: Visibility(
-                        visible: coApplicationFormState[index].applicantPhotoFilePath=='',
+                        visible: coApplicationFormState[index]
+                                .applicantPhotoFilePath ==
+                            '',
                         replacement: SizedBox(
                           height: displayHeight(context) * 0.16,
                           width: displayWidth(context),
-                          child: Image.file(File(coApplicationFormState[index].applicantPhotoFilePath)),),
+                          child: Image.file(File(coApplicationFormState[index]
+                              .applicantPhotoFilePath)),
+                        ),
                         child: UploadBox(
                           isImage: true,
                           height: displayHeight(context) * 0.16,
@@ -188,78 +194,86 @@ class CoApplicantForm1 extends ConsumerWidget {
 
                         DropDownTextField(
                           textStyle: const TextStyle(fontSize: 12),
-                        controller: coApplicationFormViewModel.dropDownController,
-                        // initialValue: "name4",
-                        listSpace: 20,
-                        listPadding: ListPadding(top: 20),
-                        enableSearch: false,
-                        dropDownList: const [
-                          DropDownValueModel(
-                              name: 'PAN Card', value: "PANCard"),
-                          DropDownValueModel(
-                              name: 'Driving License', value: "DrivingLicense"),
-                          DropDownValueModel(name: 'VoterId', value: "VoterId"),
-                        ],
-                        listTextStyle:
-                        const TextStyle(color: AppColors.primary),
-                        dropDownItemCount: 3,
-                        onChanged: (val) {
-                          // formViewModel.updateKycDoc(val);
-                        },
+                          controller:
+                              coApplicationFormViewModel.dropDownController,
+                          // initialValue: "name4",
+                          listSpace: 20,
+                          listPadding: ListPadding(top: 20),
+                          enableSearch: false,
+                          dropDownList: const [
+                            DropDownValueModel(
+                                name: 'PAN Card', value: "PANCard"),
+                            DropDownValueModel(
+                                name: 'Driving License',
+                                value: "DrivingLicense"),
+                            DropDownValueModel(
+                                name: 'VoterId', value: "VoterId"),
+                          ],
+                          listTextStyle:
+                              const TextStyle(color: AppColors.primary),
+                          dropDownItemCount: 3,
+                          onChanged: (val) {
+                            // formViewModel.updateKycDoc(val);
+                          },
                           clearOption: false,
-                        textFieldFocusNode:
-                        coApplicationFocusViewModel.kycDocFocusNode,
-                        textFieldDecoration: InputDecoration(
-                          hintStyle: const TextStyle(color: AppColors.textGray),
-                          floatingLabelStyle:
-                          coApplicationFocusStates['kycDocFocusNode']!
-                              ? AppStyles.subHeading
-                              .copyWith(color: AppColors.primary)
-                              : AppStyles.subHeading,
-                          label: const Text(
-                            'Kyc Document',
-                            style: const TextStyle(color: AppColors.boxBorderGray),
-                          ),
+                          textFieldFocusNode:
+                              coApplicationFocusViewModel.kycDocFocusNode,
+                          textFieldDecoration: InputDecoration(
+                            hintStyle:
+                                const TextStyle(color: AppColors.textGray),
+                            floatingLabelStyle:
+                                coApplicationFocusStates['kycDocFocusNode']!
+                                    ? AppStyles.subHeading
+                                        .copyWith(color: AppColors.primary)
+                                    : AppStyles.subHeading,
+                            label: const Text(
+                              'Kyc Document',
+                              style: const TextStyle(
+                                  color: AppColors.boxBorderGray),
+                            ),
 
-                          // errorText: isError! ? errorText : null,
-                          enabledBorder: const OutlineInputBorder(
+                            // errorText: isError! ? errorText : null,
+                            enabledBorder: const OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: AppColors.gray, width: 1),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                            // filled: true,
+                            // fillColor: AppColors.gray,
+                            border: const OutlineInputBorder(
                               borderSide:
-                              BorderSide(color: AppColors.gray, width: 2),
+                                  BorderSide(color: AppColors.gray, width: 2),
                               borderRadius:
-                              BorderRadius.all(Radius.circular(10))),
-                          // filled: true,
-                          // fillColor: AppColors.gray,
-                          border: const OutlineInputBorder(
-                            borderSide:
-                            BorderSide(color: AppColors.gray, width: 2),
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          ),
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
 
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: !coApplicationFormState[index].isKycValid
-                                      ? Colors.red
-                                      : Colors.blue,
-                                  width: 2),
-                              borderRadius:
-                              const BorderRadius.all(Radius.circular(10))),
-                          // ),
-                          // focusedErrorBorder: isError!
-                          //     ? const OutlineInputBorder(
-                          //     borderRadius: BorderRadius.all(Radius.circular(10)),
-                          //     borderSide: BorderSide(color: Colors.red, width: 2))
-                          //     : null       borderRadius: const BorderRadius.all(Radius.circular(10)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: !coApplicationFormState[index]
+                                            .isKycValid
+                                        ? Colors.red
+                                        : Colors.blue,
+                                    width: 2),
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10))),
+                            // ),
+                            // focusedErrorBorder: isError!
+                            //     ? const OutlineInputBorder(
+                            //     borderRadius: BorderRadius.all(Radius.circular(10)),
+                            //     borderSide: BorderSide(color: Colors.red, width: 2))
+                            //     : null       borderRadius: const BorderRadius.all(Radius.circular(10)),
+                          ),
                         ),
-                      ),
 
                         Visibility(
-                          visible:  coApplicationFormViewModel.dropDownController.dropDownValue?.value == 'PANCard',
+                          visible: coApplicationFormViewModel
+                                  .dropDownController.dropDownValue?.value ==
+                              'PANCard',
                           child: SizedBox(
                             height: displayHeight(context) * 0.10,
                             width: displayWidth(context),
                             child: Row(children: [
                               AppFloatTextField(
-
                                 width: displayWidth(context) * 0.71,
                                 focusNode:
                                     coApplicationFocusViewModel.panFocusNode,
@@ -271,10 +285,12 @@ class CoApplicantForm1 extends ConsumerWidget {
                                       value, index);
                                   print(coApplicationFormState[index].pan);
                                 },
-                                // controller: formList[index].titleController,
-                                height: !coApplicationFormState[index].isPanValid
-                                    ? displayHeight(context) * 0.09
-                                    : null,
+                                controller:
+                                    formListController[index].panController,
+                                height:
+                                    !coApplicationFormState[index].isPanValid
+                                        ? displayHeight(context) * 0.09
+                                        : null,
                                 inerHint: 'Pan',
                                 errorText: "Pan is a required field",
                                 isError:
@@ -287,17 +303,50 @@ class CoApplicantForm1 extends ConsumerWidget {
                               Container(
                                   decoration: const BoxDecoration(
                                       color: AppColors.boxBagGray,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10))),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
                                   height: displayHeight(context) * 0.06,
                                   width: displayWidth(context) * 0.15,
                                   child: IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.check_circle_rounded,
-                                        size: 25,
-                                        color: AppColors.black,
-                                      )))
+                                      onPressed: () {
+                                        ref
+                                            .read(isCoPanLoading.notifier)
+                                            .state = true;
+                                        coApplicationFormViewModel
+                                            .fetchPanVerify(index)
+                                            .onError(
+                                          (error, stackTrace) {
+                                            return ref
+                                                .read(isCoPanLoading.notifier)
+                                                .state = false;
+                                          },
+                                        ).then(
+                                          (value) {
+                                            if (value) {
+                                              ref
+                                                  .read(isCoTickColorChange
+                                                      .notifier)
+                                                  .state = true;
+                                              ref
+                                                  .read(isCoPanLoading.notifier)
+                                                  .state = false;
+                                            } else {
+                                              ref
+                                                  .read(isCoPanLoading.notifier)
+                                                  .state = false;
+                                            }
+                                          },
+                                        );
+                                      },
+                                      icon: isPanIconChange
+                                          ? const CircularProgressIndicator()
+                                          : Icon(
+                                              Icons.check_circle_rounded,
+                                              size: 25,
+                                              color: colorChangeState
+                                                  ? Colors.green
+                                                  : AppColors.black,
+                                            )))
                             ]),
                           ),
                         ),
@@ -310,7 +359,8 @@ class CoApplicantForm1 extends ConsumerWidget {
                           label: 'Next',
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const CoApplicantForm3()));
+                                builder: (context) =>
+                                    const CoApplicantForm3()));
                             // Navigator.pushNamed(
                             //     context, AppRoutes.saleCoApplicationForm3);
                           },
@@ -548,6 +598,7 @@ class CoApplicantForm1 extends ConsumerWidget {
       },
     );
   }
+
   Future<void> showBottomSheetIfNo({
     required WidgetRef ref,
     required BuildContext context,

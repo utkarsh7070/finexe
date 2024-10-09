@@ -13,6 +13,10 @@ class ApplicantForm3 extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //-------------------controllers--------------------------------------
+    final formListController = ref.watch(applicantController);
+    final formNotifierController = ref.read(applicantController.notifier);
+    //--------------------------------------------------------------------------
     final personalFormState = ref.watch(applicantViewModelProvider);
     final personalFormViewModel = ref.read(applicantViewModelProvider.notifier);
     final personalFocusStates = ref.watch(applicantFocusProvider);
@@ -61,7 +65,7 @@ class ApplicantForm3 extends ConsumerWidget {
                         AppFloatTextField(
                           focusNode: personalFocusViewModel.emailFocusNode,
                           currentState: personalFocusStates['emailFocusNode'],
-                          // controller: emailController,
+                          controller: formListController.emailController,
                           onChange: (value) {
                             personalFormViewModel.updateEmail(value);
                           },
@@ -80,7 +84,7 @@ class ApplicantForm3 extends ConsumerWidget {
                           focusNode: personalFocusViewModel.contactFocusNode,
                           currentState:
                           personalFocusStates['contactFocusNode'],
-                          // controller: contactController,
+                          controller: formListController.contactController,
                           onChange: (value) {
                             personalFormViewModel.updateContact(value);
                           },
@@ -96,10 +100,11 @@ class ApplicantForm3 extends ConsumerWidget {
                           height: displayHeight(context) * 0.02,
                         ),
                         AppFloatTextField(
-                          initialValue: personalFormState.fullName,
+                          // initialValue: personalFormState.fullName,
                           focusNode: personalFocusViewModel.fullNameFocusNode,
                           currentState:
                           personalFocusStates['fullNameFocusNode'],
+                          controller: formListController.fullNameController,
                           onChange: (value) {
                             personalFormViewModel.updateFullName(value);
                           },
@@ -118,7 +123,7 @@ class ApplicantForm3 extends ConsumerWidget {
                           focusNode: personalFocusViewModel.fatherNameFocusNode,
                           currentState:
                           personalFocusStates['fatherNameFocusNode'],
-                          // controller: emailController,
+                          controller: formListController.fatherNameController,
                           onChange: (value) {
                             personalFormViewModel.updateEmail(value);
                           },
@@ -136,7 +141,7 @@ class ApplicantForm3 extends ConsumerWidget {
                         AppFloatTextField(
                           focusNode: personalFocusViewModel.dobFocusNode,
                           currentState: personalFocusStates['dobFocusNode'],
-                          // controller: maritalController,
+                          controller: formListController.dobController,
                           onChange: (value) {
                             personalFormViewModel.updateDob(value);
                           },
@@ -154,7 +159,7 @@ class ApplicantForm3 extends ConsumerWidget {
                         AppFloatTextField(
                           focusNode: personalFocusViewModel.ageFocusNode,
                           currentState: personalFocusStates['ageFocusNode'],
-                          // controller: religionController,
+                          controller: formListController.ageController,
                           onChange: (value) {
                             personalFormViewModel.updateAge(value);
                           },
@@ -172,7 +177,7 @@ class ApplicantForm3 extends ConsumerWidget {
                         AppFloatTextField(
                           focusNode: personalFocusViewModel.genderFocusNode,
                           currentState: personalFocusStates['genderFocusNode'],
-                          // controller: motherController,
+                          controller: formListController.genderController,
                           onChange: (value) {
                             personalFormViewModel.updateGender(value);
                           },

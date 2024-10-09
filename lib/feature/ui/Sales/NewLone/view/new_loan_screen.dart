@@ -20,6 +20,9 @@ class NewLoanScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final getAllProduct = ref.watch(fetchDataProvider);
+    final dataList = ref.watch(getAllProductsList);
+    final dataListViewModel = ref.read(list.notifier);
+    final listViewModel = ref.watch(list);
     // final selectedValue = ref.watch(dropdownValueProvider);
     final phoneState = ref.watch(personalDetailViewModelProvider);
     final phoneViewModel = ref.read(personalDetailViewModelProvider.notifier);
@@ -29,6 +32,9 @@ class NewLoanScreen extends ConsumerWidget {
     final loanAmount = ref.watch(newLoanAmount);
     final interestRate = ref.watch(newInterestRate);
     final tenure = ref.watch(newTenureRate);
+
+    var loanAmountMax;
+    // var loanAmount;
     // final getAllProducts = getAllProduct.value?.items.where((element) => element.productName == phoneViewModel.dropDownController.dropDownValue?.name,);
 
     // getAllProductsList.select(
@@ -86,9 +92,16 @@ class NewLoanScreen extends ConsumerWidget {
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: getAllProduct.when(
                       data: (data) {
-                        // List<Item> list = data.items;
-                        // final Item filteredData =list.where(test);
-                       return Wrap(
+                        final list = data.items.where((element) =>
+                            element.productName ==
+                            phoneViewModel.dropDownController.dropDownValue
+                                ?.name);
+                        // final assignAmount = list.where((element) => element.loanAmount.max,) ,)
+                        for (Item item in list) {
+                          loanAmountMax = item.loanAmount.max;
+                          print(item.loanAmount);
+                        }
+                        return Wrap(
                           crossAxisAlignment: WrapCrossAlignment.center,
                           verticalDirection: VerticalDirection.down,
                           // runSpacing: displayHeight(context) * 0.04,
@@ -111,9 +124,8 @@ class NewLoanScreen extends ConsumerWidget {
                                   height: !phoneState.isPhoneNumberValid
                                       ? displayHeight(context) * 0.09
                                       : null,
-                                  inerHint: 'Payment Amount',
-                                  errorText:
-                                      "Payment Amount is a required field",
+                                  inerHint: 'Customer Mobile no',
+                                  errorText: "Mobile no is a required field",
                                   isError: !phoneState.isPhoneNumberValid,
                                   textInputAction: TextInputAction.done,
                                 ),
@@ -121,9 +133,11 @@ class NewLoanScreen extends ConsumerWidget {
                                   height: displayHeight(context) * 0.01,
                                 ),
                                 DropDownTextField(
+                                  clearOption: false,
                                   controller: phoneViewModel.dropDownController,
                                   // initialValue: phoneViewModel.dropDownController.dropDownValue?.name,
                                   listSpace: 20,
+
                                   listPadding: ListPadding(top: 20),
                                   enableSearch: false,
                                   dropDownList: const [
@@ -174,6 +188,14 @@ class NewLoanScreen extends ConsumerWidget {
                                       const TextStyle(color: AppColors.primary),
                                   dropDownItemCount: 9,
                                   onChanged: (val) {
+                                    print(val);
+                                    DropDownValueModel value = val;
+                                    print(
+                                        '  value  ${value.value},  ${value.name}');
+                                    dataListViewModel
+                                        .state = dataList!.where((element) =>
+                                            element.productName == value.name)
+                                        as Item?;
                                     // phoneViewModel.updateProduct(val);
                                     // ref.read(dropdownValueProvider.notifier).state = val;
                                   },
@@ -195,7 +217,7 @@ class NewLoanScreen extends ConsumerWidget {
                                     // errorText: isError! ? errorText : null,
                                     enabledBorder: const OutlineInputBorder(
                                         borderSide: BorderSide(
-                                            color: AppColors.gray, width: 2),
+                                            color: AppColors.gray, width: 1),
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10))),
                                     // filled: true,
@@ -239,8 +261,8 @@ class NewLoanScreen extends ConsumerWidget {
                                   axisTrackStyle: const LinearAxisTrackStyle(
                                       edgeStyle: LinearEdgeStyle.bothCurve,
                                       color: AppColors.linearBarColor),
-                                  minimum: 200,
-                                  maximum: 100000,
+                                  minimum: 1000,
+                                  maximum: 200,
                                   showTicks: true,
                                   showLabels: false,
                                   minorTicksPerInterval: 1,
@@ -289,7 +311,7 @@ class NewLoanScreen extends ConsumerWidget {
                                       color: AppColors.linearBarColor,
                                       edgeStyle: LinearEdgeStyle.bothCurve),
                                   minimum: 100,
-                                  maximum:  1000,
+                                  maximum: 1000,
                                   showTicks: true,
                                   showLabels: false,
                                   majorTickStyle:

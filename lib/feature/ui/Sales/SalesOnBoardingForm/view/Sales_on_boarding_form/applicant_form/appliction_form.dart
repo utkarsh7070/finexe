@@ -21,6 +21,10 @@ class ApplicationDetails extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //----------------------------controllers-------------------------
+    final formListController = ref.watch(applicantController);
+    final formNotifierController = ref.read(applicantController.notifier);
+    //-----------------------------------------------------
     final selectedValue = ref.watch(applicantRoleProvider);
     final isPanIconChange = ref.watch(isPanLoading);
     final colorChangeState = ref.watch(isTickColorChange);
@@ -169,7 +173,7 @@ class ApplicationDetails extends ConsumerWidget {
                               width: displayWidth(context) * 0.71,
                               focusNode: personalFocusViewModel.panFocusNode,
                               currentState: personalFocusStates['panFocusNode'],
-                              // controller: contactController,
+                              controller: formListController.panController,
                               onChange: (value) {
                                 personalFormViewModel.updatePan(value);
                               },
@@ -224,7 +228,8 @@ class ApplicationDetails extends ConsumerWidget {
                                             color: colorChangeState
                                                 ?Colors.green: AppColors.black
                                                 ,
-                                          )))
+                                          ))
+                            )
                           ]),
                         ),
                         SizedBox(

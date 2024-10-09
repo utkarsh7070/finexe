@@ -13,6 +13,10 @@ class CoApplicantForm3 extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //----------------controller-------------------------------------------------------
+    final formListController = ref.watch(coApplicantController);
+    final formNotifierController = ref.read(coApplicantController.notifier);
+//---------------------------------------------------------------------------------
     final uploadCoDocs = ref.watch(uploadCoDoc);
     final checkBoxTerms = ref.watch(checkBoxTermsConditionCoApplicant);
     final selectedValue = ref.watch(coApplicantRoleProvider);
@@ -25,6 +29,8 @@ class CoApplicantForm3 extends ConsumerWidget {
     final coApplicationFocusViewModel =
         ref.read(coApplicantFocusProvider.notifier);
     final index = ref.watch(listIndex);
+
+
     return Scaffold(
         body: Container(
       width: displayWidth(context),
@@ -79,7 +85,7 @@ class CoApplicantForm3 extends ConsumerWidget {
                           focusNode: coApplicationFocusViewModel.emailFocusNode,
                           currentState:
                               coApplicationFocusStates['emailFocusNode'],
-                          // controller: emailController,
+                          controller: formListController[index].emailController,
                           onChange: (value) {
                             coApplicationFormViewModel.updateEmail(
                                 value, index);
@@ -100,7 +106,7 @@ class CoApplicantForm3 extends ConsumerWidget {
                               coApplicationFocusViewModel.contactFocusNode,
                           currentState:
                               coApplicationFocusStates['contactFocusNode'],
-                          // controller: contactController,
+                          controller: formListController[index].contactController,
                           onChange: (value) {
                             coApplicationFormViewModel.updateContact(
                                 value, index);
@@ -122,7 +128,7 @@ class CoApplicantForm3 extends ConsumerWidget {
                               coApplicationFocusViewModel.fullNameFocusNode,
                           currentState:
                               coApplicationFocusStates['fullNameFocusNode'],
-                          // controller: contactController,
+                          controller: formListController[index].fullNameController,
                           onChange: (value) {
                             coApplicationFormViewModel.updateFullName(
                                 value, index);
@@ -144,7 +150,7 @@ class CoApplicantForm3 extends ConsumerWidget {
                               coApplicationFocusViewModel.fatherNameFocusNode,
                           currentState:
                               coApplicationFocusStates['fatherNameFocusNode'],
-                          // controller: emailController,
+                          controller: formListController[index].fatherNameController,
                           onChange: (value) {
                             coApplicationFormViewModel.updateEmail(
                                 value, index);
@@ -166,7 +172,7 @@ class CoApplicantForm3 extends ConsumerWidget {
                           focusNode: coApplicationFocusViewModel.dobFocusNode,
                           currentState:
                               coApplicationFocusStates['dobFocusNode'],
-                          // controller: maritalController,
+                          controller: formListController[index].dobController,
                           onChange: (value) {
                             coApplicationFormViewModel.updateDob(value, index);
                           },
@@ -185,7 +191,7 @@ class CoApplicantForm3 extends ConsumerWidget {
                           focusNode: coApplicationFocusViewModel.ageFocusNode,
                           currentState:
                               coApplicationFocusStates['ageFocusNode'],
-                          // controller: religionController,
+                          controller: formListController[index].ageController,
                           onChange: (value) {
                             coApplicationFormViewModel.updateAge(value, index);
                           },
@@ -205,7 +211,7 @@ class CoApplicantForm3 extends ConsumerWidget {
                               coApplicationFocusViewModel.genderFocusNode,
                           currentState:
                               coApplicationFocusStates['genderFocusNode'],
-                          // controller: motherController,
+                          controller: formListController[index].genderController,
                           onChange: (value) {
                             coApplicationFormViewModel.updateGender(
                                 value, index);

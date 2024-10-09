@@ -1,13 +1,32 @@
+import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:finexe/feature/base/api/api.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../../../base/api/dio.dart';
+import '../model/request_model/aadhaar_number_request_model.dart';
+import '../model/request_model/aadhaar_otp_request_model.dart';
+import '../model/request_model/pan_request_model.dart';
+import '../model/responce_model/aadhaar_otp_responce_model.dart';
+import '../model/responce_model/aadhar_number_response_model.dart';
 import '../view/Sales_on_boarding_form/co-applicant_form/co_applicant_form1.dart';
-import '../view/Sales_on_boarding_form/co_applicant_form.dart';
 
 final uploadCoDoc = StateProvider(
   (ref) {
+    return false;
+  },
+);
+
+final isCoPanLoading = StateProvider(
+      (ref) {
+    return false;
+  },
+);
+final isCoTickColorChange = StateProvider(
+      (ref) {
     return false;
   },
 );
@@ -72,20 +91,70 @@ final listIndex = StateProvider<int>(
   },
 );
 
-class FormDataNotifier extends StateNotifier<List<FormData>> {
-  FormDataNotifier()
+final coApplicantController =
+    StateNotifierProvider<FormDataControllerNotifier, List<FormDataController>>(
+        (ref) {
+  return FormDataControllerNotifier();
+});
+
+class FormDataControllerNotifier
+    extends StateNotifier<List<FormDataController>> {
+  FormDataControllerNotifier()
       : super([
-          FormData(
-              descriptionController: TextEditingController(),
-              titleController: TextEditingController())
+          FormDataController(
+            aadhaarController: TextEditingController(),
+            kycDocumentController: TextEditingController(),
+            contactController: TextEditingController(),
+            ageController: TextEditingController(),
+            dobController: TextEditingController(),
+            communicationAddress1Controller: TextEditingController(),
+            communicationAddress2Controller: TextEditingController(),
+            communicationCityController: TextEditingController(),
+            communicationDistrictController: TextEditingController(),
+            communicationPinCodeController: TextEditingController(),
+            communicationStateController: TextEditingController(),
+            emailController: TextEditingController(),
+            fatherNameController: TextEditingController(),
+            fullNameController: TextEditingController(),
+            genderController: TextEditingController(),
+            otpController: TextEditingController(),
+            panController: TextEditingController(),
+            permanentAddress1Controller: TextEditingController(),
+            permanentAddress2Controller: TextEditingController(),
+            permanentCityController: TextEditingController(),
+            permanentDistrictController: TextEditingController(),
+            permanentPinCodeController: TextEditingController(),
+            permanentStateController: TextEditingController(),
+          )
         ]);
 
   void addFormData() {
     state = [
       ...state,
-      FormData(
-        titleController: TextEditingController(),
-        descriptionController: TextEditingController(),
+      FormDataController(
+        aadhaarController: TextEditingController(),
+        kycDocumentController: TextEditingController(),
+        contactController: TextEditingController(),
+        ageController: TextEditingController(),
+        dobController: TextEditingController(),
+        communicationAddress1Controller: TextEditingController(),
+        communicationAddress2Controller: TextEditingController(),
+        communicationCityController: TextEditingController(),
+        communicationDistrictController: TextEditingController(),
+        communicationPinCodeController: TextEditingController(),
+        communicationStateController: TextEditingController(),
+        emailController: TextEditingController(),
+        fatherNameController: TextEditingController(),
+        fullNameController: TextEditingController(),
+        genderController: TextEditingController(),
+        otpController: TextEditingController(),
+        panController: TextEditingController(),
+        permanentAddress1Controller: TextEditingController(),
+        permanentAddress2Controller: TextEditingController(),
+        permanentCityController: TextEditingController(),
+        permanentDistrictController: TextEditingController(),
+        permanentPinCodeController: TextEditingController(),
+        permanentStateController: TextEditingController(),
       ),
     ];
   }
@@ -98,10 +167,10 @@ class FormDataNotifier extends StateNotifier<List<FormData>> {
     ];
   }
 
-  void updateFormData(int index, String title, String description) {
-    state[index].titleController.text = title;
-    state[index].descriptionController.text = description;
-  }
+  // void updateFormData(int index, String title, String description) {
+  //   state[index].titleController.text = title;
+  //   state[index].descriptionController.text = description;
+  // }
 
   @override
   void dispose() {
@@ -113,17 +182,27 @@ class FormDataNotifier extends StateNotifier<List<FormData>> {
 }
 
 final formDataProvider =
-    StateNotifierProvider<FormDataNotifier, List<FormData>>((ref) {
-  return FormDataNotifier();
+    StateNotifierProvider<FormDataControllerNotifier, List<FormDataController>>(
+        (ref) {
+  return FormDataControllerNotifier();
 });
 
 final coApplicantViewModelProvider =
-    StateNotifierProvider<ApplicantViewModel, List<KycFormState>>(
-        (ref) => ApplicantViewModel());
+    StateNotifierProvider<ApplicantViewModel, List<KycFormState>>((ref) {
+  final dio = ref.read(dioProvider);
+  return ApplicantViewModel(dio);
+});
 
 class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
-  ApplicantViewModel() : super([KycFormState()]);
-  final SingleValueDropDownController dropDownController = SingleValueDropDownController();
+  ApplicantViewModel(this.dio) : super([KycFormState()]);
+  final Dio dio;
+  final SingleValueDropDownController dropDownController =
+      SingleValueDropDownController();
+
+  AadhaarNumberResponseModel? aadhaarNumberResponseModel;
+  AadhaarOtpResponseModel? aadhaarOtpResponseModel;
+
+  // final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
@@ -134,7 +213,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
   final ImagePicker picker = ImagePicker();
 
   void addForm() {
-    state = [...state, KycFormState()];
+    state = [...state, KycFormState(id: state.last.id + 1)];
   }
 
 // Add a new text field
@@ -153,6 +232,150 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
   // }
   // Update email field
 
+  Future<bool> fetchAadhaarNumber(int index) async {
+    print(state[index].aadhaar);
+    final aadhaarNumberRequestModel = AadhaarNumberRequestModel(
+        aadharNo: state[index].aadhaar.trim().toString(),
+        transId: '12345',
+        docType: '211',
+        formName: 'coApplicant');
+    try {
+      final response = await dio.post(Api.aadhaarNumber,
+          data: aadhaarNumberRequestModel.toJson());
+      if (response.statusCode == 200) {
+        aadhaarNumberResponseModel =
+            AadhaarNumberResponseModel.fromJson(response.data);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<bool> fetchOtp(int index) async {
+    if (kDebugMode) {
+      print(state[index].otp);
+    }
+    final aadhaarOtpResquestModel = AadhaarOtpRequestModel(
+        transId: aadhaarNumberResponseModel!.items.tsTransId,
+        otp: int.parse(state[index].otp));
+    if (kDebugMode) {
+      print(int.parse(state[index].otp));
+    }
+    if (kDebugMode) {
+      print(
+        aadhaarNumberResponseModel!.items.tsTransId,
+      );
+    }
+
+    try {
+      final response = await dio.post(Api.aadhaarOtpVerify,
+          data: aadhaarOtpResquestModel.toJson());
+      if (response.statusCode == 200) {
+        aadhaarOtpResponseModel =
+            AadhaarOtpResponseModel.fromJson(response.data);
+        if (aadhaarOtpResponseModel != null) {
+          state = [
+            for (final todo in state)
+              if (todo.id == index)
+                todo.copyWith(
+                  fullName: aadhaarOtpResponseModel!.items.msg.name,
+                  dob: aadhaarOtpResponseModel!.items.msg.dob,
+                  communicationAddress1:
+                      '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!.items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark}',
+                  communicationAddress2:
+                      aadhaarOtpResponseModel!.items.msg.locality,
+                  communicationDistrict:
+                      aadhaarOtpResponseModel!.items.msg.district,
+                  communicationCity:
+                      aadhaarOtpResponseModel!.items.msg.villageTownCity,
+                  communicationPinCode:
+                      aadhaarOtpResponseModel!.items.msg.pincode,
+                  communicationState: aadhaarOtpResponseModel!.items.msg.state,
+                  gender: aadhaarOtpResponseModel!.items.msg.gender,
+                )
+          ];
+        }
+        // AadhaarNumberResponseModel.fromJson(response.data);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  void setAutoValueByAadhaar(
+      List<FormDataController> formListController, int index) {
+    if (aadhaarOtpResponseModel != null) {
+      formListController[index].fullNameController.text =
+          aadhaarOtpResponseModel!.items.msg.name;
+      formListController[index].dobController.text =
+          aadhaarOtpResponseModel!.items.msg.dob;
+      formListController[index].communicationAddress1Controller.text =
+          '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!.items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark}';
+      formListController[index].communicationAddress2Controller.text =
+          aadhaarOtpResponseModel!.items.msg.locality;
+      formListController[index].communicationDistrictController.text =
+          aadhaarOtpResponseModel!.items.msg.district;
+      formListController[index].communicationCityController.text =
+          aadhaarOtpResponseModel!.items.msg.villageTownCity;
+      formListController[index].communicationPinCodeController.text =
+          aadhaarOtpResponseModel!.items.msg.pincode;
+      formListController[index].communicationStateController.text =
+          aadhaarOtpResponseModel!.items.msg.state;
+      formListController[index].genderController.text =
+          aadhaarOtpResponseModel!.items.msg.gender;
+    }
+  }
+
+  Future<bool> fetchAadhaarWithPhoto(int index) async {
+    var formData = FormData.fromMap({
+      'front_image':
+          await MultipartFile.fromFile(state[index].aadhaarPhotoFilePath1),
+      'back_image':
+          await MultipartFile.fromFile(state[index].aadhaarPhotoFilePath2),
+      'formName':'coApplicant'
+    });
+
+    try {
+      final response = await dio.post(Api.aadhaarPhoto, data: formData);
+      if (response.statusCode == 200) {
+        // ===========================pending response =================save value and auto value show ======
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<bool> fetchPanVerify(int index) async {
+    if (kDebugMode) {
+      print(state[index].otp);
+    }
+    final panRequestModel = PanRequestModel(
+        docType: 523, panNumber: state[index].pan, transId: "111XXXXX");
+    try {
+      final response =
+          await dio.post(Api.panVerify, data: panRequestModel.toJson());
+      if (response.statusCode == 200) {
+        if (kDebugMode) {
+          print(response.data);
+        }
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
   Future<void> pickImages(int index) async {
     await Permission.photos.request();
     await Permission.videos.request();
@@ -167,21 +390,25 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
       try {
         XFile? pickedImage =
             await picker.pickImage(source: ImageSource.gallery);
-        print('image before null condition  ${pickedImage!.path.toString()}');
-        if (pickedImage != null) {
-          print('image ${pickedImage.path}');
-          state = [
-            for (final todo in state)
-              if (todo.id == index)
-                todo.copyWith(applicantPhotoFilePath: pickedImage.path)
-              else
-                todo
-          ];
-              // state.copyWith(applicantPhotoFilePath: pickedImage.path);
-          // File(pickedImage.path) as AadhaarFormState;
+        if (kDebugMode) {
+          print('image before null condition  ${pickedImage!.path.toString()}');
         }
+        if (kDebugMode) {
+          print('image ${pickedImage?.path}');
+        }
+        state = [
+          for (final todo in state)
+            if (todo.id == index)
+              todo.copyWith(applicantPhotoFilePath: pickedImage?.path)
+            else
+              todo
+        ];
+        // state.copyWith(applicantPhotoFilePath: pickedImage.path);
+        // File(pickedImage.path) as AadhaarFormState;
       } catch (e) {
-        print('Failed to pick image: $e');
+        if (kDebugMode) {
+          print('Failed to pick image: $e');
+        }
       }
     }
   }
@@ -205,18 +432,16 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         XFile? pickedImage =
             await picker.pickImage(source: ImageSource.gallery);
         print('image before null condition  ${pickedImage!.path.toString()}');
-        if (pickedImage != null) {
-          print('image ${pickedImage.path}');
-          state = [
-            for (final todo in state)
-              if (todo.id == index)
-                todo.copyWith(aadhaarPhotoFilePath1: pickedImage.path)
-              else
-                todo
-          ];
-          // copyWith(aadhaarPhotoFilePath1: pickedImage.path);
-          // File(pickedImage.path) as AadhaarFormState;
-        }
+        print('image ${pickedImage.path}');
+        state = [
+          for (final todo in state)
+            if (todo.id == index)
+              todo.copyWith(aadhaarPhotoFilePath1: pickedImage.path)
+            else
+              todo
+        ];
+        // copyWith(aadhaarPhotoFilePath1: pickedImage.path);
+        // File(pickedImage.path) as AadhaarFormState;
       } catch (e) {
         print('Failed to pick image: $e');
       }
@@ -237,48 +462,47 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         XFile? pickedImage =
             await picker.pickImage(source: ImageSource.gallery);
         print('image before null condition  ${pickedImage!.path.toString()}');
-        if (pickedImage != null) {
-          print('image ${pickedImage.path}');
-          state = [
-            for (final todo in state)
-              if (todo.id == index)
-                todo.copyWith(aadhaarPhotoFilePath2: pickedImage.path)
-              else
-                todo
-          ];
-              // state.copyWith(aadhaarPhotoFilePath2: pickedImage.path);
-          // File(pickedImage.path) as AadhaarFormState;
-        }
+        print('image ${pickedImage.path}');
+        state = [
+          for (final todo in state)
+            if (todo.id == index)
+              todo.copyWith(aadhaarPhotoFilePath2: pickedImage.path)
+            else
+              todo
+        ];
+        // state.copyWith(aadhaarPhotoFilePath2: pickedImage.path);
+        // File(pickedImage.path) as AadhaarFormState;
       } catch (e) {
         print('Failed to pick image: $e');
       }
     }
   }
 
-
   void localAddCopyPermanentAdd(int index) {
     state = [
       for (final todo in state)
         if (todo.id == index)
           todo.copyWith(
-        permanentAddress1: state[index].communicationAddress1,
-        isPermanentAddress1Valid: state[index].isPermanentAddress1Valid,
-        permanentAddress2: state[index].communicationAddress2,
-        isPermanentAddress2Valid: state[index].isCommunicationAddress2Valid,
-        permanentCity: state[index].communicationCity,
-        isPermanentCityValid: state[index].isCommunicationCityValid,
-        permanentDistrict: state[index].communicationDistrict,
-        isPermanentDistrictValid: state[index].isCommunicationDistrictValid,
-        permanentPinCode: state[index].communicationPinCode,
-        isPermanentPinCodeValid: state[index].isCommunicationPinCodeValid,
-        permanentState: state[index].communicationState,
-        isPermanentStateValid: state[index].isCommunicationStateValid)
-    else
-      todo
+              permanentAddress1: state[index].communicationAddress1,
+              isPermanentAddress1Valid: state[index].isPermanentAddress1Valid,
+              permanentAddress2: state[index].communicationAddress2,
+              isPermanentAddress2Valid:
+                  state[index].isCommunicationAddress2Valid,
+              permanentCity: state[index].communicationCity,
+              isPermanentCityValid: state[index].isCommunicationCityValid,
+              permanentDistrict: state[index].communicationDistrict,
+              isPermanentDistrictValid:
+                  state[index].isCommunicationDistrictValid,
+              permanentPinCode: state[index].communicationPinCode,
+              isPermanentPinCodeValid: state[index].isCommunicationPinCodeValid,
+              permanentState: state[index].communicationState,
+              isPermanentStateValid: state[index].isCommunicationStateValid)
+        else
+          todo
     ];
-    print('permanent add ${state[index].permanentAddress1}, ${state[index].permanentAddress2}');
+    print(
+        'permanent add ${state[index].permanentAddress1}, ${state[index].permanentAddress2}');
   }
-
 
   void updateKycDoc(String value, int index) {
     final isValid = _validateKycDoc(value);
@@ -723,6 +947,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
             isPermanentPinCodeValid;
       }
     }
+    return null;
   }
 
 // Communication Address ----------------------------------------
@@ -1102,18 +1327,72 @@ class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
   }
 }
 
-class FormData {
-  final TextEditingController titleController;
-  final TextEditingController descriptionController;
+class FormDataController {
+  final TextEditingController aadhaarController;
+  final TextEditingController kycDocumentController;
+  final TextEditingController panController;
+  final TextEditingController contactController;
+  final TextEditingController emailController;
+  final TextEditingController otpController;
 
-  FormData({
-    required this.titleController,
-    required this.descriptionController,
+  final TextEditingController genderController;
+  final TextEditingController fullNameController;
+  final TextEditingController fatherNameController;
+  final TextEditingController dobController;
+  final TextEditingController ageController;
+
+  final TextEditingController communicationAddress1Controller;
+  final TextEditingController communicationAddress2Controller;
+  final TextEditingController communicationCityController;
+  final TextEditingController communicationStateController;
+  final TextEditingController communicationDistrictController;
+  final TextEditingController communicationPinCodeController;
+
+  final TextEditingController permanentAddress1Controller;
+  final TextEditingController permanentAddress2Controller;
+  final TextEditingController permanentCityController;
+  final TextEditingController permanentStateController;
+  final TextEditingController permanentDistrictController;
+  final TextEditingController permanentPinCodeController;
+
+  // final TextEditingController titleController;
+  // final TextEditingController descriptionController;
+
+  FormDataController({
+    required this.kycDocumentController,
+    required this.contactController,
+    required this.emailController,
+    required this.fatherNameController,
+    required this.ageController,
+    required this.communicationAddress1Controller,
+    required this.communicationAddress2Controller,
+    required this.communicationCityController,
+    required this.communicationStateController,
+    required this.communicationDistrictController,
+    required this.communicationPinCodeController,
+    required this.permanentAddress1Controller,
+    required this.permanentAddress2Controller,
+    required this.permanentCityController,
+    required this.permanentStateController,
+    required this.permanentDistrictController,
+    required this.permanentPinCodeController,
+    required this.fullNameController,
+    required this.aadhaarController,
+    required this.panController,
+    required this.dobController,
+    required this.genderController,
+    required this.otpController,
   });
 
   void dispose() {
-    titleController.dispose();
-    descriptionController.dispose();
+    aadhaarController.dispose();
+    ageController.dispose();
+    communicationAddress1Controller.dispose();
+    communicationAddress2Controller.dispose();
+    communicationCityController.dispose();
+    communicationDistrictController.dispose();
+    communicationPinCodeController.dispose();
+    communicationStateController.dispose();
   }
 }
 
@@ -1318,9 +1597,12 @@ class KycFormState {
       bool? isAgeValid,
       bool? isRelationWithApplicantValid}) {
     return KycFormState(
-      applicantPhotoFilePath: applicantPhotoFilePath??this.applicantPhotoFilePath,
-        aadhaarPhotoFilePath1: aadhaarPhotoFilePath1??this.aadhaarPhotoFilePath1,
-        aadhaarPhotoFilePath2: aadhaarPhotoFilePath2??this.aadhaarPhotoFilePath2,
+        applicantPhotoFilePath:
+            applicantPhotoFilePath ?? this.applicantPhotoFilePath,
+        aadhaarPhotoFilePath1:
+            aadhaarPhotoFilePath1 ?? this.aadhaarPhotoFilePath1,
+        aadhaarPhotoFilePath2:
+            aadhaarPhotoFilePath2 ?? this.aadhaarPhotoFilePath2,
         id: id ?? this.id,
         otp: otp ?? this.otp,
         isOtpValid: isOtpValid ?? this.isOtpValid,

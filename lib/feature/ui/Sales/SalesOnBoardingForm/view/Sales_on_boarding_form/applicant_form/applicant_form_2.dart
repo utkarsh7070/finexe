@@ -16,6 +16,10 @@ class ApplicantForm2 extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //-------------------controllers--------------------------------------
+    final formListController = ref.watch(applicantController);
+    final formNotifierController = ref.read(applicantController.notifier);
+    //--------------------------------------------------------------------------
     final personalFormState = ref.watch(applicantViewModelProvider);
     final personalFormViewModel = ref.read(applicantViewModelProvider.notifier);
     final personalFocusStates = ref.watch(applicantFocusProvider);
@@ -70,7 +74,7 @@ class ApplicantForm2 extends ConsumerWidget {
                                 .communicationAddress1FocusNode,
                             currentState: personalFocusStates[
                                 'communicationAddress1FocusNode'],
-                            // controller: educationOfApplicantController,
+                            controller: formListController.communicationAddress1Controller,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationAddress1(value);
@@ -89,6 +93,7 @@ class ApplicantForm2 extends ConsumerWidget {
                             height: displayHeight(context) * 0.02,
                           ),
                           AppFloatTextField(
+                            controller: formListController.communicationAddress2Controller,
                             focusNode: personalFocusViewModel
                                 .communicationAddress2FocusNode,
                             currentState: personalFocusStates[
@@ -114,7 +119,7 @@ class ApplicantForm2 extends ConsumerWidget {
                                 .communicationCityFocusNode,
                             currentState: personalFocusStates[
                                 'communicationCityFocusNode'],
-                            // controller: contactController,
+                            controller: formListController.communicationCityController,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationCity(value);
@@ -132,6 +137,7 @@ class ApplicantForm2 extends ConsumerWidget {
                             height: displayHeight(context) * 0.02,
                           ),
                           AppFloatTextField(
+                            controller: formListController.communicationStateController,
                             focusNode: personalFocusViewModel
                                 .communicationStateFocusNode,
                             currentState: personalFocusStates[
@@ -158,7 +164,7 @@ class ApplicantForm2 extends ConsumerWidget {
                                 .communicationDistrictFocusNode,
                             currentState: personalFocusStates[
                                 'communicationDistrictFocusNode'],
-                            // controller: maritalController,
+                            controller: formListController.communicationDistrictController,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationDistrict(value);
@@ -181,7 +187,7 @@ class ApplicantForm2 extends ConsumerWidget {
                                 .communicationPinCodeFocusNode,
                             currentState: personalFocusStates[
                                 'communicationPinCodeFocusNode'],
-                            // controller: religionController,
+                            controller: formListController.communicationPinCodeController,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationPinCode(value);
@@ -265,7 +271,7 @@ class ApplicantForm2 extends ConsumerWidget {
                                 personalFocusViewModel.permanentAddress1FocusNode,
                                 currentState:
                                 personalFocusStates['permanentAddress1FocusNode'],
-                                // controller: educationOfApplicantController,
+                                controller: formListController.permanentAddress1Controller,
                                 onChange: (value) {
                                   personalFormViewModel.updatePermanentAddress1(value);
                                 },
@@ -285,7 +291,7 @@ class ApplicantForm2 extends ConsumerWidget {
                                 personalFocusViewModel.permanentAddress2FocusNode,
                                 currentState:
                                 personalFocusStates['permanentAddress2FocusNode'],
-                                // controller: motherController,
+                                controller: formListController.permanentAddress2Controller,
                                 onChange: (value) {
                                   personalFormViewModel.updatePermanentAddress2(value);
                                 },
@@ -305,7 +311,7 @@ class ApplicantForm2 extends ConsumerWidget {
                                 personalFocusViewModel.permanentCityFocusNode,
                                 currentState:
                                 personalFocusStates['permanentCityFocusNode'],
-                                // controller: contactController,
+                                controller: formListController.permanentCityController,
                                 onChange: (value) {
                                   personalFormViewModel.updatePermanentCity(value);
                                 },
@@ -325,7 +331,7 @@ class ApplicantForm2 extends ConsumerWidget {
                                 personalFocusViewModel.permanentStateFocusNode,
                                 currentState:
                                 personalFocusStates['permanentStateFocusNode'],
-                                // controller: emailController,
+                                controller: formListController.permanentStateController,
                                 onChange: (value) {
                                   personalFormViewModel.updatePermanentState(value);
                                 },
@@ -345,7 +351,7 @@ class ApplicantForm2 extends ConsumerWidget {
                                 personalFocusViewModel.permanentDistrictFocusNode,
                                 currentState:
                                 personalFocusStates['permanentDistrictFocusNode'],
-                                // controller: maritalController,
+                                controller: formListController.permanentDistrictController,
                                 onChange: (value) {
                                   personalFormViewModel.updatePermanentDistrict(value);
                                 },
@@ -365,7 +371,7 @@ class ApplicantForm2 extends ConsumerWidget {
                                 personalFocusViewModel.permanentPinCodeFocusNode,
                                 currentState:
                                 personalFocusStates['permanentPinCodeFocusNode'],
-                                // controller: religionController,
+                                controller: formListController.permanentPinCodeController,
                                 onChange: (value) {
                                   personalFormViewModel.updatePermanentPinCode(value);
                                 },

@@ -16,7 +16,7 @@ class GuarantorBottomSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
+    final formListController = ref.watch(guarantorController);
     final upload = ref.watch(uploadGuarantorDoc);
     final checkBoxTerms = ref.watch(checkBoxTermsConditionGuarantor);
     final selectedValue = ref.watch(guarantorRoleProvider);
@@ -78,6 +78,11 @@ class GuarantorBottomSheet extends ConsumerWidget {
                 AppButton(
                   textStyle: const TextStyle(color: AppColors.white),
                   onTap: () {
+                    personalFormViewModel.fetchOtp().then((value) {
+                      if(value){
+                        personalFormViewModel.setAutoValueByAadhaar(formListController);
+                      }
+                    },);
 
                   },
                   label: 'Continue',
@@ -148,7 +153,10 @@ class GuarantorBottomSheet extends ConsumerWidget {
                 AppButton(
                   textStyle: const TextStyle(color: AppColors.white),
                   onTap: () {
-                    ref.read(getOptGuarantor.notifier).state = true;
+                    personalFormViewModel.fetchAadhaarNumber().then((value) {
+                      ref.read(getOptGuarantor.notifier).state = value;
+                    },);
+
                   },
                   label: 'Get OTP',
                   width: displayWidth(context),

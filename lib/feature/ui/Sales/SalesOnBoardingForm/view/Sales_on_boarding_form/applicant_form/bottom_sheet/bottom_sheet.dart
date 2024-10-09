@@ -12,8 +12,11 @@ import '../../../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../../view_model/application_form_view_model.dart';
 
 class ApplicationBottomSheet extends ConsumerWidget {
+  const ApplicationBottomSheet({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final formListController = ref.watch(applicantController);
     final getOtpClicked = ref.watch(getOpt);
     final personalFormState = ref.watch(applicantViewModelProvider);
     final personalFormViewModel = ref.read(applicantViewModelProvider.notifier);
@@ -73,6 +76,7 @@ class ApplicationBottomSheet extends ConsumerWidget {
                   onTap: () {
                     ref.read(applicantViewModelProvider.notifier).fetchOtp().then((value) {
                       if(value){
+                        personalFormViewModel.setAutoValueByAadhaar(formListController);
                         Navigator.pop(context);
                       }
                     },);

@@ -213,11 +213,13 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     var formData = FormData.fromMap({
       'front_image': await MultipartFile.fromFile(state.aadhaarPhotoFilePath1),
       'back_image': await MultipartFile.fromFile(state.aadhaarPhotoFilePath2),
+      'formName':'applicant'
     });
 
     try {
       final response = await dio.post(Api.aadhaarPhoto, data: formData);
       if (response.statusCode == 200) {
+        //=============  response pending set value and auto set value is pending ===============
         return true;
       } else {
         return false;
@@ -344,6 +346,22 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
       }
     }
   }
+
+  void setAutoValueByAadhaar(ApplicantDataController formListController){
+    if(aadhaarOtpResponseModel!=null){
+      formListController.fullNameController.text = aadhaarOtpResponseModel!.items.msg.name;
+      formListController.dobController.text = aadhaarOtpResponseModel!.items.msg.dob;
+      formListController.communicationAddress1Controller.text =  '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!.items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark}';
+      formListController.communicationAddress2Controller.text = aadhaarOtpResponseModel!.items.msg.locality;
+      formListController.communicationDistrictController.text = aadhaarOtpResponseModel!.items.msg.district;
+      formListController.communicationCityController.text = aadhaarOtpResponseModel!.items.msg.villageTownCity;
+      formListController.communicationPinCodeController.text = aadhaarOtpResponseModel!.items.msg.pincode;
+      formListController.communicationStateController.text = aadhaarOtpResponseModel!.items.msg.state;
+      formListController.genderController.text = aadhaarOtpResponseModel!.items.msg.gender;
+    }
+  }
+
+
 
   void otpUpdate(String value) {
     final isValid = _validateOtp(value);
@@ -1262,6 +1280,131 @@ class KycFormState {
             isRelationWithApplicantValid ?? this.isRelationWithApplicantValid);
   }
 }
+
+final applicantController =
+StateNotifierProvider<FormDataControllerNotifier, ApplicantDataController>(
+        (ref) {
+      return FormDataControllerNotifier();
+    });
+
+class FormDataControllerNotifier
+    extends StateNotifier<ApplicantDataController> {
+  FormDataControllerNotifier()
+      : super(
+    ApplicantDataController(
+      aadhaarController: TextEditingController(),
+      kycDocumentController: TextEditingController(),
+      contactController: TextEditingController(),
+      ageController: TextEditingController(),
+      dobController: TextEditingController(),
+      communicationAddress1Controller: TextEditingController(),
+      communicationAddress2Controller: TextEditingController(),
+      communicationCityController: TextEditingController(),
+      communicationDistrictController: TextEditingController(),
+      communicationPinCodeController: TextEditingController(),
+      communicationStateController: TextEditingController(),
+      emailController: TextEditingController(),
+      fatherNameController: TextEditingController(),
+      fullNameController: TextEditingController(),
+      genderController: TextEditingController(),
+      otpController: TextEditingController(),
+      panController: TextEditingController(),
+      permanentAddress1Controller: TextEditingController(),
+      permanentAddress2Controller: TextEditingController(),
+      permanentCityController: TextEditingController(),
+      permanentDistrictController: TextEditingController(),
+      permanentPinCodeController: TextEditingController(),
+      permanentStateController: TextEditingController(),
+    )
+  );
+
+  @override
+  void dispose() {
+    state.panController.dispose();
+    state.aadhaarController.dispose();
+    state.kycDocumentController.dispose();
+    state.contactController.dispose();
+    state.emailController.dispose();
+    state.otpController.dispose();
+    state.genderController.dispose();
+    state.communicationAddress2Controller.dispose();
+    state.communicationCityController.dispose();
+    state.communicationStateController.dispose();
+    state.communicationDistrictController.dispose();
+    state.communicationPinCodeController.dispose();
+    state.communicationAddress1Controller.dispose();
+    state.ageController.dispose();
+    state.dobController.dispose();
+    state.fatherNameController.dispose();
+    state.fullNameController.dispose();
+    state.permanentAddress1Controller.dispose();
+    state.permanentAddress2Controller.dispose();
+    state.permanentCityController.dispose();
+    state.permanentStateController.dispose();
+    state.permanentDistrictController.dispose();
+    state.permanentPinCodeController.dispose();
+    super.dispose();
+  }
+}
+
+class ApplicantDataController {
+  final TextEditingController aadhaarController;
+  final TextEditingController kycDocumentController;
+  final TextEditingController panController;
+  final TextEditingController contactController;
+  final TextEditingController emailController;
+  final TextEditingController otpController;
+
+  final TextEditingController genderController;
+  final TextEditingController fullNameController;
+  final TextEditingController fatherNameController;
+  final TextEditingController dobController;
+  final TextEditingController ageController;
+
+  final TextEditingController communicationAddress1Controller;
+  final TextEditingController communicationAddress2Controller;
+  final TextEditingController communicationCityController;
+  final TextEditingController communicationStateController;
+  final TextEditingController communicationDistrictController;
+  final TextEditingController communicationPinCodeController;
+
+  final TextEditingController permanentAddress1Controller;
+  final TextEditingController permanentAddress2Controller;
+  final TextEditingController permanentCityController;
+  final TextEditingController permanentStateController;
+  final TextEditingController permanentDistrictController;
+  final TextEditingController permanentPinCodeController;
+
+  // final TextEditingController titleController;
+  // final TextEditingController descriptionController;
+
+  ApplicantDataController({
+    required this.kycDocumentController,
+    required this.contactController,
+    required this.emailController,
+    required this.fatherNameController,
+    required this.ageController,
+    required this.communicationAddress1Controller,
+    required this.communicationAddress2Controller,
+    required this.communicationCityController,
+    required this.communicationStateController,
+    required this.communicationDistrictController,
+    required this.communicationPinCodeController,
+    required this.permanentAddress1Controller,
+    required this.permanentAddress2Controller,
+    required this.permanentCityController,
+    required this.permanentStateController,
+    required this.permanentDistrictController,
+    required this.permanentPinCodeController,
+    required this.fullNameController,
+    required this.aadhaarController,
+    required this.panController,
+    required this.dobController,
+    required this.genderController,
+    required this.otpController,
+  });
+}
+
 
 //
 // class TextFieldControllerModel {
