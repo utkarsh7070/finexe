@@ -1,6 +1,7 @@
 import 'package:finexe/feature/Punch_In_Out/Attendance/vew/attendance.dart';
 import 'package:finexe/feature/ui/Collection/cases/view/cases_screen.dart';
 import 'package:finexe/feature/ui/Sales/NewLone/view/new_loan_screen.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_screen.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co_applicant_form.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/referance/referance_details.dart';
@@ -101,7 +102,7 @@ class AppRoutes {
       case saleCoApplicationForm1:
         return  PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
-            const CoApplicantForm1(),
+            const CoApplicantScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return FadeTransition(
                 opacity: animation,

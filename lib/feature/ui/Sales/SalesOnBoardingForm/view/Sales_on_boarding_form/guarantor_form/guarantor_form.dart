@@ -7,12 +7,10 @@ import '../../../../../../base/routes/routes.dart';
 import '../../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../../base/utils/namespase/display_size.dart';
-import '../../../../../../base/utils/namespase/font_size.dart';
 import '../../../../../../base/utils/widget/app_button.dart';
 import '../../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../../../../base/utils/widget/upload_box.dart';
 import '../../../view_model/guarantor_form_view_model.dart';
-import '../applicant_form/bottom_sheet/bottom_sheet.dart';
 import 'bottom_sheet/bottom_sheet_if_no.dart';
 import 'bottom_sheet/guarantor_bottom_sheet.dart';
 
@@ -192,7 +190,7 @@ class GuarantorDetails extends ConsumerWidget {
                                     width: displayWidth(context) * 0.02,
                                   ),
                                   Container(
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                           color: AppColors.boxBagGray,
                                           borderRadius:
                                           BorderRadius.all(Radius.circular(10))),
@@ -203,7 +201,11 @@ class GuarantorDetails extends ConsumerWidget {
                                             ref.read(isGuarantorPanLoading.notifier).state =
                                             true;
                                             personalFormViewModel
-                                                .fetchPanVerify()
+                                                .fetchPanVerify().onError((error, stackTrace) {
+                                             return ref
+                                                  .read(isGuarantorPanLoading.notifier)
+                                                  .state = false;
+                                                })
                                                 .then(
                                                   (value) {
                                                 if (value) {
@@ -219,6 +221,7 @@ class GuarantorDetails extends ConsumerWidget {
                                                       .read(
                                                       isGuarantorTickColorChange.notifier)
                                                       .state = false;
+                                                 
                                                 }
                                               },
                                             );

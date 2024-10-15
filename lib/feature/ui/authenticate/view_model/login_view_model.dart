@@ -1,5 +1,12 @@
+import 'package:dio/dio.dart';
+import 'package:finexe/feature/base/api/api.dart';
+import 'package:finexe/feature/base/api/dio.dart';
+import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/ui/authenticate/model/login_request_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../model/login_response_model.dart';
 
 final radioProvider = StateNotifierProvider<RadioNotifier, Role>((ref) {
   return RadioNotifier();
@@ -23,8 +30,6 @@ final dualFocusProvider =
   return FocusViewModel();
 });
 
-
-
 final obscureTextProvider = StateProvider<bool>(
   (ref) {
     return false;
@@ -32,11 +37,8 @@ final obscureTextProvider = StateProvider<bool>(
 );
 final loginViewModelProvider =
     StateNotifierProvider<LoginViewModel, AsyncValue<String>>((ref) {
-  // final authRepository = ref.watch(authRepositoryProvider);
-
-  return LoginViewModel(const AsyncValue.data('')
-      // authRepository: authRepository
-      );
+  final dio = ref.read(dioProvider);
+  return LoginViewModel(const AsyncValue.data(''), dio);
 });
 
 class FocusViewModel extends StateNotifier<Map<String, bool>> {
@@ -76,21 +78,33 @@ class FocusViewModel extends StateNotifier<Map<String, bool>> {
 }
 
 class LoginViewModel extends StateNotifier<AsyncValue<String>> {
-  LoginViewModel(super.state);
+  final Dio dio;
 
-// final AuthRepository authRepository;
+  LoginViewModel(super.state, this.dio);
 
-// LoginViewModel({required this.authRepository}) : super(const AsyncValue.data(''));
-
-// Future<void> login(String email, String password) async {
-//   state = const AsyncValue.loading();
-//   try {
-//     final token = await authRepository.login(email, password);
-//     state = AsyncValue.data(token);
-//   } catch (e) {
-//     state = AsyncValue.error(e);
-//   }
-// }
+  Future<bool> login(String email, String password) async {
+    LoginRequestModel loginRequestModel =
+        LoginRequestModel(userName: email, password: password);
+    // state = const AsyncValue.loading();
+    try {
+      Response response =
+          await dio.post(Api.login, data: loginRequestModel.toJson());
+      if (response.statusCode == 200) {
+        LoginResponseModel loginResponseModel =
+            LoginResponseModel.fromJson(response.data);
+        SessionService.createSession(
+            accessToken: loginResponseModel.items.token,
+            employeeId: loginResponseModel.items.employeId,
+        name: loginResponseModel.items.roleName,
+        email: loginResponseModel.items.userName);
+        return true;
+      }
+      // state = AsyncValue.data(token);
+    } catch (e) {
+      // state = AsyncValue.error(e);
+    }
+    return false;
+  }
 }
 
 class RadioNotifier extends StateNotifier<Role> {

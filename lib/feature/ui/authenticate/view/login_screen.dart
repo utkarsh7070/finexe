@@ -27,6 +27,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final focusStates = ref.watch(dualFocusProvider);
     final focusViewModel = ref.read(dualFocusProvider.notifier);
     final loginState = ref.watch(loginViewModelProvider);
+    final loginStateViewModel = ref.read(loginViewModelProvider.notifier);
     // final selectedValue = ref.watch(radioProvider);
     final obscureValue = ref.watch(obscureTextProvider);
     final passwordValidations = ref.watch(passwordValidationProvider);
@@ -175,15 +176,56 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       // const Remember(),
                       SizedBox(height: displayHeight(context) * 0.07),
-                      loginState.when(
-                        data: (token) => token.isEmpty
-                            ? _loginButton(
-                                passValidate: passwordValidations,
-                                userValidate: userValidations)
-                            : _successMessage(token),
-                        loading: () => const CircularProgressIndicator(),
-                        error: (error, _) => _errorMessage(error.toString()),
-                      ),
+                            // _loginButton(
+                            //     passValidate: passwordValidations,
+                            //     userValidate: userValidations),
+                  AppButton(
+                    width: displayWidth(context),
+                    height: displayHeight(context) * 0.06,
+                    textStyle:  TextStyle(color: AppColors.white),
+                    label: 'Log In',
+                    onTap: () {
+                      final user = _emailController.text.isEmpty;
+                      final pass = _passwordController.text.isEmpty;
+                      if (user || pass) {
+                        ref
+                            .read(userValidationProvider.notifier)
+                            .checkUsername(_emailController.text);
+                        ref
+                            .read(passwordValidationProvider.notifier)
+                            .checkPassword(_passwordController.text);
+                      } else {
+                        loginStateViewModel.login(_emailController.text, _passwordController.text).then((value) {
+                          if(value)
+                          Navigator.pushNamed(context, AppRoutes.dashBoard);
+                        },);
+
+                      }
+                      if (kDebugMode) {
+                        print('$user, $pass');
+                      }
+                      // final isValid = _formKey.currentState?.validate();
+                      // if (!isValid!) {
+                      //   return;
+                      // }
+                      // _formKey.currentState?.save();
+                      //
+                      // print('$passValidate , $userValidate');
+                      // if(passValidate && userValidate){
+                      //
+                      // }else{
+                      //   ref
+                      //       .read(passwordValidationProvider.notifier)
+                      //       .checkPassword('');
+                      //   ref
+                      //       .read(userValidationProvider.notifier)
+                      //       .checkUsername('');
+                      // }
+                    },
+                  ),
+
+
+
                       SizedBox(
                         height: displayHeight(context) * 0.05,
                       ),
@@ -233,61 +275,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  Widget _loginButton(
-      {required bool passValidate, required bool userValidate}) {
-    return AppButton(
-      width: displayWidth(context),
-      height: displayHeight(context) * 0.06,
-      textStyle: const TextStyle(color: AppColors.white),
-      label: 'Log In',
-      onTap: () {
-        final user = _emailController.text.isEmpty;
-        final pass = _passwordController.text.isEmpty;
-        if (user || pass) {
-          ref
-              .read(userValidationProvider.notifier)
-              .checkUsername(_emailController.text);
-          ref
-              .read(passwordValidationProvider.notifier)
-              .checkPassword(_passwordController.text);
-        } else {
-          Navigator.pushNamed(context, AppRoutes.dashBoard);
-        }
-        if (kDebugMode) {
-          print('$user, $pass');
-        }
-        // final isValid = _formKey.currentState?.validate();
-        // if (!isValid!) {
-        //   return;
-        // }
-        // _formKey.currentState?.save();
-        //
-        // print('$passValidate , $userValidate');
-        // if(passValidate && userValidate){
-        //
-        // }else{
-        //   ref
-        //       .read(passwordValidationProvider.notifier)
-        //       .checkPassword('');
-        //   ref
-        //       .read(userValidationProvider.notifier)
-        //       .checkUsername('');
-        // }
-      },
-    );
-    //   SizedBox(
-    //   child: ElevatedButton(
-    //     onPressed: () {
-    //       if (_formKey.currentState!.validate()) {
-    //         final email = _emailController.text;
-    //         final password = _passwordController.text;
-    //         // ref.read(loginViewModelProvider.notifier).login(email, password);
-    //       }
-    //     },
-    //     child: const Text('Login'),
-    //   ),
-    // );
-  }
+  // Widget _loginButton(
+  //     {required bool passValidate, required bool userValidate}) {
+  //   return
+  //
+  //   //   SizedBox(
+  //   //   child: ElevatedButton(
+  //   //     onPressed: () {
+  //   //       if (_formKey.currentState!.validate()) {
+  //   //         final email = _emailController.text;
+  //   //         final password = _passwordController.text;
+  //   //         // ref.read(loginViewModelProvider.notifier).login(email, password);
+  //   //       }
+  //   //     },
+  //   //     child: const Text('Login'),
+  //   //   ),
+  //   // );
+  // }
 
   Widget _successMessage(String token) {
     return Text('Login successful! Token: $token');

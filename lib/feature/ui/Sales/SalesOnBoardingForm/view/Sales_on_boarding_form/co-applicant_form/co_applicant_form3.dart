@@ -17,19 +17,16 @@ class CoApplicantForm3 extends ConsumerWidget {
     final formListController = ref.watch(coApplicantController);
     final formNotifierController = ref.read(coApplicantController.notifier);
 //---------------------------------------------------------------------------------
-    final uploadCoDocs = ref.watch(uploadCoDoc);
-    final checkBoxTerms = ref.watch(checkBoxTermsConditionCoApplicant);
-    final selectedValue = ref.watch(coApplicantRoleProvider);
-
+//
+//     final removeScreen = ref.watch(count);
+//     final remove = ref.read(count.notifier);
     final coApplicationFormState = ref.watch(coApplicantViewModelProvider);
     final coApplicationFormViewModel =
         ref.read(coApplicantViewModelProvider.notifier);
     final coApplicationFocusStates = ref.watch(coApplicantFocusProvider);
-    final isCoApplicationRemember = ref.watch(rememberCoProvider);
     final coApplicationFocusViewModel =
         ref.read(coApplicantFocusProvider.notifier);
     final index = ref.watch(listIndex);
-
 
     return Scaffold(
         body: Container(
@@ -51,7 +48,9 @@ class CoApplicantForm3 extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const BackButton(),
+                BackButton(onPressed: () {
+                  ref.read(pageViewModelProvider.notifier).setTabIndex(0);
+                },),
                 const Text(
                   textAlign: TextAlign.center,
                   'Co-Applicant Details',
@@ -106,7 +105,8 @@ class CoApplicantForm3 extends ConsumerWidget {
                               coApplicationFocusViewModel.contactFocusNode,
                           currentState:
                               coApplicationFocusStates['contactFocusNode'],
-                          controller: formListController[index].contactController,
+                          controller:
+                              formListController[index].contactController,
                           onChange: (value) {
                             coApplicationFormViewModel.updateContact(
                                 value, index);
@@ -128,7 +128,8 @@ class CoApplicantForm3 extends ConsumerWidget {
                               coApplicationFocusViewModel.fullNameFocusNode,
                           currentState:
                               coApplicationFocusStates['fullNameFocusNode'],
-                          controller: formListController[index].fullNameController,
+                          controller:
+                              formListController[index].fullNameController,
                           onChange: (value) {
                             coApplicationFormViewModel.updateFullName(
                                 value, index);
@@ -150,7 +151,8 @@ class CoApplicantForm3 extends ConsumerWidget {
                               coApplicationFocusViewModel.fatherNameFocusNode,
                           currentState:
                               coApplicationFocusStates['fatherNameFocusNode'],
-                          controller: formListController[index].fatherNameController,
+                          controller:
+                              formListController[index].fatherNameController,
                           onChange: (value) {
                             coApplicationFormViewModel.updateEmail(
                                 value, index);
@@ -211,7 +213,8 @@ class CoApplicantForm3 extends ConsumerWidget {
                               coApplicationFocusViewModel.genderFocusNode,
                           currentState:
                               coApplicationFocusStates['genderFocusNode'],
-                          controller: formListController[index].genderController,
+                          controller:
+                              formListController[index].genderController,
                           onChange: (value) {
                             coApplicationFormViewModel.updateGender(
                                 value, index);
@@ -232,9 +235,11 @@ class CoApplicantForm3 extends ConsumerWidget {
                           width: displayWidth(context),
                           label: 'Next',
                           onTap: () {
-
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const CoApplicantForm2()));
+                            // remove.state = removeScreen + 1;
+                            ref.read(pageViewModelProvider.notifier).setTabIndex(2);
+                            // Navigator.of(context).push(MaterialPageRoute(
+                            //     builder: (context) =>
+                            //         const CoApplicantForm2()));
                             //
                             // Navigator.pushNamed(
                             //     context, AppRoutes.saleCoApplicationForm2);

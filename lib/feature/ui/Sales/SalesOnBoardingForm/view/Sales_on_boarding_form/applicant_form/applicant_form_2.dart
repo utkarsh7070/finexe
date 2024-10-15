@@ -74,7 +74,8 @@ class ApplicantForm2 extends ConsumerWidget {
                                 .communicationAddress1FocusNode,
                             currentState: personalFocusStates[
                                 'communicationAddress1FocusNode'],
-                            controller: formListController.communicationAddress1Controller,
+                            controller: formListController
+                                .communicationAddress1Controller,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationAddress1(value);
@@ -93,7 +94,8 @@ class ApplicantForm2 extends ConsumerWidget {
                             height: displayHeight(context) * 0.02,
                           ),
                           AppFloatTextField(
-                            controller: formListController.communicationAddress2Controller,
+                            controller: formListController
+                                .communicationAddress2Controller,
                             focusNode: personalFocusViewModel
                                 .communicationAddress2FocusNode,
                             currentState: personalFocusStates[
@@ -119,7 +121,8 @@ class ApplicantForm2 extends ConsumerWidget {
                                 .communicationCityFocusNode,
                             currentState: personalFocusStates[
                                 'communicationCityFocusNode'],
-                            controller: formListController.communicationCityController,
+                            controller:
+                                formListController.communicationCityController,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationCity(value);
@@ -137,7 +140,8 @@ class ApplicantForm2 extends ConsumerWidget {
                             height: displayHeight(context) * 0.02,
                           ),
                           AppFloatTextField(
-                            controller: formListController.communicationStateController,
+                            controller:
+                                formListController.communicationStateController,
                             focusNode: personalFocusViewModel
                                 .communicationStateFocusNode,
                             currentState: personalFocusStates[
@@ -164,7 +168,8 @@ class ApplicantForm2 extends ConsumerWidget {
                                 .communicationDistrictFocusNode,
                             currentState: personalFocusStates[
                                 'communicationDistrictFocusNode'],
-                            controller: formListController.communicationDistrictController,
+                            controller: formListController
+                                .communicationDistrictController,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationDistrict(value);
@@ -187,7 +192,8 @@ class ApplicantForm2 extends ConsumerWidget {
                                 .communicationPinCodeFocusNode,
                             currentState: personalFocusStates[
                                 'communicationPinCodeFocusNode'],
-                            controller: formListController.communicationPinCodeController,
+                            controller: formListController
+                                .communicationPinCodeController,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationPinCode(value);
@@ -219,7 +225,8 @@ class ApplicantForm2 extends ConsumerWidget {
                                         if (value != null) {
                                           addressRoleRadioViewModel
                                               .selectAddress(value);
-                                          personalFormViewModel.localAddCopyPermanentAdd();
+                                          personalFormViewModel
+                                              .localAddCopyPermanentAdd();
                                         }
                                         // showBottomSheetIfYes(
                                         //   context: context,
@@ -257,142 +264,172 @@ class ApplicantForm2 extends ConsumerWidget {
                                   ],
                                 ),
                               ),
-
                             ],
                           ),
 
                           Visibility(
-                            visible: addressRoleRadio == ApplicantOptionRole.NO,
-
+                              visible:
+                                  addressRoleRadio == ApplicantOptionRole.NO,
                               child: Column(
-                            children: [
-                              AppFloatTextField(
-                                focusNode:
-                                personalFocusViewModel.permanentAddress1FocusNode,
-                                currentState:
-                                personalFocusStates['permanentAddress1FocusNode'],
-                                controller: formListController.permanentAddress1Controller,
-                                onChange: (value) {
-                                  personalFormViewModel.updatePermanentAddress1(value);
-                                },
-                                height: !personalFormState.isPermanentAddress1Valid
-                                    ? displayHeight(context) * 0.09
-                                    : null,
-                                inerHint: 'Address1',
-                                errorText: "Address1 is a required field",
-                                isError: !personalFormState.isPermanentAddress1Valid,
-                                textInputAction: TextInputAction.done,
-                              ),
-                              SizedBox(
-                                height: displayHeight(context) * 0.02,
-                              ),
-                              AppFloatTextField(
-                                focusNode:
-                                personalFocusViewModel.permanentAddress2FocusNode,
-                                currentState:
-                                personalFocusStates['permanentAddress2FocusNode'],
-                                controller: formListController.permanentAddress2Controller,
-                                onChange: (value) {
-                                  personalFormViewModel.updatePermanentAddress2(value);
-                                },
-                                height: !personalFormState.isPermanentAddress2Valid
-                                    ? displayHeight(context) * 0.09
-                                    : null,
-                                inerHint: 'Address2',
-                                errorText: "Address2 is a required field",
-                                isError: !personalFormState.isPermanentAddress2Valid,
-                                textInputAction: TextInputAction.done,
-                              ),
-                              SizedBox(
-                                height: displayHeight(context) * 0.02,
-                              ),
-                              AppFloatTextField(
-                                focusNode:
-                                personalFocusViewModel.permanentCityFocusNode,
-                                currentState:
-                                personalFocusStates['permanentCityFocusNode'],
-                                controller: formListController.permanentCityController,
-                                onChange: (value) {
-                                  personalFormViewModel.updatePermanentCity(value);
-                                },
-                                height: !personalFormState.isPermanentCityValid
-                                    ? displayHeight(context) * 0.09
-                                    : null,
-                                inerHint: 'City',
-                                errorText: "City is a required field",
-                                isError: !personalFormState.isPermanentCityValid,
-                                textInputAction: TextInputAction.done,
-                              ),
-                              SizedBox(
-                                height: displayHeight(context) * 0.02,
-                              ),
-                              AppFloatTextField(
-                                focusNode:
-                                personalFocusViewModel.permanentStateFocusNode,
-                                currentState:
-                                personalFocusStates['permanentStateFocusNode'],
-                                controller: formListController.permanentStateController,
-                                onChange: (value) {
-                                  personalFormViewModel.updatePermanentState(value);
-                                },
-                                height: !personalFormState.isPermanentStateValid
-                                    ? displayHeight(context) * 0.09
-                                    : null,
-                                inerHint: 'State',
-                                errorText: "State is a required field",
-                                isError: !personalFormState.isPermanentStateValid,
-                                textInputAction: TextInputAction.done,
-                              ),
-                              SizedBox(
-                                height: displayHeight(context) * 0.02,
-                              ),
-                              AppFloatTextField(
-                                focusNode:
-                                personalFocusViewModel.permanentDistrictFocusNode,
-                                currentState:
-                                personalFocusStates['permanentDistrictFocusNode'],
-                                controller: formListController.permanentDistrictController,
-                                onChange: (value) {
-                                  personalFormViewModel.updatePermanentDistrict(value);
-                                },
-                                height: !personalFormState.isPermanentDistrictValid
-                                    ? displayHeight(context) * 0.09
-                                    : null,
-                                inerHint: 'District',
-                                errorText: "District is a required field",
-                                isError: !personalFormState.isPermanentDistrictValid,
-                                textInputAction: TextInputAction.done,
-                              ),
-                              SizedBox(
-                                height: displayHeight(context) * 0.02,
-                              ),
-                              AppFloatTextField(
-                                focusNode:
-                                personalFocusViewModel.permanentPinCodeFocusNode,
-                                currentState:
-                                personalFocusStates['permanentPinCodeFocusNode'],
-                                controller: formListController.permanentPinCodeController,
-                                onChange: (value) {
-                                  personalFormViewModel.updatePermanentPinCode(value);
-                                },
-                                height: !personalFormState.isPermanentPinCodeValid
-                                    ? displayHeight(context) * 0.09
-                                    : null,
-                                inerHint: 'PinCode',
-                                errorText: "PinCode is a required field",
-                                isError: !personalFormState.isPermanentPinCodeValid,
-                                textInputAction: TextInputAction.done,
-                              ),
-                            ],
-                          )
-                          ),
+                                children: [
+                                  AppFloatTextField(
+                                    focusNode: personalFocusViewModel
+                                        .permanentAddress1FocusNode,
+                                    currentState: personalFocusStates[
+                                        'permanentAddress1FocusNode'],
+                                    controller: formListController
+                                        .permanentAddress1Controller,
+                                    onChange: (value) {
+                                      personalFormViewModel
+                                          .updatePermanentAddress1(value);
+                                    },
+                                    height: !personalFormState
+                                            .isPermanentAddress1Valid
+                                        ? displayHeight(context) * 0.09
+                                        : null,
+                                    inerHint: 'Address1',
+                                    errorText: "Address1 is a required field",
+                                    isError: !personalFormState
+                                        .isPermanentAddress1Valid,
+                                    textInputAction: TextInputAction.done,
+                                  ),
+                                  SizedBox(
+                                    height: displayHeight(context) * 0.02,
+                                  ),
+                                  AppFloatTextField(
+                                    focusNode: personalFocusViewModel
+                                        .permanentAddress2FocusNode,
+                                    currentState: personalFocusStates[
+                                        'permanentAddress2FocusNode'],
+                                    controller: formListController
+                                        .permanentAddress2Controller,
+                                    onChange: (value) {
+                                      personalFormViewModel
+                                          .updatePermanentAddress2(value);
+                                    },
+                                    height: !personalFormState
+                                            .isPermanentAddress2Valid
+                                        ? displayHeight(context) * 0.09
+                                        : null,
+                                    inerHint: 'Address2',
+                                    errorText: "Address2 is a required field",
+                                    isError: !personalFormState
+                                        .isPermanentAddress2Valid,
+                                    textInputAction: TextInputAction.done,
+                                  ),
+                                  SizedBox(
+                                    height: displayHeight(context) * 0.02,
+                                  ),
+                                  AppFloatTextField(
+                                    focusNode: personalFocusViewModel
+                                        .permanentCityFocusNode,
+                                    currentState: personalFocusStates[
+                                        'permanentCityFocusNode'],
+                                    controller: formListController
+                                        .permanentCityController,
+                                    onChange: (value) {
+                                      personalFormViewModel
+                                          .updatePermanentCity(value);
+                                    },
+                                    height:
+                                        !personalFormState.isPermanentCityValid
+                                            ? displayHeight(context) * 0.09
+                                            : null,
+                                    inerHint: 'City',
+                                    errorText: "City is a required field",
+                                    isError:
+                                        !personalFormState.isPermanentCityValid,
+                                    textInputAction: TextInputAction.done,
+                                  ),
+                                  SizedBox(
+                                    height: displayHeight(context) * 0.02,
+                                  ),
+                                  AppFloatTextField(
+                                    focusNode: personalFocusViewModel
+                                        .permanentStateFocusNode,
+                                    currentState: personalFocusStates[
+                                        'permanentStateFocusNode'],
+                                    controller: formListController
+                                        .permanentStateController,
+                                    onChange: (value) {
+                                      personalFormViewModel
+                                          .updatePermanentState(value);
+                                    },
+                                    height:
+                                        !personalFormState.isPermanentStateValid
+                                            ? displayHeight(context) * 0.09
+                                            : null,
+                                    inerHint: 'State',
+                                    errorText: "State is a required field",
+                                    isError: !personalFormState
+                                        .isPermanentStateValid,
+                                    textInputAction: TextInputAction.done,
+                                  ),
+                                  SizedBox(
+                                    height: displayHeight(context) * 0.02,
+                                  ),
+                                  AppFloatTextField(
+                                    focusNode: personalFocusViewModel
+                                        .permanentDistrictFocusNode,
+                                    currentState: personalFocusStates[
+                                        'permanentDistrictFocusNode'],
+                                    controller: formListController
+                                        .permanentDistrictController,
+                                    onChange: (value) {
+                                      personalFormViewModel
+                                          .updatePermanentDistrict(value);
+                                    },
+                                    height: !personalFormState
+                                            .isPermanentDistrictValid
+                                        ? displayHeight(context) * 0.09
+                                        : null,
+                                    inerHint: 'District',
+                                    errorText: "District is a required field",
+                                    isError: !personalFormState
+                                        .isPermanentDistrictValid,
+                                    textInputAction: TextInputAction.done,
+                                  ),
+                                  SizedBox(
+                                    height: displayHeight(context) * 0.02,
+                                  ),
+                                  AppFloatTextField(
+                                    focusNode: personalFocusViewModel
+                                        .permanentPinCodeFocusNode,
+                                    currentState: personalFocusStates[
+                                        'permanentPinCodeFocusNode'],
+                                    controller: formListController
+                                        .permanentPinCodeController,
+                                    onChange: (value) {
+                                      personalFormViewModel
+                                          .updatePermanentPinCode(value);
+                                    },
+                                    height: !personalFormState
+                                            .isPermanentPinCodeValid
+                                        ? displayHeight(context) * 0.09
+                                        : null,
+                                    inerHint: 'PinCode',
+                                    errorText: "PinCode is a required field",
+                                    isError: !personalFormState
+                                        .isPermanentPinCodeValid,
+                                    textInputAction: TextInputAction.done,
+                                  ),
+                                ],
+                              )),
                           AppButton(
                             textStyle: const TextStyle(color: AppColors.white),
                             width: displayWidth(context),
                             label: 'Next',
                             onTap: () {
-                              Navigator.pushNamed(
-                                  context, AppRoutes.saleCoApplicationForm1);
+                              // personalFormViewModel
+                              //     .submittedApplicantForm()
+                              //     .then(
+                              //   (value) {
+                              //     if (value) {
+                                    Navigator.pushNamed(context,
+                                        AppRoutes.saleCoApplicationForm1);
+                              //     }
+                              //   },
+                              // );
                             },
                           ),
                           SizedBox(
@@ -404,8 +441,6 @@ class ApplicantForm2 extends ConsumerWidget {
                           //   label: 'Back',
                           //   onTap: () {},
                           // ),
-
-
                         ])),
               ),
             ],

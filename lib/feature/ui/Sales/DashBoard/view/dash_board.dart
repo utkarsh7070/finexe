@@ -54,40 +54,8 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
             : null,
         bottomNavigationBar:
             DashBoardBottomNavigationBar(tabController: _tabController),
-        // appBar: AppBar(
-        //   // leading: Icon(CupertinoIcons),
-        //   backgroundColor: AppColors.primary,
-        //   title: const Icon(CupertinoIcons.moon),
-        // ),
         drawer: const DrawerScreen(),
-        body:
-            // Container(
-            //   padding: const EdgeInsets.all(16),
-            //   child: Column(
-            //     children: [
-            //       AppButton(
-            //         label: 'New Loan',
-            //         textStyle: const TextStyle(color: AppColors.white),
-            //         onTap: () {
-            //           Navigator.pushNamed(context, AppRoutes.saleForm);
-            //         },
-            //         width: displayWidth(context),
-            //       ),
-            //       Expanded(
-            //         child: SizedBox(
-            //             child: ListView.builder(
-            //           itemCount: 5,
-            //           itemBuilder: (context, index) {
-            //             return const Card(
-            //               child: Text('Loan Details'),
-            //             );
-            //           },
-            //         )),
-            //       )
-            //     ],
-            //   ),
-            // )
-            IndexedStack(
+        body: IndexedStack(
           index: tabViewModel.selectedIndex,
           children: <Widget>[
             const SalesCasesScreen(),

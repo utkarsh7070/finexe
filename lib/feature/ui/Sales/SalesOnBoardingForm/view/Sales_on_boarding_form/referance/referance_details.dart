@@ -19,19 +19,6 @@ class ReferenceDetails extends ConsumerWidget {
     final personalFocusViewModel = ref.read(referenceFocusProvider.notifier);
 
     return Scaffold(
-      //     Container(
-      //     width: displayWidth(context),
-      // height: displayHeight(context),
-      // color: AppColors.primary,
-      // padding: const EdgeInsets.only(top: 100),
-      // child: Container(
-      // height: displayHeight(context),
-      // padding: const EdgeInsets.all(20),
-      // decoration: const BoxDecoration(
-      // color: AppColors.white,
-      // borderRadius: BorderRadius.only(
-      // topLeft: Radius.circular(30), topRight: Radius.circular(30))),
-      // appBar: AppBar(title: Text('Reference Detail\'s'),),
       body: Container(
         width: displayWidth(context),
         height: displayHeight(context),

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dropdown_textfield/dropdown_textfield.dart';
-import 'package:finexe/feature/base/routes/routes.dart';
+
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/bottom_sheet/co_applicant_if_no_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +14,6 @@ import '../../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../../../../base/utils/widget/upload_box.dart';
 import '../../../view_model/co_applicant_form_view_model.dart';
 import 'bottom_sheet/co_applicant_bottom_sheet.dart';
-import '../co_applicant_form.dart';
 import 'co_applicant_form3.dart';
 
 class CoApplicantForm1 extends ConsumerWidget {
@@ -40,6 +39,8 @@ class CoApplicantForm1 extends ConsumerWidget {
     final coApplicationFocusViewModel =
         ref.read(coApplicantFocusProvider.notifier);
     final index = ref.watch(listIndex);
+    // final removeScreen = ref.watch(count);
+    // final remove = ref.read(count.notifier);
 
     return Scaffold(
         body: Container(
@@ -61,7 +62,17 @@ class CoApplicantForm1 extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const BackButton(),
+                BackButton(
+                  onPressed: () {
+                    print(index);
+                    if (index != 0) {
+                      ref.read(listIndex.notifier).state = index - 1;
+                      ref.read(pageViewModelProvider.notifier).setTabIndex(0);
+                    } else {
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
                 const Text(
                   textAlign: TextAlign.center,
                   'Co-Applicant Details',
@@ -70,8 +81,14 @@ class CoApplicantForm1 extends ConsumerWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(
-                  width: displayWidth(context) * 0.10,
+                Visibility(
+                  replacement:SizedBox(
+                    width: displayWidth(context) * 0.10,
+                  ),
+                  visible: index>0,
+                  child: IconButton(onPressed: () {
+
+                  }, icon: Icon(Icons.delete))
                 )
               ],
             ),
@@ -320,7 +337,11 @@ class CoApplicantForm1 extends ConsumerWidget {
                                                 .read(isCoPanLoading.notifier)
                                                 .state = false;
                                           },
-                                        ).then(
+                                        ).onError((error, stackTrace) {
+                                         return ref
+                                              .read(isCoPanLoading.notifier)
+                                              .state = false;
+                                        }).then(
                                           (value) {
                                             if (value) {
                                               ref
@@ -334,6 +355,7 @@ class CoApplicantForm1 extends ConsumerWidget {
                                               ref
                                                   .read(isCoPanLoading.notifier)
                                                   .state = false;
+
                                             }
                                           },
                                         );
@@ -358,9 +380,14 @@ class CoApplicantForm1 extends ConsumerWidget {
                           width: displayWidth(context),
                           label: 'Next',
                           onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    const CoApplicantForm3()));
+                            ref
+                                .read(pageViewModelProvider.notifier)
+                                .setTabIndex(1);
+                            // print(remove.state);
+                            // remove.state = removeScreen + 1;
+                            // Navigator.of(context).push(MaterialPageRoute(
+                            //     builder: (context) =>
+                            //         const CoApplicantForm3()));
                             // Navigator.pushNamed(
                             //     context, AppRoutes.saleCoApplicationForm3);
                           },

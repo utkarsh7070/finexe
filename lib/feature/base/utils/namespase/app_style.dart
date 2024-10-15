@@ -28,6 +28,12 @@ extension AppStyles on Never {
     fontWeight: FontWeight.w400,
     fontSize: FontSize.fontSizeXSs,
   );
+  static TextStyle nameText = TextStyle(
+    color: AppColors.textDarkGray,
+    fontFamily: Fonts.appFonts,
+    fontWeight: FontWeight.w500,
+    fontSize: FontSize.fontSizeSL,
+  );
   static TextStyle subTextStyle = TextStyle(
     color: AppColors.subTextColor,
     fontFamily: Fonts.appFonts,
@@ -45,6 +51,12 @@ extension AppStyles on Never {
 
   static TextStyle cardTextStyle16 = TextStyle(
     color: AppColors.grayCardContentColor,
+    fontFamily: Fonts.appFonts,
+    fontWeight: FontWeight.w600,
+    fontSize: FontSize.fontSize16,
+  );
+  static TextStyle TextStyle16 = TextStyle(
+    color: AppColors.black,
     fontFamily: Fonts.appFonts,
     fontWeight: FontWeight.w600,
     fontSize: FontSize.fontSize16,
@@ -73,6 +85,19 @@ extension AppStyles on Never {
     fontFamily: Fonts.appFonts,
     fontWeight: FontWeight.w600,
     fontSize: FontSize.fontSizeXXXL,
+  );
+
+  static TextStyle headingTextStyleXL1 = TextStyle(
+    color: AppColors.primary,
+    fontFamily: Fonts.appFonts,
+    fontWeight: FontWeight.w700,
+    fontSize: FontSize.fontSizeXXXL,
+  );
+  static TextStyle headingTextStyleXL2 = TextStyle(
+    color: AppColors.orange,
+    fontFamily: Fonts.appFonts,
+    fontWeight: FontWeight.w600,
+    fontSize: FontSize.fontSizeL,
   );
 
   static TextStyle smallTextStyle = TextStyle(

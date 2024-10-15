@@ -4,12 +4,14 @@ import 'package:dio/dio.dart';
 import 'package:dio/src/dio.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/aadhaar_number_request_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/aadhaar_otp_request_model.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/submite_applicant_form_data_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/aadhar_number_response_model.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/submit_applicant_response_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
@@ -19,18 +21,18 @@ import '../view/Sales_on_boarding_form/co_applicant_form.dart';
 import '../view/Sales_on_boarding_form/applicant_form/appliction_form.dart';
 
 final uploadDoc = StateProvider(
-  (ref) {
+      (ref) {
     return false;
   },
 );
 
 final isPanLoading = StateProvider(
-  (ref) {
+      (ref) {
     return false;
   },
 );
 final isTickColorChange = StateProvider(
-  (ref) {
+      (ref) {
     return false;
   },
 );
@@ -54,7 +56,7 @@ class ImagePickerNotifier extends StateNotifier<File?> {
         await Permission.videos.status.isGranted) {
       try {
         XFile? pickedImage =
-            await picker.pickImage(source: ImageSource.gallery);
+        await picker.pickImage(source: ImageSource.gallery);
         if (pickedImage != null) {
           state = File(pickedImage.path);
         }
@@ -75,24 +77,24 @@ class ImagePickerNotifier extends StateNotifier<File?> {
 }
 
 final imagePickerProvider =
-    StateNotifierProvider<ImagePickerNotifier, File?>((ref) {
+StateNotifierProvider<ImagePickerNotifier, File?>((ref) {
   return ImagePickerNotifier();
 });
 
 final getOpt = StateProvider(
-  (ref) {
+      (ref) {
     return false;
   },
 );
 
 final checkBoxTermsConditionApplicant = StateProvider(
-  (ref) {
+      (ref) {
     return false;
   },
 );
 
 final applicantRoleProvider =
-    StateNotifierProvider<OptionRoleNotifier, ApplicantOptionRole>((ref) {
+StateNotifierProvider<OptionRoleNotifier, ApplicantOptionRole>((ref) {
   return OptionRoleNotifier();
 });
 
@@ -107,10 +109,10 @@ class OptionRoleNotifier extends StateNotifier<ApplicantOptionRole> {
 }
 
 final applicantAddressRoleProvider =
-    StateNotifierProvider<OptionAddressRoleNotifier, ApplicantOptionRole>(
+StateNotifierProvider<OptionAddressRoleNotifier, ApplicantOptionRole>(
         (ref) {
-  return OptionAddressRoleNotifier();
-});
+      return OptionAddressRoleNotifier();
+    });
 
 class OptionAddressRoleNotifier extends StateNotifier<ApplicantOptionRole> {
   OptionAddressRoleNotifier()
@@ -123,18 +125,18 @@ class OptionAddressRoleNotifier extends StateNotifier<ApplicantOptionRole> {
 }
 
 final rememberProvider = StateProvider<bool>(
-  (ref) {
+      (ref) {
     return false;
   },
 );
 
 final applicantFocusProvider =
-    StateNotifierProvider<ApplicantFocusProvider, Map<String, bool>>((ref) {
+StateNotifierProvider<ApplicantFocusProvider, Map<String, bool>>((ref) {
   return ApplicantFocusProvider();
 });
 
 final applicantViewModelProvider =
-    StateNotifierProvider<ApplicantViewModel, KycFormState>((ref) {
+StateNotifierProvider<ApplicantViewModel, KycFormState>((ref) {
   final dio = ref.read(dioProvider);
 
   return ApplicantViewModel(dio);
@@ -191,7 +193,9 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
           fullName: aadhaarOtpResponseModel!.items.msg.name,
           dob: aadhaarOtpResponseModel!.items.msg.dob,
           communicationAddress1:
-              '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!.items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark}',
+          '${aadhaarOtpResponseModel!.items.msg
+              .house}, ${aadhaarOtpResponseModel!.items.msg
+              .street}, ${aadhaarOtpResponseModel!.items.msg.landmark}',
           communicationAddress2: aadhaarOtpResponseModel!.items.msg.locality,
           communicationDistrict: aadhaarOtpResponseModel!.items.msg.district,
           communicationCity: aadhaarOtpResponseModel!.items.msg.villageTownCity,
@@ -213,9 +217,8 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     var formData = FormData.fromMap({
       'front_image': await MultipartFile.fromFile(state.aadhaarPhotoFilePath1),
       'back_image': await MultipartFile.fromFile(state.aadhaarPhotoFilePath2),
-      'formName':'applicant'
+      'formName': 'applicant'
     });
-
     try {
       final response = await dio.post(Api.aadhaarPhoto, data: formData);
       if (response.statusCode == 200) {
@@ -235,7 +238,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
         docType: 523, panNumber: state.pan, transId: "111XXXXX");
     try {
       final response =
-          await dio.post(Api.panVerify, data: panRequestModel.toJson());
+      await dio.post(Api.panVerify, data: panRequestModel.toJson());
       if (response.statusCode == 200) {
         print(response.data);
         return true;
@@ -244,6 +247,60 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
       }
     } catch (e) {
       throw Exception(e);
+    }
+  }
+
+  Future<void> getApplicationForm() async{
+
+  }
+
+  Future<bool> submittedApplicantForm() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final token = sharedPreferences.getString('token');
+    final employeId =  sharedPreferences.getString('employeId');
+    final customerId = sharedPreferences.getString('customerId');
+    final formData = ApplicantFormData(employeId: employeId!,
+        customerId: customerId!,
+        fullName: state.fullName,
+        email: state.email,
+        aadharNo: state.aadhaar,
+        mobileNo: state.contact,
+        panNo: state.pan,
+        gender: state.gender,
+        fatherName: state.fatherName,
+        maritalStatus: '',
+        spouseName: '',
+        motherName: '',
+        dob: state.dob,
+        religion: '',
+        caste: '',
+        age: state.age,
+        drivingLicenceNo: '',
+        voterIdNo: '',
+        education: '',
+        permanentAddressaddressLine1: state.permanentAddress1,
+        permanentAddressaddressLine2: state.permanentAddress2,
+        permanentAddresspinCode: state.permanentPinCode,
+        permanentAddresscity: state.permanentCity,
+        permanentAddressdistrict: state.permanentDistrict,
+        permanentAddressstate: state.permanentState,
+        localAddressaddressLine1: state.communicationAddress1,
+        localAddressaddressLine2: state.communicationAddress2,
+        localAddresspinCode: state.communicationPinCode,
+        localAddresscity: state.communicationCity,
+        localAddressdistrict: state.communicationDistrict,
+        localAddressstate: state.communicationState);
+    FormData dioFormData = formData.toFormData();
+
+    final response = await dio.post(Api.submitNewLoan,
+        data: dioFormData, options: Options(headers: {'token': token}));
+    print(response.statusMessage);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      SubmitApplicantResponseModel.fromJson(response.data);
+      return true;
+    } else {
+      throw Exception('Failed to load data');
     }
   }
 
@@ -278,7 +335,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
         await Permission.videos.status.isGranted) {
       try {
         XFile? pickedImage =
-            await picker.pickImage(source: ImageSource.gallery);
+        await picker.pickImage(source: ImageSource.gallery);
         print('image before null condition  ${pickedImage!.path.toString()}');
         if (pickedImage != null) {
           print('image ${pickedImage.path}');
@@ -308,7 +365,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
         await Permission.videos.status.isGranted) {
       try {
         XFile? pickedImage =
-            await picker.pickImage(source: ImageSource.gallery);
+        await picker.pickImage(source: ImageSource.gallery);
         print('image before null condition  ${pickedImage!.path.toString()}');
         if (pickedImage != null) {
           print('image ${pickedImage.path}');
@@ -334,7 +391,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
         await Permission.videos.status.isGranted) {
       try {
         XFile? pickedImage =
-            await picker.pickImage(source: ImageSource.gallery);
+        await picker.pickImage(source: ImageSource.gallery);
         print('image before null condition  ${pickedImage!.path.toString()}');
         if (pickedImage != null) {
           print('image ${pickedImage.path}');
@@ -347,20 +404,29 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     }
   }
 
-  void setAutoValueByAadhaar(ApplicantDataController formListController){
-    if(aadhaarOtpResponseModel!=null){
-      formListController.fullNameController.text = aadhaarOtpResponseModel!.items.msg.name;
-      formListController.dobController.text = aadhaarOtpResponseModel!.items.msg.dob;
-      formListController.communicationAddress1Controller.text =  '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!.items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark}';
-      formListController.communicationAddress2Controller.text = aadhaarOtpResponseModel!.items.msg.locality;
-      formListController.communicationDistrictController.text = aadhaarOtpResponseModel!.items.msg.district;
-      formListController.communicationCityController.text = aadhaarOtpResponseModel!.items.msg.villageTownCity;
-      formListController.communicationPinCodeController.text = aadhaarOtpResponseModel!.items.msg.pincode;
-      formListController.communicationStateController.text = aadhaarOtpResponseModel!.items.msg.state;
-      formListController.genderController.text = aadhaarOtpResponseModel!.items.msg.gender;
+  void setAutoValueByAadhaar(ApplicantDataController formListController) {
+    if (aadhaarOtpResponseModel != null) {
+      formListController.fullNameController.text =
+          aadhaarOtpResponseModel!.items.msg.name;
+      formListController.dobController.text =
+          aadhaarOtpResponseModel!.items.msg.dob;
+      formListController.communicationAddress1Controller.text =
+      '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!
+          .items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark}';
+      formListController.communicationAddress2Controller.text =
+          aadhaarOtpResponseModel!.items.msg.locality;
+      formListController.communicationDistrictController.text =
+          aadhaarOtpResponseModel!.items.msg.district;
+      formListController.communicationCityController.text =
+          aadhaarOtpResponseModel!.items.msg.villageTownCity;
+      formListController.communicationPinCodeController.text =
+          aadhaarOtpResponseModel!.items.msg.pincode;
+      formListController.communicationStateController.text =
+          aadhaarOtpResponseModel!.items.msg.state;
+      formListController.genderController.text =
+          aadhaarOtpResponseModel!.items.msg.gender;
     }
   }
-
 
 
   void otpUpdate(String value) {
@@ -533,36 +599,36 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     final isReligionValid = _validateReligion(state.religion);
     final isCasteValid = _validateCaste(state.caste);
     final isRelationWithApplicantValid =
-        _validateRelationWithApplicant(state.relationWithApplicant);
+    _validateRelationWithApplicant(state.relationWithApplicant);
     final isEducationOfApplicantValid =
-        _validateEducationOfApplicant(state.educationOfApplicant);
+    _validateEducationOfApplicant(state.educationOfApplicant);
     final isAgeValid = _validateAge(state.age);
     final isDobValid = _validateDob(state.dob);
     final isFatherNameValid = _validateFatherName(state.fatherName);
     final isFullNameValid = _validateFullName(state.fullName);
     final isGenderValid = _validateGender(state.gender);
     final isPermanentAddress1Valid =
-        _validatePermanentAddress1(state.permanentAddress1);
+    _validatePermanentAddress1(state.permanentAddress1);
     final isPermanentAddress2Valid =
-        _validatePermanentAddress2(state.permanentAddress2);
+    _validatePermanentAddress2(state.permanentAddress2);
     final isPermanentCityValid = _validatePermanentCity(state.permanentCity);
     final isPermanentStateValid = _validatePermanentState(state.permanentState);
     final isPermanentDistrictValid =
-        _validatePermanentDistrict(state.permanentDistrict);
+    _validatePermanentDistrict(state.permanentDistrict);
     final isPermanentPinCodeValid =
-        _validatePermanentPinCode(state.permanentPinCode);
+    _validatePermanentPinCode(state.permanentPinCode);
     final isCommunicationAddress1Valid =
-        _validateCommunicationAddress1(state.communicationAddress1);
+    _validateCommunicationAddress1(state.communicationAddress1);
     final isCommunicationAddress2Valid =
-        _validateCommunicationAddress2(state.communicationAddress2);
+    _validateCommunicationAddress2(state.communicationAddress2);
     final isCommunicationCityValid =
-        _validateCommunicationCity(state.communicationCity);
+    _validateCommunicationCity(state.communicationCity);
     final isCommunicationStateValid =
-        _validateCommunicationState(state.communicationState);
+    _validateCommunicationState(state.communicationState);
     final isCommunicationDistrictValid =
-        _validateCommunicationDistrict(state.communicationDistrict);
+    _validateCommunicationDistrict(state.communicationDistrict);
     final isCommunicationPinCodeValid =
-        _validateCommunicationPinCode(state.communicationPinCode);
+    _validateCommunicationPinCode(state.communicationPinCode);
 
     state = state.copyWith(
         isPermanentAddress1Valid: isPermanentAddress1Valid,
@@ -812,37 +878,37 @@ class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
         permanentPinCodeFocusNode = FocusNode(),
         permanentStateFocusNode = FocusNode(),
         super({
-          'aadhaarFocusNode': false,
-          'kycDocFocusNode': false,
-          'panFocusNode': false,
-          'motherFocusNode': false,
-          'contactFocusNode': false,
-          'emailFocusNode': false,
-          'maritalFocusNode': false,
-          'religionFocusNode': false,
-          'casteFocusNode': false,
-          'educationOfApplicantFocusNode': false,
-          'genderFocusNode': false,
-          'fullNameFocusNode': false,
-          'fatherNameFocusNode': false,
-          'dobFocusNode': false,
-          'ageFocusNode': false,
-          'relationWithApplicantFocusNode': false,
-          'communicationAddress1FocusNode': false,
-          'communicationAddress2FocusNode': false,
-          'communicationCityFocusNode': false,
-          'communicationDistrictFocusNode': false,
-          'communicationPinCodeFocusNode': false,
-          'communicationStateFocusNode': false,
-          'permanentAddress1FocusNode': false,
-          'permanentAddress2FocusNode': false,
-          'permanentCityFocusNode': false,
-          'permanentDistrictFocusNode': false,
-          'permanentPinCodeFocusNode': false,
-          'permanentStateFocusNode': false,
-        }) {
+        'aadhaarFocusNode': false,
+        'kycDocFocusNode': false,
+        'panFocusNode': false,
+        'motherFocusNode': false,
+        'contactFocusNode': false,
+        'emailFocusNode': false,
+        'maritalFocusNode': false,
+        'religionFocusNode': false,
+        'casteFocusNode': false,
+        'educationOfApplicantFocusNode': false,
+        'genderFocusNode': false,
+        'fullNameFocusNode': false,
+        'fatherNameFocusNode': false,
+        'dobFocusNode': false,
+        'ageFocusNode': false,
+        'relationWithApplicantFocusNode': false,
+        'communicationAddress1FocusNode': false,
+        'communicationAddress2FocusNode': false,
+        'communicationCityFocusNode': false,
+        'communicationDistrictFocusNode': false,
+        'communicationPinCodeFocusNode': false,
+        'communicationStateFocusNode': false,
+        'permanentAddress1FocusNode': false,
+        'permanentAddress2FocusNode': false,
+        'permanentCityFocusNode': false,
+        'permanentDistrictFocusNode': false,
+        'permanentPinCodeFocusNode': false,
+        'permanentStateFocusNode': false,
+      }) {
     aadhaarFocusNode.addListener(
-      () => _focusListener('aadhaarFocusNode', aadhaarFocusNode),
+          () => _focusListener('aadhaarFocusNode', aadhaarFocusNode),
     );
     kycDocFocusNode
         .addListener(() => _focusListener('kycDocFocusNode', kycDocFocusNode));
@@ -851,49 +917,61 @@ class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
     motherFocusNode
         .addListener(() => _focusListener('motherFocusNode', motherFocusNode));
     contactFocusNode.addListener(
-        () => _focusListener('contactFocusNode', contactFocusNode));
+            () => _focusListener('contactFocusNode', contactFocusNode));
     emailFocusNode
         .addListener(() => _focusListener('emailFocusNode', emailFocusNode));
     maritalFocusNode.addListener(
-        () => _focusListener('maritalFocusNode', maritalFocusNode));
+            () => _focusListener('maritalFocusNode', maritalFocusNode));
     religionFocusNode.addListener(
-        () => _focusListener('religionFocusNode', religionFocusNode));
+            () => _focusListener('religionFocusNode', religionFocusNode));
     casteFocusNode
         .addListener(() => _focusListener('casteFocusNode', casteFocusNode));
-    educationOfApplicantFocusNode.addListener(() => _focusListener(
-        'educationOfApplicantFocusNode', educationOfApplicantFocusNode));
+    educationOfApplicantFocusNode.addListener(() =>
+        _focusListener(
+            'educationOfApplicantFocusNode', educationOfApplicantFocusNode));
     genderFocusNode
         .addListener(() => _focusListener('genderFocusNode', genderFocusNode));
     fullNameFocusNode.addListener(
-        () => _focusListener('fullNameFocusNode', fullNameFocusNode));
+            () => _focusListener('fullNameFocusNode', fullNameFocusNode));
     fatherNameFocusNode.addListener(
-        () => _focusListener('fatherNameFocusNode', fatherNameFocusNode));
+            () => _focusListener('fatherNameFocusNode', fatherNameFocusNode));
     dobFocusNode
         .addListener(() => _focusListener('dobFocusNode', dobFocusNode));
     ageFocusNode
         .addListener(() => _focusListener('ageFocusNode', ageFocusNode));
-    relationWithApplicantFocusNode.addListener(() => _focusListener(
-        'relationWithApplicantFocusNode', relationWithApplicantFocusNode));
-    communicationAddress1FocusNode.addListener(() => _focusListener(
-        'communicationAddress1FocusNode', communicationAddress1FocusNode));
-    communicationCityFocusNode.addListener(() => _focusListener(
-        'communicationCityFocusNode', communicationCityFocusNode));
-    communicationDistrictFocusNode.addListener(() => _focusListener(
-        'communicationDistrictFocusNode', communicationDistrictFocusNode));
-    communicationPinCodeFocusNode.addListener(() => _focusListener(
-        'communicationPinCodeFocusNode', communicationPinCodeFocusNode));
-    communicationStateFocusNode.addListener(() => _focusListener(
-        'communicationStateFocusNode', communicationStateFocusNode));
-    communicationAddress2FocusNode.addListener(() => _focusListener(
-        'communicationAddress2FocusNode', communicationAddress2FocusNode));
-    permanentAddress1FocusNode.addListener(() => _focusListener(
-        'permanentAddress1FocusNode', permanentAddress1FocusNode));
-    permanentAddress2FocusNode.addListener(() => _focusListener(
-        'permanentAddress2FocusNode', permanentAddress2FocusNode));
+    relationWithApplicantFocusNode.addListener(() =>
+        _focusListener(
+            'relationWithApplicantFocusNode', relationWithApplicantFocusNode));
+    communicationAddress1FocusNode.addListener(() =>
+        _focusListener(
+            'communicationAddress1FocusNode', communicationAddress1FocusNode));
+    communicationCityFocusNode.addListener(() =>
+        _focusListener(
+            'communicationCityFocusNode', communicationCityFocusNode));
+    communicationDistrictFocusNode.addListener(() =>
+        _focusListener(
+            'communicationDistrictFocusNode', communicationDistrictFocusNode));
+    communicationPinCodeFocusNode.addListener(() =>
+        _focusListener(
+            'communicationPinCodeFocusNode', communicationPinCodeFocusNode));
+    communicationStateFocusNode.addListener(() =>
+        _focusListener(
+            'communicationStateFocusNode', communicationStateFocusNode));
+    communicationAddress2FocusNode.addListener(() =>
+        _focusListener(
+            'communicationAddress2FocusNode', communicationAddress2FocusNode));
+    permanentAddress1FocusNode.addListener(() =>
+        _focusListener(
+            'permanentAddress1FocusNode', permanentAddress1FocusNode));
+    permanentAddress2FocusNode.addListener(() =>
+        _focusListener(
+            'permanentAddress2FocusNode', permanentAddress2FocusNode));
     permanentCityFocusNode.addListener(
-        () => _focusListener('permanentCityFocusNode', permanentCityFocusNode));
-    permanentDistrictFocusNode.addListener(() => _focusListener(
-        'permanentDistrictFocusNode', permanentDistrictFocusNode));
+            () =>
+            _focusListener('permanentCityFocusNode', permanentCityFocusNode));
+    permanentDistrictFocusNode.addListener(() =>
+        _focusListener(
+            'permanentDistrictFocusNode', permanentDistrictFocusNode));
     permanentPinCodeFocusNode.addListener(() =>
         _focusListener('permanentPinCodeFocusNode', permanentPinCodeFocusNode));
     permanentStateFocusNode.addListener(() =>
@@ -910,59 +988,71 @@ class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
   @override
   void dispose() {
     aadhaarFocusNode.removeListener(
-      () => _focusListener('aadhaarFocusNode', aadhaarFocusNode),
+          () => _focusListener('aadhaarFocusNode', aadhaarFocusNode),
     );
     kycDocFocusNode.removeListener(
-        () => _focusListener('kycDocFocusNode', kycDocFocusNode));
+            () => _focusListener('kycDocFocusNode', kycDocFocusNode));
     panFocusNode
         .removeListener(() => _focusListener('panFocusNode', panFocusNode));
     motherFocusNode.removeListener(
-        () => _focusListener('motherFocusNode', motherFocusNode));
+            () => _focusListener('motherFocusNode', motherFocusNode));
     contactFocusNode.removeListener(
-        () => _focusListener('contactFocusNode', contactFocusNode));
+            () => _focusListener('contactFocusNode', contactFocusNode));
     emailFocusNode
         .removeListener(() => _focusListener('emailFocusNode', emailFocusNode));
     maritalFocusNode.removeListener(
-        () => _focusListener('maritalFocusNode', maritalFocusNode));
+            () => _focusListener('maritalFocusNode', maritalFocusNode));
     religionFocusNode.removeListener(
-        () => _focusListener('religionFocusNode', religionFocusNode));
+            () => _focusListener('religionFocusNode', religionFocusNode));
     casteFocusNode
         .removeListener(() => _focusListener('casteFocusNode', casteFocusNode));
-    educationOfApplicantFocusNode.removeListener(() => _focusListener(
-        'educationOfApplicantFocusNode', educationOfApplicantFocusNode));
+    educationOfApplicantFocusNode.removeListener(() =>
+        _focusListener(
+            'educationOfApplicantFocusNode', educationOfApplicantFocusNode));
     genderFocusNode.removeListener(
-        () => _focusListener('genderFocusNode', genderFocusNode));
+            () => _focusListener('genderFocusNode', genderFocusNode));
     fullNameFocusNode.removeListener(
-        () => _focusListener('fullNameFocusNode', fullNameFocusNode));
+            () => _focusListener('fullNameFocusNode', fullNameFocusNode));
     fatherNameFocusNode.removeListener(
-        () => _focusListener('fatherNameFocusNode', fatherNameFocusNode));
+            () => _focusListener('fatherNameFocusNode', fatherNameFocusNode));
     dobFocusNode
         .removeListener(() => _focusListener('dobFocusNode', dobFocusNode));
     ageFocusNode
         .removeListener(() => _focusListener('ageFocusNode', ageFocusNode));
-    relationWithApplicantFocusNode.removeListener(() => _focusListener(
-        'relationWithApplicantFocusNode', relationWithApplicantFocusNode));
+    relationWithApplicantFocusNode.removeListener(() =>
+        _focusListener(
+            'relationWithApplicantFocusNode', relationWithApplicantFocusNode));
 
-    communicationAddress1FocusNode.removeListener(() => _focusListener(
-        'communicationAddress1FocusNode', communicationAddress1FocusNode));
-    communicationCityFocusNode.removeListener(() => _focusListener(
-        'communicationCityFocusNode', communicationCityFocusNode));
-    communicationDistrictFocusNode.removeListener(() => _focusListener(
-        'communicationDistrictFocusNode', communicationDistrictFocusNode));
-    communicationPinCodeFocusNode.removeListener(() => _focusListener(
-        'communicationPinCodeFocusNode', communicationPinCodeFocusNode));
-    communicationStateFocusNode.removeListener(() => _focusListener(
-        'communicationStateFocusNode', communicationStateFocusNode));
-    communicationAddress2FocusNode.removeListener(() => _focusListener(
-        'communicationAddress2FocusNode', communicationAddress2FocusNode));
-    permanentAddress1FocusNode.removeListener(() => _focusListener(
-        'permanentAddress1FocusNode', permanentAddress1FocusNode));
-    permanentAddress2FocusNode.removeListener(() => _focusListener(
-        'permanentAddress2FocusNode', permanentAddress2FocusNode));
+    communicationAddress1FocusNode.removeListener(() =>
+        _focusListener(
+            'communicationAddress1FocusNode', communicationAddress1FocusNode));
+    communicationCityFocusNode.removeListener(() =>
+        _focusListener(
+            'communicationCityFocusNode', communicationCityFocusNode));
+    communicationDistrictFocusNode.removeListener(() =>
+        _focusListener(
+            'communicationDistrictFocusNode', communicationDistrictFocusNode));
+    communicationPinCodeFocusNode.removeListener(() =>
+        _focusListener(
+            'communicationPinCodeFocusNode', communicationPinCodeFocusNode));
+    communicationStateFocusNode.removeListener(() =>
+        _focusListener(
+            'communicationStateFocusNode', communicationStateFocusNode));
+    communicationAddress2FocusNode.removeListener(() =>
+        _focusListener(
+            'communicationAddress2FocusNode', communicationAddress2FocusNode));
+    permanentAddress1FocusNode.removeListener(() =>
+        _focusListener(
+            'permanentAddress1FocusNode', permanentAddress1FocusNode));
+    permanentAddress2FocusNode.removeListener(() =>
+        _focusListener(
+            'permanentAddress2FocusNode', permanentAddress2FocusNode));
     permanentCityFocusNode.removeListener(
-        () => _focusListener('permanentCityFocusNode', permanentCityFocusNode));
-    permanentDistrictFocusNode.removeListener(() => _focusListener(
-        'permanentDistrictFocusNode', permanentDistrictFocusNode));
+            () =>
+            _focusListener('permanentCityFocusNode', permanentCityFocusNode));
+    permanentDistrictFocusNode.removeListener(() =>
+        _focusListener(
+            'permanentDistrictFocusNode', permanentDistrictFocusNode));
     permanentPinCodeFocusNode.removeListener(() =>
         _focusListener('permanentPinCodeFocusNode', permanentPinCodeFocusNode));
     permanentStateFocusNode.removeListener(() =>
@@ -1134,77 +1224,76 @@ class KycFormState {
     this.isRelationWithApplicantValid = true,
   });
 
-  KycFormState copyWith(
-      {String? otp,
-      bool? isOtpValid,
-      String? applicantPhotoFilePath,
-      String? aadhaarPhotoFilePath1,
-      String? aadhaarPhotoFilePath2,
-      String? aadhaar,
-      String? permanentAddress1,
-      String? permanentAddress2,
-      String? permanentCity,
-      String? permanentState,
-      String? permanentDistrict,
-      String? permanentPinCode,
-      bool? isPermanentAddress1Valid,
-      bool? isPermanentAddress2Valid,
-      bool? isPermanentCityValid,
-      bool? isPermanentStateValid,
-      bool? isPermanentDistrictValid,
-      bool? isPermanentPinCodeValid,
-      bool? isAadhaarValid,
-      String? kycDocument,
-      String? pan,
-      String? mother,
-      String? contact,
-      String? email,
-      String? marital,
-      String? religion,
-      String? caste,
-      String? educationOfApplicant,
-      String? gender,
-      String? fullName,
-      String? fatherName,
-      String? dob,
-      String? age,
-      String? relationWithApplicant,
-      String? communicationAddress1,
-      String? communicationAddress2,
-      String? communicationCity,
-      String? communicationState,
-      String? communicationDistrict,
-      String? communicationPinCode,
-      bool? isCommunicationAddress1Valid,
-      bool? isCommunicationAddress2Valid,
-      bool? isCommunicationCityValid,
-      bool? isCommunicationStateValid,
-      bool? isCommunicationDistrictValid,
-      bool? isCommunicationPinCodeValid,
-      bool? isKycValid,
-      bool? isPanValid,
-      bool? isMotherValid,
-      bool? isContactValid,
-      bool? isEmailValid,
-      bool? isMaritalValid,
-      bool? isReligionValid,
-      bool? isCasteValid,
-      bool? isEducationOfApplicantValid,
-      bool? isGenderValid,
-      bool? isFullNameValid,
-      bool? isFatherNameValid,
-      bool? isDobValid,
-      bool? isAgeValid,
-      bool? isRelationWithApplicantValid}) {
+  KycFormState copyWith({String? otp,
+    bool? isOtpValid,
+    String? applicantPhotoFilePath,
+    String? aadhaarPhotoFilePath1,
+    String? aadhaarPhotoFilePath2,
+    String? aadhaar,
+    String? permanentAddress1,
+    String? permanentAddress2,
+    String? permanentCity,
+    String? permanentState,
+    String? permanentDistrict,
+    String? permanentPinCode,
+    bool? isPermanentAddress1Valid,
+    bool? isPermanentAddress2Valid,
+    bool? isPermanentCityValid,
+    bool? isPermanentStateValid,
+    bool? isPermanentDistrictValid,
+    bool? isPermanentPinCodeValid,
+    bool? isAadhaarValid,
+    String? kycDocument,
+    String? pan,
+    String? mother,
+    String? contact,
+    String? email,
+    String? marital,
+    String? religion,
+    String? caste,
+    String? educationOfApplicant,
+    String? gender,
+    String? fullName,
+    String? fatherName,
+    String? dob,
+    String? age,
+    String? relationWithApplicant,
+    String? communicationAddress1,
+    String? communicationAddress2,
+    String? communicationCity,
+    String? communicationState,
+    String? communicationDistrict,
+    String? communicationPinCode,
+    bool? isCommunicationAddress1Valid,
+    bool? isCommunicationAddress2Valid,
+    bool? isCommunicationCityValid,
+    bool? isCommunicationStateValid,
+    bool? isCommunicationDistrictValid,
+    bool? isCommunicationPinCodeValid,
+    bool? isKycValid,
+    bool? isPanValid,
+    bool? isMotherValid,
+    bool? isContactValid,
+    bool? isEmailValid,
+    bool? isMaritalValid,
+    bool? isReligionValid,
+    bool? isCasteValid,
+    bool? isEducationOfApplicantValid,
+    bool? isGenderValid,
+    bool? isFullNameValid,
+    bool? isFatherNameValid,
+    bool? isDobValid,
+    bool? isAgeValid,
+    bool? isRelationWithApplicantValid}) {
     return KycFormState(
         isOtpValid: isOtpValid ?? this.isOtpValid,
         otp: otp ?? this.otp,
         applicantPhotoFilePath:
-            applicantPhotoFilePath ?? this.applicantPhotoFilePath,
+        applicantPhotoFilePath ?? this.applicantPhotoFilePath,
         aadhaarPhotoFilePath1:
-            aadhaarPhotoFilePath1 ?? this.aadhaarPhotoFilePath1,
+        aadhaarPhotoFilePath1 ?? this.aadhaarPhotoFilePath1,
         aadhaarPhotoFilePath2:
-            aadhaarPhotoFilePath2 ?? this.aadhaarPhotoFilePath2,
+        aadhaarPhotoFilePath2 ?? this.aadhaarPhotoFilePath2,
         aadhaar: aadhaar ?? this.aadhaar,
         isAadhaarValid: isAadhaarValid ?? this.isAadhaarValid,
         kycDocument: kycDocument ?? this.kycDocument,
@@ -1222,14 +1311,14 @@ class KycFormState {
         dob: dob ?? this.dob,
         age: age ?? this.age,
         relationWithApplicant:
-            relationWithApplicant ?? this.relationWithApplicant,
+        relationWithApplicant ?? this.relationWithApplicant,
         communicationAddress1:
-            communicationAddress1 ?? this.communicationAddress1,
+        communicationAddress1 ?? this.communicationAddress1,
         communicationAddress2:
-            communicationAddress2 ?? this.communicationAddress2,
+        communicationAddress2 ?? this.communicationAddress2,
         communicationCity: communicationCity ?? this.communicationCity,
         communicationDistrict:
-            communicationDistrict ?? this.communicationDistrict,
+        communicationDistrict ?? this.communicationDistrict,
         communicationPinCode: communicationPinCode ?? this.communicationPinCode,
         communicationState: communicationState ?? this.communicationState,
         permanentAddress1: permanentAddress1 ?? this.permanentAddress1,
@@ -1239,28 +1328,28 @@ class KycFormState {
         permanentPinCode: permanentPinCode ?? this.permanentPinCode,
         permanentState: permanentState ?? this.permanentState,
         isPermanentAddress1Valid:
-            isPermanentAddress1Valid ?? this.isPermanentAddress1Valid,
+        isPermanentAddress1Valid ?? this.isPermanentAddress1Valid,
         isPermanentAddress2Valid:
-            isPermanentAddress2Valid ?? this.isPermanentAddress2Valid,
+        isPermanentAddress2Valid ?? this.isPermanentAddress2Valid,
         isPermanentCityValid: isPermanentCityValid ?? this.isPermanentCityValid,
         isPermanentDistrictValid:
-            isPermanentDistrictValid ?? this.isPermanentDistrictValid,
+        isPermanentDistrictValid ?? this.isPermanentDistrictValid,
         isPermanentPinCodeValid:
-            isPermanentPinCodeValid ?? this.isPermanentPinCodeValid,
+        isPermanentPinCodeValid ?? this.isPermanentPinCodeValid,
         isPermanentStateValid:
-            isPermanentStateValid ?? this.isPermanentStateValid,
+        isPermanentStateValid ?? this.isPermanentStateValid,
         isCommunicationAddress1Valid:
-            isCommunicationAddress1Valid ?? this.isCommunicationAddress1Valid,
+        isCommunicationAddress1Valid ?? this.isCommunicationAddress1Valid,
         isCommunicationAddress2Valid:
-            isCommunicationAddress2Valid ?? this.isCommunicationAddress2Valid,
+        isCommunicationAddress2Valid ?? this.isCommunicationAddress2Valid,
         isCommunicationCityValid:
-            isCommunicationCityValid ?? this.isCommunicationCityValid,
+        isCommunicationCityValid ?? this.isCommunicationCityValid,
         isCommunicationDistrictValid:
-            isCommunicationDistrictValid ?? this.isCommunicationDistrictValid,
+        isCommunicationDistrictValid ?? this.isCommunicationDistrictValid,
         isCommunicationPinCodeValid:
-            isCommunicationPinCodeValid ?? this.isCommunicationPinCodeValid,
+        isCommunicationPinCodeValid ?? this.isCommunicationPinCodeValid,
         isCommunicationStateValid:
-            isCommunicationStateValid ?? this.isCommunicationStateValid,
+        isCommunicationStateValid ?? this.isCommunicationStateValid,
         isKycValid: isKycValid ?? this.isKycValid,
         isPanValid: isPanValid ?? this.isPanValid,
         isMotherValid: isMotherValid ?? this.isMotherValid,
@@ -1270,14 +1359,14 @@ class KycFormState {
         isReligionValid: isReligionValid ?? this.isReligionValid,
         isCasteValid: isCasteValid ?? this.isCasteValid,
         isEducationOfApplicantValid:
-            isEducationOfApplicantValid ?? this.isEducationOfApplicantValid,
+        isEducationOfApplicantValid ?? this.isEducationOfApplicantValid,
         isGenderValid: isGenderValid ?? this.isGenderValid,
         isFullNameValid: isFullNameValid ?? this.isFullNameValid,
         isFatherNameValid: isFatherNameValid ?? this.isFatherNameValid,
         isDobValid: isDobValid ?? this.isDobValid,
         isAgeValid: isAgeValid ?? this.isAgeValid,
         isRelationWithApplicantValid:
-            isRelationWithApplicantValid ?? this.isRelationWithApplicantValid);
+        isRelationWithApplicantValid ?? this.isRelationWithApplicantValid);
   }
 }
 
@@ -1291,31 +1380,31 @@ class FormDataControllerNotifier
     extends StateNotifier<ApplicantDataController> {
   FormDataControllerNotifier()
       : super(
-    ApplicantDataController(
-      aadhaarController: TextEditingController(),
-      kycDocumentController: TextEditingController(),
-      contactController: TextEditingController(),
-      ageController: TextEditingController(),
-      dobController: TextEditingController(),
-      communicationAddress1Controller: TextEditingController(),
-      communicationAddress2Controller: TextEditingController(),
-      communicationCityController: TextEditingController(),
-      communicationDistrictController: TextEditingController(),
-      communicationPinCodeController: TextEditingController(),
-      communicationStateController: TextEditingController(),
-      emailController: TextEditingController(),
-      fatherNameController: TextEditingController(),
-      fullNameController: TextEditingController(),
-      genderController: TextEditingController(),
-      otpController: TextEditingController(),
-      panController: TextEditingController(),
-      permanentAddress1Controller: TextEditingController(),
-      permanentAddress2Controller: TextEditingController(),
-      permanentCityController: TextEditingController(),
-      permanentDistrictController: TextEditingController(),
-      permanentPinCodeController: TextEditingController(),
-      permanentStateController: TextEditingController(),
-    )
+      ApplicantDataController(
+        aadhaarController: TextEditingController(),
+        kycDocumentController: TextEditingController(),
+        contactController: TextEditingController(),
+        ageController: TextEditingController(),
+        dobController: TextEditingController(),
+        communicationAddress1Controller: TextEditingController(),
+        communicationAddress2Controller: TextEditingController(),
+        communicationCityController: TextEditingController(),
+        communicationDistrictController: TextEditingController(),
+        communicationPinCodeController: TextEditingController(),
+        communicationStateController: TextEditingController(),
+        emailController: TextEditingController(),
+        fatherNameController: TextEditingController(),
+        fullNameController: TextEditingController(),
+        genderController: TextEditingController(),
+        otpController: TextEditingController(),
+        panController: TextEditingController(),
+        permanentAddress1Controller: TextEditingController(),
+        permanentAddress2Controller: TextEditingController(),
+        permanentCityController: TextEditingController(),
+        permanentDistrictController: TextEditingController(),
+        permanentPinCodeController: TextEditingController(),
+        permanentStateController: TextEditingController(),
+      )
   );
 
   @override

@@ -16,7 +16,7 @@ class UpdateVisit extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dropDownControllers = ref.watch(dropDownControllerProvider);
+    // final dropDownControllers = ref.watch(dropDownControllerProvider);
     final dropDownData = ref.read(updateVisitDropDown);
 
     final paymentState = ref.watch(paymentStatusViewModelProvider);
@@ -45,7 +45,7 @@ class UpdateVisit extends ConsumerWidget {
               ),
               DropDownTextField(
                 clearOption: false,
-                controller: dropDownControllers,
+                controller: paymentViewModel.dropDownControllerProvider,
                 listSpace: 20,
                 listPadding: ListPadding(top: 20),
                 enableSearch: false,
@@ -94,7 +94,7 @@ class UpdateVisit extends ConsumerWidget {
                 height: displayHeight(context) * 0.01,
               ),
               Visibility(
-                visible: dropDownControllers.dropDownValue?.value ==
+                visible:  paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
                     'CustomerWillPayEmi',
                 child: AppFloatTextField(
                   focusNode: paymentFocusViewModel.paymentAmountFocusNode,
@@ -116,11 +116,11 @@ class UpdateVisit extends ConsumerWidget {
                 height: displayHeight(context) * 0.01,
               ),
               Visibility(
-                visible: dropDownControllers.dropDownValue?.value ==
+                visible:  paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
                         'CustomerWillPayEmi' ||
-                    dropDownControllers.dropDownValue?.value ==
+                    paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
                         'CustomerWillNotPayEmi' ||
-                    dropDownControllers.dropDownValue?.value ==
+                    paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
                         'CustomerNotContactable',
                 child: AppFloatTextField(
                   focusNode: paymentFocusViewModel.dateFocusNode,
@@ -142,9 +142,9 @@ class UpdateVisit extends ConsumerWidget {
                 height: displayHeight(context) * 0.01,
               ),
               Visibility(
-                visible: dropDownControllers.dropDownValue?.value ==
+                visible:  paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
                         'CustomerWillNotPayEmi' ||
-                    dropDownControllers.dropDownValue?.value ==
+                    paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
                         'CustomerNotContactable',
                 child: AppFloatTextField(
                   maxLine: 5,
@@ -157,7 +157,7 @@ class UpdateVisit extends ConsumerWidget {
                   height: !paymentState.isReasonValid
                       ? displayHeight(context) * 0.16
                       : displayHeight(context) * 0.13,
-                  inerHint: dropDownControllers.dropDownValue?.value ==
+                  inerHint:  paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
                           'CustomerNotContactable'
                       ? 'Reason For Customer Not Contactable*'
                       : 'Reason For Not Pay (500 Character)*',
@@ -170,7 +170,7 @@ class UpdateVisit extends ConsumerWidget {
                 height: displayHeight(context) * 0.01,
               ),
               Visibility(
-                visible: dropDownControllers.dropDownValue?.value ==
+                visible:  paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
                     'CustomerWillNotPayEmi',
                 child: AppFloatTextField(
                   maxLine: 5,

@@ -200,7 +200,11 @@ class ApplicationDetails extends ConsumerWidget {
                                       ref.read(isPanLoading.notifier).state =
                                           true;
                                       personalFormViewModel
-                                          .fetchPanVerify()
+                                          .fetchPanVerify().onError((error, stackTrace) {
+                                            return  ref
+                                                .read(isPanLoading.notifier)
+                                                .state = false;
+                                          },)
                                           .then(
                                         (value) {
                                           if (value) {

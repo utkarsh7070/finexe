@@ -66,14 +66,14 @@ class GuarantorForm2 extends ConsumerWidget {
                       clipBehavior: Clip.none,
                       runSpacing: displayHeight(context) * 0.04,
                       children: [
-                        Column(
-                            children: [
+                        Column(children: [
                           AppFloatTextField(
                             focusNode: personalFocusViewModel
                                 .communicationAddress1FocusNode,
                             currentState: personalFocusStates[
                                 'communicationAddress1FocusNode'],
-                            controller: formListController.communicationAddress1Controller,
+                            controller: formListController
+                                .communicationAddress1Controller,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationAddress1(value);
@@ -96,7 +96,8 @@ class GuarantorForm2 extends ConsumerWidget {
                                 .communicationAddress2FocusNode,
                             currentState: personalFocusStates[
                                 'communicationAddress2FocusNode'],
-                            controller: formListController.communicationAddress2Controller,
+                            controller: formListController
+                                .communicationAddress2Controller,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationAddress2(value);
@@ -118,7 +119,8 @@ class GuarantorForm2 extends ConsumerWidget {
                                 .communicationCityFocusNode,
                             currentState: personalFocusStates[
                                 'communicationCityFocusNode'],
-                            controller: formListController.communicationCityController,
+                            controller:
+                                formListController.communicationCityController,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationCity(value);
@@ -140,7 +142,8 @@ class GuarantorForm2 extends ConsumerWidget {
                                 .communicationStateFocusNode,
                             currentState: personalFocusStates[
                                 'communicationStateFocusNode'],
-                            controller: formListController.communicationStateController,
+                            controller:
+                                formListController.communicationStateController,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationState(value);
@@ -162,7 +165,8 @@ class GuarantorForm2 extends ConsumerWidget {
                                 .communicationDistrictFocusNode,
                             currentState: personalFocusStates[
                                 'communicationDistrictFocusNode'],
-                            controller: formListController.communicationDistrictController,
+                            controller: formListController
+                                .communicationDistrictController,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationDistrict(value);
@@ -185,7 +189,8 @@ class GuarantorForm2 extends ConsumerWidget {
                                 .communicationPinCodeFocusNode,
                             currentState: personalFocusStates[
                                 'communicationPinCodeFocusNode'],
-                            controller: formListController.communicationPinCodeController,
+                            controller: formListController
+                                .communicationPinCodeController,
                             onChange: (value) {
                               personalFormViewModel
                                   .updateCommunicationPinCode(value);
@@ -203,7 +208,10 @@ class GuarantorForm2 extends ConsumerWidget {
                           SizedBox(
                             height: displayHeight(context) * 0.02,
                           ),
-                          const Text('Same as permanent address',textAlign: TextAlign.start,),
+                          const Text(
+                            'Same as permanent address',
+                            textAlign: TextAlign.start,
+                          ),
                           Row(
                             children: [
                               SizedBox(
@@ -217,7 +225,8 @@ class GuarantorForm2 extends ConsumerWidget {
                                         if (value != null) {
                                           guarantorAddressRadioViewModel
                                               .selectAddress(value);
-                                          personalFormViewModel.localAddCopyPermanentAdd();
+                                          personalFormViewModel
+                                              .localAddCopyPermanentAdd();
                                         }
                                         // showBottomSheetIfYes(
                                         //   context: context,
@@ -255,7 +264,6 @@ class GuarantorForm2 extends ConsumerWidget {
                                   ],
                                 ),
                               ),
-
                             ],
                           ),
                           Visibility(
@@ -268,7 +276,8 @@ class GuarantorForm2 extends ConsumerWidget {
                                         .permanentAddress1FocusNode,
                                     currentState: personalFocusStates[
                                         'permanentAddress1FocusNode'],
-                                    controller: formListController.permanentAddress1Controller,
+                                    controller: formListController
+                                        .permanentAddress1Controller,
                                     onChange: (value) {
                                       personalFormViewModel
                                           .updatePermanentAddress1(value);
@@ -291,7 +300,8 @@ class GuarantorForm2 extends ConsumerWidget {
                                         .permanentAddress2FocusNode,
                                     currentState: personalFocusStates[
                                         'permanentAddress2FocusNode'],
-                                    controller: formListController.permanentAddress2Controller,
+                                    controller: formListController
+                                        .permanentAddress2Controller,
                                     onChange: (value) {
                                       personalFormViewModel
                                           .updatePermanentAddress2(value);
@@ -314,7 +324,8 @@ class GuarantorForm2 extends ConsumerWidget {
                                         .permanentCityFocusNode,
                                     currentState: personalFocusStates[
                                         'permanentCityFocusNode'],
-                                    controller: formListController.permanentCityController,
+                                    controller: formListController
+                                        .permanentCityController,
                                     onChange: (value) {
                                       personalFormViewModel
                                           .updatePermanentCity(value);
@@ -337,7 +348,8 @@ class GuarantorForm2 extends ConsumerWidget {
                                         .permanentStateFocusNode,
                                     currentState: personalFocusStates[
                                         'permanentStateFocusNode'],
-                                    controller: formListController.permanentStateController,
+                                    controller: formListController
+                                        .permanentStateController,
                                     onChange: (value) {
                                       personalFormViewModel
                                           .updatePermanentState(value);
@@ -360,7 +372,8 @@ class GuarantorForm2 extends ConsumerWidget {
                                         .permanentDistrictFocusNode,
                                     currentState: personalFocusStates[
                                         'permanentDistrictFocusNode'],
-                                    controller: formListController.permanentDistrictController,
+                                    controller: formListController
+                                        .permanentDistrictController,
                                     onChange: (value) {
                                       personalFormViewModel
                                           .updatePermanentDistrict(value);
@@ -383,7 +396,8 @@ class GuarantorForm2 extends ConsumerWidget {
                                         .permanentPinCodeFocusNode,
                                     currentState: personalFocusStates[
                                         'permanentPinCodeFocusNode'],
-                                    controller: formListController.permanentPinCodeController,
+                                    controller: formListController
+                                        .permanentPinCodeController,
                                     onChange: (value) {
                                       personalFormViewModel
                                           .updatePermanentPinCode(value);
@@ -401,7 +415,6 @@ class GuarantorForm2 extends ConsumerWidget {
                                   SizedBox(
                                     height: displayHeight(context) * 0.02,
                                   ),
-
                                 ],
                               )),
                           SizedBox(
@@ -412,8 +425,15 @@ class GuarantorForm2 extends ConsumerWidget {
                             width: displayWidth(context),
                             label: 'Next',
                             onTap: () {
-                              Navigator.pushNamed(
-                                  context, AppRoutes.saleReferenceForm);
+                              personalFormViewModel.validateForm();
+                              personalFormViewModel.submitGuarantorForm().then(
+                                (value) {
+                                  if (value) {
+                                    Navigator.pushNamed(
+                                        context, AppRoutes.saleReferenceForm);
+                                  }
+                                },
+                              );
                             },
                           ),
                           SizedBox(
@@ -425,8 +445,6 @@ class GuarantorForm2 extends ConsumerWidget {
                           //   label: 'Back',
                           //   onTap: () {},
                           // ),
-
-
                         ]),
                       ]),
                 ),

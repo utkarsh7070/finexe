@@ -2,10 +2,13 @@
 
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/Submite_guarantor_form_data.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/submit_guarantor_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../base/api/dio.dart';
 import '../model/request_model/aadhaar_number_request_model.dart';
@@ -231,10 +234,56 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     }
   }
 
+  Future<bool> submitGuarantorForm() async{
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final token = sharedPreferences.getString('token');
+    final customerId = sharedPreferences.getString('customerId');
+    final formData = GuarantorFormData(
+        relationWithApplicant: '',
+        docType: 'panCard',
+        customerId: customerId!,
+        fullName: state.fullName,
+        email: state.email,
+        aadharNo: state.aadhaar,
+        mobileNo: state.contact,
+        docNo: state.pan,
+        gender: state.gender,
+        fatherName: state.fatherName,
+        maritalStatus: '',
+        spouseName: '',
+        motherName: '',
+        dob: state.dob,
+        religion: '',
+        caste: '',
+        age: state.age,
+        education: '',
+        permanentAddressaddressLine1: state.permanentAddress1,
+        permanentAddressaddressLine2: state.permanentAddress2,
+        permanentAddresspinCode: state.permanentPinCode,
+        permanentAddresscity: state.permanentCity,
+        permanentAddressdistrict: state.permanentDistrict,
+        permanentAddressstate: state.permanentState,
+        localAddressaddressLine1: state.communicationAddress1,
+        localAddressaddressLine2: state.communicationAddress2,
+        localAddresspinCode: state.communicationPinCode,
+        localAddresscity: state.communicationCity,
+        localAddressdistrict: state.communicationDistrict,
+        localAddressstate: state.communicationState);
+    FormData dioFormData = formData.toFormData();
+
+    final response = await dio.post(Api.submitGuarantorForm,
+        data: dioFormData, options: Options(headers: {'token': token}));
+    print(response.statusMessage);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      SubmitGuarantorResponseModel.fromJson(response.data);
+      return true;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
 
   Future<void> pickImages() async {
-
-
     // var video = await Permission.storage.status;
     if (await Permission.photos.status.isDenied && await Permission.videos.status.isDenied) {
       await Permission.photos.request();
@@ -263,8 +312,6 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
   // }
 
   Future<void> pickAadhaar1Images() async {
-
-
     // var video = await Permission.storage.status;
     if (await Permission.photos.status.isDenied && await Permission.videos.status.isDenied) {
       await Permission.photos.request();
@@ -287,13 +334,9 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
   }
 
   Future<void> pickAadhaar2Images() async {
-
-
-    // var video = await Permission.storage.status;
     if (await Permission.photos.status.isDenied && await Permission.videos.status.isDenied) {
       await Permission.photos.request();
       await Permission.videos.request();
-      // We haven't asked for permission yet or the permission has been denied before, but not permanently.
     }
     if(await Permission.photos.status.isGranted && await Permission.videos.status.isGranted){
       try {
@@ -302,7 +345,6 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
         if (pickedImage != null) {
           print('image ${pickedImage.path}');
           state = state.copyWith(aadhaarPhotoFilePath2: pickedImage.path);
-          // File(pickedImage.path) as AadhaarFormState;
         }
       } catch (e) {
         print('Failed to pick image: $e');
@@ -490,7 +532,7 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
   }
 
   // Validate the form
-  bool validateForm(int index) {
+  bool validateForm() {
     final isKycValid = _validateKycDoc(state.kycDocument);
     final isPanValid = _validatePan(state.pan);
     final isMotherValid = _validateMother(state.mother);

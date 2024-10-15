@@ -1,15 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/api/api.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/submit_co_applicant_response_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/dio.dart';
 import '../model/request_model/aadhaar_number_request_model.dart';
 import '../model/request_model/aadhaar_otp_request_model.dart';
 import '../model/request_model/pan_request_model.dart';
+import '../model/request_model/submit_co_applicant_form_data.dart';
+import '../model/request_model/submite_applicant_form_data_model.dart';
 import '../model/responce_model/aadhaar_otp_responce_model.dart';
 import '../model/responce_model/aadhar_number_response_model.dart';
 import '../view/Sales_on_boarding_form/co-applicant_form/co_applicant_form1.dart';
@@ -21,12 +25,12 @@ final uploadCoDoc = StateProvider(
 );
 
 final isCoPanLoading = StateProvider(
-      (ref) {
+  (ref) {
     return false;
   },
 );
 final isCoTickColorChange = StateProvider(
-      (ref) {
+  (ref) {
     return false;
   },
 );
@@ -90,6 +94,12 @@ final listIndex = StateProvider<int>(
     return 0;
   },
 );
+
+// final count = StateProvider<int>(
+//       (ref) {
+//     return 0;
+//   },
+// );
 
 final coApplicantController =
     StateNotifierProvider<FormDataControllerNotifier, List<FormDataController>>(
@@ -308,6 +318,57 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     }
   }
 
+  Future<bool> submitCoApplicantForm(int index) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final token = sharedPreferences.getString('token');
+    final employeId = sharedPreferences.getString('employeId');
+    final customerId = sharedPreferences.getString('customerId');
+    final formData = CoApplicantFormData(
+        relationWithApplicant: '',
+        docType: dropDownController.dropDownValue!.name,
+        employeId: employeId!,
+        customerId: customerId!,
+        fullName: state[index].fullName,
+        email: state[index].email,
+        aadharNo: state[index].aadhaar,
+        mobileNo: state[index].contact,
+        docNo: state[index].pan,
+        gender: state[index].gender,
+        fatherName: state[index].fatherName,
+        maritalStatus: '',
+        spouseName: '',
+        motherName: '',
+        dob: state[index].dob,
+        religion: '',
+        caste: '',
+        age: state[index].age,
+        education: '',
+        permanentAddressaddressLine1: state[index].permanentAddress1,
+        permanentAddressaddressLine2: state[index].permanentAddress2,
+        permanentAddresspinCode: state[index].permanentPinCode,
+        permanentAddresscity: state[index].permanentCity,
+        permanentAddressdistrict: state[index].permanentDistrict,
+        permanentAddressstate: state[index].permanentState,
+        localAddressaddressLine1: state[index].communicationAddress1,
+        localAddressaddressLine2: state[index].communicationAddress2,
+        localAddresspinCode: state[index].communicationPinCode,
+        localAddresscity: state[index].communicationCity,
+        localAddressdistrict: state[index].communicationDistrict,
+        localAddressstate: state[index].communicationState);
+    FormData dioFormData = formData.toFormData();
+
+    final response = await dio.post(Api.submitCoApplicantForm,
+        data: dioFormData, options: Options(headers: {'token': token}));
+    print(response.statusMessage);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      SubmitCoApplicantResponseModel.fromJson(response.data);
+      return true;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
   void setAutoValueByAadhaar(
       List<FormDataController> formListController, int index) {
     if (aadhaarOtpResponseModel != null) {
@@ -338,7 +399,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
           await MultipartFile.fromFile(state[index].aadhaarPhotoFilePath1),
       'back_image':
           await MultipartFile.fromFile(state[index].aadhaarPhotoFilePath2),
-      'formName':'coApplicant'
+      'formName': 'coApplicant'
     });
 
     try {
@@ -416,6 +477,10 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
   // void clearImage() {
   //   state = null;
   // }
+
+  void removeItem(int index){
+
+  }
 
   Future<void> pickAadhaar1Images(int index) async {
     await Permission.photos.request();
@@ -1679,5 +1744,44 @@ class KycFormState {
         isAgeValid: isAgeValid ?? this.isAgeValid,
         isRelationWithApplicantValid:
             isRelationWithApplicantValid ?? this.isRelationWithApplicantValid);
+  }
+}
+
+
+//-----------------------pageView-------------------------------------------------
+
+final pageViewModelProvider = StateNotifierProvider<CoTabViewModel, CoTabModel>(
+      (ref) => CoTabViewModel(),
+);
+
+class CoTabViewModel extends StateNotifier<CoTabModel> {
+  CoTabViewModel() : super(CoTabModel(selectedIndex: 0));
+
+  void setTabIndex(int index) {
+    state = state.copyWith(selectedIndex: index);
+  }
+}
+
+// class PageIndexNotifier extends StateNotifier<int> {
+//   PageIndexNotifier() : super(0);
+//
+//   void setPageIndex(int index) {
+//     state = index;
+//   }
+// }
+//
+// final pageIndexProvider = StateNotifierProvider<PageIndexNotifier, int>((ref) {
+//   return PageIndexNotifier();
+// });
+//-----------------------------------------------------------------------------------
+class CoTabModel {
+  final int selectedIndex;
+
+  CoTabModel({required this.selectedIndex});
+
+  CoTabModel copyWith({int? selectedIndex}) {
+    return CoTabModel(
+      selectedIndex: selectedIndex ?? this.selectedIndex,
+    );
   }
 }

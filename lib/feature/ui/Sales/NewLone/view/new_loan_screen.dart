@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
@@ -20,39 +22,12 @@ class NewLoanScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final getAllProduct = ref.watch(fetchDataProvider);
-    final dataList = ref.watch(getAllProductsList);
-    final dataListViewModel = ref.read(list.notifier);
-    final listViewModel = ref.watch(list);
-    // final selectedValue = ref.watch(dropdownValueProvider);
     final phoneState = ref.watch(personalDetailViewModelProvider);
     final phoneViewModel = ref.read(personalDetailViewModelProvider.notifier);
     final personalFocusStates = ref.watch(newLoanFocusProvider);
     final phoneFocusViewModel = ref.read(newLoanFocusProvider.notifier);
 
-    final loanAmount = ref.watch(newLoanAmount);
-    final interestRate = ref.watch(newInterestRate);
-    final tenure = ref.watch(newTenureRate);
-
-    var loanAmountMax;
-    // var loanAmount;
-    // final getAllProducts = getAllProduct.value?.items.where((element) => element.productName == phoneViewModel.dropDownController.dropDownValue?.name,);
-
-    // getAllProductsList.select(
-    //   (value) {
-    //     value?.where(
-    //       (element) {
-    //         return element.productName ==
-    //             phoneViewModel.dropDownController.dropDownValue?.name
-    //                 .toString();
-    //       },
-    //     );
-    //   },
-    // );
-
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('New Loan'),
-      // ),
       body: Container(
         width: displayWidth(context),
         height: displayHeight(context),
@@ -92,15 +67,25 @@ class NewLoanScreen extends ConsumerWidget {
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: getAllProduct.when(
                       data: (data) {
-                        final list = data.items.where((element) =>
-                            element.productName ==
-                            phoneViewModel.dropDownController.dropDownValue
-                                ?.name);
-                        // final assignAmount = list.where((element) => element.loanAmount.max,) ,)
-                        for (Item item in list) {
-                          loanAmountMax = item.loanAmount.max;
-                          print(item.loanAmount);
-                        }
+                        final item = data.firstWhere(
+                          (element) =>
+                              element.productName ==
+                              phoneViewModel
+                                  .dropDownController.dropDownValue?.name,
+                          orElse: () => Item(
+                              loanAmount: LoanAmount(min: 0, max: 100),
+                              roi: LoanAmount(min: 0, max: 100),
+                              tenure: LoanAmount(min: 0, max: 100),
+                              id: '0',
+                              productName: 'productName',
+                              loginFees: 0,
+                              status: 'status',
+                              createdAt: DateTime(000),
+                              updatedAt: DateTime(000),
+                              v: 0,
+                              permissionFormId: 'permissionFormId',
+                              productFinId: 'productFinId'),
+                        );
                         return Wrap(
                           crossAxisAlignment: WrapCrossAlignment.center,
                           verticalDirection: VerticalDirection.down,
@@ -135,7 +120,8 @@ class NewLoanScreen extends ConsumerWidget {
                                 DropDownTextField(
                                   clearOption: false,
                                   controller: phoneViewModel.dropDownController,
-                                  // initialValue: phoneViewModel.dropDownController.dropDownValue?.name,
+                                  // initialValue:
+                                  // phoneViewModel.dropDownController.dropDownValue,
                                   listSpace: 20,
 
                                   listPadding: ListPadding(top: 20),
@@ -188,16 +174,7 @@ class NewLoanScreen extends ConsumerWidget {
                                       const TextStyle(color: AppColors.primary),
                                   dropDownItemCount: 9,
                                   onChanged: (val) {
-                                    print(val);
-                                    DropDownValueModel value = val;
-                                    print(
-                                        '  value  ${value.value},  ${value.name}');
-                                    dataListViewModel
-                                        .state = dataList!.where((element) =>
-                                            element.productName == value.name)
-                                        as Item?;
-                                    // phoneViewModel.updateProduct(val);
-                                    // ref.read(dropdownValueProvider.notifier).state = val;
+                                    phoneViewModel.updateProduct(item.id);
                                   },
                                   textFieldFocusNode:
                                       phoneFocusViewModel.productFocusNode,
@@ -211,10 +188,7 @@ class NewLoanScreen extends ConsumerWidget {
                                             : AppStyles.subHeading,
                                     label: const Text(
                                       'Product',
-                                      // style: const TextStyle(color: AppColors.textGray),
                                     ),
-
-                                    // errorText: isError! ? errorText : null,
                                     enabledBorder: const OutlineInputBorder(
                                         borderSide: BorderSide(
                                             color: AppColors.gray, width: 1),
@@ -243,17 +217,18 @@ class NewLoanScreen extends ConsumerWidget {
                                 SizedBox(
                                   height: displayHeight(context) * 0.04,
                                 ),
-                                amountShow(context),
+                                amountShow(
+                                    context,
+                                    phoneState.loanAmount,
+                                    phoneState.roi,
+                                    phoneState.tenure,
+                                    phoneState.emi),
                                 SizedBox(
                                   height: displayHeight(context) * 0.04,
                                 ),
                                 amountTextShow(
                                     data: 'Loan Amount',
-                                    price: '${loanAmount.toInt()}'),
-                                // Text('Loan Amount',
-                                //     style: AppStyles.subTextStyle.copyWith(
-                                //         color: AppColors.grayColor3,
-                                //         fontWeight: FontWeight.w500)),
+                                    price: '${phoneState.loanAmount.toInt()}'),
                                 SizedBox(
                                   height: displayHeight(context) * 0.01,
                                 ),
@@ -261,8 +236,8 @@ class NewLoanScreen extends ConsumerWidget {
                                   axisTrackStyle: const LinearAxisTrackStyle(
                                       edgeStyle: LinearEdgeStyle.bothCurve,
                                       color: AppColors.linearBarColor),
-                                  minimum: 1000,
-                                  maximum: 200,
+                                  minimum: item.loanAmount.min.toDouble(),
+                                  maximum: item.loanAmount.max.toDouble(),
                                   showTicks: true,
                                   showLabels: false,
                                   minorTicksPerInterval: 1,
@@ -274,12 +249,11 @@ class NewLoanScreen extends ConsumerWidget {
                                   markerPointers: [
                                     // Widget for the draggable pointer
                                     LinearWidgetPointer(
-                                        value: loanAmount,
+                                        value: phoneState.loanAmount,
                                         onChanged: (double value) {
-                                          // Update the loan amount using Riverpod state
-                                          ref
-                                              .read(newLoanAmount.notifier)
+                                          phoneViewModel
                                               .updateLoanAmount(value);
+                                          phoneViewModel.updateEmi();
                                         },
                                         child: const Icon(
                                           Icons.circle,
@@ -292,7 +266,7 @@ class NewLoanScreen extends ConsumerWidget {
                                       edgeStyle: LinearEdgeStyle.bothCurve,
                                       position: LinearElementPosition.cross,
                                       startValue: 0,
-                                      endValue: loanAmount,
+                                      endValue: phoneState.loanAmount,
                                       color: AppColors.primary,
                                     ),
                                   ],
@@ -302,7 +276,7 @@ class NewLoanScreen extends ConsumerWidget {
                                 ),
                                 amountTextShow(
                                     data: 'Interest Rate',
-                                    price: '${interestRate.toInt()}%'),
+                                    price: '${phoneState.roi.toInt()}%'),
                                 SizedBox(
                                   height: displayHeight(context) * 0.01,
                                 ),
@@ -310,8 +284,8 @@ class NewLoanScreen extends ConsumerWidget {
                                   axisTrackStyle: const LinearAxisTrackStyle(
                                       color: AppColors.linearBarColor,
                                       edgeStyle: LinearEdgeStyle.bothCurve),
-                                  minimum: 100,
-                                  maximum: 1000,
+                                  minimum: item.roi.min.toDouble(),
+                                  maximum: item.roi.max.toDouble(),
                                   showTicks: true,
                                   showLabels: false,
                                   majorTickStyle:
@@ -322,12 +296,11 @@ class NewLoanScreen extends ConsumerWidget {
                                   markerPointers: [
                                     // Widget for the draggable pointer
                                     LinearWidgetPointer(
-                                        value: interestRate,
+                                        value: phoneState.roi,
                                         onChanged: (double value) {
-                                          // Update the loan amount using Riverpod state
-                                          ref
-                                              .read(newInterestRate.notifier)
+                                          phoneViewModel
                                               .updateInterestLone(value);
+                                          phoneViewModel.updateEmi();
                                         },
                                         child: const Icon(
                                           Icons.circle,
@@ -340,21 +313,17 @@ class NewLoanScreen extends ConsumerWidget {
                                       edgeStyle: LinearEdgeStyle.bothCurve,
                                       position: LinearElementPosition.cross,
                                       startValue: 0,
-                                      endValue: interestRate,
+                                      endValue: phoneState.roi,
                                       color: AppColors.primary,
                                     ),
                                   ],
                                 ),
-
                                 SizedBox(
                                   height: displayHeight(context) * 0.03,
                                 ),
                                 amountTextShow(
-                                    data: 'Tenure', price: '${tenure.toInt()}'),
-                                // Text('Tenure',
-                                //     style: AppStyles.subTextStyle.copyWith(
-                                //         color: AppColors.grayColor3,
-                                //         fontWeight: FontWeight.w500)),
+                                    data: 'Tenure',
+                                    price: '${phoneState.tenure.toInt()}'),
                                 SizedBox(
                                   height: displayHeight(context) * 0.01,
                                 ),
@@ -363,8 +332,8 @@ class NewLoanScreen extends ConsumerWidget {
                                   axisTrackStyle: const LinearAxisTrackStyle(
                                       color: AppColors.linearBarColor,
                                       edgeStyle: LinearEdgeStyle.bothCurve),
-                                  minimum: 0,
-                                  maximum: 100,
+                                  minimum: item.tenure.min.toDouble(),
+                                  maximum: item.tenure.max.toDouble(),
                                   showTicks: true,
                                   showLabels: false,
                                   majorTickStyle: const LinearTickStyle(
@@ -379,11 +348,11 @@ class NewLoanScreen extends ConsumerWidget {
                                   markerPointers: [
                                     // Widget for the draggable pointer
                                     LinearWidgetPointer(
-                                        value: tenure,
+                                        value: phoneState.tenure,
                                         onChanged: (double value) {
-                                          ref
-                                              .read(newTenureRate.notifier)
+                                          phoneViewModel
                                               .updateTenureRate(value);
+                                          phoneViewModel.updateEmi();
                                         },
                                         child: const Icon(
                                           CupertinoIcons.circle_fill,
@@ -395,7 +364,7 @@ class NewLoanScreen extends ConsumerWidget {
                                     LinearGaugeRange(
                                       edgeStyle: LinearEdgeStyle.bothCurve,
                                       startValue: 0,
-                                      endValue: tenure,
+                                      endValue: phoneState.tenure,
                                       color: AppColors.primary,
                                       position: LinearElementPosition.cross,
                                     ),
@@ -404,15 +373,19 @@ class NewLoanScreen extends ConsumerWidget {
                                 SizedBox(
                                   height: displayHeight(context) * 0.01,
                                 ),
-
                                 SizedBox(
                                   height: displayHeight(context) * 0.04,
                                 ),
                                 AppButton(
                                   width: displayWidth(context),
                                   onTap: () {
-                                    Navigator.pushNamed(
-                                        context, AppRoutes.saleApplicationForm);
+                                    phoneViewModel.submitNewLoan(item.id).then((value) {
+                                      if(value){
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.saleApplicationForm);
+                                      }
+                                    },);
+
                                   },
                                   label: 'Submit',
                                   textStyle:
@@ -468,7 +441,14 @@ class NewLoanScreen extends ConsumerWidget {
     );
   }
 
-  Widget amountShow(BuildContext context) {
+  Widget amountShow(BuildContext context, double loanAmount, double interest,
+      double tenure, emi) {
+    // double monthlyRate = interest / (12 * 100);
+    // double emi =
+    //     (loanAmount * monthlyRate * (pow((1 + monthlyRate), tenure.toInt()))) /
+    //         (pow((1 + monthlyRate), tenure.toInt()) - 1);
+    // String formattedNumber = emi.toStringAsFixed(1);
+    // phoneViewModel.updateEmi(double.parse(formattedNumber));
     return Container(
       padding: const EdgeInsets.all(16),
       height: displayHeight(context) * 0.20,
@@ -488,7 +468,7 @@ class NewLoanScreen extends ConsumerWidget {
         children: [
           RichText(
             text: TextSpan(
-              text: '₹ 13,030.00 ',
+              text: '${emi}',
               style: AppStyles.buttonLightTextStyle
                   .copyWith(fontSize: FontSize.fontSizeL),
               children: <TextSpan>[
@@ -513,13 +493,15 @@ class NewLoanScreen extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                amount(context, title: 'Loan Amount', amount: '₹ 20,000.00'),
+                amount(context,
+                    title: 'Loan Amount', amount: '${loanAmount.toInt()}'),
                 VerticalDivider(
                   width: displayWidth(context) * 0.05,
                   color: AppColors.grayColor4,
                   thickness: 1,
                 ),
-                amount(context, title: 'Interest', amount: '₹ 45,000.00'),
+                amount(context,
+                    title: 'Interest', amount: '${interest.toInt()}%'),
               ],
             ),
           ),
