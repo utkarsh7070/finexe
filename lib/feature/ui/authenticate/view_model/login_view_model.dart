@@ -1,7 +1,9 @@
+import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/authenticate/model/login_request_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -79,31 +81,43 @@ class FocusViewModel extends StateNotifier<Map<String, bool>> {
 
 class LoginViewModel extends StateNotifier<AsyncValue<String>> {
   final Dio dio;
-
+  //final bool isLoading;
   LoginViewModel(super.state, this.dio);
 
+  bool? isLoading = false;
+
   Future<bool> login(String email, String password) async {
+    isLoading = true;
     LoginRequestModel loginRequestModel =
         LoginRequestModel(userName: email, password: password);
-    // state = const AsyncValue.loading();
+    state = const AsyncValue.loading();
     try {
       Response response =
           await dio.post(Api.login, data: loginRequestModel.toJson());
       if (response.statusCode == 200) {
+        isLoading = false;
         LoginResponseModel loginResponseModel =
             LoginResponseModel.fromJson(response.data);
+
         SessionService.createSession(
             accessToken: loginResponseModel.items.token,
             employeeId: loginResponseModel.items.employeId,
-        name: loginResponseModel.items.roleName,
-        email: loginResponseModel.items.userName);
+            name: loginResponseModel.items.roleName,
+            email: loginResponseModel.items.userName);
+        state = AsyncValue.data('Success');
         return true;
       }
       // state = AsyncValue.data(token);
     } catch (e) {
       // state = AsyncValue.error(e);
+      isLoading = true;
+
+      return false;
+    } finally {
+      isLoading = true;
+
+      return false;
     }
-    return false;
   }
 }
 
@@ -143,6 +157,7 @@ class PasswordValidationNotifier extends StateNotifier<bool> {
       state = true;
     } else {
       state = false;
+      log('state: ' + state.toString());
     }
   }
 // Method to update the selected value

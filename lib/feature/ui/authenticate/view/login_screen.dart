@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +29,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final focusStates = ref.watch(dualFocusProvider);
     final focusViewModel = ref.read(dualFocusProvider.notifier);
-    final loginState = ref.watch(loginViewModelProvider);
+    final loginState = ref.watch(loginViewModelProvider.notifier).isLoading;
     final loginStateViewModel = ref.read(loginViewModelProvider.notifier);
     // final selectedValue = ref.watch(radioProvider);
     final obscureValue = ref.watch(obscureTextProvider);
@@ -81,6 +84,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ? displayHeight(context) * 0.09
                             : null,
                         onFiledSubmitted: (value) {
+                          log('onFiledSubmitted');
                           ref
                               .read(userValidationProvider.notifier)
                               .checkUsername(value.toString());
@@ -133,7 +137,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           if (obscureValue != true) {
                             ref.read(obscureTextProvider.notifier).state = true;
                           } else {
-                            ref.read(obscureTextProvider.notifier).state = false;
+                            ref.read(obscureTextProvider.notifier).state =
+                                false;
                           }
                         },
                         hint: 'Password',
@@ -176,55 +181,69 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       // const Remember(),
                       SizedBox(height: displayHeight(context) * 0.07),
-                            // _loginButton(
-                            //     passValidate: passwordValidations,
-                            //     userValidate: userValidations),
-                  AppButton(
-                    width: displayWidth(context),
-                    height: displayHeight(context) * 0.06,
-                    textStyle:  TextStyle(color: AppColors.white),
-                    label: 'Log In',
-                    onTap: () {
-                      final user = _emailController.text.isEmpty;
-                      final pass = _passwordController.text.isEmpty;
-                      if (user || pass) {
-                        ref
-                            .read(userValidationProvider.notifier)
-                            .checkUsername(_emailController.text);
-                        ref
-                            .read(passwordValidationProvider.notifier)
-                            .checkPassword(_passwordController.text);
-                      } else {
-                        loginStateViewModel.login(_emailController.text, _passwordController.text).then((value) {
-                          if(value)
-                          Navigator.pushNamed(context, AppRoutes.dashBoard);
-                        },);
+                      // _loginButton(
+                      //     passValidate: passwordValidations,
+                      //     userValidate: userValidations),
 
-                      }
-                      if (kDebugMode) {
-                        print('$user, $pass');
-                      }
-                      // final isValid = _formKey.currentState?.validate();
-                      // if (!isValid!) {
-                      //   return;
-                      // }
-                      // _formKey.currentState?.save();
-                      //
-                      // print('$passValidate , $userValidate');
-                      // if(passValidate && userValidate){
-                      //
-                      // }else{
-                      //   ref
-                      //       .read(passwordValidationProvider.notifier)
-                      //       .checkPassword('');
-                      //   ref
-                      //       .read(userValidationProvider.notifier)
-                      //       .checkUsername('');
-                      // }
-                    },
-                  ),
-
-
+                      // loginState.when(
+                      //   data: (data) {
+                      //     return
+                      AnimatedSwitcher(
+                        duration: const Duration(
+                            milliseconds: 300), // Animation duration
+                        switchInCurve: Curves.easeIn,
+                        switchOutCurve: Curves.easeOut,
+                        child: loginState!
+                            ? const CircularProgressIndicator(
+                                key: ValueKey(
+                                    'loading'), // Key for progress indicator
+                              )
+                            : AppButton(
+                                key: const ValueKey('button'), // Key for button
+                                width: displayWidth(context),
+                                height: displayHeight(context) * 0.06,
+                                textStyle:
+                                    const TextStyle(color: AppColors.white),
+                                label: 'Log In',
+                                onTap: () {
+                                  final user = _emailController.text.isEmpty;
+                                  final pass = _passwordController.text.isEmpty;
+                                  if (user || pass) {
+                                    ref
+                                        .read(userValidationProvider.notifier)
+                                        .checkUsername(_emailController.text);
+                                    ref
+                                        .read(
+                                            passwordValidationProvider.notifier)
+                                        .checkPassword(
+                                            _passwordController.text);
+                                  } else {
+                                    // Trigger the login and show snackbar or navigate based on success
+                                    loginStateViewModel
+                                        .login(_emailController.text,
+                                            _passwordController.text)
+                                        .then((value) {
+                                      if (value) {
+                                        showCustomSnackBar(context,
+                                            'Login Successful', Colors.green);
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.dashBoard);
+                                      } else {
+                                        showCustomSnackBar(context,
+                                            'User Name Not Found', Colors.red);
+                                      }
+                                    });
+                                  }
+                                },
+                              ),
+                      ),
+                      //  },
+                      // error: (error, stackTrace) =>
+                      //     Text('Error: ${error.toString()}'),
+                      // loading: () => Center(
+                      //   child: CircularProgressIndicator(),
+                      // ),
+                      // ),
 
                       SizedBox(
                         height: displayHeight(context) * 0.05,
