@@ -31,10 +31,7 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
 
   @override
   Widget build(BuildContext context) {
-    final stageProvider = ref.watch(stepStageProvider);
-    final data = ref.read(stepStageProvider.notifier).state.trim();
     final tabViewModel = ref.watch(tabViewModelProvider);
-    final tabState = ref.read(tabViewModelProvider.notifier);
     return Scaffold(
         floatingActionButton: tabViewModel.selectedIndex == 1
             ? FloatingActionButton(

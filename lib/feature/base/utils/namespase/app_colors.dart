@@ -9,6 +9,7 @@ extension AppColors on Never {
   static const Color white = Color(0xffffffff);
   static const Color grayDark = Color(0xff7C86A2);
   static const Color buttonBorderGray = Color(0xffD0D5DD);
+  static const Color dividerColor = Color(0xffDEDEDE);
   static const Color titleGray = Color(0xFF4B5563);
   static const Color boxBagGray = Color(0xffF9FAFB);
   static const Color textDarkGray = Color(0xff33383D);

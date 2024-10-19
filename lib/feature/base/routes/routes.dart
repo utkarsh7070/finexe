@@ -1,23 +1,19 @@
-import 'package:finexe/feature/Punch_In_Out/Attendance/vew/attendance.dart';
-import 'package:finexe/feature/ui/Collection/cases/view/cases_screen.dart';
+
 import 'package:finexe/feature/ui/Sales/NewLone/view/new_loan_screen.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_screen.dart';
-import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co_applicant_form.dart';
-import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/referance/referance_details.dart';
 import 'package:flutter/material.dart';
-import '../../ui/Collection/cases/view/UpdateVisit/update_ visit_screen.dart';
+import '../../ui/Collection/Collection cases/view/cases_screen.dart';
+import '../../ui/Collection/Collection cases/view/visitPending/more_info_screen.dart';
 import '../../ui/Sales/DashBoard/view/dash_board.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/applicant_form/applicant_form_2.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/applicant_form/application_form3.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/applicant_form/appliction_form.dart';
-import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_form1.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_form2.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_form3.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/guarantor_form.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/guarantor_form_2.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/guarantor_form_3.dart';
-import '../../ui/Sales/SalesOnBoardingForm/view/sales_on_boarding_form.dart';
 import '../../ui/authenticate/forgot_passwaord/view/forgot_password_screen.dart';
 import '../../ui/authenticate/view/login_screen.dart';
 
@@ -40,6 +36,7 @@ class AppRoutes {
   static const String attendance = '/attendance';
   static const String cases = '/cases';
   static const String updateVisit = '/updateVisit';
+  static const String moreInfo = '/moreInfo';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -160,9 +157,11 @@ class AppRoutes {
         // return MaterialPageRoute(builder: (_) => const NewLoanScreen());
 
       case cases:
-        return MaterialPageRoute(builder: (_) => const CasesScreen());
-      case updateVisit:
-        return MaterialPageRoute(builder: (_) => const UpdateVisit());
+        return MaterialPageRoute(builder: (_) => const CollectionCasesScreen());
+      // case updateVisit:
+      //   return MaterialPageRoute(builder: (_) => const UpdateVisit());
+        case moreInfo:
+        return MaterialPageRoute(builder: (_) =>  const CollectionMoreInfoScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

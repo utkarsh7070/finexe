@@ -49,7 +49,7 @@ class SalesCasesScreen extends ConsumerWidget {
               ),
               CustomSlidingSegmentedControl<int>(
                 padding: displayWidth(context) * 0.05,
-                initialValue: 2,
+                initialValue: 1,
                 children: const {
                   1: Text('All'),
                   2: Text('Approved'),

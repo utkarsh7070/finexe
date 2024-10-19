@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'CollectionDue/collection_due_screen.dart';
 import 'visitPending/visit_pending_screen.dart';
 
-class CasesScreen extends ConsumerWidget {
-  const CasesScreen({super.key});
+class CollectionCasesScreen extends ConsumerWidget {
+  const CollectionCasesScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

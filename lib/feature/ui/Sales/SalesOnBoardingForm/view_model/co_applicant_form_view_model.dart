@@ -242,6 +242,15 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
   // }
   // Update email field
 
+  void removeCoApplicant(String todoId) {
+    // Again, our state is immutable. So we're making a new list instead of
+    // changing the existing list.
+    state = [
+      for (final todo in state)
+        if (todo.id != todoId) todo,
+    ];
+  }
+
   Future<bool> fetchAadhaarNumber(int index) async {
     print(state[index].aadhaar);
     final aadhaarNumberRequestModel = AadhaarNumberRequestModel(

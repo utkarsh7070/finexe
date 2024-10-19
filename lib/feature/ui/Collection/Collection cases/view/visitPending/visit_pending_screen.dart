@@ -2,9 +2,6 @@ import 'package:advanced_search/advanced_search.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
-import 'package:finexe/feature/ui/Collection/cases/view_model/visit_pending_view_model.dart';
-import 'package:finexe/feature/ui/Collection/widget/update_emi_dialog/update_emi_dialog_content.dart';
-import 'package:finexe/feature/ui/Collection/widget/update_visit_dialog/update_visit_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,15 +11,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../base/routes/routes.dart';
 import '../../../../../base/utils/namespase/app_colors.dart';
-import '../../../widget/clouser_dialog/clouser_dialog.dart';
-import '../../../widget/update_emi_dialog/update_emi_dialog.dart';
+import '../../../widget/Visit Pending Dialogs/clouser_dialog/clouser_dialog.dart';
+import '../../../widget/Visit Pending Dialogs/map/map_dialog.dart';
+import '../../../widget/Visit Pending Dialogs/update_emi_dialog/update_emi_dialog.dart';
+import '../../../widget/Visit Pending Dialogs/update_visit_dialog/update_visit_dialog.dart';
 
 class VisitPendingScreen extends ConsumerWidget {
   const VisitPendingScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     return Container(
       padding: const EdgeInsets.all(16),
       height: displayHeight(context),
@@ -156,19 +154,24 @@ class VisitPendingScreen extends ConsumerWidget {
                                   SizedBox(
                                     height: displayHeight(context) * 0.01,
                                   ),
-                                  Container(
-                                    height: displayHeight(context) * 0.06,
-                                    width: displayWidth(context) * 0.15,
-                                    decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10)),
-                                        color: AppColors.primaryLight),
-                                    child: Center(
-                                        child: Image.asset(
-                                      'assets/images/Location.png',
-                                      height: 20,
-                                      width: 20,
-                                    )),
+                                  GestureDetector(
+                                    onTap: () {
+                                      MapDialog().mapDialog(context: context);
+                                    },
+                                    child: Container(
+                                      height: displayHeight(context) * 0.06,
+                                      width: displayWidth(context) * 0.15,
+                                      decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                          color: AppColors.primaryLight),
+                                      child: Center(
+                                          child: Image.asset(
+                                        'assets/images/Location.png',
+                                        height: 20,
+                                        width: 20,
+                                      )),
+                                    ),
                                   )
                                 ],
                               ),
@@ -193,26 +196,31 @@ class VisitPendingScreen extends ConsumerWidget {
                                       ),
                                     ],
                                   ),
-                                  Container(
-                                    height: displayHeight(context) * 0.06,
-                                    width: displayWidth(context) * 0.15,
-                                    decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10)),
-                                        color: AppColors.primaryLight),
-                                    child: Center(
-                                        child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          'assets/images/info.png',
-                                          height: 20,
-                                          width: 20,
-                                        ),
-                                        const Text('info')
-                                      ],
-                                    )),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushNamed(context, AppRoutes.moreInfo);
+                                    },
+                                    child: Container(
+                                      height: displayHeight(context) * 0.06,
+                                      width: displayWidth(context) * 0.15,
+                                      decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                          color: AppColors.primaryLight),
+                                      child: Center(
+                                          child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            'assets/images/info.png',
+                                            height: 20,
+                                            width: 20,
+                                          ),
+                                          const Text('info')
+                                        ],
+                                      )),
+                                    ),
                                   )
                                 ],
                               ),
@@ -272,8 +280,8 @@ class VisitPendingScreen extends ConsumerWidget {
                                   children: [
                                     GestureDetector(
                                       onTap: () {
-                                        UpdateVisitDialog()
-                                            .updateVisitDialog(context: context);
+                                        UpdateVisitDialog().updateVisitDialog(
+                                            context: context);
                                       },
                                       child: textPreIcon(context,
                                           image: 'assets/images/money.png',
@@ -304,7 +312,8 @@ class VisitPendingScreen extends ConsumerWidget {
                               AppButton(
                                 width: displayWidth(context),
                                 onTap: () {
-                                  UpdateEmiDialog().updateEmiDialog(context: context);
+                                  UpdateEmiDialog()
+                                      .updateEmiDialog(context: context);
                                 },
                                 label: 'Update EMI',
                                 textStyle:
