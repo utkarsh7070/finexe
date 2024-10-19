@@ -693,7 +693,8 @@ final directionsProvider =
   final result = await polylinePoints.getRouteBetweenCoordinates(
     request: PolylineRequest(
       origin: PointLatLng(currentLocation.latitude, currentLocation.longitude),
-      destination: PointLatLng(destination.latitude, destination.longitude), mode: TravelMode.driving,
+      destination: PointLatLng(destination.latitude, destination.longitude),
+      mode: TravelMode.driving,
     ),
     googleApiKey: apiKey,
   );
@@ -707,3 +708,4 @@ final directionsProvider =
     return [];
   }
 });
+//-----------------------------end map--------------------------------------------------------
