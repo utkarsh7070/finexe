@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-import 'map_content.dart';
+/*import 'map_content.dart';*/
 
 class MapDialog {
   MapDialog();
@@ -17,7 +17,7 @@ class MapDialog {
             insetPadding: const EdgeInsets.all(20),
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: MapContent());
+            child:Container());
       },
     );
   }

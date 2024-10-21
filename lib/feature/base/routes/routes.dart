@@ -1,4 +1,5 @@
 
+import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/home_collection_view/DashboardScreen.dart';
 import 'package:finexe/feature/ui/Sales/NewLone/view/new_loan_screen.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_screen.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/referance/referance_details.dart';
@@ -37,11 +38,14 @@ class AppRoutes {
   static const String cases = '/cases';
   static const String updateVisit = '/updateVisit';
   static const String moreInfo = '/moreInfo';
+  static const String collectionHome = '/collectionHome';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
+      case collectionHome:
+        return MaterialPageRoute(builder: (_) =>  DashboardScreen());
       case forgot:
         return MaterialPageRoute(builder: (_) => ForgotPasswordScreen());
       case dashBoard:
