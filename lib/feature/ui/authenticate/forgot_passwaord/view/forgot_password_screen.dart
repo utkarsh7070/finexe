@@ -79,7 +79,7 @@ class ForgotPasswordScreen extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(CupertinoIcons.back,color: AppColors.primery,),
+        const Icon(CupertinoIcons.back,color: AppColors.primary,),
         TextButton(onPressed: () {
           Navigator.pop(context);
           // Navigator.pushNamed(context, AppRoutes.login);

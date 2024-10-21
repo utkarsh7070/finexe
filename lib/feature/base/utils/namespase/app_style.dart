@@ -16,11 +16,23 @@ extension AppStyles on Never {
     fontWeight: FontWeight.w400,
     fontSize: FontSize.fontSizeS,
   );
+  static TextStyle subHeadingW500 = TextStyle(
+    color: AppColors.titleGray,
+    fontFamily: Fonts.appFonts,
+    fontWeight: FontWeight.w500,
+    fontSize: FontSize.fontSizeS,
+  );
   static TextStyle termsConditionText = TextStyle(
     color: AppColors.textDarkGray,
     fontFamily: Fonts.appFonts,
     fontWeight: FontWeight.w400,
     fontSize: FontSize.fontSizeXSs,
+  );
+  static TextStyle nameText = TextStyle(
+    color: AppColors.textDarkGray,
+    fontFamily: Fonts.appFonts,
+    fontWeight: FontWeight.w500,
+    fontSize: FontSize.fontSizeSL,
   );
   static TextStyle subTextStyle = TextStyle(
     color: AppColors.subTextColor,
@@ -35,8 +47,16 @@ extension AppStyles on Never {
     fontWeight: FontWeight.w300,
     fontSize: FontSize.fontSize16,
   );
+
+
   static TextStyle cardTextStyle16 = TextStyle(
     color: AppColors.grayCardContentColor,
+    fontFamily: Fonts.appFonts,
+    fontWeight: FontWeight.w600,
+    fontSize: FontSize.fontSize16,
+  );
+  static TextStyle TextStyle16 = TextStyle(
+    color: AppColors.black,
     fontFamily: Fonts.appFonts,
     fontWeight: FontWeight.w600,
     fontSize: FontSize.fontSize16,
@@ -67,6 +87,19 @@ extension AppStyles on Never {
     fontSize: FontSize.fontSizeXXXL,
   );
 
+  static TextStyle headingTextStyleXL1 = TextStyle(
+    color: AppColors.primary,
+    fontFamily: Fonts.appFonts,
+    fontWeight: FontWeight.w700,
+    fontSize: FontSize.fontSizeXXXL,
+  );
+  static TextStyle headingTextStyleXL2 = TextStyle(
+    color: AppColors.orange,
+    fontFamily: Fonts.appFonts,
+    fontWeight: FontWeight.w600,
+    fontSize: FontSize.fontSizeL,
+  );
+
   static TextStyle smallTextStyle = TextStyle(
     color: AppColors.grayDark,
     fontFamily: Fonts.appFonts,
@@ -74,7 +107,7 @@ extension AppStyles on Never {
     fontSize: FontSize.fontSizeXSs,
   );
   static TextStyle smallTextStyleRich = TextStyle(
-    color: AppColors.primery,
+    color: AppColors.primary,
     fontFamily: Fonts.appFonts,
     fontWeight: FontWeight.w100,
     fontSize: FontSize.fontSizeXSs,

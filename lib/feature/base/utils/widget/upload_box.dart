@@ -7,6 +7,7 @@ import 'package:mobkit_dashed_border/mobkit_dashed_border.dart';
 import '../namespase/font_size.dart';
 
 class UploadBox extends StatelessWidget {
+  final bool isImage;
   final IconData? iconData;
   final String? title;
   final String? subTitle;
@@ -25,7 +26,7 @@ class UploadBox extends StatelessWidget {
       this.height,
       this.width,
       this.subTextColor,
-      this.textColor});
+      this.textColor,  this.isImage=false});
 
   @override
   Widget build(BuildContext context) {
@@ -38,26 +39,27 @@ class UploadBox extends StatelessWidget {
             dashLength: 10,
             side: BorderSide(color: Colors.black, width: 1),
           ),
-          borderRadius: BorderRadius.all(Radius.circular(21)),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
           color: AppColors.boxBagGray),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            isImage?Image.asset('assets/images/image.png',height: 36,width: 36,):Icon(
               iconData,
               color: color,
             ),
             SizedBox(
               height: displayHeight(context) * 0.01,
             ),
-            Text(title!,
-                style: AppStyles.subTextStyle.copyWith(
-                    fontSize: FontSize.fontSizeXSs, color: textColor)),
+            Text(subTitle!, style: AppStyles.subTextStyle.copyWith(color: subTextColor)),
+
             SizedBox(
               height: displayHeight(context) * 0.01,
             ),
-            Text(subTitle!, style: AppStyles.subTextStyle.copyWith(color: subTextColor)),
+            Text(title!,
+                style: AppStyles.subTextStyle.copyWith(
+                    fontSize: FontSize.fontSizeXSs, color: textColor)),
           ],
         ),
       ),
