@@ -1,14 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
-
-// final visitPendingData= StateNotifierProvider<VisitPendingModel,>((ref) {
-//
-// },)
+import '../../../../base/api/api.dart';
+import '../../../../base/api/dio.dart';
+import '../model/get_visit_pending_response_data.dart';
 
 final updateVisitDropDown = StateProvider<List<DropDownValueModel>>(
   (ref) {
@@ -670,8 +669,14 @@ final currentLocationProvider = FutureProvider<Position>((ref) async {
     throw Exception(
         'Location permissions are permanently denied, we cannot request permissions.');
   }
+  LocationSettings locationSettings = const LocationSettings(
+    accuracy: LocationAccuracy.high,
+    distanceFilter: 100,
+  );
   // Return the current position
-  return await Geolocator.getCurrentPosition();
+  Position position =
+  await Geolocator.getCurrentPosition(locationSettings: locationSettings);
+  return position;
 });
 
 // Provider to manage the Google Map controller
@@ -709,3 +714,36 @@ final directionsProvider =
   }
 });
 //-----------------------------end map--------------------------------------------------------
+
+final fetchVisitPendingDataProvider = FutureProvider<List<Map<String, String>>>((ref) async{
+  final String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+  final Map<String, String> queryParam ={
+    "status":"pending"
+  };
+  final dio = ref.read(dioProvider);
+  final response = await dio.get(Api.collectionVisitPending,
+      queryParameters:queryParam,
+      options:Options(headers:{
+    "token":token
+  }));
+  print(response.statusMessage);
+  print(response.statusCode);
+  if (response.statusCode == 200) {
+    print(response.data);
+    GetVisitPendingResponseData apiResponseList =
+    GetVisitPendingResponseData.fromJson(response.data);
+    return apiResponseList.items;
+  } else {
+    throw Exception('Failed to load data');
+  }
+});
+
+  // return GetVisitPendingResponseData(status: status, subCode: subCode, message: message, error: error, items: items)
+  // // final content = json.decode(
+  // //   await rootBundle.loadString('assets/configurations.json'),
+  // ) as Map<String, Object?>;
+  //
+  // return Configuration.fromJson(content);
+
+
+

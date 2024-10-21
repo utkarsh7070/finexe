@@ -13,6 +13,8 @@ class Api {
   static const String submitCoApplicantForm = '${baseUrl}v1/salesMan/coApplicantAddDetail';
   static const String submitGuarantorForm = '${baseUrl}v1/salesMan/guarantorAddDetail';
   static const String getApplicantForm = '${baseUrl}v1/salesMan/applicantDetail/:customerId';
+  static const String collectionVisitPending = '${baseUrl}v1/googleSheet/overAllEmiData';
+
   //-------------------------------------------------------------------------------------------
   static Duration connectionTimeout = const Duration(milliseconds: 15000);
   static Duration receiveTimeout = const Duration(milliseconds: 15000);

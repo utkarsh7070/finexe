@@ -1,4 +1,6 @@
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:finexe/feature/base/extentions/capital_letter.dart';
+import 'package:finexe/feature/ui/Collection/Collection%20cases/view/visitPending/visit_pending_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +14,26 @@ import '../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../Collection cases/view_model/visit_pending_view_model.dart';
 
 class UpdateVisitDialogContent extends ConsumerWidget {
-  const UpdateVisitDialogContent({super.key});
+  final String? customerName;
+  final String? collection;
+  final String? emiAmount;
+  final String? netDue;
+  final String? oldDue;
+  final String? partner;
+  final String? finId;
+  final String? father;
+
+  const UpdateVisitDialogContent({
+    super.key,
+    required this.partner,
+    required this.father,
+    required this.finId,
+    required this.customerName,
+    required this.collection,
+    required this.emiAmount,
+    required this.netDue,
+    required this.oldDue,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,10 +58,12 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(height: displayHeight(context)*0.02,width: displayWidth(context)*0.10,),
+                      SizedBox(
+                        height: displayHeight(context) * 0.02,
+                        width: displayWidth(context) * 0.10,
+                      ),
                       SizedBox(
                           child: Align(
                               alignment: Alignment.center,
@@ -51,19 +74,20 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                       IconButton(
                           onPressed: () {
                             Navigator.pop(context);
-                          }, icon: const Icon(Icons.cancel_sharp))
+                          },
+                          icon: const Icon(Icons.cancel_sharp))
                     ],
                   ),
                   SizedBox(
                     height: displayHeight(context) * 0.02,
                   ),
-                  topWidget(context, text1: 'FINC956', text2: 'UGRO'),
+                  topWidget(context, text1: finId!, text2: partner!),
                   SizedBox(
                     height: displayHeight(context) * 0.01,
                   ),
                   nameField(
-                      text1: 'Customer Name', text2: 'Lakhan S/O  Ramprasad'),
-                  nameField(text1: 'Collection Type', text2: 'Bounce EMI'),
+                      text1: 'Customer Name', text2: '$customerName  S/O $father'),
+                  nameField(text1: 'Collection Type', text2: collection!),
                   SizedBox(
                     height: displayHeight(context) * 0.02,
                   ),
@@ -72,18 +96,18 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     children: [
                       boxData(
                         context,
-                        text1: 'Closure Am.',
-                        text2: '₹14384',
+                        text1: 'Emi Amount',
+                        text2: '₹${emiAmount}',
                       ),
                       boxData(
                         context,
-                        text1: 'Closure Am.',
-                        text2: '₹14384',
+                        text1: 'Net Due',
+                        text2: '₹${netDue}',
                       ),
                       boxData(
                         context,
-                        text1: 'Closure Am.',
-                        text2: '₹14384',
+                        text1: 'Old Due',
+                        text2: '₹${oldDue}',
                       ),
                     ],
                   ),
@@ -167,7 +191,8 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     height: displayHeight(context) * 0.01,
                   ),
                   Visibility(
-                    visible: paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                    visible: paymentViewModel
+                            .dropDownControllerProvider.dropDownValue?.value ==
                         'CustomerWillPayEmi',
                     child: AppFloatTextField(
                       focusNode: paymentFocusViewModel.paymentAmountFocusNode,
@@ -190,11 +215,14 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     height: displayHeight(context) * 0.01,
                   ),
                   Visibility(
-                    visible: paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                    visible: paymentViewModel.dropDownControllerProvider
+                                .dropDownValue?.value ==
                             'CustomerWillPayEmi' ||
-                        paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                        paymentViewModel.dropDownControllerProvider
+                                .dropDownValue?.value ==
                             'CustomerWillNotPayEmi' ||
-                        paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                        paymentViewModel.dropDownControllerProvider
+                                .dropDownValue?.value ==
                             'CustomerNotContactable',
                     child: AppFloatTextField(
                       focusNode: paymentFocusViewModel.dateFocusNode,
@@ -217,9 +245,11 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     height: displayHeight(context) * 0.01,
                   ),
                   Visibility(
-                    visible: paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                    visible: paymentViewModel.dropDownControllerProvider
+                                .dropDownValue?.value ==
                             'CustomerWillNotPayEmi' ||
-                        paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                        paymentViewModel.dropDownControllerProvider
+                                .dropDownValue?.value ==
                             'CustomerNotContactable',
                     child: AppFloatTextField(
                       maxLine: 5,
@@ -232,7 +262,8 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                       height: !paymentState.isReasonValid
                           ? displayHeight(context) * 0.16
                           : displayHeight(context) * 0.13,
-                      inerHint: paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                      inerHint: paymentViewModel.dropDownControllerProvider
+                                  .dropDownValue?.value ==
                               'CustomerNotContactable'
                           ? 'Reason For Customer Not Contactable*'
                           : 'Reason For Not Pay (500 Character)*',
@@ -245,7 +276,8 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     height: displayHeight(context) * 0.01,
                   ),
                   Visibility(
-                    visible: paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                    visible: paymentViewModel
+                            .dropDownControllerProvider.dropDownValue?.value ==
                         'CustomerWillNotPayEmi',
                     child: AppFloatTextField(
                       maxLine: 5,
@@ -332,7 +364,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
               .copyWith(color: AppColors.gray7, fontSize: FontSize.fontSizeXS),
         ),
         Text(
-          text2,
+          text2.capitalize(),
           style: AppStyles.nameText.copyWith(
               fontSize: FontSize.fontSizeS, fontWeight: FontWeight.w600),
         ),
@@ -361,7 +393,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
             style: AppStyles.subTextStyle.copyWith(color: AppColors.white),
           ),
           Text(
-            text2,
+            text2.capitalize(),
             style: AppStyles.nameText.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppColors.white,
