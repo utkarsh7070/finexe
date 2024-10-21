@@ -10,13 +10,14 @@ class MyApp extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: AppRoutes.cases, // Define initial route
+      initialRoute: AppRoutes.collectionHome, // Define initial route
       onGenerateRoute: AppRoutes.generateRoute,
 
       // supportedLocales: AppLocalizations.supportedLocales,
       // localizationsDelegates: AppLocalizations.localizationsDelegate,
       title: 'Flutter Demo',
       theme: AppTheme().light(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
