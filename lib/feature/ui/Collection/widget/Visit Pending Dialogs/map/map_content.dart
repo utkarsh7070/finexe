@@ -8,16 +8,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../Collection cases/view_model/visit_pending_view_model.dart';
 
+
 class MapContent extends ConsumerWidget{
   MapContent({super.key});
 
   static const LatLng destination = const LatLng(45.521563, -122.677433);
-
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentLocation = ref.watch(currentLocationProvider);
     final polylines = ref.watch(polylineProvider);
+
       return currentLocation.when(
         data: (position) {
       final initialCameraPosition = CameraPosition(
