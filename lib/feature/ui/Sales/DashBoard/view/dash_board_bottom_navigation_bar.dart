@@ -21,12 +21,12 @@ class DashBoardBottomNavigationBar extends ConsumerWidget {
       Icon(CupertinoIcons.person),
     ];
 
-    final List<String> _labels = ['cases', 'Home', 'Profile'];
+    final List<String> _labels = ['Cases', 'Home', 'Profile'];
 
     return Container(
       height: displayHeight(context) * 0.12,
       width: displayWidth(context) * 0.30,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(11.8),
       child: Card(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(40))),
@@ -41,7 +41,6 @@ class DashBoardBottomNavigationBar extends ConsumerWidget {
             indicator: const UnderlineTabIndicator(
               borderSide: BorderSide.none,
             ),
-
             tabs: [
               for (int i = 0; i < _icons.length; i++)
                 _tabItem(_icons[i], _labels[i], context,

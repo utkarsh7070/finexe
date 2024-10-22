@@ -1,6 +1,11 @@
+import 'dart:developer';
+
+import 'package:finexe/feature/base/dialog/logout_dialog.dart';
+import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../base/routes/routes.dart';
@@ -29,36 +34,76 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
     _tabController = TabController(length: 3, vsync: this);
   }
 
+  // final SessionService userSession = SessionService();
   @override
   Widget build(BuildContext context) {
     final tabViewModel = ref.watch(tabViewModelProvider);
-    return Scaffold(
-        floatingActionButton: tabViewModel.selectedIndex == 1
-            ? FloatingActionButton(
-                foregroundColor: AppColors.black,
-                backgroundColor: AppColors.white,
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50)),
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.newLone);
-                },
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.black,
+    return WillPopScope(
+      onWillPop: () async {
+        // Close the app
+        SystemNavigator.pop();
+        return false; // Prevents back navigation
+      },
+      child: Scaffold(
+          floatingActionButton: tabViewModel.selectedIndex == 1
+              ? FloatingActionButton(
+                  foregroundColor: AppColors.black,
+                  backgroundColor: AppColors.white,
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50)),
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoutes.newLone);
+                  },
+                  child: const Icon(
+                    Icons.add,
+                    color: Colors.black,
+                  ),
+                )
+              : null,
+          bottomNavigationBar:
+              DashBoardBottomNavigationBar(tabController: _tabController),
+          drawer: const DrawerScreen(),
+          body: IndexedStack(
+            index: tabViewModel.selectedIndex,
+            children: <Widget>[
+              const SalesCasesScreen(),
+              const OnBoardingScreen(),
+              Container(
+                  child: Center(
+                child: ElevatedButton(
+                  // onPressed: () async {
+                  //   bool result = await SessionService.deleteSession();
+                  //   if (result) {
+                  //     // Optionally navigate or show a message after successful deletion
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       SnackBar(content: Text('Logout successfully')),
+                  //     );
+                  //     // Navigate to the login screen and remove all previous routes
+                  //     Navigator.pushNamedAndRemoveUntil(
+                  //       context,
+                  //       AppRoutes.login, // Name of your login route
+                  //       (route) =>
+                  //           false, // Remove all routes until the login route
+                  //     );
+                  //     log('Logout');
+                  //   } else {
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       SnackBar(content: Text('Failed to logout')),
+                  //     );
+                  //   }
+                  // },
+                  onPressed: () {
+                    LogOutDialog.logOutDialog(context: context);
+                  },
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
-              )
-            : null,
-        bottomNavigationBar:
-            DashBoardBottomNavigationBar(tabController: _tabController),
-        drawer: const DrawerScreen(),
-        body: IndexedStack(
-          index: tabViewModel.selectedIndex,
-          children: <Widget>[
-            const SalesCasesScreen(),
-            const OnBoardingScreen(),
-            Container(child: const Text('jhsdalj')),
-          ],
-        ));
+              )),
+            ],
+          )),
+    );
   }
 }
