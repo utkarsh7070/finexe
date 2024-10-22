@@ -24,10 +24,12 @@ class CoApplicationBottomSheet extends ConsumerWidget {
     final checkBoxTerms = ref.watch(checkBoxTermsConditionCoApplicant);
     final getOtpClicked = ref.watch(getOptCoApp);
     final coApplicationFormState = ref.watch(coApplicantViewModelProvider);
-    final coApplicationFormViewModel = ref.read(coApplicantViewModelProvider.notifier);
+    final coApplicationFormViewModel =
+        ref.read(coApplicantViewModelProvider.notifier);
     final coApplicationFocusStates = ref.watch(coApplicantFocusProvider);
     final isCoApplicationRemember = ref.watch(rememberCoProvider);
-    final coApplicationFocusViewModel = ref.read(coApplicantFocusProvider.notifier);
+    final coApplicationFocusViewModel =
+        ref.read(coApplicantFocusProvider.notifier);
     final index = ref.watch(listIndex);
     return Stack(
       children: [
@@ -46,9 +48,9 @@ class CoApplicationBottomSheet extends ConsumerWidget {
                 ),
                 const Flexible(
                     child: Text(
-                      'We have just sent you 6 digit code Phone Number +7489455607',
-                      textAlign: TextAlign.center,
-                    )),
+                  'We have just sent you 6 digit code Phone Number +7489455607',
+                  textAlign: TextAlign.center,
+                )),
                 SizedBox(
                   height: displayHeight(context) * 0.04,
                 ),
@@ -58,7 +60,7 @@ class CoApplicationBottomSheet extends ConsumerWidget {
                   borderColor: AppColors.buttonBorderGray,
                   showFieldAsBox: true,
                   onCodeChanged: (String code) {
-                    coApplicationFormViewModel.updateOtp(code,index);
+                    coApplicationFormViewModel.updateOtp(code, index);
                   },
                   onSubmit: (String verificationCode) {
                     showDialog(
@@ -77,13 +79,15 @@ class CoApplicationBottomSheet extends ConsumerWidget {
                 AppButton(
                   textStyle: const TextStyle(color: AppColors.white),
                   onTap: () {
-                    coApplicationFormViewModel.fetchOtp(index).then((value) {
-                      if(value) {
-                        coApplicationFormViewModel.setAutoValueByAadhaar(formListController,index);
-                        Navigator.pop(context);
-                      }
-
-                    },);
+                    coApplicationFormViewModel.fetchOtp(index).then(
+                      (value) {
+                        if (value) {
+                          coApplicationFormViewModel.setAutoValueByAadhaar(
+                              formListController, index);
+                          Navigator.pop(context);
+                        }
+                      },
+                    );
                   },
                   label: 'Continue',
                   width: displayWidth(context),
@@ -117,7 +121,7 @@ class CoApplicationBottomSheet extends ConsumerWidget {
                   focusNode: coApplicationFocusViewModel.aadhaarFocusNode,
                   currentState: coApplicationFocusStates['aadhaarFocusNode'],
                   onChange: (value) {
-                    coApplicationFormViewModel.updateAadhaar(value,index);
+                    coApplicationFormViewModel.updateAadhaar(value, index);
                   },
                   height: !coApplicationFormState[index].isAadhaarValid
                       ? displayHeight(context) * 0.09
@@ -153,12 +157,11 @@ class CoApplicationBottomSheet extends ConsumerWidget {
                 AppButton(
                   textStyle: const TextStyle(color: AppColors.white),
                   onTap: () {
-                    coApplicationFormViewModel.fetchAadhaarNumber(index).then((value) {
+                    coApplicationFormViewModel.fetchAadhaarNumber(index).then(
+                      (value) {
                         ref.read(getOptCoApp.notifier).state = value;
-
-                    },);
-
-
+                      },
+                    );
                   },
                   label: 'Get OTP',
                   width: displayWidth(context),

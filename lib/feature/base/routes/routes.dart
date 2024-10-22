@@ -48,7 +48,7 @@ class AppRoutes {
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case collectionHome:
-        return MaterialPageRoute(builder: (_) =>  DashboardScreen());
+        return MaterialPageRoute(builder: (_) => DashboardScreen());
       case forgot:
         return MaterialPageRoute(builder: (_) => ForgotPasswordScreen());
       case dashBoard:

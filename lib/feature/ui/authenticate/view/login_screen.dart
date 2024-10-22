@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../base/routes/routes.dart';
 import '../../../base/utils/namespase/display_size.dart';
 import '../../../base/utils/widget/app_text_filed_login.dart';
@@ -51,7 +52,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final focusViewModel = ref.read(dualFocusProvider.notifier);
     final loginState = ref.watch(loginViewModelProvider);
     final loginStateViewModel = ref.read(loginViewModelProvider.notifier);
-    // final selectedValue = ref.watch(radioProvider);
+    //final selectedValue = ref.watch(radioProvider);
     final obscureValue = ref.watch(obscureTextProvider);
     final passwordValidations = ref.watch(passwordValidationProvider);
     final userValidations = ref.watch(userValidationProvider);
@@ -285,7 +286,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          onPressed: () {
+                          onPressed: () async {
+                            // SharedPreferences preferences =
+                            //     await SharedPreferences.getInstance();
+
                             final user = _emailController.text.isEmpty;
                             final pass = _passwordController.text.isEmpty;
                             if (user || pass) {
@@ -300,21 +304,57 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               loginStateViewModel
                                   .login(_emailController.text,
                                       _passwordController.text)
-                                  .then((value) {
+                                  .then((value) async {
                                 if (value) {
-                                  log(value.toString());
+                                  // Fetch the stored roleName from SharedPreferences
+                                  SharedPreferences preferences =
+                                      await SharedPreferences.getInstance();
+                                  String? role =
+                                      await preferences.getString('roleName');
+
+                                  log("Login Success: " + value.toString());
+                                  log("Role: " + role.toString());
+
                                   showCustomSnackBar(context,
                                       'Login Successful', Colors.green);
-                                  // Navigator.pushReplacementNamed(
-                                  //     context, AppRoutes.dashBoard);
-                                  // Navigate to the login screen and remove all previous routes
-                                  Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    AppRoutes
-                                        .dashBoard, // Name of your login route
-                                    (route) =>
-                                        false, // Remove all routes until the login route
-                                  );
+
+                                  // Navigate the user according to their role
+                                  switch (role) {
+                                    case 'admin':
+                                      log("Navigating to admin dashboard");
+                                      Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        AppRoutes
+                                            .dashBoard, // Admin dashboard route
+                                        (route) =>
+                                            false, // Remove all previous routes
+                                      );
+                                      break;
+                                    case 'sales':
+                                      log("Navigating to sales dashboard");
+                                      Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        AppRoutes
+                                            .saleApplicationForm, // Sales dashboard route
+                                        (route) =>
+                                            false, // Remove all previous routes
+                                      );
+                                      break;
+                                    case 'collection':
+                                      log("Navigating to collection dashboard");
+                                      Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        AppRoutes
+                                            .collectionHome, // Collection dashboard route
+                                        (route) =>
+                                            false, // Remove all previous routes
+                                      );
+                                      break;
+                                    default:
+                                      // Handle unknown roles or navigate to a default screen
+                                      log('No matching role found');
+                                      break;
+                                  }
                                 } else {
                                   log('value:: ' + value.toString());
                                   showCustomSnackBar(context,
@@ -328,11 +368,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 3,
-                                        key: ValueKey(
-                                            'loading'), // Key for progress indicator
+                                      SizedBox(
+                                        width: 24, // Specify the width
+                                        height: 24, // Specify the height
+                                        child: const CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 3,
+                                          key: ValueKey(
+                                              'loading'), // Key for progress indicator
+                                        ),
                                       ),
                                       SizedBox(
                                         width: 10,
@@ -429,19 +473,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   //   // );
   // }
 
-  Widget _successMessage(String token) {
-    return Text('Login successful! Token: $token');
-  }
+  // Widget _successMessage(String token) {
+  //   return Text('Login successful! Token: $token');
+  // }
 
-  Widget _errorMessage(String error) {
-    return Column(
-      children: [
-        Text('Login failed: $error', style: const TextStyle(color: Colors.red)),
-        const SizedBox(height: 16),
-        // _loginButton(passValidate: null),
-      ],
-    );
-  }
+  // Widget _errorMessage(String error) {
+  //   return Column(
+  //     children: [
+  //       Text('Login failed: $error', style: const TextStyle(color: Colors.red)),
+  //       const SizedBox(height: 16),
+  //       // _loginButton(passValidate: null),
+  //     ],
+  //   );
+  // }
 
   @override
   void dispose() {
@@ -639,9 +683,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (kDebugMode) {
         print('permanentlyDenied dialog call');
       }
+      log('Permission Permanently Denied');
       AllPermissionDialog()
           .allPermissionDialog(
-              context: context!,
+              context: context,
               // controller: this,
               text: 'Permission Permanently Denied',
               icon: Icons.warning,
