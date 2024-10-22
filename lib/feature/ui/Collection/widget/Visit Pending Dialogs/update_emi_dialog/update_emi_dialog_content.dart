@@ -22,357 +22,394 @@ class UpdateEmiDialogContent extends ConsumerWidget {
     final creditDropData = ref.read(creditDropDown);
     final paymentState = ref.watch(updateEmiViewModelProvider);
     final paymentViewModel = ref.read(updateEmiViewModelProvider.notifier);
-    final paymentFocusStates =
-    ref.watch(updateEmiFocusProvider);
-    final paymentFocusViewModel =
-    ref.read(updateEmiFocusProvider.notifier);
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      child: SizedBox(
-        width: displayWidth(context),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
+    final paymentFocusStates = ref.watch(updateEmiFocusProvider);
+    final paymentFocusViewModel = ref.read(updateEmiFocusProvider.notifier);
+    final getCollectionMode = ref.watch(fetchGetAllModeOfCollectionProvider);
+    return getCollectionMode.when(
+      data: (data) {
+        // List<DropDownValueModel> dropdown = data.forEach((element) {
+        //   return DropDownValueModel(name: element.title,value:element.title );
+        //
+        // },);
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            width: displayWidth(context),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: displayHeight(context)*0.02,width: displayWidth(context)*0.10,),
-                      SizedBox(
-                          child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Update EMI',
-                                style: AppStyles.cardTextStyle16,
-                              ))),
-                      IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          }, icon: const Icon(Icons.cancel_sharp))
-                    ],
-                  ),
-                  SizedBox(
-                    height: displayHeight(context) * 0.02,
-                  ),
-                  topWidget(context, text1: 'FINC956', text2: 'UGRO'),
-                  SizedBox(
-                    height: displayHeight(context) * 0.01,
-                  ),
-                  nameField(
-                      text1: 'Customer Name', text2: 'Lakhan S/O  Ramprasad'),
-                  nameField(text1: 'Collection Type', text2: 'Bounce EMI'),
-                  SizedBox(
-                    height: displayHeight(context) * 0.02,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      boxData(
-                        context,
-                        text1: 'Closure Am.',
-                        text2: '₹14384',
-                      ),
-                      boxData(
-                        context,
-                        text1: 'Closure Am.',
-                        text2: '₹14384',
-                      ),
-                      boxData(
-                        context,
-                        text1: 'Closure Am.',
-                        text2: '₹14384',
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: displayHeight(context) * 0.02,
-            ),
-            Container(
-              padding: const EdgeInsets.only(left: 16),
-              height: displayHeight(context) * 0.05,
-              width: displayWidth(context),
-              color: AppColors.primaryLight1,
-              child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Additional Form',
-                    style: AppStyles.TextStyle16.copyWith(
-                        fontSize: FontSize.fontSizeS),
-                  )),
-            ),
-            SizedBox(
-              height: displayHeight(context) * 0.02,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  AppFloatTextField(
-                    focusNode: paymentFocusViewModel.emiAmountFocusNode,
-                    currentState:
-                    paymentFocusStates['emiAmountFocusNode'],
-                    // controller: licenseController,
-                    onChange: (value) {
-                      paymentViewModel.updateEmiAmount(value);
-                    },
-                    height: !paymentState.isEmiAmount
-                        ? displayHeight(context) * 0.09
-                        : null,
-                    inerHint: 'Received EMI Amount',
-                    errorText: "EMI Amount is a required field",
-                    isError: !paymentState.isEmiAmount,
-                    textInputAction: TextInputAction.done,
-                  ),
-                  SizedBox(
-                    height: displayHeight(context) * 0.01,
-                  ),
-                  DropDownTextField(
-                    clearOption: false,
-                    controller: paymentViewModel.modeOfCollectionController,
-                    listSpace: 20,
-                    listPadding: ListPadding(top: 20),
-                    enableSearch: false,
-                    dropDownList: dropDownData,
-                    listTextStyle: const TextStyle(color: AppColors.primary),
-                    dropDownItemCount: 3,
-                    textFieldFocusNode:
-                    paymentFocusViewModel.modeOfCollection,
-                    textFieldDecoration: InputDecoration(
-                      hintStyle: const TextStyle(color: AppColors.textGray),
-                      floatingLabelStyle:
-                      paymentFocusStates['modeOfCollection']!
-                          ? AppStyles.subHeading
-                          .copyWith(color: AppColors.primary)
-                          : AppStyles.subHeading,
-                      label: const Text(
-                        'Mode Of Collection',
-                        // style: const TextStyle(color: AppColors.textGray),
-                      ),
-
-                      // errorText: isError! ? errorText : null,
-                      enabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: AppColors.buttonBorderGray, width: 1),
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      // filled: true,
-                      // fillColor: AppColors.gray,
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: AppColors.buttonBorderGray, width: 1),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-
-                      focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.blue,
-                              width: 2),
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10))),
-                    ),
-                  ),
-                  SizedBox(
-                    height: displayHeight(context) * 0.01,
-                  ),
-                  Visibility(
-                    visible: paymentViewModel.modeOfCollectionController.dropDownValue?.value ==
-                        'okCredit',
-                    child: DropDownTextField(
-                      clearOption: false,
-                      controller: paymentViewModel.creditPersonController,
-                      listSpace: 20,
-                      listPadding: ListPadding(top: 20),
-                      enableSearch: false,
-                      dropDownList: creditDropData,
-                      listTextStyle: const TextStyle(color: AppColors.primary),
-                      dropDownItemCount: 4,
-                      // onChanged: (val) {
-                      //   // paymentViewModel.updatePaymentStatus(val);
-                      // },
-                      textFieldFocusNode:
-                      paymentFocusViewModel.creditPersonFocusNode,
-                      textFieldDecoration: InputDecoration(
-                        hintStyle: const TextStyle(color: AppColors.textGray),
-                        floatingLabelStyle:
-                        paymentFocusStates['creditPersonFocusNode']!
-                            ? AppStyles.subHeading
-                            .copyWith(color: AppColors.primary)
-                            : AppStyles.subHeading,
-                        label: const Text(
-                          'Credit Person',
-                        ),
-                        enabledBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: AppColors.buttonBorderGray, width: 1),
-                            borderRadius: BorderRadius.all(Radius.circular(10))),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: AppColors.buttonBorderGray, width: 1),
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.blue,
-                                width: 2),
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(10))),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: displayHeight(context) * 0.01,
-                  ),
-                  Visibility(
-                    visible: paymentViewModel.modeOfCollectionController.dropDownValue?.value ==
-                        'online',
-                    child: DropDownTextField(
-                      clearOption: false,
-                      controller: paymentViewModel.bankNameController,
-                      listSpace: 20,
-                      listPadding: ListPadding(top: 20),
-                      enableSearch: false,
-                      dropDownList: bankDownData,
-                      listTextStyle: const TextStyle(color: AppColors.primary),
-                      dropDownItemCount: 4,
-                      // onChanged: (val) {
-                      //   // paymentViewModel.updatePaymentStatus(val);
-                      // },
-                      textFieldFocusNode:
-                      paymentFocusViewModel.bankNameFocusNode,
-                      textFieldDecoration: InputDecoration(
-                        hintStyle: const TextStyle(color: AppColors.textGray),
-                        floatingLabelStyle:
-                        paymentFocusStates['bankNameFocusNode']!
-                            ? AppStyles.subHeading
-                            .copyWith(color: AppColors.primary)
-                            : AppStyles.subHeading,
-                        label: const Text(
-                          'Select Bank Name',
-                        ),
-                        enabledBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: AppColors.buttonBorderGray, width: 1),
-                            borderRadius: BorderRadius.all(Radius.circular(10))),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: AppColors.buttonBorderGray, width: 1),
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.blue,
-                                width: 2),
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(10))),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(
-                    height: displayHeight(context) * 0.01,
-                  ),
-                  Visibility(
-                    visible: paymentViewModel.modeOfCollectionController.dropDownValue?.value ==
-                        'online'||paymentViewModel.modeOfCollectionController.dropDownValue?.value ==
-                        'okCredit',
-                    child:
-                    AppFloatTextField(
-                      focusNode: paymentFocusViewModel.receiptFocusNode,
-                      currentState: paymentFocusStates['receiptFocusNode'],
-                      // controller: licenseController,
-                      onChange: (value) {
-                        paymentViewModel.updateReceipt(value);
-                      },
-                      height: !paymentState.isReceipt
-                          ? displayHeight(context) * 0.09
-                          : null,
-                      inerHint: 'Mention Mail For Receipt',
-                      errorText:
-                      "Date To Receive/Revisit Date is a required field",
-                      isError: !paymentState.isReceipt,
-                      textInputAction: TextInputAction.done,
-                    ),
-                  ),
-                  SizedBox(
-                    height: displayHeight(context) * 0.01,
-                  ),
-                  AppFloatTextField(
-                    focusNode: paymentFocusViewModel.transactionIdFocusNode,
-                    currentState: paymentFocusStates['transactionIdFocusNode'],
-                    // controller: licenseController,
-                    onChange: (value) {
-                      paymentViewModel.updateTransactionId(value);
-                    },
-                    height: !paymentState.isTransactionId
-                        ? displayHeight(context) * 0.09
-                        : null,
-                    inerHint: 'Transaction Id',
-                    errorText:
-                    "Transaction Id is a required field",
-                    isError: !paymentState.isTransactionId,
-                    textInputAction: TextInputAction.done,
-                  ),
-                  SizedBox(
-                    height: displayHeight(context) * 0.01,
-                  ),
-                  AppFloatTextField(
-                    maxLine: 5,
-                    focusNode: paymentFocusViewModel.remarkFocusNode,
-                    currentState: paymentFocusStates['remarkFocusNode'],
-                    // controller: licenseController,
-                    onChange: (value) {
-                      paymentViewModel.updateRemark(value);
-                    },
-                    height: !paymentState.isRemark
-                        ? displayHeight(context) * 0.16
-                        : displayHeight(context) * 0.13,
-
-                    inerHint: 'Remark*',
-                    errorText: "Remark* is a required field",
-                    isError: !paymentState.isRemark,
-                    textInputAction: TextInputAction.done,
-                  ),
-                  // SizedBox(
-                  //   height: displayHeight(context) * 0.01,
-                  // ),
-                  TextButton(
-                      onPressed: () {},
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(
-                            Icons.file_upload_outlined,
-                            color: AppColors.primary,
+                          SizedBox(
+                            height: displayHeight(context) * 0.02,
+                            width: displayWidth(context) * 0.10,
                           ),
-                          Text('Upload Transaction Image')
+                          SizedBox(
+                              child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'Update EMI',
+                                    style: AppStyles.cardTextStyle16,
+                                  ))),
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              icon: const Icon(Icons.cancel_sharp))
                         ],
+                      ),
+                      SizedBox(
+                        height: displayHeight(context) * 0.02,
+                      ),
+                      topWidget(context, text1: 'FINC956', text2: 'UGRO'),
+                      SizedBox(
+                        height: displayHeight(context) * 0.01,
+                      ),
+                      nameField(
+                          text1: 'Customer Name',
+                          text2: 'Lakhan S/O  Ramprasad'),
+                      nameField(text1: 'Collection Type', text2: 'Bounce EMI'),
+                      SizedBox(
+                        height: displayHeight(context) * 0.02,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          boxData(
+                            context,
+                            text1: 'Closure Am.',
+                            text2: '₹14384',
+                          ),
+                          boxData(
+                            context,
+                            text1: 'Closure Am.',
+                            text2: '₹14384',
+                          ),
+                          boxData(
+                            context,
+                            text1: 'Closure Am.',
+                            text2: '₹14384',
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: displayHeight(context) * 0.02,
+                ),
+                Container(
+                  padding: const EdgeInsets.only(left: 16),
+                  height: displayHeight(context) * 0.05,
+                  width: displayWidth(context),
+                  color: AppColors.primaryLight1,
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Additional Form',
+                        style: AppStyles.TextStyle16.copyWith(
+                            fontSize: FontSize.fontSizeS),
                       )),
-                  // AppButton(
-                  //   textStyle: AppStyles.buttonLightTextStyle,
-                  //   width: displayWidth(context) ,
-                  //   onTap: () {},
-                  //   label: 'Take Photo Visit',
-                  // ),
-                  AppButton(
-                    textStyle: AppStyles.buttonLightTextStyle,
-                    width: displayWidth(context),
-                    onTap: () {},
-                    label: 'Submit',
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
+                ),
+                SizedBox(
+                  height: displayHeight(context) * 0.02,
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      AppFloatTextField(
+                        focusNode: paymentFocusViewModel.emiAmountFocusNode,
+                        currentState: paymentFocusStates['emiAmountFocusNode'],
+                        // controller: licenseController,
+                        onChange: (value) {
+                          paymentViewModel.updateEmiAmount(value);
+                        },
+                        height: !paymentState.isEmiAmount
+                            ? displayHeight(context) * 0.09
+                            : null,
+                        inerHint: 'Received EMI Amount',
+                        errorText: "EMI Amount is a required field",
+                        isError: !paymentState.isEmiAmount,
+                        textInputAction: TextInputAction.done,
+                      ),
+                      SizedBox(
+                        height: displayHeight(context) * 0.01,
+                      ),
+                      DropDownTextField(
+                        clearOption: false,
+                        controller: paymentViewModel.modeOfCollectionController,
+                        listSpace: 20,
+                        listPadding: ListPadding(top: 20),
+                        enableSearch: false,
+                        dropDownList: dropDownData,
+                        listTextStyle:
+                            const TextStyle(color: AppColors.primary),
+                        dropDownItemCount: 3,
+                        textFieldFocusNode:
+                            paymentFocusViewModel.modeOfCollection,
+                        textFieldDecoration: InputDecoration(
+                          hintStyle: const TextStyle(color: AppColors.textGray),
+                          floatingLabelStyle:
+                              paymentFocusStates['modeOfCollection']!
+                                  ? AppStyles.subHeading
+                                      .copyWith(color: AppColors.primary)
+                                  : AppStyles.subHeading,
+                          label: const Text(
+                            'Mode Of Collection',
+                            // style: const TextStyle(color: AppColors.textGray),
+                          ),
+
+                          // errorText: isError! ? errorText : null,
+                          enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: AppColors.buttonBorderGray, width: 1),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          // filled: true,
+                          // fillColor: AppColors.gray,
+                          border: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: AppColors.buttonBorderGray, width: 1),
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.blue, width: 2),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                        ),
+                      ),
+                      SizedBox(
+                        height: displayHeight(context) * 0.01,
+                      ),
+                      Visibility(
+                        visible: paymentViewModel.modeOfCollectionController
+                                .dropDownValue?.value ==
+                            'okCredit',
+                        child: DropDownTextField(
+                          clearOption: false,
+                          controller: paymentViewModel.creditPersonController,
+                          listSpace: 20,
+                          listPadding: ListPadding(top: 20),
+                          enableSearch: false,
+                          dropDownList: creditDropData,
+                          listTextStyle:
+                              const TextStyle(color: AppColors.primary),
+                          dropDownItemCount: 4,
+                          // onChanged: (val) {
+                          //   // paymentViewModel.updatePaymentStatus(val);
+                          // },
+                          textFieldFocusNode:
+                              paymentFocusViewModel.creditPersonFocusNode,
+                          textFieldDecoration: InputDecoration(
+                            hintStyle:
+                                const TextStyle(color: AppColors.textGray),
+                            floatingLabelStyle:
+                                paymentFocusStates['creditPersonFocusNode']!
+                                    ? AppStyles.subHeading
+                                        .copyWith(color: AppColors.primary)
+                                    : AppStyles.subHeading,
+                            label: const Text(
+                              'Credit Person',
+                            ),
+                            enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppColors.buttonBorderGray,
+                                    width: 1),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                            border: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: AppColors.buttonBorderGray, width: 1),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.blue, width: 2),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: displayHeight(context) * 0.01,
+                      ),
+                      Visibility(
+                        visible: paymentViewModel.modeOfCollectionController
+                                .dropDownValue?.value ==
+                            'online',
+                        child: DropDownTextField(
+                          clearOption: false,
+                          controller: paymentViewModel.bankNameController,
+                          listSpace: 20,
+                          listPadding: ListPadding(top: 20),
+                          enableSearch: false,
+                          dropDownList: bankDownData,
+                          listTextStyle:
+                              const TextStyle(color: AppColors.primary),
+                          dropDownItemCount: 4,
+                          // onChanged: (val) {
+                          //   // paymentViewModel.updatePaymentStatus(val);
+                          // },
+                          textFieldFocusNode:
+                              paymentFocusViewModel.bankNameFocusNode,
+                          textFieldDecoration: InputDecoration(
+                            hintStyle:
+                                const TextStyle(color: AppColors.textGray),
+                            floatingLabelStyle:
+                                paymentFocusStates['bankNameFocusNode']!
+                                    ? AppStyles.subHeading
+                                        .copyWith(color: AppColors.primary)
+                                    : AppStyles.subHeading,
+                            label: const Text(
+                              'Select Bank Name',
+                            ),
+                            enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppColors.buttonBorderGray,
+                                    width: 1),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                            border: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: AppColors.buttonBorderGray, width: 1),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.blue, width: 2),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: displayHeight(context) * 0.01,
+                      ),
+                      Visibility(
+                        visible: paymentViewModel.modeOfCollectionController
+                                    .dropDownValue?.value ==
+                                'online' ||
+                            paymentViewModel.modeOfCollectionController
+                                    .dropDownValue?.value ==
+                                'okCredit',
+                        child: AppFloatTextField(
+                          focusNode: paymentFocusViewModel.receiptFocusNode,
+                          currentState: paymentFocusStates['receiptFocusNode'],
+                          // controller: licenseController,
+                          onChange: (value) {
+                            paymentViewModel.updateReceipt(value);
+                          },
+                          height: !paymentState.isReceipt
+                              ? displayHeight(context) * 0.09
+                              : null,
+                          inerHint: 'Mention Mail For Receipt',
+                          errorText:
+                              "Date To Receive/Revisit Date is a required field",
+                          isError: !paymentState.isReceipt,
+                          textInputAction: TextInputAction.done,
+                        ),
+                      ),
+                      SizedBox(
+                        height: displayHeight(context) * 0.01,
+                      ),
+                      AppFloatTextField(
+                        focusNode: paymentFocusViewModel.transactionIdFocusNode,
+                        currentState:
+                            paymentFocusStates['transactionIdFocusNode'],
+                        // controller: licenseController,
+                        onChange: (value) {
+                          paymentViewModel.updateTransactionId(value);
+                        },
+                        height: !paymentState.isTransactionId
+                            ? displayHeight(context) * 0.09
+                            : null,
+                        inerHint: 'Transaction Id',
+                        errorText: "Transaction Id is a required field",
+                        isError: !paymentState.isTransactionId,
+                        textInputAction: TextInputAction.done,
+                      ),
+                      SizedBox(
+                        height: displayHeight(context) * 0.01,
+                      ),
+                      AppFloatTextField(
+                        maxLine: 5,
+                        focusNode: paymentFocusViewModel.remarkFocusNode,
+                        currentState: paymentFocusStates['remarkFocusNode'],
+                        // controller: licenseController,
+                        onChange: (value) {
+                          paymentViewModel.updateRemark(value);
+                        },
+                        height: !paymentState.isRemark
+                            ? displayHeight(context) * 0.16
+                            : displayHeight(context) * 0.13,
+
+                        inerHint: 'Remark*',
+                        errorText: "Remark* is a required field",
+                        isError: !paymentState.isRemark,
+                        textInputAction: TextInputAction.done,
+                      ),
+                      // SizedBox(
+                      //   height: displayHeight(context) * 0.01,
+                      // ),
+                      TextButton(
+                          onPressed: () {},
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.file_upload_outlined,
+                                color: AppColors.primary,
+                              ),
+                              Text('Upload Transaction Image')
+                            ],
+                          )),
+                      // AppButton(
+                      //   textStyle: AppStyles.buttonLightTextStyle,
+                      //   width: displayWidth(context) ,
+                      //   onTap: () {},
+                      //   label: 'Take Photo Visit',
+                      // ),
+                      AppButton(
+                        textStyle: AppStyles.buttonLightTextStyle,
+                        width: displayWidth(context),
+                        onTap: () {},
+                        label: 'Submit',
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+      error: (error, stackTrace) {
+        return const Text('Something wrong');
+      },
+      loading: () {
+        return SizedBox(
+            height: displayHeight(context) * 0.07,
+            width: displayWidth(context),
+            child: Center(
+                child: SizedBox(
+                    height: displayHeight(context) * 0.03,
+                    width: displayWidth(context) * 0.10,
+                    child: const CircularProgressIndicator())));
+      },
     );
   }
 
