@@ -89,14 +89,15 @@ StateNotifierProvider<UpdateEmiViewModel, UpdateEmiModel>(
 final paymentStatusViewModelProvider =
 StateNotifierProvider<PaymentStatusViewModel, PaymentStatusModel>((ref) {
   final dio = ref.read(dioProvider);
-  final position = ref.watch(currentLocationProvider);
-  return PaymentStatusViewModel(dio,position as Position);
+  final  position = ref.watch(currentLocationProvider);
+  return PaymentStatusViewModel(dio,position);
 });
 
 class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
   final Dio dio;
-  final Position position;
+  final  position;
   String? imageApi = '';
+
 
   PaymentStatusViewModel(this.dio,this.position) : super(PaymentStatusModel());
   final SingleValueDropDownController dropDownControllerProvider =
@@ -104,6 +105,7 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
   final ImagePicker picker = ImagePicker();
 
   Future<XFile?> clickPhoto() async {
+    state = state.copyWith(isLoading:true);
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       state = state.copyWith(photoFile: pickedFile.path);
@@ -119,10 +121,16 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     final String token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
     final response = await dio.post(Api.uploadImageCollection,
-        data: formData, options: Options(headers: {"token": token}));
+        data: formData, options: Options(headers: {"token": token})).onError((error, stackTrace) {
+      state = state.copyWith(isLoading:false);
+          throw Exception(error);
+        },).then((value) {
+      state = state.copyWith(isLoading:false);
+        },);
     print(response.statusMessage);
     print(response.statusCode);
     if (response.statusCode == 200) {
+
       if (kDebugMode) {
         print('image ${response.data}');
         final value = jsonDecode(response.data);
@@ -134,7 +142,7 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     }
   }
 
-  Future<void> visitFormSubmit(String image, ItemsDetails data) async {
+  Future<void> visitFormSubmit({required String image,required ItemsDetails data}) async {
     String getCurrentDateFormatted() {
       // final DateTime now = DateTime.now();
       // final DateFormat formatter = DateFormat('yyyy/MM/dd');
@@ -492,6 +500,7 @@ class ClosuerFocusProvider extends StateNotifier<Map<String, bool>> {
 }
 
 class PaymentStatusModel {
+  final bool isLoading;
   final int selectedValue;
   final String photoFile;
   final String paymentStatus;
@@ -506,6 +515,7 @@ class PaymentStatusModel {
   final bool isSolutionValid;
 
   PaymentStatusModel({
+    this.isLoading = false,
     this.photoFile = '',
     this.selectedValue = 0,
     this.paymentStatus = '',
@@ -522,6 +532,7 @@ class PaymentStatusModel {
 
   PaymentStatusModel copyWith({
     String? photoFile,
+    bool? isLoading,
     int? selectedValue,
     String? paymentStatus,
     bool? isPaymentStatusValid,
@@ -535,6 +546,7 @@ class PaymentStatusModel {
     bool? isSolutionValid,
   }) {
     return PaymentStatusModel(
+      isLoading: isLoading??this.isLoading,
       photoFile: photoFile ?? this.photoFile,
       selectedValue: selectedValue ?? this.selectedValue,
       paymentStatus: paymentStatus ?? this.paymentStatus,
