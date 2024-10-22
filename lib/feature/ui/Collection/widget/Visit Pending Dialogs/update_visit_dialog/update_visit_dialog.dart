@@ -14,7 +14,8 @@ class UpdateVisitDialog {
     required String? oldDue,
     required String? finId,
     required String? partner,
-    required String? father
+    required String? father,
+    required int? index
   }) async {
     return showDialog(
       context: context,
@@ -27,7 +28,7 @@ class UpdateVisitDialog {
                 borderRadius: BorderRadius.all(Radius.circular(10))),
             child: UpdateVisitDialogContent(finId: finId,partner: partner,father: father,
                 oldDue: oldDue, collection: collectionType, netDue: netDue,
-                emiAmount: emiAmount, customerName: customerName));
+                emiAmount: emiAmount, customerName: customerName,index: index,));
       },
     );
   }

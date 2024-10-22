@@ -1,10 +1,10 @@
+import 'dart:io';
+
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/extentions/capital_letter.dart';
-import 'package:finexe/feature/ui/Collection/Collection%20cases/view/visitPending/visit_pending_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../base/utils/namespase/display_size.dart';
@@ -22,10 +22,13 @@ class UpdateVisitDialogContent extends ConsumerWidget {
   final String? partner;
   final String? finId;
   final String? father;
+  final int? index;
 
   const UpdateVisitDialogContent({
     super.key,
+
     required this.partner,
+    required this.index,
     required this.father,
     required this.finId,
     required this.customerName,
@@ -73,6 +76,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                               ))),
                       IconButton(
                           onPressed: () {
+                            paymentViewModel.updatePhotoValue('');
                             Navigator.pop(context);
                           },
                           icon: const Icon(Icons.cancel_sharp))
@@ -300,9 +304,20 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                   // SizedBox(
                   //   height: displayHeight(context) * 0.01,
                   // ),
-                  TextButton(
-                      onPressed: () {},
-                      child: const Row(
+                  GestureDetector(
+                    onTap: () {
+                      paymentViewModel.clickPhoto().then((value) {
+                        if(value!=null){
+                          print('imagepath ${value.path}');
+                          paymentViewModel.uploadImage(value.path);
+                        }else{
+                          print('elsepart');
+                        }
+                      },);
+                    },
+                    child: Visibility(
+                      visible: paymentState.photoFile.isNotEmpty,
+                      replacement: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
@@ -311,13 +326,14 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                           ),
                           Text('Take Visit Photo')
                         ],
-                      )),
-                  // AppButton(
-                  //   textStyle: AppStyles.buttonLightTextStyle,
-                  //   width: displayWidth(context) ,
-                  //   onTap: () {},
-                  //   label: 'Take Photo Visit',
-                  // ),
+                      ),
+                      child: SizedBox(
+                        height: displayHeight(context)*0.07,
+                          width: displayWidth(context),
+                          child: Image.file(File(paymentState.photoFile)))
+                    ),
+                  ),
+                  SizedBox(height: displayHeight(context)*0.02,),
                   AppButton(
                     textStyle: AppStyles.buttonLightTextStyle,
                     width: displayWidth(context),

@@ -312,7 +312,8 @@ class VisitPendingScreen extends ConsumerWidget {
                                         GestureDetector(
                                           onTap: () {
                                             UpdateVisitDialog()
-                                                .updateVisitDialog(emiAmount: item.emiAmount,netDue: item.netDue!,oldDue: item.oldDue,
+                                                .updateVisitDialog(index: index,
+                                                emiAmount: item.emiAmount,netDue: item.netDue!,oldDue: item.oldDue,
                                                     collectionType:
                                                         item.collectionType,
                                                     customerName:

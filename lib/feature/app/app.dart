@@ -10,7 +10,7 @@ class MyApp extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: AppRoutes.collectionHome, // Define initial route
+      initialRoute: AppRoutes.cases, // Define initial route
       onGenerateRoute: AppRoutes.generateRoute,
 
       // supportedLocales: AppLocalizations.supportedLocales,
