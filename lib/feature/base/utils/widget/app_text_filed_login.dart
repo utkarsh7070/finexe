@@ -79,6 +79,7 @@ class AppFloatTextField extends StatelessWidget {
         textInputAction: textInputAction,
         keyboardType: textInputType,
         style: const TextStyle(fontSize: 12),
+        textAlignVertical: TextAlignVertical.center,  // Add this property
         decoration: InputDecoration(
           isDense: false,
           // hintText: inerHint,
@@ -104,6 +105,7 @@ class AppFloatTextField extends StatelessWidget {
                   child: Icon(suffixIcon, color: Colors.grey),
                 )
               : null,
+          contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),  // Add this property
           enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: AppColors.gray, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(10))),
