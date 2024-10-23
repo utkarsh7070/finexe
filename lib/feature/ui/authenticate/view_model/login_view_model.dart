@@ -369,14 +369,15 @@ class LoginViewModel extends StateNotifier<AsyncValue<String>> {
             LoginResponseModel.fromJson(response.data);
 
         log('response:: ' + response.data.toString());
+        log('role:: ' + loginResponseModel.items.roleName.toString());
 
         // Create session after login
         SessionService.createSession(
-          accessToken: loginResponseModel.items.token,
-          employeeId: loginResponseModel.items.employeId,
-          name: loginResponseModel.items.roleName,
-          email: loginResponseModel.items.userName,
-        );
+            accessToken: loginResponseModel.items.token,
+            employeeId: loginResponseModel.items.employeId,
+            name: loginResponseModel.items.roleName,
+            email: loginResponseModel.items.userName,
+            role: loginResponseModel.items.roleName);
 
         // Update state to indicate success
         state = AsyncValue.data('Success');

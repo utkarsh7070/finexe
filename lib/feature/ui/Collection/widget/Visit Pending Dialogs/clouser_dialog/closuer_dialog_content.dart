@@ -1,6 +1,8 @@
+import 'package:finexe/feature/base/extentions/capital_letter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../base/utils/namespase/app_style.dart';
@@ -8,11 +10,20 @@ import '../../../../../base/utils/namespase/display_size.dart';
 import '../../../../../base/utils/namespase/font_size.dart';
 import '../../../../../base/utils/widget/app_button.dart';
 import '../../../../../base/utils/widget/app_text_filed_login.dart';
+import '../../../Collection cases/model/visit_pending_items_model.dart';
 import '../../../Collection cases/view_model/visit_pending_view_model.dart';
 
 
 class ClosuerDialogContent extends ConsumerWidget {
-  const ClosuerDialogContent({super.key});
+  final ItemsDetails? item;
+  final int? index;
+  /*const ClosuerDialogContent({super.key});*/
+
+  const ClosuerDialogContent({
+    super.key,
+    required this.index,
+    required this.item
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,10 +31,10 @@ class ClosuerDialogContent extends ConsumerWidget {
     // final dropDownData = ref.read(updateVisitDropDown);
     final paymentState = ref.watch(closuerViewModelProvider);
     final paymentViewModel = ref.read(closuerViewModelProvider.notifier);
-    final paymentFocusStates =
-    ref.watch(closuerFocusProvider);
-    final paymentFocusViewModel =
-    ref.read(closuerFocusProvider.notifier);
+    final paymentFocusStates = ref.watch(closuerFocusProvider);
+    final paymentFocusViewModel = ref.read(closuerFocusProvider.notifier);
+    final selectedDate = ref.watch(dateProvider);
+
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       child: SizedBox(
@@ -57,13 +68,14 @@ class ClosuerDialogContent extends ConsumerWidget {
                   SizedBox(
                     height: displayHeight(context) * 0.02,
                   ),
-                  topWidget(context, text1: 'FINC956', text2: 'UGRO'),
+                  topWidget(context, text1: item?.ld!, text2: item?.partner!),
                   SizedBox(
                     height: displayHeight(context) * 0.01,
                   ),
                   nameField(
-                      text1: 'Customer Name', text2: 'Lakhan S/O  Ramprasad'),
-                  nameField(text1: 'Collection Type', text2: 'Bounce EMI'),
+                      text1: 'Customer Name',
+                      text2: '${item?.customerName}  S/O ${item?.fatherName}'),
+                  nameField(text1: 'Collection Type', text2: item!.collectionType),
                   SizedBox(
                     height: displayHeight(context) * 0.02,
                   ),
@@ -72,18 +84,18 @@ class ClosuerDialogContent extends ConsumerWidget {
                     children: [
                       boxData(
                         context,
-                        text1: 'Closure Am.',
-                        text2: '₹14384',
+                        text1: 'Emi Amount',
+                        text2: '₹${item?.emiAmount}',
                       ),
                       boxData(
                         context,
-                        text1: 'Closure Am.',
-                        text2: '₹14384',
+                        text1: 'Net Due',
+                        text2: '₹${item?.netDue}',
                       ),
                       boxData(
                         context,
-                        text1: 'Closure Am.',
-                        text2: '₹14384',
+                        text1: 'Old Due',
+                        text2: '₹${item?.oldDue}',
                       ),
                     ],
                   ),
@@ -116,8 +128,7 @@ class ClosuerDialogContent extends ConsumerWidget {
                 children: [
                   AppFloatTextField(
                     focusNode: paymentFocusViewModel.amountClosuerFocusNode,
-                    currentState:
-                    paymentFocusStates['amountClosuerFocusNode'],
+                    currentState: paymentFocusStates['amountClosuerFocusNode'],
                     // controller: licenseController,
                     onChange: (value) {
                       paymentViewModel.updateAmount(value);
@@ -129,11 +140,13 @@ class ClosuerDialogContent extends ConsumerWidget {
                     errorText: "Payment Amount is a required field",
                     isError: !paymentState.isAmount,
                     textInputAction: TextInputAction.done,
+                   /* textAlignVertical: TextAlignVertical.center, // This aligns the text properly inside the field
+                    contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),*/ // Adjust padding to give more space
                   ),
                   SizedBox(
                     height: displayHeight(context) * 0.01,
                   ),
-                  AppFloatTextField(
+                 /* AppFloatTextField(
                     focusNode: paymentFocusViewModel.dateClosuerFocusNode,
                     currentState: paymentFocusStates['dateClosuerFocusNode'],
                     // controller: licenseController,
@@ -148,7 +161,102 @@ class ClosuerDialogContent extends ConsumerWidget {
                     "Date To Receive/Revisit Date is a required field",
                     isError: !paymentState.isDate,
                     textInputAction: TextInputAction.done,
+                  ),*/
+
+                 /* // Date field with DatePicker
+                  AppFloatTextField(
+                    focusNode: paymentFocusViewModel.dateClosuerFocusNode,
+                    currentState: paymentFocusStates['dateClosuerFocusNode'],
+                    onChange: (value) {
+                      paymentViewModel.updateDate(DateTime.parse(value));  // Parse the date string into DateTime
+                    },
+                    height: !paymentState.isDate ? displayHeight(context) * 0.09 : null,
+                    inerHint: 'Date To Receive/Revisit Date',
+                    errorText: "Date To Receive/Revisit Date is a required field",
+                    isError: !paymentState.isDate,
+                    controller: TextEditingController(
+                      text: ref.watch(dateProvider) != null
+                          ? DateFormat('yyyy-MM-dd').format(ref.watch(dateProvider)!)
+                          : '',
+                    ),
+                    onTap: () async {
+                      final pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: ref.watch(dateProvider) ?? DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (pickedDate != null) {
+                        ref.read(dateProvider.notifier).updateDate(pickedDate);
+                        paymentViewModel.updateDate(pickedDate);  // Pass picked date to view model
+                      }
+                    },
+                    textInputAction: TextInputAction.done,
+                  ),*/
+
+                 /* AppFloatTextField(
+                    focusNode: paymentFocusViewModel.dateClosuerFocusNode,
+                    currentState: paymentFocusStates['dateClosuerFocusNode'],
+                    onChange: (value) {
+                      paymentViewModel.updateDate(DateTime.parse(value));  // Parse the date string into DateTime
+                    },
+                    height: !paymentState.isDate ? displayHeight(context) * 0.09 : null,
+                    inerHint: 'Date To Receive/Revisit Date',
+                    errorText: "Date To Receive/Revisit Date is a required field",
+                    isError: !paymentState.isDate,
+                    controller: TextEditingController(
+                      text: ref.watch(dateProvider) != null
+                          ? DateFormat('yyyy-MM-dd').format(ref.watch(dateProvider)!)
+                          : '',
+                    ),
+                    suffixIcon: Icons.calendar_today,  // Use the calendar icon
+                    isSuffix: true,  // Enable the suffix icon
+                    suffixOnTap: () async {
+                      final pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: ref.watch(dateProvider) ?? DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (pickedDate != null) {
+                        ref.read(dateProvider.notifier).updateDate(pickedDate);
+                        paymentViewModel.updateDate(pickedDate);  // Pass picked date to view model
+                      }
+                    },
+                    textInputAction: TextInputAction.done,
+                  ),*/
+
+                  AppFloatTextField(
+                    focusNode: paymentFocusViewModel.dateClosuerFocusNode,
+                    currentState: paymentFocusStates['dateClosuerFocusNode'],
+                    onChange: (value) {
+                      paymentViewModel.updateDate(DateTime.parse(value));  // Parse the date string into DateTime
+                    },
+                    height: !paymentState.isDate ? displayHeight(context) * 0.09 : null,
+                    inerHint: 'Date To Receive/Revisit Date',
+                    errorText: "Date To Receive/Revisit Date is a required field",
+                    isError: !paymentState.isDate,
+                    controller: TextEditingController(
+                      text: ref.watch(dateProvider) != null
+                          ? DateFormat('yyyy-MM-dd').format(ref.watch(dateProvider)!)
+                          : '',
+                    ),
+                    onTap: () async {
+                      await paymentViewModel.openDatePicker(ref, ref.watch(dateProvider));
+                      // Update the date provider after selection
+                      final pickedDate = ref.watch(dateProvider);
+                      if (pickedDate != null) {
+                        ref.read(dateProvider.notifier).updateDate(pickedDate);
+                      }
+                    },
+                    textInputAction: TextInputAction.done,
+                    suffixIcon: Icons.calendar_today, // Calendar icon on the right
+                    isSuffix: true,
+
                   ),
+
+
+
                   SizedBox(
                     height: displayHeight(context) * 0.01,
                   ),
@@ -174,7 +282,9 @@ class ClosuerDialogContent extends ConsumerWidget {
                   AppButton(
                     textStyle: AppStyles.buttonLightTextStyle,
                     width: displayWidth(context),
-                    onTap: () {},
+                    onTap: () {
+                      paymentViewModel.visitClosureFormSubmit(context ,data:item! );
+                    },
                     label: 'Submit',
                   )
                 ],
@@ -186,19 +296,19 @@ class ClosuerDialogContent extends ConsumerWidget {
     );
   }
 
-  Widget topWidget(context, {required String text1, required String text2}) {
+  Widget topWidget(context, {required String? text1, required String? text2}) {
     return SizedBox(
       width: displayWidth(context),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            text1,
+            text1!,
             style: AppStyles.headingTextStyleXL1
                 .copyWith(fontSize: FontSize.fontSizeXL),
           ),
           Text(
-            text2,
+            text2!,
             style: AppStyles.headingTextStyleXL2
                 .copyWith(fontSize: FontSize.fontSize16),
           ),
@@ -207,17 +317,17 @@ class ClosuerDialogContent extends ConsumerWidget {
     );
   }
 
-  Widget nameField({required String text1, required String text2}) {
+  Widget nameField({required String? text1, required String? text2}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          text1,
+          text1!,
           style: AppStyles.subHeadingW500
               .copyWith(color: AppColors.gray7, fontSize: FontSize.fontSizeXS),
         ),
         Text(
-          text2,
+          text2!.capitalize(),
           style: AppStyles.nameText.copyWith(
               fontSize: FontSize.fontSizeS, fontWeight: FontWeight.w600),
         ),

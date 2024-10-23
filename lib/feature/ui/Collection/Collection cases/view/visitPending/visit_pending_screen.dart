@@ -328,7 +328,8 @@ class VisitPendingScreen extends ConsumerWidget {
                                         GestureDetector(
                                           onTap: () {
                                             ClosuerDialog().closuerDialog(
-                                                context: context);
+                                                item:item,
+                                                context: context,index: index);
                                           },
                                           child: textPreIcon(context,
                                               image:
