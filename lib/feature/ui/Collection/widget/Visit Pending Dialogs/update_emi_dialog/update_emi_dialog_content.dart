@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -9,10 +11,14 @@ import '../../../../../base/utils/namespase/display_size.dart';
 import '../../../../../base/utils/namespase/font_size.dart';
 import '../../../../../base/utils/widget/app_button.dart';
 import '../../../../../base/utils/widget/app_text_filed_login.dart';
+import '../../../Collection cases/model/visit_pending_items_model.dart';
 import '../../../Collection cases/view_model/visit_pending_view_model.dart';
 
 class UpdateEmiDialogContent extends ConsumerWidget {
-  const UpdateEmiDialogContent({super.key});
+  final ItemsDetails? item;
+  final int? index;
+  const UpdateEmiDialogContent({super.key,   required this.index,
+    required this.item});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,10 +33,13 @@ class UpdateEmiDialogContent extends ConsumerWidget {
     final getCollectionMode = ref.watch(fetchGetAllModeOfCollectionProvider);
     return getCollectionMode.when(
       data: (data) {
-        // List<DropDownValueModel> dropdown = data.forEach((element) {
-        //   return DropDownValueModel(name: element.title,value:element.title );
-        //
-        // },);
+        List<DropDownValueModel> dropdown = [];
+        for (var element in data) {
+          if (element.title.isNotEmpty) {
+            dropdown.add(
+                DropDownValueModel(name: element.title, value: element.id));
+          }
+        }
         return SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: SizedBox(
@@ -59,6 +68,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                                   ))),
                           IconButton(
                               onPressed: () {
+                                paymentViewModel.updatePhotoValue('', context);
                                 Navigator.pop(context);
                               },
                               icon: const Icon(Icons.cancel_sharp))
@@ -145,15 +155,21 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         height: displayHeight(context) * 0.01,
                       ),
                       DropDownTextField(
+                        onChanged: (dropDown) {
+                          if (dropDown != null) {
+                            print('drop down $dropDown');
+                            paymentViewModel.openFeilds(dropDown.value);
+                          }
+                        },
                         clearOption: false,
                         controller: paymentViewModel.modeOfCollectionController,
                         listSpace: 20,
                         listPadding: ListPadding(top: 20),
                         enableSearch: false,
-                        dropDownList: dropDownData,
+                        dropDownList: dropdown,
                         listTextStyle:
                             const TextStyle(color: AppColors.primary),
-                        dropDownItemCount: 3,
+                        dropDownItemCount: data.length,
                         textFieldFocusNode:
                             paymentFocusViewModel.modeOfCollection,
                         textFieldDecoration: InputDecoration(
@@ -193,22 +209,26 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         height: displayHeight(context) * 0.01,
                       ),
                       Visibility(
-                        visible: paymentViewModel.modeOfCollectionController
-                                .dropDownValue?.value ==
-                            'okCredit',
+                        visible: paymentState.modeTitle == 'okCreditAssign' &&
+                            paymentState.isExtraFormOpen,
+                        // paymentViewModel.modeOfCollectionController
+                        //         .dropDownValue?.name ==
+                        //     'okcredit' ,
+                        // && paymentState.isExtraFormOpen,
                         child: DropDownTextField(
                           clearOption: false,
                           controller: paymentViewModel.creditPersonController,
                           listSpace: 20,
                           listPadding: ListPadding(top: 20),
                           enableSearch: false,
-                          dropDownList: creditDropData,
+                          dropDownList: paymentState.subDropdown,
                           listTextStyle:
                               const TextStyle(color: AppColors.primary),
                           dropDownItemCount: 4,
-                          // onChanged: (val) {
-                          //   // paymentViewModel.updatePaymentStatus(val);
-                          // },
+                          onChanged: (val) {
+                            print(val);
+                            paymentViewModel.updateCreditPerson(val.value);
+                          },
                           textFieldFocusNode:
                               paymentFocusViewModel.creditPersonFocusNode,
                           textFieldDecoration: InputDecoration(
@@ -246,22 +266,24 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         height: displayHeight(context) * 0.01,
                       ),
                       Visibility(
-                        visible: paymentViewModel.modeOfCollectionController
-                                .dropDownValue?.value ==
-                            'online',
+                        visible: paymentState.modeTitle == 'bankName' &&
+                            paymentState.isExtraFormOpen,
+                        // paymentViewModel.modeOfCollectionController
+                        //         .dropDownValue?.name ==
+                        //     'online'&& paymentState.isExtraFormOpen ,
                         child: DropDownTextField(
                           clearOption: false,
                           controller: paymentViewModel.bankNameController,
                           listSpace: 20,
                           listPadding: ListPadding(top: 20),
                           enableSearch: false,
-                          dropDownList: bankDownData,
+                          dropDownList: paymentState.subDropdown,
                           listTextStyle:
                               const TextStyle(color: AppColors.primary),
                           dropDownItemCount: 4,
-                          // onChanged: (val) {
-                          //   // paymentViewModel.updatePaymentStatus(val);
-                          // },
+                          onChanged: (val) {
+                            paymentViewModel.updateBankName(val.value);
+                          },
                           textFieldFocusNode:
                               paymentFocusViewModel.bankNameFocusNode,
                           textFieldDecoration: InputDecoration(
@@ -300,12 +322,13 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         height: displayHeight(context) * 0.01,
                       ),
                       Visibility(
-                        visible: paymentViewModel.modeOfCollectionController
-                                    .dropDownValue?.value ==
-                                'online' ||
-                            paymentViewModel.modeOfCollectionController
-                                    .dropDownValue?.value ==
-                                'okCredit',
+                        visible: paymentState.isEmail,
+                        // paymentViewModel.modeOfCollectionController
+                        //             .dropDownValue?.name ==
+                        //         'online' ||
+                        //     paymentViewModel.modeOfCollectionController
+                        //             .dropDownValue?.name ==
+                        //         'okCredit',
                         child: AppFloatTextField(
                           focusNode: paymentFocusViewModel.receiptFocusNode,
                           currentState: paymentFocusStates['receiptFocusNode'],
@@ -362,31 +385,60 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         isError: !paymentState.isRemark,
                         textInputAction: TextInputAction.done,
                       ),
-                      // SizedBox(
-                      //   height: displayHeight(context) * 0.01,
-                      // ),
-                      TextButton(
-                          onPressed: () {},
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.file_upload_outlined,
-                                color: AppColors.primary,
-                              ),
-                              Text('Upload Transaction Image')
-                            ],
-                          )),
+                      SizedBox(
+                        height: displayHeight(context) * 0.01,
+                      ),
+
+                      GestureDetector(
+                        onTap: () {
+                          paymentViewModel.clickPhoto().then(
+                            (value) {
+                              if (value != null) {
+                                // imagePath = value.path;
+                                // print('imagepath ${imagePath}');
+                                paymentViewModel.uploadImage(value.path);
+                              } else {
+                                print('elsepart');
+                              }
+                            },
+                          );
+                        },
+                        child: !paymentState.isLoading
+                            ? Visibility(
+                                visible: paymentState.photoFile.isNotEmpty,
+                                replacement: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.file_upload_outlined,
+                                      color: AppColors.primary,
+                                    ),
+                                    Text('Upload Transaction Image')
+                                  ],
+                                ),
+                                child: SizedBox(
+                                    height: displayHeight(context) * 0.07,
+                                    width: displayWidth(context),
+                                    child: Image.file(
+                                        File(paymentState.photoFile))))
+                            : SizedBox(
+                                height: displayHeight(context) * 0.04,
+                                width: displayWidth(context) * 0.07,
+                                child: const CircularProgressIndicator()),
+                      ),
                       // AppButton(
                       //   textStyle: AppStyles.buttonLightTextStyle,
                       //   width: displayWidth(context) ,
                       //   onTap: () {},
                       //   label: 'Take Photo Visit',
                       // ),
+                      SizedBox(height: displayHeight(context)*0.01,),
                       AppButton(
                         textStyle: AppStyles.buttonLightTextStyle,
                         width: displayWidth(context),
-                        onTap: () {},
+                        onTap: () {
+                          paymentViewModel.updateEmiSubmitButton(detail: item!);
+                        },
                         label: 'Submit',
                       )
                     ],

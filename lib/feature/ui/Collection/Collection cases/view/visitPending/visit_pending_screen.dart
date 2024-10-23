@@ -347,7 +347,7 @@ class VisitPendingScreen extends ConsumerWidget {
                                     width: displayWidth(context),
                                     onTap: () {
                                       UpdateEmiDialog()
-                                          .updateEmiDialog(context: context);
+                                          .updateEmiDialog(context: context,index: index,item: item);
                                     },
                                     label: 'Update EMI',
                                     textStyle:
