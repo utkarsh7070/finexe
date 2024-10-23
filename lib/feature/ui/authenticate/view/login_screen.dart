@@ -307,54 +307,60 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   .then((value) async {
                                 if (value) {
                                   // Fetch the stored roleName from SharedPreferences
-                                  SharedPreferences preferences =
-                                      await SharedPreferences.getInstance();
-                                  String? role =
-                                      await preferences.getString('roleName');
+                                  // SharedPreferences preferences =
+                                  //     await SharedPreferences.getInstance();
+                                  // String? role =
+                                  //     await preferences.getString('roleName');
 
                                   log("Login Success: " + value.toString());
-                                  log("Role: " + role.toString());
+                                  //  log("Role: " + role.toString());
 
                                   showCustomSnackBar(context,
                                       'Login Successful', Colors.green);
-
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    AppRoutes.attendance,
+                                    (route) => false,
+                                  );
                                   // Navigate the user according to their role
-                                  switch (role) {
-                                    case 'admin':
-                                      log("Navigating to admin dashboard");
-                                      Navigator.pushNamedAndRemoveUntil(
-                                        context,
-                                        AppRoutes
-                                            .dashBoard, // Admin dashboard route
-                                        (route) =>
-                                            false, // Remove all previous routes
-                                      );
-                                      break;
-                                    case 'sales':
-                                      log("Navigating to sales dashboard");
-                                      Navigator.pushNamedAndRemoveUntil(
-                                        context,
-                                        AppRoutes
-                                            .saleApplicationForm, // Sales dashboard route
-                                        (route) =>
-                                            false, // Remove all previous routes
-                                      );
-                                      break;
-                                    case 'collection':
-                                      log("Navigating to collection dashboard");
-                                      Navigator.pushNamedAndRemoveUntil(
-                                        context,
-                                        AppRoutes
-                                            .collectionHome, // Collection dashboard route
-                                        (route) =>
-                                            false, // Remove all previous routes
-                                      );
-                                      break;
-                                    default:
-                                      // Handle unknown roles or navigate to a default screen
-                                      log('No matching role found');
-                                      break;
-                                  }
+                                  // switch (role) {
+                                  //   case 'admin':
+                                  //     log("Navigating to admin dashboard");
+
+                                  //     Navigator.pushNamedAndRemoveUntil(
+                                  //       context,
+                                  //       AppRoutes
+                                  //           .dashBoard, // Admin dashboard route
+                                  //       (route) =>
+                                  //           false, // Remove all previous routes
+                                  //     );
+
+                                  //     break;
+                                  //   case 'sales':
+                                  //     log("Navigating to sales dashboard");
+                                  //     Navigator.pushNamedAndRemoveUntil(
+                                  //       context,
+                                  //       AppRoutes
+                                  //           .saleApplicationForm, // Sales dashboard route
+                                  //       (route) =>
+                                  //           false, // Remove all previous routes
+                                  //     );
+                                  //     break;
+                                  //   case 'collection':
+                                  //     log("Navigating to collection dashboard");
+                                  //     Navigator.pushNamedAndRemoveUntil(
+                                  //       context,
+                                  //       AppRoutes
+                                  //           .collectionHome, // Collection dashboard route
+                                  //       (route) =>
+                                  //           false, // Remove all previous routes
+                                  //     );
+                                  //     break;
+                                  //   default:
+                                  //     // Handle unknown roles or navigate to a default screen
+                                  //     log('No matching role found');
+                                  //     break;
+                                  // }
                                 } else {
                                   log('value:: ' + value.toString());
                                   showCustomSnackBar(context,

@@ -1,3 +1,4 @@
+import 'package:finexe/feature/Punch_In_Out/view/attendance.dart';
 import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/home_collection_view/DashboardScreen.dart';
 import 'package:finexe/feature/ui/Sales/NewLone/view/new_loan_screen.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_screen.dart';
@@ -40,6 +41,7 @@ class AppRoutes {
   static const String updateVisit = '/updateVisit';
   static const String moreInfo = '/moreInfo';
   static const String collectionHome = '/collectionHome';
+  static const String attendanceScreen = '/attendanceScreen';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -51,6 +53,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => DashboardScreen());
       case forgot:
         return MaterialPageRoute(builder: (_) => ForgotPasswordScreen());
+      case attendance:
+        return MaterialPageRoute(builder: (_) => AttendanceScreen());
       case dashBoard:
         return
             // MaterialPageRoute(builder: (_) =>

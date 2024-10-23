@@ -104,38 +104,45 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           Future.microtask(() {
             if (isLoggedIn.token!) {
               log('user is loggen in');
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.attendance,
+                (route) => false,
+              );
               // Navigator.pushReplacementNamed(context,
               //     AppRoutes.dashBoard); // Navigate to dashboard if logged in
-              switch (isLoggedIn.role) {
-                case 'admin':
-                  log("Navigating to admin dashboard");
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppRoutes.dashBoard, // Admin dashboard route
-                    (route) => false, // Remove all previous routes
-                  );
-                  break;
-                case 'sales':
-                  log("Navigating to sales dashboard");
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppRoutes.dashBoard, // Sales dashboard route
-                    (route) => false, // Remove all previous routes
-                  );
-                  break;
-                case 'collection':
-                  log("Navigating to collection dashboard");
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppRoutes.collectionHome, // Collection dashboard route
-                    (route) => false, // Remove all previous routes
-                  );
-                  break;
-                default:
-                  // Handle unknown roles or navigate to a default screen
-                  log('No matching role found');
-                  break;
-              }
+              // switch (isLoggedIn.role) {
+              //   case 'admin':
+              //     log("Navigating to admin dashboard");
+              //     Navigator.pushNamedAndRemoveUntil(
+              //       context,
+              //       AppRoutes.dashBoard, // Admin dashboard route
+              //       (route) => false, // Remove all previous routes
+              //     );
+              //     break;
+              //   case 'sales':
+              //     log("Navigating to sales dashboard");
+              //     Navigator.pushNamedAndRemoveUntil(
+              //       context,
+              //       AppRoutes.dashBoard, // Sales dashboard route
+              //       (route) => false, // Remove all previous routes
+              //     );
+              //     break;
+              //   case 'collection':
+              //     log("Navigating to collection dashboard");
+              //     Navigator.pushNamedAndRemoveUntil(
+              //       context,
+              //       AppRoutes.collectionHome, // Collection dashboard route
+              //       (route) => false, // Remove all previous routes
+              //     );
+              //     break;
+              //   default:
+              //     // Handle unknown roles or navigate to a default screen
+              //     log('No matching role found');
+              //     break;
+              // }
+              // Navigator.pushReplacementNamed(context,
+              //     AppRoutes.dashBoard);
             } else {
               Navigator.pushReplacementNamed(context,
                   AppRoutes.login); // Navigate to login if not logged in
