@@ -12,7 +12,7 @@ class UpdateVisitDialog {
     required ItemsDetails item,
     required int index,
   }) async {
-    return showDialog(
+    return showDialog(barrierDismissible: false,
       context: context,
       builder: (context) {
         return Dialog(

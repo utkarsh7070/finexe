@@ -8,6 +8,7 @@ class AppFloatTextField extends StatelessWidget {
   final String? inerHint;
   final double? width;
   final String? errorText;
+  final bool isReadOnly;
   final TextEditingController? controller;
   final IconData? suffixIcon;
   final IconData? prefixIcon;
@@ -43,6 +44,7 @@ class AppFloatTextField extends StatelessWidget {
       this.suffixOnTap,
       this.onTap,
       this.isSuffix = false,
+        this.isReadOnly = false,
       this.textInputAction = TextInputAction.done,
       this.textInputType = TextInputType.text,
       // this.initialValue,
@@ -64,7 +66,7 @@ class AppFloatTextField extends StatelessWidget {
       height: height ?? displayHeight(context) * 0.06,
 
       alignment: Alignment.center,
-      child: TextFormField(
+      child: TextFormField(readOnly: isReadOnly,
         // initialValue: initialValue,
         maxLines: maxLine,
         focusNode: focusNode,

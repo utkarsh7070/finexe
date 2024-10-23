@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/collection_mode_response_model.dart';
+import 'package:finexe/feature/ui/Collection/Collection%20cases/model/get_mode_by_id_response_model.dart';
+import 'package:finexe/feature/ui/Collection/Collection%20cases/model/update_emi_submit_request_model.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_submit_request_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,10 +15,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
 import '../model/get_visit_pending_response_data.dart';
 import '../model/visit_pending_items_model.dart';
+import '../model/visit_update_upload_image_responce_model.dart';
 
 final updateVisitDropDown = StateProvider<List<DropDownValueModel>>(
       (ref) {
@@ -82,30 +86,33 @@ StateNotifierProvider<UpdateEmiFocusProvider, Map<String, bool>>((ref) {
 });
 
 final updateEmiViewModelProvider =
-StateNotifierProvider<UpdateEmiViewModel, UpdateEmiModel>(
-        (ref) => UpdateEmiViewModel());
-
+StateNotifierProvider<UpdateEmiViewModel, UpdateEmiModel>((ref) {
+  final dio = ref.read(dioProvider);
+  return UpdateEmiViewModel(dio);
+});
 
 final paymentStatusViewModelProvider =
 StateNotifierProvider<PaymentStatusViewModel, PaymentStatusModel>((ref) {
   final dio = ref.read(dioProvider);
-  final  position = ref.watch(currentLocationProvider);
-  return PaymentStatusViewModel(dio,position);
+
+  final position = ref.watch(currentLocationProvider);
+  return PaymentStatusViewModel(dio, position);
 });
 
 class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
   final Dio dio;
-  final  position;
-  String? imageApi = '';
+  final AsyncValue<Position> position;
+  String imageApi = '';
 
-
-  PaymentStatusViewModel(this.dio,this.position) : super(PaymentStatusModel());
+  TextEditingController dateController = TextEditingController();
   final SingleValueDropDownController dropDownControllerProvider =
   SingleValueDropDownController();
   final ImagePicker picker = ImagePicker();
 
+  PaymentStatusViewModel(this.dio, this.position) : super(PaymentStatusModel());
+
   Future<XFile?> clickPhoto() async {
-    state = state.copyWith(isLoading:true);
+    state = state.copyWith(isLoading: true);
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       state = state.copyWith(photoFile: pickedFile.path);
@@ -118,77 +125,105 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     var formData = FormData.fromMap({
       'image': await MultipartFile.fromFile(image),
     });
+    print(image);
     final String token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
     final response = await dio.post(Api.uploadImageCollection,
-        data: formData, options: Options(headers: {"token": token})).onError((error, stackTrace) {
-      state = state.copyWith(isLoading:false);
-          throw Exception(error);
-        },).then((value) {
-      state = state.copyWith(isLoading:false);
-        },);
-    print(response.statusMessage);
-    print(response.statusCode);
+        data: formData, options: Options(headers: {"token": token}));
     if (response.statusCode == 200) {
-
+      VisitUpdateUploadImageResponseModel imageResponseModel =
+      VisitUpdateUploadImageResponseModel.fromJson(response.data);
+      state = state.copyWith(isLoading: false);
       if (kDebugMode) {
-        print('image ${response.data}');
-        final value = jsonDecode(response.data);
-        imageApi = value['items']['image'];
+        print('image ${imageResponseModel.items.image}');
+        imageApi = imageResponseModel.items.image;
         print(imageApi);
       }
     } else {
+      state = state.copyWith(isLoading: false);
       throw Exception('Failed to load data');
     }
   }
 
-  Future<void> visitFormSubmit({required String image,required ItemsDetails data}) async {
-    String getCurrentDateFormatted() {
-      // final DateTime now = DateTime.now();
-      // final DateFormat formatter = DateFormat('yyyy/MM/dd');
-      // final String formattedDate = formatter.format(now);
-      return DateFormat('yyyy-dd-MM').format(DateTime.now());
-    }
-    VisitUpdateSubmitRequestModel requestModel = VisitUpdateSubmitRequestModel(
-        ld: data.ld!,
-        customerName: data.customerName!,
-        visitDate: getCurrentDateFormatted.toString(),
-        revisitDate: state.date,
-        newContactNumber: int.parse(data.mobile!),
-        customerResponse: state.reason,
-        paymentAmount: int.parse(state.paymentAmount!),
-        reasonForNotPay: state.reason,
-        solution: state.solution,
-        reasonForCustomerNotContactable: state.reason,
-        visitSelfie: state.photoFile,
-        address: data.address!,
-        latitude: position.latitude,
-        longitude: position.longitude);
-
-    final String token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
-    final response = await dio.post(Api.visitFormSubmit,
-        data: requestModel.toJson(), options: Options(headers: {"token": token}));
-    print(response.statusMessage);
-    print(response.statusCode);
-    if (response.statusCode == 200) {
+  Future<void> dateFilter(BuildContext context) async {
+    DateTime selectedDate = DateTime.now();
+    final DateTime? picked = await showDatePicker(
+      cancelText: 'reset',
+      context: context,
+      initialDate: selectedDate.add(Duration(days: 1)),
+      // Start from tomorrow
+      firstDate: selectedDate.add(Duration(days: 1)),
+      // First selectable date is tomorrow
+      lastDate: selectedDate.add(Duration(days: 3)),
+    );
+    if (picked != null && picked != selectedDate) {
+      selectedDate = picked;
       if (kDebugMode) {
-        print('image ${response.data}');
+        print(picked);
       }
-    } else {
-      throw Exception('Failed to load data');
     }
+    if (picked != null && picked != '') {
+      String? formattedDate = DateFormat('dd/MM/yyyy').format(picked);
+      print(formattedDate);
+      dateController.text = formattedDate;
+      state = state.copyWith(date: formattedDate);
+    } else {}
+  }
+
+  Future<void> visitFormSubmit({required ItemsDetails datas}) async {
+    position.when(
+      data: (data) async {
+        final requestModel = VisitUpdateSubmitRequestModel(
+            ld: datas.ld!,
+            customerName: datas.customerName!,
+            visitDate: DateFormat('dd/MM/yyyy').format(DateTime.now()),
+            revisitDate: state.date,
+            newContactNumber: int.parse(datas.mobile!),
+            customerResponse: state.reason,
+            paymentAmount: int.parse(state.paymentAmount),
+            reasonForNotPay: state.reason,
+            solution: state.solution,
+            reasonForCustomerNotContactable: state.reason,
+            visitSelfie: imageApi,
+            address: datas.address!,
+            latitude: data.latitude,
+            longitude: data.longitude);
+
+        const String token =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+        final response = await dio.post(Api.visitFormSubmit,
+            data: requestModel.toJson(),
+            options: Options(headers: {"token": token}));
+        print(response.statusMessage);
+        print(response.statusCode);
+        if (response.statusCode == 200) {
+          return true;
+          if (kDebugMode) {
+            print('image ${response.data}');
+          }
+        } else {
+          throw Exception('Failed to load data');
+          return false;
+        }
+      },
+      error: (error, stackTrace) {
+        return false;
+      },
+      loading: () {},
+    );
   }
 
   @override
   void dispose() {
     dropDownControllerProvider.dispose();
+    dateController.dispose();
     super.dispose();
   }
 
-
-  void updatePhotoValue(String value) {
+  void updatePhotoValue(String value, context) {
     state = state.copyWith(photoFile: value);
+    dateController.text = '';
+    Navigator.pop(context);
   }
 
   void updatePaymentStatus(String value) {
@@ -302,7 +337,9 @@ bool _validateSolution(String solution) {
 }
 
 class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
-  UpdateEmiViewModel() : super(UpdateEmiModel());
+  final Dio dio;
+
+  UpdateEmiViewModel(this.dio) : super(UpdateEmiModel());
 
   final SingleValueDropDownController modeOfCollectionController =
   SingleValueDropDownController();
@@ -310,6 +347,8 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
   SingleValueDropDownController();
   final SingleValueDropDownController creditPersonController =
   SingleValueDropDownController();
+  final ImagePicker picker = ImagePicker();
+  String? imageApi = '';
 
   @override
   void dispose() {
@@ -317,6 +356,115 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     bankNameController.dispose();
     creditPersonController.dispose();
     super.dispose();
+  }
+
+  void updatePhotoValue(String value, context) {
+    state = state.copyWith(photoFile: value);
+
+    Navigator.pop(context);
+  }
+  void updateCreditPerson(String id){
+    state = state.copyWith(commonId: id);
+  }
+
+  Future<void> updateEmiSubmitButton({required ItemsDetails detail}) async {
+    UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
+        ld: detail.ld!,
+        collectedBy: '',
+        customerName: detail.customerName!,
+        mobileNo: int.parse(detail.mobile!),
+        receivedAmount: int.parse(state.emiAmount),
+        transactionId: state.transactionId,
+        transactionImage: imageApi!,
+        modeOfCollectionId: state.modeOfCollectionId,
+        commonId: state.commonId,
+        bankName: state.bankName,
+        customerEmail: state.receipt,
+        emiReceivedDate: DateFormat('dd/MM/yyyy').format(DateTime.now()),
+        remarkByCollection: state.remark,
+        partner: detail.partner!);
+
+    const String token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    final response = await dio.post(Api.visitFormSubmit,
+        data: requestModel.toJson(),
+        options: Options(headers: {"token": token}));
+    print(response.statusMessage);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      // return true;
+      if (kDebugMode) {
+        print('image ${response.data}');
+      }
+    } else {
+      throw Exception('Failed to load data');
+      // return false;
+    }
+  }
+
+
+  Future<XFile?> clickPhoto() async {
+    state = state.copyWith(isLoading: true);
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      state = state.copyWith(photoFile: pickedFile.path);
+      return pickedFile;
+    }
+    return null;
+  }
+
+  Future<void> uploadImage(String image) async {
+    var formData = FormData.fromMap({
+      'image': await MultipartFile.fromFile(image),
+    });
+    print(image);
+    final String token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    final response = await dio.post(Api.uploadImageCollection,
+        data: formData, options: Options(headers: {"token": token}));
+    if (response.statusCode == 200) {
+      VisitUpdateUploadImageResponseModel imageResponseModel =
+      VisitUpdateUploadImageResponseModel.fromJson(response.data);
+      state = state.copyWith(isLoading: false);
+      if (kDebugMode) {
+        print('image ${imageResponseModel.items.image}');
+        imageApi = imageResponseModel.items.image;
+        print(imageApi);
+      }
+    } else {
+      state = state.copyWith(isLoading: false);
+      throw Exception('Failed to load data');
+    }
+  }
+
+  Future<void> openFeilds(String id) async {
+    state = state.copyWith(modeOfCollectionId: id);
+    print('id $id');
+    const String token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    Response response = await dio.get(Api.getModeById,
+        queryParameters: {"modeOfCollectionId": id},
+        options: Options(headers: {"token": token}));
+    print(response.statusMessage);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      print(response.data);
+      GetModeByIdResponseModel apiResponseList =
+      GetModeByIdResponseModel.fromJson(response.data);
+      List<DropDownValueModel> list = [];
+      print(apiResponseList);
+      state = state.copyWith(isEmail: apiResponseList.items.modeDetail.email);
+      state = state.copyWith(
+          isExtraFormOpen: apiResponseList.items.modeDetail.extraForm);
+      state = state.copyWith(modeTitle: apiResponseList.items.modeDetail.title);
+
+      state = state.copyWith(
+          modeTitle: apiResponseList.items.dropdownDetail.modelName);
+      for (final drop in apiResponseList.items.detail) {
+        list.add(DropDownValueModel(name: '${drop.title}', value: drop.id));
+      }
+      state = state.copyWith(subDropdown: list);
+    }
   }
 
   void updateTransactionId(String value) {
@@ -546,7 +694,7 @@ class PaymentStatusModel {
     bool? isSolutionValid,
   }) {
     return PaymentStatusModel(
-      isLoading: isLoading??this.isLoading,
+      isLoading: isLoading ?? this.isLoading,
       photoFile: photoFile ?? this.photoFile,
       selectedValue: selectedValue ?? this.selectedValue,
       paymentStatus: paymentStatus ?? this.paymentStatus,
@@ -597,6 +745,12 @@ class ClosuerModel {
 }
 
 class UpdateEmiModel {
+  final String modeOfCollectionId;
+  final String commonId;
+  final String photoFile;
+  final List<DropDownValueModel> subDropdown;
+  final bool isLoading;
+  final String dropdownDetail;
   final String emiAmount;
   final String transactionId;
   final String transactionImage;
@@ -609,8 +763,19 @@ class UpdateEmiModel {
   final bool isRemark;
   final bool isBankName;
   final bool isReceipt;
+  final bool isExtraFormOpen;
+  final bool isEmail;
+  final String modeTitle;
 
   UpdateEmiModel({
+    this.modeOfCollectionId = '',
+    this.commonId = '',
+    this.photoFile = '',
+    this.subDropdown = const [],
+    this.dropdownDetail = '',
+    this.modeTitle = '',
+    this.isEmail = false,
+    this.isExtraFormOpen = false,
     this.emiAmount = '',
     this.transactionId = '',
     this.transactionImage = '',
@@ -623,9 +788,18 @@ class UpdateEmiModel {
     this.isRemark = true,
     this.isBankName = true,
     this.isReceipt = true,
-  });
+    this.isLoading = false});
 
   UpdateEmiModel copyWith({
+    String? modeOfCollectionId,
+    String? commonId,
+    String? photoFile,
+    List<DropDownValueModel>? subDropdown,
+    bool? isLoading,
+    String? dropdownDetail,
+    String? modeTitle,
+    bool? isExtraFormOpen,
+    bool? isEmail,
     String? emiAmount,
     String? transactionId,
     String? transactionImage,
@@ -640,6 +814,15 @@ class UpdateEmiModel {
     bool? isReceipt,
   }) {
     return UpdateEmiModel(
+        modeOfCollectionId: modeOfCollectionId ?? this.modeOfCollectionId,
+        commonId: commonId ?? this.commonId,
+        photoFile: photoFile ?? this.photoFile,
+        subDropdown: subDropdown ?? this.subDropdown,
+        isLoading: isLoading ?? this.isLoading,
+        dropdownDetail: dropdownDetail ?? this.dropdownDetail,
+        modeTitle: modeTitle ?? this.modeTitle,
+        isEmail: isEmail ?? this.isEmail,
+        isExtraFormOpen: isExtraFormOpen ?? this.isExtraFormOpen,
         emiAmount: emiAmount ?? this.emiAmount,
         transactionId: transactionId ?? this.transactionId,
         bankName: bankName ?? this.bankName,

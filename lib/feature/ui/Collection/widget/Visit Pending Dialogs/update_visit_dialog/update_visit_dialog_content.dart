@@ -63,8 +63,8 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                               ))),
                       IconButton(
                           onPressed: () {
-                            paymentViewModel.updatePhotoValue('');
-                            Navigator.pop(context);
+                            paymentViewModel.updatePhotoValue('',context);
+
                           },
                           icon: const Icon(Icons.cancel_sharp))
                     ],
@@ -216,10 +216,15 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                         paymentViewModel.dropDownControllerProvider
                             .dropDownValue?.value ==
                             'CustomerNotContactable',
-                    child: AppFloatTextField(
+                    child: AppFloatTextField(isReadOnly: true,
+                      isSuffix: true,
+                      suffixIcon: Icons.date_range,
+                      suffixOnTap: () {
+                        paymentViewModel.dateFilter(context);
+                      },
                       focusNode: paymentFocusViewModel.dateFocusNode,
                       currentState: paymentFocusStates['dateFocusNode'],
-                      // controller: licenseController,
+                      controller: paymentViewModel.dateController,
                       onChange: (value) {
                         paymentViewModel.updateDate(value);
                       },
@@ -331,10 +336,8 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     textStyle: AppStyles.buttonLightTextStyle,
                     width: displayWidth(context),
                     onTap: () {
-                      if(imagePath!=null){
-                        paymentViewModel.visitFormSubmit(image:imagePath!,data:item! );
-                      }
-
+                      paymentViewModel.visitFormSubmit(datas:item!);
+                      paymentViewModel.updatePhotoValue('',context);
                     },
                     label: 'Submit',
                   )
