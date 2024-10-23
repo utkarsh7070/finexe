@@ -5,12 +5,14 @@ class SessionService {
       {String? accessToken,
       String? employeeId,
       String? name,
-      String? email}) async {
+      String? email,
+      String? role}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setString('token', accessToken!);
     preferences.setString('employeId', employeeId!);
     preferences.setString('name', name ?? '');
     preferences.setString('email', email ?? '');
+    preferences.setString('roleName', role ?? '');
   }
 
   static Future<void> customerIdSave({
