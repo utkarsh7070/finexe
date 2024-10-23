@@ -17,6 +17,7 @@ class Api {
   static const String getAllModeOfCollection = '${baseUrl}v1/adminMaster/modeOfCollection/getAllModeOfCollection';
   static const String uploadImageCollection = '${baseUrl}v1/formData/ImageUpload';
   static const String visitFormSubmit = '${baseUrl}v1/googleSheet/visitFormAdd';
+  static const String visitCloseFormSubmit = '${baseUrl}v1/googleSheet/posCloserForm';
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
 

@@ -137,6 +137,8 @@
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../Collection cases/view/cases_screen.dart';
+import '../../Collection cases/view/visitPending/visit_pending_screen.dart';
 import '../home_collection_model/UserProfile.dart';
 
 class DashboardScreen extends ConsumerWidget {
@@ -181,115 +183,133 @@ class DashboardScreen extends ConsumerWidget {
         ],
       ),
 
+
       drawer: Padding(
         padding: const EdgeInsets.fromLTRB(0, 20, 80, 20),
         child: Drawer(
-          backgroundColor: AppColors.blueShadeColor,
-          child: ListView(
-           /* padding: EdgeInsets.zero,*/
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+          child: Column(
             children: [
-              SizedBox(height: 10,),
-
-             /* SizedBox(
-                height: 170,
-                child: Container(
-                  padding: EdgeInsets.all(30),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey), // Border color
-                    borderRadius: BorderRadius.circular(0), // Border radius
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/finexe_text_image.png'), // Replace with your image path
-                      fit: BoxFit.contain, // Adjust how the image is fit inside the container
+              // Top white section with image
+              Container(
+                color: Colors.white, // White background for the top part
+                child: Column(
+                  children: [
+                    SizedBox(height: 10),
+                    SizedBox(
+                      height: 100,
+                      child: Container(
+                        padding: EdgeInsets.all(10), // Reduce padding to give the image more space
+                        child: Padding(
+                          padding: const EdgeInsets.all(10), // Add padding around the image for spacing
+                          child: Image.asset(
+                            'assets/images/finexe_text_image.png', // Your image path
+                            fit: BoxFit.contain, // Ensure the image is contained within the available space
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),*/
-
-              SizedBox(
-                height: 100,
-                child: Container(
-                  padding: EdgeInsets.all(10), // Reduce padding to give the image more space
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.transparent), // Remove border or make it transparent
-                    borderRadius: BorderRadius.circular(0), // You can adjust the radius if needed
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10), // Add padding around the image for spacing
-                    child: Image.asset(
-                      'assets/images/finexe_text_image.png', // Your image path
-                      fit: BoxFit.contain, // Ensure the image is contained within the available space
-                    ),
-                  ),
+                  ],
                 ),
               ),
 
+              // Bottom blue section with menu items
+              Expanded(
+                child: Container(
+                  color: AppColors.primary, // Blue background for the bottom part
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      ListTile(
+                        contentPadding: EdgeInsets.fromLTRB(20, 30, 0, 10), // Adjust the horizontal padding as needed
+                        title: Text(
+                          'Menu',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.white,
+                          ),
+                        ),
+                        onTap: () {
+                          // Handle navigation to settings
+                        },
+                      ),
 
-              ListTile(
-                contentPadding: EdgeInsets.fromLTRB(20, 30, 0, 10), // Adjust the horizontal padding as needed
+                      ListTile(
+                        leading: Icon(Icons.home, color: AppColors.white),
+                        title: Text(
+                          'Home',
+                          style: TextStyle(color: AppColors.white),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DashboardScreen(),
+                            ),
+                          );
+                        },
+                      ),
 
-                title: Text('Menu', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,color: AppColors.primary),),
-                onTap: () {
-                  // Handle navigation to settings
-                },
+                      Divider(
+                        color: Colors.white,
+                        height: 5,
+                        thickness: 1,
+                        indent: 20,
+                        endIndent: 20,
+                      ),
+
+                      ListTile(
+                        leading: Icon(Icons.money, color: AppColors.white),
+                        title: Text(
+                          'Collection',
+                          style: TextStyle(color: AppColors.white),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CollectionCasesScreen(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      Divider(
+                        color: Colors.white,
+                        height: 5,
+                        thickness: 1,
+                        indent: 20,
+                        endIndent: 20,
+                      ),
+
+                      ListTile(
+                        leading: Icon(Icons.logout, color: AppColors.white),
+                        title: Text(
+                          'Logout',
+                          style: TextStyle(color: AppColors.white),
+                        ),
+                        onTap: () {
+                          // Handle logout
+                          //_logoutAndRedirectToLogin();
+                        },
+                      ),
+
+                      Divider(
+                        color: Colors.white,
+                        height: 5,
+                        thickness: 1,
+                        indent: 20,
+                        endIndent: 20,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-
-              ListTile(
-                leading: Icon(Icons.home,color: AppColors.white,),
-                title: Text('Home',style: TextStyle(
-                  color: AppColors.white, // Change this to your desired color
-                ),),
-                onTap: () {
-                  // Handle navigation to settings
-                /*  Navigator.push(
-                      context, MaterialPageRoute(
-                      builder: (context) => PortfolioScreen()));*/
-                },
-              ),
-               Divider(
-                color: Colors.black38, // Set the color of the divider
-                height: 5, // Set the height of the divider
-                thickness: 2, // Set the thickness of the divider
-                indent: 20, // Set the indent (left padding) of the divider
-                endIndent: 20, // Set the end indent (right padding) of the divider
-              ),
-
-              ListTile(
-                leading: Icon(Icons.money,color: AppColors.white,),
-                title: Text('Collection',style: TextStyle(
-                  color: AppColors.white, // Change this to your desired color
-                ),),
-                onTap: () {
-                  // Handle navigation to about
-                 /* Navigator.push(
-                      context, MaterialPageRoute(
-                      builder: (context) => WithdrawalInterestPage()));*/
-                },
-              ),
-               Divider(
-                color: Colors.black38, // Set the color of the divider
-                height: 5, // Set the height of the divider
-                thickness: 2, // Set the thickness of the divider
-                indent: 20, // Set the indent (left padding) of the divider
-                endIndent: 20, // Set the end indent (right padding) of the divider
-              ),
-
-
-              ListTile(
-                leading: Icon(Icons.logout,color: AppColors.white,),
-                title: Text('Logout',style: TextStyle(
-                  color: AppColors.white, // Change this to your desired color
-                ),),
-                onTap: () {
-                  // Handle navigation to about
-                 // _logoutAndRedirectToLogin();
-                },
-              ),
-
             ],
           ),
         ),
       ),
+
 
       body: userProfile == null
           ? Center(child: CircularProgressIndicator())

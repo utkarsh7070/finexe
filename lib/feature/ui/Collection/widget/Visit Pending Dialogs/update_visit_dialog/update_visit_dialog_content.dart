@@ -378,7 +378,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
               .copyWith(color: AppColors.gray7, fontSize: FontSize.fontSizeXS),
         ),
         Text(
-          text2!.capitalize(),
+          text2!.capitalize(),  // Use for only first Letter capital.
           style: AppStyles.nameText.copyWith(
               fontSize: FontSize.fontSizeS, fontWeight: FontWeight.w600),
         ),

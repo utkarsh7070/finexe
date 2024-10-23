@@ -15,6 +15,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
+import '../model/visit_closure_submit_request_model.dart';
 import '../model/get_visit_pending_response_data.dart';
 import '../model/visit_pending_items_model.dart';
 
@@ -41,6 +42,7 @@ final modeOfCollectionDropDown = StateProvider<List<DropDownValueModel>>(
     ];
   },
 );
+
 final bankDropDown = StateProvider<List<DropDownValueModel>>(
       (ref) {
     return [
@@ -50,6 +52,7 @@ final bankDropDown = StateProvider<List<DropDownValueModel>>(
     ];
   },
 );
+
 final creditDropDown = StateProvider<List<DropDownValueModel>>(
       (ref) {
     return [
@@ -74,7 +77,10 @@ StateNotifierProvider<ClosuerFocusProvider, Map<String, bool>>((ref) {
 
 final closuerViewModelProvider =
 StateNotifierProvider<ClosuerViewModel, ClosuerModel>(
-        (ref) => ClosuerViewModel());
+        (ref) {
+          final dio = ref.watch(dioProvider);
+          return ClosuerViewModel(dio);
+        } );
 
 final updateEmiFocusProvider =
 StateNotifierProvider<UpdateEmiFocusProvider, Map<String, bool>>((ref) {
@@ -352,11 +358,16 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
 }
 
 class ClosuerViewModel extends StateNotifier<ClosuerModel> {
-  ClosuerViewModel() : super(ClosuerModel());
+  final Dio dio;
 
-  void updateDate(String value) {
-    final isValid = _validateDate(value);
-    state = state.copyWith(date: value, isDate: isValid);
+  ClosuerViewModel(this.dio) : super(ClosuerModel());
+
+  void updateDate(DateTime value) {
+    // Format the date as yyyy-MM-dd
+    final formattedDate = DateFormat('yyyy-MM-dd').format(value).toString();
+    // Validate and store the formatted date
+    final isValid = _validateDate(formattedDate);
+    state = state.copyWith(date: formattedDate, isDate: isValid);
   }
 
   void updateAmount(String value) {
@@ -367,6 +378,61 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
   void updateReason(String value) {
     final isValid = _validateReason(value);
     state = state.copyWith(reason: value, isReason: isValid);
+  }
+
+
+  Future<void> openDatePicker(WidgetRef ref, DateTime? initialDate) async {
+    final pickedDate = await showDatePicker(
+      context: ref.context,
+      initialDate: initialDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (pickedDate != null) {
+      updateDate(pickedDate); // Update the date in the state
+      ref.read(dateProvider.notifier).updateDate(pickedDate); // Use ref to read the provider
+    }
+  }
+
+
+  Future<void> visitClosureFormSubmit(BuildContext context, {required ItemsDetails data}) async {
+    VisitClosureSubmitRequestModel requestModel = VisitClosureSubmitRequestModel(
+      ld: data.ld!,
+      customerName: data.customerName!,
+      mobileNo: int.parse(data.mobile!),
+      amountToBeReceivedFromCustomer: int.parse(state.amount!),
+      dateOfDeposit: state.date,
+      settlementForReason: state.reason,
+    );
+
+    final String token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    final response = await dio.post(Api.visitCloseFormSubmit,
+        data: requestModel.toJson(),
+        options: Options(headers: {"token": token}));
+    print(response.statusMessage);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      if (kDebugMode) {
+        print('VisitClosureResponse ${response.data}');
+        Navigator.pop(context);
+      }
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+}
+
+// Provider to manage the selected date
+final dateProvider = StateNotifierProvider<DateNotifier, DateTime?>((ref) {
+  return DateNotifier();
+});
+
+class DateNotifier extends StateNotifier<DateTime?> {
+  DateNotifier() : super(null);
+
+  void updateDate(DateTime newDate) {
+    state = newDate;
   }
 }
 
@@ -562,6 +628,7 @@ class PaymentStatusModel {
     );
   }
 }
+
 
 class ClosuerModel {
   final String amount;
