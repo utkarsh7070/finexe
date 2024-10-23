@@ -1,5 +1,3 @@
-
-
 // import 'package:flutter/material.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import '../home_collection_model/UserProfile.dart';
@@ -134,6 +132,7 @@
 //   }
 // }
 
+import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -142,8 +141,8 @@ import '../../Collection cases/view/visitPending/visit_pending_screen.dart';
 import '../home_collection_model/UserProfile.dart';
 
 class DashboardScreen extends ConsumerWidget {
-
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); // Step 1: Define the GlobalKey
+  final GlobalKey<ScaffoldState> _scaffoldKey =
+      GlobalKey<ScaffoldState>(); // Step 1: Define the GlobalKey
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -156,8 +155,7 @@ class DashboardScreen extends ConsumerWidget {
       key: _scaffoldKey, // Step 2: Assign the scaffoldKey to the Scaffold
       backgroundColor: AppColors.primary,
       appBar: AppBar(
-
-       /* leading: Icon(Icons.menu),*/
+        /* leading: Icon(Icons.menu),*/
 
         leading: IconButton(
           onPressed: () {
@@ -168,7 +166,6 @@ class DashboardScreen extends ConsumerWidget {
           iconSize: 30, // Set the size of the icon
           color: Colors.black, // Set the color of the icon
         ),
-
         title: Text("Collection Dashboard"),
         actions: [
           IconButton(
@@ -177,7 +174,7 @@ class DashboardScreen extends ConsumerWidget {
               ref.read(userProfileProvider.notifier).fetchUserProfile();
             },
           ),
-         /* CircleAvatar(
+          /* CircleAvatar(
             backgroundImage: NetworkImage("https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png"), // Replace with actual image URL
           ),*/
         ],
@@ -187,6 +184,7 @@ class DashboardScreen extends ConsumerWidget {
       drawer: Padding(
         padding: const EdgeInsets.fromLTRB(0, 20, 80, 20),
         child: Drawer(
+
           child: Column(
             children: [
               // Top white section with image
@@ -207,10 +205,12 @@ class DashboardScreen extends ConsumerWidget {
                           ),
                         ),
                       ),
+
                     ),
                   ],
                 ),
               ),
+
 
               // Bottom blue section with menu items
               Expanded(
@@ -304,6 +304,7 @@ class DashboardScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
+
               ),
             ],
           ),
@@ -314,86 +315,93 @@ class DashboardScreen extends ConsumerWidget {
       body: userProfile == null
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-        child: Column(
-          children: [
-            // User profile card
-            Card(
-              elevation: 2,
-              margin: EdgeInsets.all(16),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundImage: NetworkImage('https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png'), // Replace with actual image URL
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      userProfile.name,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    Text(userProfile.email),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Employee Unique Id:"),
-                        Text(userProfile.employeeId),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Mobile No:"),
-                        Text(userProfile.mobileNo),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Current Address:"),
-                        Text(userProfile.address),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Joining Date:"),
-                        Text(userProfile.joiningDate),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // GridView for six square cards
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GridView.count(
-                physics: NeverScrollableScrollPhysics(), // To prevent GridView from scrolling
-                shrinkWrap: true, // To fit content within the SingleChildScrollView
-                crossAxisCount: 2, // Two cards per row
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1, // To make the cards square
+              child: Column(
                 children: [
-                  buildCard(Icons.person, '100', 'Visits Accepted'),
-                  buildCard(Icons.person, '50', 'Visits Pending'),
-                  buildCard(Icons.person, '10', 'Visits Rejected'),
-                  buildCard(Icons.attach_money, '200', 'Collections Accepted'),
-                  buildCard(Icons.attach_money, '30', 'Collections Pending'),
-                  buildCard(Icons.attach_money, '5', 'Collections Rejected'),
+                  // User profile card
+                  Card(
+                    elevation: 2,
+                    margin: EdgeInsets.all(16),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundImage: NetworkImage(
+                                'https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png'), // Replace with actual image URL
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            userProfile.name,
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          Text(userProfile.email),
+                          SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Employee Unique Id:"),
+                              Text(userProfile.employeeId),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Mobile No:"),
+                              Text(userProfile.mobileNo),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Current Address:"),
+                              Text(userProfile.address),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Joining Date:"),
+                              Text(userProfile.joiningDate),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // GridView for six square cards
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: GridView.count(
+                      physics:
+                          NeverScrollableScrollPhysics(), // To prevent GridView from scrolling
+                      shrinkWrap:
+                          true, // To fit content within the SingleChildScrollView
+                      crossAxisCount: 2, // Two cards per row
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 1, // To make the cards square
+                      children: [
+                        buildCard(Icons.person, '100', 'Visits Accepted'),
+                        buildCard(Icons.person, '50', 'Visits Pending'),
+                        buildCard(Icons.person, '10', 'Visits Rejected'),
+                        buildCard(
+                            Icons.attach_money, '200', 'Collections Accepted'),
+                        buildCard(
+                            Icons.attach_money, '30', 'Collections Pending'),
+                        buildCard(
+                            Icons.attach_money, '5', 'Collections Rejected'),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 10),
                 ],
               ),
             ),
-
-            SizedBox(height: 10),
-          ],
-        ),
-      ),
     );
   }
 
