@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
+import 'package:finexe/feature/Punch_In_Out/viewmodel/viewmodel.dart';
 import 'package:finexe/feature/base/dialog/all_permission_dialog.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
@@ -32,6 +34,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final DeviceInfoPlugin info = DeviceInfoPlugin();
+  bool isLoggedIn = false;
 
   @override
   void initState() {
@@ -46,8 +49,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     await _requestPermissions(context); // Your async work here
   }
 
+  void startTokenExpiryTimer() {
+    Timer(Duration(hours: 12), removeToken);
+  }
+
+  Future<void> removeToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+    // Optionally, handle token expiry UI update
+    print("Token has been removed after 12 hours");
+  }
+
   @override
   Widget build(BuildContext context) {
+    log('isLoggedIn: ' + isLoggedIn.toString());
+    final checkpunchProvider = ref.watch(attendanceProvider);
+
     final focusStates = ref.watch(dualFocusProvider);
     final focusViewModel = ref.read(dualFocusProvider.notifier);
     final loginState = ref.watch(loginViewModelProvider);
@@ -202,7 +219,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                       ),
                       // const Remember(),
-                      SizedBox(height: displayHeight(context) * 0.07),
+                      SizedBox(height: displayHeight(context) * 0.04),
                       // _loginButton(
                       //     passValidate: passwordValidations,
                       //     userValidate: userValidations),
@@ -306,6 +323,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       _passwordController.text)
                                   .then((value) async {
                                 if (value) {
+                                  // bool isLoggedIn = false;
+                                  setState(() {
+                                    isLoggedIn = value;
+                                    log('isLoggedIn: ' + isLoggedIn.toString());
+                                  });
+                                  startTokenExpiryTimer();
                                   // Fetch the stored roleName from SharedPreferences
                                   // SharedPreferences preferences =
                                   //     await SharedPreferences.getInstance();
@@ -317,11 +340,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                                   showCustomSnackBar(context,
                                       'Login Successful', Colors.green);
-                                  Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    AppRoutes.attendance,
-                                    (route) => false,
-                                  );
+                                  // Navigator.pushNamedAndRemoveUntil(
+                                  //   context,
+                                  //   AppRoutes.attendance,
+                                  //   (route) => false,
+                                  // );
                                   // Navigate the user according to their role
                                   // switch (role) {
                                   //   case 'admin':
@@ -411,7 +434,149 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       //   child: CircularProgressIndicator(),
                       // ),
                       // ),
+                      SizedBox(
+                        height: displayHeight(context) * 0.02,
+                      ),
+                      isLoggedIn
+                          ? Center(
+                              child: ElevatedButton(
+                                  onPressed: () async {
+                                    // Fetch the stored roleName from SharedPreferences
+                                    SharedPreferences preferences =
+                                        await SharedPreferences.getInstance();
+                                    String? role =
+                                        await preferences.getString('roleName');
 
+                                    // ref
+                                    //     .read(attendanceProvider.notifier)
+                                    //     .checkPunch()
+                                    //     .then(
+                                    //   (value) {
+                                    //     if (value == true) {
+                                    //       //   log('not punchIn');
+                                    //       log('already punchIn');
+                                    //       switch (role) {
+                                    //         case 'admin':
+                                    //           log("Navigating to admin dashboard");
+                                    //           Navigator.pushNamedAndRemoveUntil(
+                                    //             context,
+                                    //             AppRoutes
+                                    //                 .collectionHome, // Admin dashboard route
+                                    //             (route) =>
+                                    //                 false, // Remove all previous routes
+                                    //           );
+                                    //           break;
+                                    //         case 'sales':
+                                    //           log("Navigating to sales dashboard");
+                                    //           Navigator.pushNamedAndRemoveUntil(
+                                    //             context,
+                                    //             AppRoutes
+                                    //                 .dashBoard, // Sales dashboard route
+                                    //             (route) =>
+                                    //                 false, // Remove all previous routes
+                                    //           );
+                                    //           break;
+                                    //         case 'collection':
+                                    //           log("Navigating to collection dashboard");
+                                    //           Navigator.pushNamedAndRemoveUntil(
+                                    //             context,
+                                    //             AppRoutes
+                                    //                 .collectionHome, // Collection dashboard route
+                                    //             (route) =>
+                                    //                 false, // Remove all previous routes
+                                    //           );
+                                    //           break;
+                                    //         default:
+                                    //           // Handle unknown roles or navigate to a default screen
+                                    //           log('No matching role found');
+                                    //           break;
+                                    //       }
+                                    //       // Navigator.pushNamedAndRemoveUntil(
+                                    //       //   context,
+                                    //       //   AppRoutes.attendance,
+                                    //       //   (route) => false,
+                                    //       // );
+                                    //     } else {
+                                    //       // log('not punchIn');
+                                    //       // Navigator.pushNamedAndRemoveUntil(
+                                    //       //   context,
+                                    //       //   AppRoutes.attendance,
+                                    //       //   (route) => false,
+                                    //       // );
+                                    //     }
+                                    //   },
+                                    // );
+                                    ref
+                                        .read(attendanceProvider.notifier)
+                                        .onPunchIn(context)
+                                        .then(
+                                      (value) {
+                                        ref
+                                            .read(attendanceProvider.notifier)
+                                            .checkPunch()
+                                            .then(
+                                          (value) {
+                                            if (value == false) {
+                                              log('punchedIn');
+                                              switch (role) {
+                                                case 'admin':
+                                                  log("Navigating to admin dashboard");
+                                                  Navigator
+                                                      .pushNamedAndRemoveUntil(
+                                                    context,
+                                                    AppRoutes
+                                                        .collectionHome, // Admin dashboard route
+                                                    (route) =>
+                                                        false, // Remove all previous routes
+                                                  );
+                                                  break;
+                                                case 'sales':
+                                                  log("Navigating to sales dashboard");
+                                                  Navigator
+                                                      .pushNamedAndRemoveUntil(
+                                                    context,
+                                                    AppRoutes
+                                                        .dashBoard, // Sales dashboard route
+                                                    (route) =>
+                                                        false, // Remove all previous routes
+                                                  );
+                                                  break;
+                                                case 'collection':
+                                                  log("Navigating to collection dashboard");
+                                                  Navigator
+                                                      .pushNamedAndRemoveUntil(
+                                                    context,
+                                                    AppRoutes
+                                                        .collectionHome, // Collection dashboard route
+                                                    (route) =>
+                                                        false, // Remove all previous routes
+                                                  );
+                                                  break;
+                                                default:
+                                                  // Handle unknown roles or navigate to a default screen
+                                                  log('No matching role found');
+                                                  break;
+                                              }
+                                            } else {
+                                              log('not punch out');
+                                            }
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: checkpunchProvider.isLoading
+                                      ? const Center(
+                                          child: CircularProgressIndicator(
+                                            color: Colors.blue,
+                                          ),
+                                        )
+                                      : Text(
+                                          'PunchIn',
+                                          style: TextStyle(color: Colors.white),
+                                        )),
+                            )
+                          : SizedBox.shrink(),
                       SizedBox(
                         height: displayHeight(context) * 0.05,
                       ),
