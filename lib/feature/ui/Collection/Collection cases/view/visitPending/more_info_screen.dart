@@ -10,14 +10,21 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../base/utils/namespase/font_size.dart';
+import '../../model/VisitItemDetail.dart';
+import '../../model/visit_pending_items_model.dart';
 import '../../view_model/more_info_view_model.dart';
+import '../../view_model/visit_detail_view_model.dart';
+import '../../view_model/visit_pending_view_model.dart';
 import 'employee_data_source.dart';
 
 class CollectionMoreInfoScreen extends ConsumerStatefulWidget {
-  const CollectionMoreInfoScreen({super.key});
 
   @override
   _MoreInfoScreen createState() => _MoreInfoScreen();
+
+  final int index;
+  CollectionMoreInfoScreen({required int this.index});
+
 }
 class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with SingleTickerProviderStateMixin {
   late TabController _tabController;
@@ -25,249 +32,295 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 5, vsync: this, initialIndex: widget.index.clamp(0, 0));
+  }
+
+  @override
+  void didUpdateWidget(covariant CollectionMoreInfoScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Update the TabController's index without disposing of it
+    if (widget.index != oldWidget.index) {
+      _tabController.index = widget.index.clamp(0,0); // ensure it's within bounds
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // final dataSource = ref.watch(employeeDataGridSourceProvider);
-    final employees = ref.watch(dataProvider);
-    final columns = ref.watch(columnProvider);
-    final dataSource = ref.watch(employeeDataGridSourceProvider);
-    final selectedTab = ref.watch(selectedTabProvider);
-    // final employeeDataSource = EmployeeDataSource(employees);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('More Info'),
-      ),
-      body: SizedBox(
-        width: displayWidth(context),
-        height: displayHeight(context),
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
+    final data = ref.watch(fetchVisitPendingDataProvider);
+
+    return data.when(
+      data: (data) {
+        List<ItemsDetails> listOfLists = data.map((map) {
+          return ItemsDetails.fromJson(map);
+        }).toList();
+
+        final safeIndex = widget.index != null && widget.index < listOfLists.length ? widget.index : 0;
+        ItemsDetails item = listOfLists[safeIndex];
+
+        // Extract the LD number from the item
+        final String? ldNumber = item.ld;  // Assuming 'ldNumber' is the correct field in ItemsDetails
+
+        // Fetch visit details data
+        final visitData = ref.watch(fetchVisitDetailsProvider(ldNumber!)); // Watch the visit details provider
+
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('More Info'),
+          ),
+          body: Column(
             children: [
-              ExpansionTile(
-                childrenPadding: const EdgeInsets.only(left: 16,bottom: 10),
-                shape: const Border(
-                    bottom: BorderSide(
-                  color: AppColors.dividerColor,
-                )),
-                title: const Text('Applicant Details'),
-                children: <Widget>[
-                  textData(context, text1: 'LD No', text2: 'FINC956'),
-                  textData(context, text1: 'Customer', text2: 'Lakhan'),
-                  textData(context, text1: 'Father Name', text2: 'Ramprasad'),
-                ],
-              ),
-              // const Divider(
-              //   thickness: 1,
-              //   color: AppColors.dividerColor,
-              // ),
-              ExpansionTile(
-                shape: const Border(
-                    bottom: BorderSide(
-                  color: AppColors.dividerColor,
-                )),
-                childrenPadding: const EdgeInsets.only(left: 16,bottom: 10),
-                title: const Text('Co-Applicant Details'),
-                children: <Widget>[
-                  textData(context, text1: 'Name', text2: 'Radha Bai'),
-                  textData(context, text1: 'Mobile No', text2: '7805809432'),
-                  textData(context,
-                      text1: 'Address',
-                      text2:
-                          'Gram Panali Panali Rajgarh Madhya Pradesh 465683'),
-                ],
-              ),
-              // const Divider(
-              //   thickness: 1,
-              //   color: AppColors.dividerColor,
-              // ),
-              ExpansionTile(
-                shape: const Border(
-                    bottom: BorderSide(
-                  color: AppColors.dividerColor,
-                )),
-                childrenPadding: const EdgeInsets.only(left: 16,bottom: 10),
-                title: const Text('Guarantor Details'),
-                children: <Widget>[
-                  textData(context, text1: 'Name', text2: 'Radha Bai'),
-                  textData(context, text1: 'Mobile No', text2: '7805809432'),
-                  textData(context,
-                      text1: 'Address',
-                      text2:
-                          'Gram Panali Panali Rajgarh Madhya Pradesh 465683'),
-                ],
-              ),
-              // const Divider(
-              //   thickness: 1,
-              //   color: AppColors.dividerColor,
-              // ),
-              ExpansionTile(
-                shape: const Border(
-                    bottom: BorderSide(
-                  color: AppColors.dividerColor,
-                )),
-                childrenPadding: const EdgeInsets.only(left: 16,bottom: 10),
-                // shape: const RoundedRectangleBorder(),
-                title: const Text('Payment Summery'),
-                children: <Widget>[
-                  textData(context, text1: 'LD No', text2: 'FINC956'),
-                  textData(context, text1: 'LD No', text2: 'FINC956'),
-                  textData(context, text1: 'LD No', text2: 'FINC956'),
-                ],
-              ),
-              // const Divider(
-              //   thickness: 1,
-              //   color: AppColors.dividerColor,
-              // ),
+              // First Section: Applicant Details, Co-Applicant Details, Guarantor, Payment Summary
+              _buildApplicantDetails(item),
+              _buildCoApplicantDetails(item),
+              _buildGuarantorDetails(item),
+              _buildPaymentSummary(item),
+
+              // Spacer or separator (optional)
               SizedBox(height: displayHeight(context) * 0.03),
+
+              // Tabs Section: Visit, Collection, Calling, Notice, Closure
               Container(
-                padding: const EdgeInsets.only(left: 16),
-                height: displayHeight(context) * 0.05,
-                width: displayWidth(context),
-                color: AppColors.primaryLight1,
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Additional Info',
-                      style: AppStyles.TextStyle16.copyWith(
-                          fontSize: FontSize.fontSizeS),
-                    )),
-              ),
-              SizedBox(height: displayHeight(context)*0.02,),
-              CustomSlidingSegmentedControl<int>(innerPadding: EdgeInsets.all(5),
-                padding:10,
-                initialValue: 1,
-                children: const {
-                  1: Text('Visit'),
-                  2: Text('Collection'),
-                  3: Text('Calling'),
-                  4: Text('Notice'),
-                  5: Text('Closuer'),
-                },
-                decoration: BoxDecoration(
-                  color: CupertinoColors.lightBackgroundGray,
-                  borderRadius: BorderRadius.circular(8),
+                color: AppColors.primaryLight1, // Optional: style background color of tab section
+                child: TabBar(
+                  controller: _tabController,
+                  isScrollable: true,
+                  tabs: const [
+                    Tab(text: 'Visit'),
+                    Tab(text: 'Collection'),
+                    Tab(text: 'Calling'),
+                    Tab(text: 'Notice'),
+                    Tab(text: 'Closure'),
+                  ],
                 ),
-                thumbDecoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(6),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(.3),
-                      blurRadius: 4.0,
-                      spreadRadius: 1.0,
-                      offset: const Offset(
-                        0.0,
-                        2.0,
-                      ),
+              ),
+
+              // TabBarView with disabled swipe
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  physics: const NeverScrollableScrollPhysics(), // Disable swipe gestures
+                  children: [
+                    visitData.when(
+                      data: (visitDetails) {
+                        return _buildVisitTab(visitDetails); // Pass the visit data here
+                      },
+                      error: (error, stackTrace) {
+                        return const Text('Error loading visit details');
+                      },
+                      loading: () {
+                        return const Center(child: CircularProgressIndicator());
+                      },
                     ),
+                    Placeholder(), // Replace with Collection content
+                    Placeholder(), // Replace with Calling content
+                    Placeholder(), // Replace with Notice content
+                    Placeholder(), // Replace with Closure content
                   ],
-                ),
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInToLinear,
-                onValueChanged: (v) {
-                  ref.read(selectedTabProvider.notifier).state = v;
-                  print(v);
-                },
-              ),
-              // SizedBox(
-              //   width: displayWidth(context),
-              //   height: displayHeight(context)*0.04,
-              //   child: TabBar(
-              //     onTap: (index) {
-              //       ref.read(selectedTabProvider.notifier).state = index;
-              //     },
-              //     tabs: const [
-              //       Tab(text: 'Tab 1'),
-              //       Tab(text: 'Tab 2'),
-              //       Tab(text: 'Tab 3'),
-              //       Tab(text: 'Tab 4'),
-              //     ],
-              //   ),
-              // ),
-
-              SizedBox(
-                height: displayHeight(context) * 0.40,
-                child: SfDataGrid(
-                  headerGridLinesVisibility: GridLinesVisibility.horizontal,
-                  //   footer:
-                  // Container(
-                  //   color: Colors.grey[300],
-                  //   alignment: Alignment.center,
-                  //   padding: const EdgeInsets.all(16.0),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     children: [
-                  //       Text(
-                  //         'Total Employees: ${employees.length}',
-                  //         style: const TextStyle(fontWeight: FontWeight.bold),
-                  //       ),
-                  //       Text(
-                  //         'Average Salary: \$${employees.map((e) => e.salary).reduce((a, b) => a + b) / employees.length}',
-                  //         style: const TextStyle(fontWeight: FontWeight.bold),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
-                  source: dataSource,
-                  columnWidthMode: ColumnWidthMode.fill,
-                  columns: <GridColumn>[
-                    GridColumn(
-                        columnName: 'id',
-                        label: Container(
-                            padding: const EdgeInsets.all(16.0),
-                            alignment: Alignment.center,
-                            child: const Text(
-                              'ID',
-                            ))),
-                    GridColumn(
-                        columnName: 'name',
-                        label: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            alignment: Alignment.center,
-                            child: const Text('Name'))),
-                    GridColumn(
-                        columnName: 'designation',
-                        label: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            alignment: Alignment.center,
-                            child: const Text(
-                              'Designation',
-                              overflow: TextOverflow.ellipsis,
-                            ))),
-                    GridColumn(
-                        columnName: 'salary',
-                        label: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            alignment: Alignment.center,
-                            child: const Text('Salary'))),
-                  ],
-                ),
-              ),
-              SfDataPagerTheme(
-                data: const SfDataPagerThemeData(
-                  itemBorderColor: AppColors.primaryLight,
-                ),
-                child: SfDataPager(
-
-                  delegate: dataSource,
-                  pageCount: (employees.length / dataSource.pageSize)
-                      .ceil()
-                      .toDouble(),
-                  availableRowsPerPage: const [10, 20, 50],
-                  // pageSize: employeeDataSource.pageSize,
-                  onRowsPerPageChanged: (int? rowsPerPage) {
-                    dataSource.pageSize = rowsPerPage ?? 10;
-                    dataSource.handlePageChange(0, 0);
-                  },
                 ),
               ),
             ],
           ),
-        ),
+        );
+      },
+      error: (error, stackTrace) {
+        return const Text('Error loading data');
+      },
+      loading: () {
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    // Dispose the TabController when the widget is disposed to prevent memory leaks.
+    _tabController.dispose();
+    super.dispose();
+  }
+
+
+  // First Section Widgets
+  Widget _buildApplicantDetails(ItemsDetails item) {
+    return ExpansionTile(
+      childrenPadding: const EdgeInsets.only(left: 16, bottom: 10),
+      shape: const Border(
+        bottom: BorderSide(color: AppColors.dividerColor),
+      ),
+      title: const Text('Applicant Details'),
+      children: <Widget>[
+        textData(context, text1: 'LD No', text2: '${item.ld}'),
+        textData(context, text1: 'Customer', text2: '${item.customerName}'),
+        textData(context, text1: 'Father Name', text2: '${item.fatherName}'),
+      ],
+    );
+  }
+
+  Widget _buildCoApplicantDetails(ItemsDetails item) {
+    return ExpansionTile(
+      childrenPadding: const EdgeInsets.only(left: 16, bottom: 10),
+      shape: const Border(
+        bottom: BorderSide(color: AppColors.dividerColor),
+      ),
+      title: const Text('Co-Applicant Details'),
+      children: <Widget>[
+        textData(context, text1: 'Name', text2: '${item.coBorrower1Name}'),
+        textData(context, text1: 'Mobile No', text2: '${item.coBorrower1Mobile}'),
+        textData(context, text1: 'Address', text2: '${item.coBorrower1Address}'),
+      ],
+    );
+  }
+
+  Widget _buildGuarantorDetails(ItemsDetails item) {
+    return ExpansionTile(
+      childrenPadding: const EdgeInsets.only(left: 16, bottom: 10),
+      shape: const Border(
+        bottom: BorderSide(color: AppColors.dividerColor),
+      ),
+      title: const Text('Guarantor Details'),
+      children: <Widget>[
+        textData(context, text1: 'Name', text2: '${item.gtrName}'),
+        textData(context, text1: 'Mobile No', text2: '${item.gtrMobNo}'),
+        textData(context, text1: 'Address', text2: '${item.gtrAddress}'),
+      ],
+    );
+  }
+
+  Widget _buildPaymentSummary(ItemsDetails item) {
+    return ExpansionTile(
+      childrenPadding: const EdgeInsets.only(left: 16, bottom: 10),
+      shape: const Border(
+        bottom: BorderSide(color: AppColors.dividerColor),
+      ),
+      title: const Text('Payment Summary'),
+      children: <Widget>[
+        textData(context, text1: 'Partner', text2: '${item.partner}'),
+        textData(context, text1: 'EMI Amount', text2: '${item.emiAmount}'),
+        textData(context, text1: 'Net Due', text2: '${item.netDue}'),
+        textData(context, text1: 'Collection Type', text2: '${item.collectionType}'),
+        textData(context, text1: 'POS/Closure Amt', text2: '${item.posClosureAmount}'),
+      ],
+    );
+  }
+
+  Widget _buildVisitTab(List<VisitItemDetail> visitData) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Horizontal scroll for table headings and data
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal, // Allow horizontal scrolling for many columns
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Table Headers
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Table(
+                    border: TableBorder.all(color: Colors.grey),
+                    defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width
+                    children: [
+                      TableRow(
+                        decoration: const BoxDecoration(
+                          color: Colors.blueAccent,
+                        ),
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'VISIT DATE',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'CUSTOMER RESPONSE',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'PAYMENT AMOUNT',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'SOLUTION',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'STATUS',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'REJECT REASON',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                // Table Rows (Dynamic Data)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Table(
+                    border: TableBorder.all(color: Colors.grey),
+                    defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width for data rows
+                    children: visitData.map((item) {
+                      return TableRow(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item.visitDate, textAlign: TextAlign.center),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item.customerResponse, textAlign: TextAlign.center),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text('${item.paymentAmount}', textAlign: TextAlign.center),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item.solution.isNotEmpty ? item.solution : 'N/A', textAlign: TextAlign.center),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item.status, textAlign: TextAlign.center),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item.reasonForNotPay.isNotEmpty ? item.reasonForNotPay : 'N/A', textAlign: TextAlign.center),
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -282,4 +335,6 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
       ],
     );
   }
+
+
 }

@@ -19,6 +19,7 @@ import '../../../widget/Visit Pending Dialogs/update_emi_dialog/update_emi_dialo
 import '../../../widget/Visit Pending Dialogs/update_visit_dialog/update_visit_dialog.dart';
 import '../../model/visit_pending_items_model.dart';
 import '../../view_model/visit_pending_view_model.dart';
+import 'more_info_screen.dart';
 
 class VisitPendingScreen extends ConsumerWidget {
   const VisitPendingScreen({super.key});
@@ -228,8 +229,16 @@ class VisitPendingScreen extends ConsumerWidget {
                                       ),
                                       GestureDetector(
                                         onTap: () {
-                                          Navigator.pushNamed(
-                                              context, AppRoutes.moreInfo);
+                                          /*Navigator.pushNamed(
+                                              context, AppRoutes.moreInfo,arguments: {
+                                                "index":index
+                                          });*/
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => CollectionMoreInfoScreen(index: index),
+                                            ),
+                                          );
                                         },
                                         child: Container(
                                           height: displayHeight(context) * 0.06,

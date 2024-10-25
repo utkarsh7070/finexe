@@ -177,9 +177,28 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const CollectionCasesScreen());
       // case updateVisit:
       //   return MaterialPageRoute(builder: (_) => const UpdateVisit());
+     /* case moreInfo:
+        return MaterialPageRoute(
+            builder: (_) => const CollectionMoreInfoScreen());*/
+     /* case moreInfo:
+        return MaterialPageRoute(
+          builder: (context) => CollectionMoreInfoScreen(
+            index: (ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>)['index'] ?? 0,
+          ),
+        );*/
+
       case moreInfo:
         return MaterialPageRoute(
-            builder: (_) => const CollectionMoreInfoScreen());
+          builder: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+            // Safely access the index from the arguments, defaulting to 0 if null
+            final index = arguments?['index'] ?? 0;
+
+            return CollectionMoreInfoScreen(index: index);
+          },
+        );
+
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

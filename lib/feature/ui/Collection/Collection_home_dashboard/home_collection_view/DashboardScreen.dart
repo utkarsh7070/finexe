@@ -136,9 +136,11 @@ import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../base/api/api.dart';
 import '../../Collection cases/view/cases_screen.dart';
 import '../../Collection cases/view/visitPending/visit_pending_screen.dart';
 import '../home_collection_model/UserProfile.dart';
+import '../home_collection_viewmodel/fetchUserProfile.dart';
 
 class DashboardScreen extends ConsumerWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey =
@@ -146,10 +148,28 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Automatically trigger profile fetch when the widget is built
-    ref.read(userProfileProvider.notifier).fetchUserProfile();
 
-    final userProfile = ref.watch(userProfileProvider);
+
+   // ref.read(apiResponseProvider.notifier).fetchEmployeeDetails();
+
+    var apiResponse = ref.watch(apiResponseProvider);
+    var userProfile;
+  // final userProfile= apiResponse?.employeeDetail;
+
+    // If the API response is null, call fetchEmployeeDetails if it's not already called
+    if (apiResponse == null) {
+      ref.read(apiResponseProvider.notifier).fetchEmployeeDetails();
+      apiResponse = ref.watch(apiResponseProvider);
+       userProfile= apiResponse?.employeeDetail;
+    }else{
+      userProfile= apiResponse.employeeDetail;
+    }
+
+    /*// If the API response is still not loaded, show a loading indicator
+    if (apiResponse == null) {
+      return Center(child: CircularProgressIndicator());
+    }
+   */
 
     return Scaffold(
       key: _scaffoldKey, // Step 2: Assign the scaffoldKey to the Scaffold
@@ -167,17 +187,19 @@ class DashboardScreen extends ConsumerWidget {
           color: Colors.black, // Set the color of the icon
         ),
         title: Text("Collection Dashboard"),
-        actions: [
+       /* actions: [
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: () {
-              ref.read(userProfileProvider.notifier).fetchUserProfile();
+             // ref.read(apiResponseProvider.notifier).fetchUserProfile();
+              ref.read(apiResponseProvider.notifier).fetchEmployeeDetails();
+              ref.watch(apiResponseProvider);
             },
           ),
-          /* CircleAvatar(
+          *//* CircleAvatar(
             backgroundImage: NetworkImage("https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png"), // Replace with actual image URL
-          ),*/
-        ],
+          ),*//*
+        ],*/
       ),
 
 
@@ -326,14 +348,21 @@ class DashboardScreen extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          CircleAvatar(
+                          /*CircleAvatar(
                             radius: 40,
                             backgroundImage: NetworkImage(
                                 'https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png'), // Replace with actual image URL
+                          ),*/
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundImage: NetworkImage(
+                              '${Api.imageUrl}${userProfile.employeePhoto ?? ''}',
+                            ),
                           ),
+
                           SizedBox(height: 10),
                           Text(
-                            userProfile.name,
+                            userProfile.employeName,
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
@@ -343,7 +372,7 @@ class DashboardScreen extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text("Employee Unique Id:"),
-                              Text(userProfile.employeeId),
+                              Text(userProfile.employeUniqueId),
                             ],
                           ),
                           Row(
@@ -357,14 +386,14 @@ class DashboardScreen extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text("Current Address:"),
-                              Text(userProfile.address),
+                              Text(userProfile.currentAddress),
                             ],
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text("Joining Date:"),
-                              Text(userProfile.joiningDate),
+                              Text(userProfile.formattedJoiningDate),
                             ],
                           ),
                         ],
@@ -385,15 +414,15 @@ class DashboardScreen extends ConsumerWidget {
                       mainAxisSpacing: 16,
                       childAspectRatio: 1, // To make the cards square
                       children: [
-                        buildCard(Icons.person, '100', 'Visits Accepted'),
-                        buildCard(Icons.person, '50', 'Visits Pending'),
-                        buildCard(Icons.person, '10', 'Visits Rejected'),
+                        buildCard(Icons.person, '${apiResponse?.visitAccepted}', 'Visits Accepted'),
+                        buildCard(Icons.person, '${apiResponse?.visitPendingForApproval}', 'Visits Pending'),
+                        buildCard(Icons.person, '${apiResponse?.visitRejected}', 'Visits Rejected'),
                         buildCard(
-                            Icons.attach_money, '200', 'Collections Accepted'),
+                            Icons.currency_rupee, '${apiResponse?.collectionAcceptAmount}', 'Collections Accepted'),
                         buildCard(
-                            Icons.attach_money, '30', 'Collections Pending'),
+                            Icons.currency_rupee, '${apiResponse?.collectionEmiAmountPendingForApproval}', 'Collections Pending'),
                         buildCard(
-                            Icons.attach_money, '5', 'Collections Rejected'),
+                            Icons.currency_rupee, '${apiResponse?.collectionRejectAmount}', 'Collections Rejected'),
                       ],
                     ),
                   ),
@@ -435,4 +464,6 @@ class DashboardScreen extends ConsumerWidget {
       ),
     );
   }
+
+
 }

@@ -31,6 +31,13 @@ class Api {
   static const String updateEmiSubmit = '${baseUrl}v1/googleSheet/collectionEmiFormAdd';
 
   static const String visitCloseFormSubmit = '${baseUrl}v1/googleSheet/posCloserForm';
+
+  static const String getAllocationDashboard = '${baseUrl}v1/googleSheet/getAllocationDashboard';
+
+  static const String imageUrl = '${baseUrl}';
+
+  static const String getVisitDetail = '${baseUrl}v1/googleSheet/visitDetail';
+
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
 
