@@ -345,23 +345,18 @@ class LoginViewModel extends StateNotifier<AsyncValue<String>> {
 
   Future<bool> login(String email, String password) async {
     isLoading = true;
-    log('login');
+
     LoginRequestModel loginRequestModel =
         LoginRequestModel(userName: email, password: password);
 
     // Set state to loading
     state = const AsyncValue.loading();
-    log('login2');
 
     try {
-      log('login3');
-
       final response =
           await dio.post(Api.login, data: loginRequestModel.toJson());
 
       if (response.statusCode == 200) {
-        log('login4');
-
         isLoading = false;
 
         // Parse the response and save the session data

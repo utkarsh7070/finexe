@@ -132,6 +132,7 @@
 //   }
 // }
 
+
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -147,6 +148,7 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.read(userProfileProvider.notifier).fetchUserProfile();
     final userProfile = ref.watch(userProfileProvider);
+    // final checkpunchProvider = ref.watch(attendanceProvider);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -167,9 +169,11 @@ class DashboardScreen extends ConsumerWidget {
         title: const Text("Collection Dashboard"),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.punch_clock),
             onPressed: () {
-              ref.read(userProfileProvider.notifier).fetchUserProfile();
+              // ref.read(userProfileProvider.notifier).fetchUserProfile();
+              //  ref.read(attendanceProvider.notifier).onPunchOut();
+              _showMyDialog(context, ref);
             },
           ),
           /* CircleAvatar(
@@ -177,6 +181,7 @@ class DashboardScreen extends ConsumerWidget {
           ),*/
         ],
       ),
+
 
       drawer: const DashBoardSideBar(),
       // Padding(
@@ -366,6 +371,8 @@ class DashboardScreen extends ConsumerWidget {
                           ],
                         ),
                       ],
+
+
                     ),
                   ),
                 ),
@@ -434,6 +441,54 @@ class DashboardScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _showMyDialog(BuildContext context, WidgetRef ref) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button to close dialog
+      builder: (BuildContext context) {
+        final checkpunchProvider = ref.watch(attendanceProvider);
+        return AlertDialog(
+          title: Text('Punch out'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Are you sure you want to punch out.'),
+                // Text('Press the button below to close.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  child: Text(
+                    'PunchOut',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    ref.read(attendanceProvider.notifier).onPunchOut();
+
+                    Navigator.of(context).pop();
+                  },
+                ),
+                ElevatedButton(
+                  child: Text(
+                    'Close',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            )
+          ],
+        );
+      },
     );
   }
 }

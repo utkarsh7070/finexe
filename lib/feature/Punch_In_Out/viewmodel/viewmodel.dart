@@ -59,14 +59,14 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   final PunchInRepositoryImp _punchInRepository;
 
   AttendanceNotifier(this._punchInRepository) : super(AttendanceState()) {
-    _getCurrentLocation();
+    getCurrentLocation();
   }
 
   final double targetLatitude = 22.724366;
   final double targetLongitude = 75.882175;
   String? storedToken;
 
-  Future<void> _getCurrentLocation() async {
+  Future<void> getCurrentLocation() async {
     state = state.copyWith(isLoading: true);
 
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -118,9 +118,10 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     SharedPreferences preferences = await SessionService.getSession();
     storedToken = preferences.getString('token');
     state = state.copyWith(isLoading: false);
+    log("storedToken: " + storedToken.toString());
   }
 
-  Future<void> checkPunch() async {
+  Future<bool?> checkPunch() async {
     if (state.currentPosition != null && storedToken != null) {
       Map<String, String> token = {"token": storedToken!};
       Map<String, double> location = {
@@ -138,6 +139,9 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
         if (checkAttendanceResponse != null) {
           state = state.copyWith(
               punchStatus: checkAttendanceResponse.items.viewButton!);
+          log('viewButton: ' +
+              checkAttendanceResponse.items.viewButton.toString());
+          return checkAttendanceResponse.items.viewButton;
         }
       } on DioException catch (error) {
         state = state.copyWith(isLoading: false);
@@ -193,11 +197,12 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     state = state.copyWith(isLoading: false);
   }
 
-  Future<void> onPunchIn(BuildContext context) async {
+  Future<bool?> onPunchIn(BuildContext context) async {
     Map<String, String> token = {"token": "$storedToken"};
 
     try {
       log('onPunchIn');
+      state = state.copyWith(isLoading: true);
 
       var response = await _punchInRepository.punchIn(token);
       log('onPunchIn after');
@@ -216,31 +221,52 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       );
 
       await checkPunch();
+      state = state.copyWith(
+        isLoading: false,
+        // punchStatus: false
+      );
+      return true;
       // Navigator.pushNamed(context, AppRoutes.eod);
     } on DioException catch (error) {
       DioExceptions.fromDioError(error);
+      state = state.copyWith(isLoading: false);
     }
   }
 
-  Future<void> onPunchOut() async {
+  Future<bool?> onPunchOut() async {
     Map<String, String> token = {"token": "$storedToken"};
 
     try {
       log('onPunchOut');
 
       var response = await _punchInRepository.punchOut(token);
+      // log("onPunchOut response: " + response.);
+      log('puch');
       PunchInModel punchInModel = PunchInModel.fromJson(response.data);
 
-      Fluttertoast.showToast(
-        msg: punchInModel!.message.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.TOP,
-        backgroundColor: Colors.white,
-        textColor: Colors.blue,
-        fontSize: 16.0,
-      );
+      if (punchInModel.subCode == 200) {
+        // PunchInModel punchInModel = PunchInModel.fromJson(response.data);
+        Fluttertoast.showToast(
+          msg: punchInModel!.message.toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          backgroundColor: Colors.white,
+          textColor: Colors.blue,
+          fontSize: 16.0,
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: punchInModel!.message.toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          backgroundColor: Colors.white,
+          textColor: Colors.blue,
+          fontSize: 16.0,
+        );
+      }
 
       await checkPunch();
+      return true;
     } on DioException catch (error) {
       DioExceptions.fromDioError(error);
     }
