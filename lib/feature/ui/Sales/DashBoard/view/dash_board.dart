@@ -1,8 +1,10 @@
 import 'dart:developer';
 
+import 'package:finexe/feature/Punch_In_Out/viewmodel/viewmodel.dart';
 import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
+import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,6 +40,8 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
   @override
   Widget build(BuildContext context) {
     final tabViewModel = ref.watch(tabViewModelProvider);
+    final checkpunchProvider = ref.watch(attendanceProvider);
+
     return WillPopScope(
       onWillPop: () async {
         // Close the app
@@ -71,35 +75,68 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
               const OnBoardingScreen(),
               Container(
                   child: Center(
-                child: ElevatedButton(
-                  // onPressed: () async {
-                  //   bool result = await SessionService.deleteSession();
-                  //   if (result) {
-                  //     // Optionally navigate or show a message after successful deletion
-                  //     ScaffoldMessenger.of(context).showSnackBar(
-                  //       SnackBar(content: Text('Logout successfully')),
-                  //     );
-                  //     // Navigate to the login screen and remove all previous routes
-                  //     Navigator.pushNamedAndRemoveUntil(
-                  //       context,
-                  //       AppRoutes.login, // Name of your login route
-                  //       (route) =>
-                  //           false, // Remove all routes until the login route
-                  //     );
-                  //     log('Logout');
-                  //   } else {
-                  //     ScaffoldMessenger.of(context).showSnackBar(
-                  //       SnackBar(content: Text('Failed to logout')),
-                  //     );
-                  //   }
-                  // },
-                  onPressed: () {
-                    LogOutDialog.logOutDialog(context: context);
-                  },
-                  child: Text(
-                    'Logout',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                child: Column(
+                  children: [
+                    SizedBox(height: 300),
+                    ElevatedButton(
+                      // onPressed: () async {
+                      //   bool result = await SessionService.deleteSession();
+                      //   if (result) {
+                      //     // Optionally navigate or show a message after successful deletion
+                      //     ScaffoldMessenger.of(context).showSnackBar(
+                      //       SnackBar(content: Text('Logout successfully')),
+                      //     );
+                      //     // Navigate to the login screen and remove all previous routes
+                      //     Navigator.pushNamedAndRemoveUntil(
+                      //       context,
+                      //       AppRoutes.login, // Name of your login route
+                      //       (route) =>
+                      //           false, // Remove all routes until the login route
+                      //     );
+                      //     log('Logout');
+                      //   } else {
+                      //     ScaffoldMessenger.of(context).showSnackBar(
+                      //       SnackBar(content: Text('Failed to logout')),
+                      //     );
+                      //   }
+                      // },
+                      onPressed: () {
+                        LogOutDialog.logOutDialog(context: context);
+                      },
+                      child: Text(
+                        'Logout',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        log('onPunchOut');
+                        ref.read(attendanceProvider.notifier).onPunchOut().then(
+                          (value) {
+                            log('punchout');
+                            // Navigator.pushNamedAndRemoveUntil(
+                            //   context,
+                            //   AppRoutes.attendance,
+                            //   (route) => false,
+                            // );
+                          },
+                        );
+                      },
+                      child: checkpunchProvider.isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(
+                              'PuchOut',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                    ),
+                  ],
                 ),
               )),
             ],

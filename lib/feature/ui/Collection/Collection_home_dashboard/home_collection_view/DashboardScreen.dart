@@ -132,6 +132,7 @@
 //   }
 // }
 
+import 'package:finexe/feature/Punch_In_Out/viewmodel/viewmodel.dart';
 import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -150,6 +151,7 @@ class DashboardScreen extends ConsumerWidget {
     ref.read(userProfileProvider.notifier).fetchUserProfile();
 
     final userProfile = ref.watch(userProfileProvider);
+    // final checkpunchProvider = ref.watch(attendanceProvider);
 
     return Scaffold(
       key: _scaffoldKey, // Step 2: Assign the scaffoldKey to the Scaffold
@@ -169,9 +171,11 @@ class DashboardScreen extends ConsumerWidget {
         title: Text("Collection Dashboard"),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: Icon(Icons.punch_clock),
             onPressed: () {
-              ref.read(userProfileProvider.notifier).fetchUserProfile();
+              // ref.read(userProfileProvider.notifier).fetchUserProfile();
+              //  ref.read(attendanceProvider.notifier).onPunchOut();
+              _showMyDialog(context, ref);
             },
           ),
           /* CircleAvatar(
@@ -180,11 +184,9 @@ class DashboardScreen extends ConsumerWidget {
         ],
       ),
 
-
       drawer: Padding(
         padding: const EdgeInsets.fromLTRB(0, 20, 80, 20),
         child: Drawer(
-
           child: Column(
             children: [
               // Top white section with image
@@ -196,31 +198,34 @@ class DashboardScreen extends ConsumerWidget {
                     SizedBox(
                       height: 100,
                       child: Container(
-                        padding: EdgeInsets.all(10), // Reduce padding to give the image more space
+                        padding: EdgeInsets.all(
+                            10), // Reduce padding to give the image more space
                         child: Padding(
-                          padding: const EdgeInsets.all(10), // Add padding around the image for spacing
+                          padding: const EdgeInsets.all(
+                              10), // Add padding around the image for spacing
                           child: Image.asset(
                             'assets/images/finexe_text_image.png', // Your image path
-                            fit: BoxFit.contain, // Ensure the image is contained within the available space
+                            fit: BoxFit
+                                .contain, // Ensure the image is contained within the available space
                           ),
                         ),
                       ),
-
                     ),
                   ],
                 ),
               ),
 
-
               // Bottom blue section with menu items
               Expanded(
                 child: Container(
-                  color: AppColors.primary, // Blue background for the bottom part
+                  color:
+                      AppColors.primary, // Blue background for the bottom part
                   child: ListView(
                     padding: EdgeInsets.zero,
                     children: [
                       ListTile(
-                        contentPadding: EdgeInsets.fromLTRB(20, 30, 0, 10), // Adjust the horizontal padding as needed
+                        contentPadding: EdgeInsets.fromLTRB(20, 30, 0,
+                            10), // Adjust the horizontal padding as needed
                         title: Text(
                           'Menu',
                           style: TextStyle(
@@ -233,7 +238,6 @@ class DashboardScreen extends ConsumerWidget {
                           // Handle navigation to settings
                         },
                       ),
-
                       ListTile(
                         leading: Icon(Icons.home, color: AppColors.white),
                         title: Text(
@@ -249,7 +253,6 @@ class DashboardScreen extends ConsumerWidget {
                           );
                         },
                       ),
-
                       Divider(
                         color: Colors.white,
                         height: 5,
@@ -257,7 +260,6 @@ class DashboardScreen extends ConsumerWidget {
                         indent: 20,
                         endIndent: 20,
                       ),
-
                       ListTile(
                         leading: Icon(Icons.money, color: AppColors.white),
                         title: Text(
@@ -273,7 +275,6 @@ class DashboardScreen extends ConsumerWidget {
                           );
                         },
                       ),
-
                       Divider(
                         color: Colors.white,
                         height: 5,
@@ -281,7 +282,6 @@ class DashboardScreen extends ConsumerWidget {
                         indent: 20,
                         endIndent: 20,
                       ),
-
                       ListTile(
                         leading: Icon(Icons.logout, color: AppColors.white),
                         title: Text(
@@ -291,9 +291,9 @@ class DashboardScreen extends ConsumerWidget {
                         onTap: () {
                           // Handle logout
                           //_logoutAndRedirectToLogin();
+                          LogOutDialog.logOutDialog(context: context);
                         },
                       ),
-
                       Divider(
                         color: Colors.white,
                         height: 5,
@@ -301,16 +301,36 @@ class DashboardScreen extends ConsumerWidget {
                         indent: 20,
                         endIndent: 20,
                       ),
+                      // ListTile(
+                      //   leading: Icon(Icons.logout, color: AppColors.white),
+                      //   title: Text(
+                      //     'PunchOut',
+                      //     style: TextStyle(color: AppColors.white),
+                      //   ),
+                      //   onTap: () {
+                      //     // Handle logout
+                      //     //_logoutAndRedirectToLogin();
+                      //     //  ref
+                      //     //     .read(attendanceProvider.notifier)
+                      //     //     .clickPunch(context);
+                      //     ref.read(attendanceProvider.notifier).onPunchOut();
+                      //   },
+                      // ),
+                      // Divider(
+                      //   color: Colors.white,
+                      //   height: 5,
+                      //   thickness: 1,
+                      //   indent: 20,
+                      //   endIndent: 20,
+                      // ),
                     ],
                   ),
                 ),
-
               ),
             ],
           ),
         ),
       ),
-
 
       body: userProfile == null
           ? Center(child: CircularProgressIndicator())
@@ -433,6 +453,54 @@ class DashboardScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _showMyDialog(BuildContext context, WidgetRef ref) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button to close dialog
+      builder: (BuildContext context) {
+        final checkpunchProvider = ref.watch(attendanceProvider);
+        return AlertDialog(
+          title: Text('Punch out'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Are you sure you want to punch out.'),
+                // Text('Press the button below to close.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  child: Text(
+                    'PunchOut',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    ref.read(attendanceProvider.notifier).onPunchOut();
+
+                    Navigator.of(context).pop();
+                  },
+                ),
+                ElevatedButton(
+                  child: Text(
+                    'Close',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            )
+          ],
+        );
+      },
     );
   }
 }
