@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/extentions/dio_extension.dart';
@@ -21,6 +23,8 @@ class PunchInRepositoryImp extends PunchInRepository {
     try {
       Response response =
           await dio.get(Api.punchIn, options: Options(headers: token));
+      log('punchIn api: ${Api.punchIn.toString()}');
+
       if (kDebugMode) {
         print(response.data);
       }
@@ -43,14 +47,16 @@ class PunchInRepositoryImp extends PunchInRepository {
     try {
       Response response =
           await dio.get(Api.punchOut, options: Options(headers: token));
+      log('punchOut api: ${Api.punchOut.toString()}');
       if (kDebugMode) {
-        print(response.data);
+        // log(">>>L " + response.data);
       }
       if (response.statusCode == 500) {
         if (kDebugMode) {
           print('500 error');
         }
       } else if (response.statusCode == 404) {
+        log('404 error');
       } else {
         return response;
       }
@@ -65,6 +71,9 @@ class PunchInRepositoryImp extends PunchInRepository {
     try {
       Response response = await dio.get(Api.checkPunchIn,
           queryParameters: queryParam, options: Options(headers: token));
+      log('queryParam: ' + queryParam.toString());
+      log('checkPunchIn api: ${Api.checkPunchIn.toString()}');
+
       if (kDebugMode) {
         print('check punch status ${response.data}');
       }

@@ -15,7 +15,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
 import '../model/visit_closure_submit_request_model.dart';
@@ -24,7 +25,7 @@ import '../model/visit_pending_items_model.dart';
 import '../model/visit_update_upload_image_responce_model.dart';
 
 final updateVisitDropDown = StateProvider<List<DropDownValueModel>>(
-      (ref) {
+  (ref) {
     return [
       const DropDownValueModel(name: 'None', value: "none"),
       const DropDownValueModel(
@@ -38,7 +39,7 @@ final updateVisitDropDown = StateProvider<List<DropDownValueModel>>(
 );
 
 final modeOfCollectionDropDown = StateProvider<List<DropDownValueModel>>(
-      (ref) {
+  (ref) {
     return [
       const DropDownValueModel(name: 'Partner', value: "partner"),
       const DropDownValueModel(name: 'Online', value: "online"),
@@ -48,7 +49,7 @@ final modeOfCollectionDropDown = StateProvider<List<DropDownValueModel>>(
 );
 
 final bankDropDown = StateProvider<List<DropDownValueModel>>(
-      (ref) {
+  (ref) {
     return [
       const DropDownValueModel(name: 'Hdfc', value: "hdfc"),
       const DropDownValueModel(name: 'New Bank', value: "newBank"),
@@ -58,7 +59,7 @@ final bankDropDown = StateProvider<List<DropDownValueModel>>(
 );
 
 final creditDropDown = StateProvider<List<DropDownValueModel>>(
-      (ref) {
+  (ref) {
     return [
       const DropDownValueModel(name: 'Roshan', value: "roshan"),
       const DropDownValueModel(name: 'Sagar', value: "sagar"),
@@ -70,35 +71,34 @@ final creditDropDown = StateProvider<List<DropDownValueModel>>(
 //--------------------drop down----------------------------------
 
 final paymentStatusFocusProviderFocusProvider =
-StateNotifierProvider<PaymentStatusFocusProvider, Map<String, bool>>((ref) {
+    StateNotifierProvider<PaymentStatusFocusProvider, Map<String, bool>>((ref) {
   return PaymentStatusFocusProvider();
 });
 
 final closuerFocusProvider =
-StateNotifierProvider<ClosuerFocusProvider, Map<String, bool>>((ref) {
+    StateNotifierProvider<ClosuerFocusProvider, Map<String, bool>>((ref) {
   return ClosuerFocusProvider();
 });
 
 final closuerViewModelProvider =
-StateNotifierProvider<ClosuerViewModel, ClosuerModel>(
-        (ref) {
-          final dio = ref.watch(dioProvider);
-          return ClosuerViewModel(dio);
-        } );
+    StateNotifierProvider<ClosuerViewModel, ClosuerModel>((ref) {
+  final dio = ref.watch(dioProvider);
+  return ClosuerViewModel(dio);
+});
 
 final updateEmiFocusProvider =
-StateNotifierProvider<UpdateEmiFocusProvider, Map<String, bool>>((ref) {
+    StateNotifierProvider<UpdateEmiFocusProvider, Map<String, bool>>((ref) {
   return UpdateEmiFocusProvider();
 });
 
 final updateEmiViewModelProvider =
-StateNotifierProvider<UpdateEmiViewModel, UpdateEmiModel>((ref) {
+    StateNotifierProvider<UpdateEmiViewModel, UpdateEmiModel>((ref) {
   final dio = ref.read(dioProvider);
   return UpdateEmiViewModel(dio);
 });
 
 final paymentStatusViewModelProvider =
-StateNotifierProvider<PaymentStatusViewModel, PaymentStatusModel>((ref) {
+    StateNotifierProvider<PaymentStatusViewModel, PaymentStatusModel>((ref) {
   final dio = ref.read(dioProvider);
 
   final position = ref.watch(currentLocationProvider);
@@ -112,7 +112,7 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
 
   TextEditingController dateController = TextEditingController();
   final SingleValueDropDownController dropDownControllerProvider =
-  SingleValueDropDownController();
+      SingleValueDropDownController();
   final ImagePicker picker = ImagePicker();
 
   PaymentStatusViewModel(this.dio, this.position) : super(PaymentStatusModel());
@@ -128,17 +128,19 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
   }
 
   Future<void> uploadImage(String image) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString('token');
     var formData = FormData.fromMap({
       'image': await MultipartFile.fromFile(image),
     });
     print(image);
-    final String token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    // final String token =
+    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
     final response = await dio.post(Api.uploadImageCollection,
         data: formData, options: Options(headers: {"token": token}));
     if (response.statusCode == 200) {
       VisitUpdateUploadImageResponseModel imageResponseModel =
-      VisitUpdateUploadImageResponseModel.fromJson(response.data);
+          VisitUpdateUploadImageResponseModel.fromJson(response.data);
       state = state.copyWith(isLoading: false);
       if (kDebugMode) {
         print('image ${imageResponseModel.items.image}');
@@ -177,6 +179,8 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
   }
 
   Future<void> visitFormSubmit({required ItemsDetails datas}) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString('token');
     position.when(
       data: (data) async {
         final requestModel = VisitUpdateSubmitRequestModel(
@@ -194,9 +198,8 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
             address: datas.address!,
             latitude: data.latitude,
             longitude: data.longitude);
-
-        const String token =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+        // const String token =
+        //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
         final response = await dio.post(Api.visitFormSubmit,
             data: requestModel.toJson(),
             options: Options(headers: {"token": token}));
@@ -348,11 +351,11 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
   UpdateEmiViewModel(this.dio) : super(UpdateEmiModel());
 
   final SingleValueDropDownController modeOfCollectionController =
-  SingleValueDropDownController();
+      SingleValueDropDownController();
   final SingleValueDropDownController bankNameController =
-  SingleValueDropDownController();
+      SingleValueDropDownController();
   final SingleValueDropDownController creditPersonController =
-  SingleValueDropDownController();
+      SingleValueDropDownController();
   final ImagePicker picker = ImagePicker();
   String? imageApi = '';
 
@@ -369,11 +372,14 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
 
     Navigator.pop(context);
   }
-  void updateCreditPerson(String id){
+
+  void updateCreditPerson(String id) {
     state = state.copyWith(commonId: id);
   }
 
   Future<void> updateEmiSubmitButton({required ItemsDetails detail}) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString('token');
     UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
         ld: detail.ld!,
         collectedBy: '',
@@ -390,8 +396,8 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         remarkByCollection: state.remark,
         partner: detail.partner!);
 
-    const String token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    // const String token =
+    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
     final response = await dio.post(Api.visitFormSubmit,
         data: requestModel.toJson(),
         options: Options(headers: {"token": token}));
@@ -408,7 +414,6 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     }
   }
 
-
   Future<XFile?> clickPhoto() async {
     state = state.copyWith(isLoading: true);
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
@@ -420,17 +425,19 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
   }
 
   Future<void> uploadImage(String image) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString('token');
     var formData = FormData.fromMap({
       'image': await MultipartFile.fromFile(image),
     });
     print(image);
-    final String token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    // final String token =
+    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
     final response = await dio.post(Api.uploadImageCollection,
         data: formData, options: Options(headers: {"token": token}));
     if (response.statusCode == 200) {
       VisitUpdateUploadImageResponseModel imageResponseModel =
-      VisitUpdateUploadImageResponseModel.fromJson(response.data);
+          VisitUpdateUploadImageResponseModel.fromJson(response.data);
       state = state.copyWith(isLoading: false);
       if (kDebugMode) {
         print('image ${imageResponseModel.items.image}');
@@ -444,10 +451,12 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
   }
 
   Future<void> openFeilds(String id) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString('token');
     state = state.copyWith(modeOfCollectionId: id);
     print('id $id');
-    const String token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    // const String token =
+    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
     Response response = await dio.get(Api.getModeById,
         queryParameters: {"modeOfCollectionId": id},
         options: Options(headers: {"token": token}));
@@ -456,7 +465,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     if (response.statusCode == 200) {
       print(response.data);
       GetModeByIdResponseModel apiResponseList =
-      GetModeByIdResponseModel.fromJson(response.data);
+          GetModeByIdResponseModel.fromJson(response.data);
       List<DropDownValueModel> list = [];
       print(apiResponseList);
       state = state.copyWith(isEmail: apiResponseList.items.modeDetail.email);
@@ -528,7 +537,6 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
     state = state.copyWith(reason: value, isReason: isValid);
   }
 
-
   Future<void> openDatePicker(WidgetRef ref, DateTime? initialDate) async {
     final pickedDate = await showDatePicker(
       context: ref.context,
@@ -538,13 +546,18 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
     );
     if (pickedDate != null) {
       updateDate(pickedDate); // Update the date in the state
-      ref.read(dateProvider.notifier).updateDate(pickedDate); // Use ref to read the provider
+      ref
+          .read(dateProvider.notifier)
+          .updateDate(pickedDate); // Use ref to read the provider
     }
   }
 
-
-  Future<void> visitClosureFormSubmit(BuildContext context, {required ItemsDetails data}) async {
-    VisitClosureSubmitRequestModel requestModel = VisitClosureSubmitRequestModel(
+  Future<void> visitClosureFormSubmit(BuildContext context,
+      {required ItemsDetails data}) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString('token');
+    VisitClosureSubmitRequestModel requestModel =
+        VisitClosureSubmitRequestModel(
       ld: data.ld!,
       customerName: data.customerName!,
       mobileNo: int.parse(data.mobile!),
@@ -553,8 +566,8 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
       settlementForReason: state.reason,
     );
 
-    final String token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    // final String token =
+    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
     final response = await dio.post(Api.visitCloseFormSubmit,
         data: requestModel.toJson(),
         options: Options(headers: {"token": token}));
@@ -598,28 +611,26 @@ class PaymentStatusFocusProvider extends StateNotifier<Map<String, bool>> {
         reasonFocusNode = FocusNode(),
         solutionFocusNode = FocusNode(),
         super({
-        'paymentStatusFocusNode': false,
-        'paymentAmountFocusNode': false,
-        'dateFocusNode': false,
-        'reasonFocusNode': false,
-        'solutionFocusNode': false,
-      }) {
+          'paymentStatusFocusNode': false,
+          'paymentAmountFocusNode': false,
+          'dateFocusNode': false,
+          'reasonFocusNode': false,
+          'solutionFocusNode': false,
+        }) {
     paymentStatusFocusNode.addListener(
-          () =>
-          _focusListener('paymentStatusFocusNode', paymentStatusFocusNode),
+      () => _focusListener('paymentStatusFocusNode', paymentStatusFocusNode),
     );
     paymentAmountFocusNode.addListener(
-          () =>
-          _focusListener('paymentAmountFocusNode', paymentAmountFocusNode),
+      () => _focusListener('paymentAmountFocusNode', paymentAmountFocusNode),
     );
     dateFocusNode.addListener(
-          () => _focusListener('dateFocusNode', dateFocusNode),
+      () => _focusListener('dateFocusNode', dateFocusNode),
     );
     reasonFocusNode.addListener(
-          () => _focusListener('reasonFocusNode', reasonFocusNode),
+      () => _focusListener('reasonFocusNode', reasonFocusNode),
     );
     solutionFocusNode.addListener(
-          () => _focusListener('solutionFocusNode', solutionFocusNode),
+      () => _focusListener('solutionFocusNode', solutionFocusNode),
     );
   }
 
@@ -633,21 +644,19 @@ class PaymentStatusFocusProvider extends StateNotifier<Map<String, bool>> {
   @override
   void dispose() {
     paymentStatusFocusNode.removeListener(
-          () =>
-          _focusListener('paymentStatusFocusNode', paymentStatusFocusNode),
+      () => _focusListener('paymentStatusFocusNode', paymentStatusFocusNode),
     );
     paymentAmountFocusNode.removeListener(
-          () =>
-          _focusListener('paymentAmountFocusNode', paymentAmountFocusNode),
+      () => _focusListener('paymentAmountFocusNode', paymentAmountFocusNode),
     );
     dateFocusNode.removeListener(
-          () => _focusListener('dateFocusNode', dateFocusNode),
+      () => _focusListener('dateFocusNode', dateFocusNode),
     );
     reasonFocusNode.removeListener(
-          () => _focusListener('reasonFocusNode', reasonFocusNode),
+      () => _focusListener('reasonFocusNode', reasonFocusNode),
     );
     solutionFocusNode.removeListener(
-          () => _focusListener('solutionFocusNode', solutionFocusNode),
+      () => _focusListener('solutionFocusNode', solutionFocusNode),
     );
     paymentStatusFocusNode.dispose();
     paymentAmountFocusNode.dispose();
@@ -669,20 +678,18 @@ class ClosuerFocusProvider extends StateNotifier<Map<String, bool>> {
         dateClosuerFocusNode = FocusNode(),
         reasonClosuerFocusNode = FocusNode(),
         super({
-        'amountClosuerFocusNode': false,
-        'dateClosuerFocusNode': false,
-        'reasonClosuerFocusNode': false,
-      }) {
+          'amountClosuerFocusNode': false,
+          'dateClosuerFocusNode': false,
+          'reasonClosuerFocusNode': false,
+        }) {
     amountClosuerFocusNode.addListener(
-          () =>
-          _focusListener('amountClosuerFocusNode', amountClosuerFocusNode),
+      () => _focusListener('amountClosuerFocusNode', amountClosuerFocusNode),
     );
     dateClosuerFocusNode.addListener(
-          () => _focusListener('dateClosuerFocusNode', dateClosuerFocusNode),
+      () => _focusListener('dateClosuerFocusNode', dateClosuerFocusNode),
     );
     reasonClosuerFocusNode.addListener(
-          () =>
-          _focusListener('reasonClosuerFocusNode', reasonClosuerFocusNode),
+      () => _focusListener('reasonClosuerFocusNode', reasonClosuerFocusNode),
     );
   }
 
@@ -696,15 +703,13 @@ class ClosuerFocusProvider extends StateNotifier<Map<String, bool>> {
   @override
   void dispose() {
     amountClosuerFocusNode.removeListener(
-          () =>
-          _focusListener('amountClosuerFocusNode', amountClosuerFocusNode),
+      () => _focusListener('amountClosuerFocusNode', amountClosuerFocusNode),
     );
     dateClosuerFocusNode.removeListener(
-          () => _focusListener('dateClosuerFocusNode', dateClosuerFocusNode),
+      () => _focusListener('dateClosuerFocusNode', dateClosuerFocusNode),
     );
     reasonClosuerFocusNode.removeListener(
-          () =>
-          _focusListener('reasonClosuerFocusNode', reasonClosuerFocusNode),
+      () => _focusListener('reasonClosuerFocusNode', reasonClosuerFocusNode),
     );
     amountClosuerFocusNode.dispose();
     dateClosuerFocusNode.dispose();
@@ -777,7 +782,6 @@ class PaymentStatusModel {
   }
 }
 
-
 class ClosuerModel {
   final String amount;
   final String date;
@@ -786,12 +790,13 @@ class ClosuerModel {
   final bool isDate;
   final bool isReason;
 
-  ClosuerModel({this.amount = '',
-    this.date = '',
-    this.reason = '',
-    this.isAmount = true,
-    this.isDate = true,
-    this.isReason = true});
+  ClosuerModel(
+      {this.amount = '',
+      this.date = '',
+      this.reason = '',
+      this.isAmount = true,
+      this.isDate = true,
+      this.isReason = true});
 
   ClosuerModel copyWith({
     String? amount,
@@ -834,28 +839,28 @@ class UpdateEmiModel {
   final bool isEmail;
   final String modeTitle;
 
-  UpdateEmiModel({
-    this.modeOfCollectionId = '',
-    this.commonId = '',
-    this.photoFile = '',
-    this.subDropdown = const [],
-    this.dropdownDetail = '',
-    this.modeTitle = '',
-    this.isEmail = false,
-    this.isExtraFormOpen = false,
-    this.emiAmount = '',
-    this.transactionId = '',
-    this.transactionImage = '',
-    this.remark = '',
-    this.bankName = '',
-    this.receipt = '',
-    this.isEmiAmount = true,
-    this.isTransactionId = true,
-    this.isTransactionImage = true,
-    this.isRemark = true,
-    this.isBankName = true,
-    this.isReceipt = true,
-    this.isLoading = false});
+  UpdateEmiModel(
+      {this.modeOfCollectionId = '',
+      this.commonId = '',
+      this.photoFile = '',
+      this.subDropdown = const [],
+      this.dropdownDetail = '',
+      this.modeTitle = '',
+      this.isEmail = false,
+      this.isExtraFormOpen = false,
+      this.emiAmount = '',
+      this.transactionId = '',
+      this.transactionImage = '',
+      this.remark = '',
+      this.bankName = '',
+      this.receipt = '',
+      this.isEmiAmount = true,
+      this.isTransactionId = true,
+      this.isTransactionImage = true,
+      this.isRemark = true,
+      this.isBankName = true,
+      this.isReceipt = true,
+      this.isLoading = false});
 
   UpdateEmiModel copyWith({
     String? modeOfCollectionId,
@@ -925,41 +930,39 @@ class UpdateEmiFocusProvider extends StateNotifier<Map<String, bool>> {
         modeOfCollection = FocusNode(),
         creditPersonFocusNode = FocusNode(),
         super({
-        'emiAmountFocusNode': false,
-        'transactionIdFocusNode': false,
-        'bankNameFocusNode': false,
-        'receiptFocusNode': false,
-        'remarkFocusNode': false,
-        'transactionImageFocusNode': false,
-        'modeOfCollection': false,
-        'creditPersonFocusNode': false,
-      }) {
+          'emiAmountFocusNode': false,
+          'transactionIdFocusNode': false,
+          'bankNameFocusNode': false,
+          'receiptFocusNode': false,
+          'remarkFocusNode': false,
+          'transactionImageFocusNode': false,
+          'modeOfCollection': false,
+          'creditPersonFocusNode': false,
+        }) {
     emiAmountFocusNode.addListener(
-          () => _focusListener('emiAmountFocusNode', emiAmountFocusNode),
+      () => _focusListener('emiAmountFocusNode', emiAmountFocusNode),
     );
     transactionIdFocusNode.addListener(
-          () =>
-          _focusListener('transactionIdFocusNode', transactionIdFocusNode),
+      () => _focusListener('transactionIdFocusNode', transactionIdFocusNode),
     );
     bankNameFocusNode.addListener(
-          () => _focusListener('bankNameFocusNode', bankNameFocusNode),
+      () => _focusListener('bankNameFocusNode', bankNameFocusNode),
     );
     receiptFocusNode.addListener(
-          () => _focusListener('receiptFocusNode', receiptFocusNode),
+      () => _focusListener('receiptFocusNode', receiptFocusNode),
     );
     remarkFocusNode.addListener(
-          () => _focusListener('remarkFocusNode', remarkFocusNode),
+      () => _focusListener('remarkFocusNode', remarkFocusNode),
     );
     transactionImageFocusNode.addListener(
-          () =>
-          _focusListener(
-              'transactionImageFocusNode', transactionImageFocusNode),
+      () => _focusListener(
+          'transactionImageFocusNode', transactionImageFocusNode),
     );
     modeOfCollection.addListener(
-          () => _focusListener('modeOfCollection', modeOfCollection),
+      () => _focusListener('modeOfCollection', modeOfCollection),
     );
     creditPersonFocusNode.addListener(
-          () => _focusListener('creditPersonFocusNode', creditPersonFocusNode),
+      () => _focusListener('creditPersonFocusNode', creditPersonFocusNode),
     );
   }
 
@@ -973,31 +976,29 @@ class UpdateEmiFocusProvider extends StateNotifier<Map<String, bool>> {
   @override
   void dispose() {
     emiAmountFocusNode.removeListener(
-          () => _focusListener('emiAmountFocusNode', emiAmountFocusNode),
+      () => _focusListener('emiAmountFocusNode', emiAmountFocusNode),
     );
     transactionIdFocusNode.removeListener(
-          () =>
-          _focusListener('transactionIdFocusNode', transactionIdFocusNode),
+      () => _focusListener('transactionIdFocusNode', transactionIdFocusNode),
     );
     bankNameFocusNode.removeListener(
-          () => _focusListener('bankNameFocusNode', bankNameFocusNode),
+      () => _focusListener('bankNameFocusNode', bankNameFocusNode),
     );
     receiptFocusNode.removeListener(
-          () => _focusListener('receiptFocusNode', receiptFocusNode),
+      () => _focusListener('receiptFocusNode', receiptFocusNode),
     );
     remarkFocusNode.removeListener(
-          () => _focusListener('remarkFocusNode', remarkFocusNode),
+      () => _focusListener('remarkFocusNode', remarkFocusNode),
     );
     transactionImageFocusNode.removeListener(
-          () =>
-          _focusListener(
-              'transactionImageFocusNode', transactionImageFocusNode),
+      () => _focusListener(
+          'transactionImageFocusNode', transactionImageFocusNode),
     );
     modeOfCollection.removeListener(
-          () => _focusListener('modeOfCollection', modeOfCollection),
+      () => _focusListener('modeOfCollection', modeOfCollection),
     );
     creditPersonFocusNode.removeListener(
-          () => _focusListener('creditPersonFocusNode', creditPersonFocusNode),
+      () => _focusListener('creditPersonFocusNode', creditPersonFocusNode),
     );
     emiAmountFocusNode.dispose();
     transactionIdFocusNode.dispose();
@@ -1044,50 +1045,79 @@ final currentLocationProvider = FutureProvider<Position>((ref) async {
   );
   // Return the current position
   Position position =
-  await Geolocator.getCurrentPosition(locationSettings: locationSettings);
+      await Geolocator.getCurrentPosition(locationSettings: locationSettings);
   return position;
 });
 
 // Provider to manage the Google Map controller
 final mapControllerProvider =
-StateProvider<GoogleMapController?>((ref) => null);
+    StateProvider<GoogleMapController?>((ref) => null);
 
 // Provider to manage the polyline for directions
 final polylineProvider = StateProvider<List<Polyline>>((ref) => []);
 
 // Provider to fetch directions between two points
 final directionsProvider =
-FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
+    FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
   final currentLocation = await ref.watch(currentLocationProvider.future);
 
-  final polylinePoints = PolylinePoints();
+  // final polylinePoints = PolylinePoints();
   const apiKey =
       'AIzaSyCiUeNk2R6jiihpsymrcQhGC586itXxAYg'; // Replace with your actual API key
+  final String url =
+      'https://maps.googleapis.com/maps/api/directions/json?origin=${currentLocation.latitude},${currentLocation.longitude}&destination=${destination.latitude},${destination.longitude}&key=$apiKey';
 
-  final result = await polylinePoints.getRouteBetweenCoordinates(
-    request: PolylineRequest(
-      origin: PointLatLng(currentLocation.latitude, currentLocation.longitude),
-      destination: PointLatLng(destination.latitude, destination.longitude),
-      mode: TravelMode.driving,
-    ),
-    googleApiKey: apiKey,
-  );
+  List<LatLng> decodePolyline(String encoded) {
+    PolylinePoints polylinePoints = PolylinePoints();
+    List<PointLatLng> points = polylinePoints.decodePolyline(encoded);
 
-  if (result.points.isNotEmpty) {
-    // Convert the points to a list of LatLng
-    return result.points
+    return points
         .map((point) => LatLng(point.latitude, point.longitude))
         .toList();
-  } else {
-    return [];
   }
+
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+    if (data['routes'].isNotEmpty) {
+      final String polyline = data['routes'][0]['overview_polyline']['points'];
+
+      return decodePolyline(polyline);
+    } else {
+      throw Exception('No routes found');
+    }
+  } else {
+    throw Exception('Failed to fetch directions');
+  }
+
+  // final result = await polylinePoints.getRouteBetweenCoordinates(
+  //   request: PolylineRequest(
+  //     origin: PointLatLng(currentLocation.latitude, currentLocation.longitude),
+  //     destination: PointLatLng(destination.latitude, destination.longitude),
+  //     mode: TravelMode.driving,
+  //   ),
+  //   googleApiKey: apiKey,
+  // );
+  // print(result.points.isNotEmpty);
+  // if (result.points.isNotEmpty) {
+  //   // print(result.points.isNotEmpty);
+  //   // Convert the points to a list of LatLng
+  //   return result.points
+  //       .map((point) => LatLng(point.latitude, point.longitude))
+  //       .toList();
+  // } else {
+  //   return [];
+  // }
 });
 //-----------------------------end map--------------------------------------------------------
 
 final fetchVisitPendingDataProvider =
-FutureProvider<List<Map<String, String>>>((ref) async {
-  final String token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    FutureProvider<List<Map<String, String>>>((ref) async {
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      String? token =  sharedPreferences.getString('token');
+  // final String token =
+  //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
   final Map<String, String> queryParam = {"status": "pending"};
   final dio = ref.read(dioProvider);
   final response = await dio.get(Api.collectionVisitPending,
@@ -1097,6 +1127,7 @@ FutureProvider<List<Map<String, String>>>((ref) async {
   if (response.statusCode == 200) {
     print(response.data);
     GetVisitPendingResponseData apiResponseList = GetVisitPendingResponseData.fromJson(response.data);
+
     return apiResponseList.items;
   } else {
     throw Exception('Failed to load data');
@@ -1104,9 +1135,11 @@ FutureProvider<List<Map<String, String>>>((ref) async {
 });
 
 final fetchGetAllModeOfCollectionProvider =
-FutureProvider<List<ModeItem>>((ref) async {
-  const String token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    FutureProvider<List<ModeItem>>((ref) async {
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      String? token =  sharedPreferences.getString('token');
+  // const String token =
+  //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
   final dio = ref.read(dioProvider);
   final response = await dio.get(Api.getAllModeOfCollection,
       options: Options(headers: {"token": token}));
@@ -1115,7 +1148,7 @@ FutureProvider<List<ModeItem>>((ref) async {
   if (response.statusCode == 200) {
     print(response.data);
     CollectionModeResponseModel apiResponseList =
-    CollectionModeResponseModel.fromJson(response.data);
+        CollectionModeResponseModel.fromJson(response.data);
     return apiResponseList.items;
   } else {
     throw Exception('Failed to load data');
