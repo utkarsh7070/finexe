@@ -34,6 +34,7 @@ class Api {
   static const String uploadImageCollection =
       '${baseUrl}v1/formData/ImageUpload';
   static const String visitFormSubmit = '${baseUrl}v1/googleSheet/visitFormAdd';
+  static const String visitDetailsTable = '${baseUrl}v1/googleSheet/visitDetail';
 
   static const String getModeById =
       '${baseUrl}v1/adminMaster/modeOfCollection/getModeById';

@@ -69,7 +69,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                           IconButton(
                               onPressed: () {
                                 paymentViewModel.updatePhotoValue('', context);
-                                Navigator.pop(context);
+
                               },
                               icon: const Icon(Icons.cancel_sharp))
                         ],
