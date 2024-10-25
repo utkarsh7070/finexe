@@ -185,7 +185,7 @@ class VisitPendingScreen extends ConsumerWidget {
                                       GestureDetector(
                                         onTap: () {
                                           MapDialog()
-                                              .mapDialog(context: context);
+                                              .mapDialog(context: context,lat: item.lat!,log: item.longValue!);
                                         },
                                         child: Container(
                                           height: displayHeight(context) * 0.06,
