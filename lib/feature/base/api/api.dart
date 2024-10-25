@@ -38,6 +38,9 @@ class Api {
 
   static const String getVisitDetail = '${baseUrl}v1/googleSheet/visitDetail';
 
+  static const String getVisitCollection = '${baseUrl}v1/googleSheet/collectionDetail';
+  static const String getVisitClosure = '${baseUrl}v1/googleSheet/getCloserDetailBy';
+
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
 
