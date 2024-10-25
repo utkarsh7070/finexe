@@ -136,8 +136,14 @@
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../base/api/api.dart';
+import '../../Collection cases/view/cases_screen.dart';
+import '../../Collection cases/view/visitPending/visit_pending_screen.dart';
 import '../home_collection_model/UserProfile.dart';
+import '../home_collection_viewmodel/fetchUserProfile.dart';
 import 'dashboard_side_bar.dart';
+
 
 class DashboardScreen extends ConsumerWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -146,9 +152,30 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.read(userProfileProvider.notifier).fetchUserProfile();
-    final userProfile = ref.watch(userProfileProvider);
-    // final checkpunchProvider = ref.watch(attendanceProvider);
+
+
+
+   // ref.read(apiResponseProvider.notifier).fetchEmployeeDetails();
+
+    var apiResponse = ref.watch(apiResponseProvider);
+    var userProfile;
+  // final userProfile= apiResponse?.employeeDetail;
+
+    // If the API response is null, call fetchEmployeeDetails if it's not already called
+    if (apiResponse == null) {
+      ref.read(apiResponseProvider.notifier).fetchEmployeeDetails();
+      apiResponse = ref.watch(apiResponseProvider);
+       userProfile= apiResponse?.employeeDetail;
+    }else{
+      userProfile= apiResponse.employeeDetail;
+    }
+
+    /*// If the API response is still not loaded, show a loading indicator
+    if (apiResponse == null) {
+      return Center(child: CircularProgressIndicator());
+    }
+   */
+
 
     return Scaffold(
       key: _scaffoldKey,
@@ -166,6 +193,7 @@ class DashboardScreen extends ConsumerWidget {
           iconSize: 30, // Set the size of the icon
           color: Colors.black, // Set the color of the icon
         ),
+
         title: const Text("Collection Dashboard"),
         actions: [
           IconButton(
@@ -176,9 +204,7 @@ class DashboardScreen extends ConsumerWidget {
               _showMyDialog(context, ref);
             },
           ),
-          /* CircleAvatar(
-            backgroundImage: NetworkImage("https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png"), // Replace with actual image URL
-          ),*/
+       
         ],
       ),
 
@@ -373,35 +399,36 @@ class DashboardScreen extends ConsumerWidget {
                       ],
 
 
+
                     ),
                   ),
                 ),
 
-                // GridView for six square cards
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: GridView.count(
-                    physics: const NeverScrollableScrollPhysics(),
-                    // To prevent GridView from scrolling
-                    shrinkWrap: true,
-                    // To fit content within the SingleChildScrollView
-                    crossAxisCount: 2,
-                    // Two cards per row
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 1,
-                    // To make the cards square
-                    children: [
-                      buildCard(Icons.person, '100', 'Visits Accepted'),
-                      buildCard(Icons.person, '50', 'Visits Pending'),
-                      buildCard(Icons.person, '10', 'Visits Rejected'),
-                      buildCard(Icons.attach_money, '200',
-                          'Collections Accepted'),
-                      buildCard(
-                          Icons.attach_money, '30', 'Collections Pending'),
-                      buildCard(
-                          Icons.attach_money, '5', 'Collections Rejected'),
-                    ],
+
+                  // GridView for six square cards
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: GridView.count(
+                      physics:
+                          NeverScrollableScrollPhysics(), // To prevent GridView from scrolling
+                      shrinkWrap:
+                          true, // To fit content within the SingleChildScrollView
+                      crossAxisCount: 2, // Two cards per row
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 1, // To make the cards square
+                      children: [
+                        buildCard(Icons.person, '${apiResponse?.visitAccepted}', 'Visits Accepted'),
+                        buildCard(Icons.person, '${apiResponse?.visitPendingForApproval}', 'Visits Pending'),
+                        buildCard(Icons.person, '${apiResponse?.visitRejected}', 'Visits Rejected'),
+                        buildCard(
+                            Icons.currency_rupee, '${apiResponse?.collectionAcceptAmount}', 'Collections Accepted'),
+                        buildCard(
+                            Icons.currency_rupee, '${apiResponse?.collectionEmiAmountPendingForApproval}', 'Collections Pending'),
+                        buildCard(
+                            Icons.currency_rupee, '${apiResponse?.collectionRejectAmount}', 'Collections Rejected'),
+                      ],
+                    ),
                   ),
                 ),
 
@@ -443,6 +470,7 @@ class DashboardScreen extends ConsumerWidget {
       ),
     );
   }
+
 
   Future<void> _showMyDialog(BuildContext context, WidgetRef ref) async {
     return showDialog<void>(

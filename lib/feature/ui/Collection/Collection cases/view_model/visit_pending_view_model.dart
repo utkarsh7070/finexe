@@ -1126,8 +1126,8 @@ final fetchVisitPendingDataProvider =
   print(response.statusCode);
   if (response.statusCode == 200) {
     print(response.data);
-    GetVisitPendingResponseData apiResponseList =
-        GetVisitPendingResponseData.fromJson(response.data);
+    GetVisitPendingResponseData apiResponseList = GetVisitPendingResponseData.fromJson(response.data);
+
     return apiResponseList.items;
   } else {
     throw Exception('Failed to load data');

@@ -41,8 +41,18 @@ class Api {
   static const String updateEmiSubmit =
       '${baseUrl}v1/googleSheet/collectionEmiFormAdd';
 
-  static const String visitCloseFormSubmit =
-      '${baseUrl}v1/googleSheet/posCloserForm';
+  static const String visitCloseFormSubmit = '${baseUrl}v1/googleSheet/posCloserForm';
+
+  static const String getAllocationDashboard = '${baseUrl}v1/googleSheet/getAllocationDashboard';
+
+  static const String imageUrl = '${baseUrl}';
+
+  static const String getVisitDetail = '${baseUrl}v1/googleSheet/visitDetail';
+
+  static const String getVisitCollection = '${baseUrl}v1/googleSheet/collectionDetail';
+  static const String getVisitClosure = '${baseUrl}v1/googleSheet/getCloserDetailBy';
+
+
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
 
