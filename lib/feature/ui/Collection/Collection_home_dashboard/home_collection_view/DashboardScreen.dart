@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import '../home_collection_model/UserProfile.dart';
+// import '../home_collection_model/user_profile_model.dart';
 //
 // class DashboardScreen extends ConsumerWidget {
 //   @override
@@ -132,8 +132,9 @@
 //   }
 // }
 
-import 'package:finexe/feature/base/dialog/logout_dialog.dart';
+
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
+import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../base/api/api.dart';
@@ -141,14 +142,19 @@ import '../../Collection cases/view/cases_screen.dart';
 import '../../Collection cases/view/visitPending/visit_pending_screen.dart';
 import '../home_collection_model/UserProfile.dart';
 import '../home_collection_viewmodel/fetchUserProfile.dart';
+import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
+import '../Widget/punct_in_out_action_dialog_content.dart';
+import '../home_collection_model/user_profile_model.dart';
+import '../home_collection_viewmodel/fetchUserProfile.dart';
+import 'dashboard_side_bar.dart';
 
 class DashboardScreen extends ConsumerWidget {
-  final GlobalKey<ScaffoldState> _scaffoldKey =
-      GlobalKey<ScaffoldState>(); // Step 1: Define the GlobalKey
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  DashboardScreen({super.key}); // Step 1: Define the GlobalKey
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     var apiResponse = ref.watch(apiResponseProvider);
     var userProfile;
 
@@ -162,8 +168,9 @@ class DashboardScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      key: _scaffoldKey, // Step 2: Assign the scaffoldKey to the Scaffold
-      backgroundColor: AppColors.primary,
+      key: _scaffoldKey,
+      // Step 2: Assign the scaffoldKey to the Scaffold
+      // backgroundColor: AppColors.primary,
       appBar: AppBar(
         /* leading: Icon(Icons.menu),*/
 
@@ -172,167 +179,40 @@ class DashboardScreen extends ConsumerWidget {
             // Handle the click action here
             _scaffoldKey.currentState?.openDrawer(); // Open the end drawer
           },
-          icon: Icon(Icons.menu), // Choose the appropriate icon
+          icon: const Icon(Icons.menu), // Choose the appropriate icon
           iconSize: 30, // Set the size of the icon
           color: Colors.black, // Set the color of the icon
         ),
-        title: Text("Collection Dashboard"),
-       /* actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () {
-             // ref.read(apiResponseProvider.notifier).fetchUserProfile();
-              ref.read(apiResponseProvider.notifier).fetchEmployeeDetails();
-              ref.watch(apiResponseProvider);
-            },
-          ),
-          *//* CircleAvatar(
-            backgroundImage: NetworkImage("https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png"), // Replace with actual image URL
-          ),*//*
-        ],*/
+        title: const Text("Collection Dashboard"),
+        actions: [
+          GestureDetector(
+              onTap: () {
+                _showMyDialog(context, ref);
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Image.asset(
+                  'assets/images/fingerprint.png',
+                  height: displayHeight(context) * 0.04,
+                  width: displayWidth(context) * 0.06,
+                ),
+              )),
+
+        ],
       ),
 
 
-      drawer: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 20, 80, 20),
-        child: Drawer(
-
-          child: Column(
-            children: [
-              // Top white section with image
-              Container(
-                color: Colors.white, // White background for the top part
-                child: Column(
-                  children: [
-                    SizedBox(height: 10),
-                    SizedBox(
-                      height: 100,
-                      child: Container(
-                        padding: EdgeInsets.all(10), // Reduce padding to give the image more space
-                        child: Padding(
-                          padding: const EdgeInsets.all(10), // Add padding around the image for spacing
-                          child: Image.asset(
-                            'assets/images/finexe_text_image.png', // Your image path
-                            fit: BoxFit.contain, // Ensure the image is contained within the available space
-                          ),
-                        ),
-                      ),
-
-                    ),
-                  ],
-                ),
-              ),
-
-
-              // Bottom blue section with menu items
-              Expanded(
-                child: Container(
-                  color: AppColors.primary, // Blue background for the bottom part
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    children: [
-                      ListTile(
-                        contentPadding: EdgeInsets.fromLTRB(20, 30, 0, 10), // Adjust the horizontal padding as needed
-                        title: Text(
-                          'Menu',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.white,
-                          ),
-                        ),
-                        onTap: () {
-                          // Handle navigation to settings
-                        },
-                      ),
-
-                      ListTile(
-                        leading: Icon(Icons.home, color: AppColors.white),
-                        title: Text(
-                          'Home',
-                          style: TextStyle(color: AppColors.white),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DashboardScreen(),
-                            ),
-                          );
-                        },
-                      ),
-
-                      Divider(
-                        color: Colors.white,
-                        height: 5,
-                        thickness: 1,
-                        indent: 20,
-                        endIndent: 20,
-                      ),
-
-                      ListTile(
-                        leading: Icon(Icons.money, color: AppColors.white),
-                        title: Text(
-                          'Collection',
-                          style: TextStyle(color: AppColors.white),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CollectionCasesScreen(),
-                            ),
-                          );
-                        },
-                      ),
-
-                      Divider(
-                        color: Colors.white,
-                        height: 5,
-                        thickness: 1,
-                        indent: 20,
-                        endIndent: 20,
-                      ),
-
-                      ListTile(
-                        leading: Icon(Icons.logout, color: AppColors.white),
-                        title: Text(
-                          'Logout',
-                          style: TextStyle(color: AppColors.white),
-                        ),
-                        onTap: () {
-                          // Handle logout
-                          //_logoutAndRedirectToLogin();
-                        },
-                      ),
-
-                      Divider(
-                        color: Colors.white,
-                        height: 5,
-                        thickness: 1,
-                        indent: 20,
-                        endIndent: 20,
-                      ),
-                    ],
-                  ),
-                ),
-
-              ),
-            ],
-          ),
-        ),
-      ),
-
+      drawer: const DashBoardSideBar(),
 
       body: userProfile == null
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Column(
                 children: [
                   // User profile card
                   Card(
                     elevation: 2,
-                    margin: EdgeInsets.all(16),
+                    margin: const EdgeInsets.all(16),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -439,15 +319,16 @@ class DashboardScreen extends ConsumerWidget {
                 Icon(icon, size: 30),
                 Text(
                   amount,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               label,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
           ],
         ),
@@ -456,4 +337,25 @@ class DashboardScreen extends ConsumerWidget {
   }
 
 
+  Future<void> _showMyDialog(BuildContext context, WidgetRef ref) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button to close dialog
+      builder: (BuildContext context) {
+        final checkPunchProvider = ref.watch(attendanceProvider);
+        return const AlertDialog(
+          title: Text('Punch out'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Are you sure you want to punch out.'),
+                // Text('Press the button below to close.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[PunchOutActionContent()],
+        );
+      },
+    );
+  }
 }

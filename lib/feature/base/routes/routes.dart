@@ -46,7 +46,7 @@ class AppRoutes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
-        return MaterialPageRoute(builder: (_) => SplashScreen());
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case collectionHome:
@@ -54,7 +54,7 @@ class AppRoutes {
       case forgot:
         return MaterialPageRoute(builder: (_) => ForgotPasswordScreen());
       case attendance:
-        return MaterialPageRoute(builder: (_) => AttendanceScreen());
+        return MaterialPageRoute(builder: (_) => const AttendanceScreen());
       case dashBoard:
         return
             // MaterialPageRoute(builder: (_) =>

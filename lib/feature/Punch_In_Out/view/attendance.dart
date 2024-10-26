@@ -1,47 +1,129 @@
-import 'package:finexe/feature/Punch_In_Out/viewmodel/viewmodel.dart';
-import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:finexe_attendance/feature/constant/namespase/app_colors.dart';
-// import '../controller/attendance_controller.dart';
 import 'dart:developer';
 
+import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:one_clock/one_clock.dart';
+
 class AttendanceScreen extends ConsumerWidget {
+  const AttendanceScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = ref.watch(attendanceProvider);
-    log('loading: ' + controller.isLoading.toString());
+    final checkPunchProvider = ref.watch(attendanceProvider);
+    // final checkPunchViewModel = ref.read(sessionProvider);
+
     return Scaffold(
-      backgroundColor: Colors.blue,
-      body: SafeArea(
-        child: controller.isLoading
-            ? const Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.white,
-                ),
-              )
-            : SizedBox(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey.shade200,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+          appBar: AppBar(),
+          body: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Hello',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    checkPunchProvider.employeeName,
+                    style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * .03,
+                  ),
+                  Card(
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.10,
+                      decoration: const BoxDecoration(  gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFF0082C6),
+                            Color(0xFF09ABFF),
+
+                          ]),
+                          // color: Colors.blue,
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text(
+                                'Last Check in Time',
+                                style: TextStyle(
+                                    color: Colors.grey.shade200,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                              DigitalClock(
+                                  showSeconds: false,
+                                  isLive: true,
+                                  digitalClockTextColor: Colors.white,
+                                  // decoration: const BoxDecoration(
+                                  //     color: Colors.yellow,
+                                  //     shape: BoxShape.rectangle,
+                                  //     borderRadius: BorderRadius.all(Radius.circular(15))),
+                                  datetime: DateTime.now())
+                              // Text(controller.formattedDate.toString(),style: TextStyle(color:Colors.grey.shade200,fontSize: 20,fontWeight: FontWeight.w500),),
+                            ],
+                          ),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.grey.shade200,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.all(Radius.circular(10)))),
+                              onPressed: () {
+                                // controller.clickPunch();
+                                ref
+                                    .read(attendanceProvider.notifier)
+                                    .clickPunch(context);
+                                // ref
+                                //     .read(attendanceProvider.notifier)
+                                //     .onPunchIn(context);
+                              },
+                              child: checkPunchProvider.isLoading
+                                  ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.blue,
+                                ),
+                              )
+                                  :
+                            //   checkPunchProvider.punchStatus?
+                            // const Text(
+                            //         'Punch Out',
+                            //         style: TextStyle(color: Colors.blue),
+                            //       ):
+                            Text(
+                                'punchIn',
+                                style: TextStyle(color: Colors.blue),
+                              ),
+
+
+                          )
+                        ],
                       ),
                     ),
-                    onPressed: () {
-                      ref.read(attendanceProvider.notifier).clickPunch(context);
-                    },
-                    child: Text(
-                      controller.punchStatus ? 'Punch In' : 'Punch Out',
-                      style: const TextStyle(color: Colors.blue),
-                    ),
-                  ),
-                ),
+                  )
+                ],
               ),
-      ),
-    );
+            ),
+          ),
+        );
   }
 }

@@ -33,6 +33,8 @@ class VisitPendingScreen extends ConsumerWidget {
         List<ItemsDetails> listOfLists = data.map((map) {
           return ItemsDetails.fromJson(map);
         }).toList();
+
+        // print(sea?rchList);
         return Container(
           padding: const EdgeInsets.all(16),
           height: displayHeight(context),
@@ -85,7 +87,7 @@ class VisitPendingScreen extends ConsumerWidget {
                   print("LENGTH: " + listOfResults.length.toString());
                 },
 
-                searchItems: [],
+                searchItems:[]
               ),
               SizedBox(
                 height: displayHeight(context) * 0.03,
@@ -186,7 +188,7 @@ class VisitPendingScreen extends ConsumerWidget {
                                       GestureDetector(
                                         onTap: () {
                                           MapDialog()
-                                              .mapDialog(context: context);
+                                              .mapDialog(context: context,lat: item.lat!,log: item.longValue!);
                                         },
                                         child: Container(
                                           height: displayHeight(context) * 0.06,
