@@ -40,6 +40,8 @@ class Api {
 
   static const String getVisitCollection = '${baseUrl}v1/googleSheet/collectionDetail';
   static const String getVisitClosure = '${baseUrl}v1/googleSheet/getCloserDetailBy';
+  static const String getVisitNotice = '${baseUrl}v1/googleSheet/getLegalNoticeBy';
+  static const String getVisitCalling = '${baseUrl}v1/googleSheet/callDoneBy';
 
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd

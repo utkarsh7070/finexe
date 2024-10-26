@@ -143,19 +143,6 @@ class VisitItemCollection {
     );
   }
 
-  /*String get paymentPerson {
-    final mode = (modeOfCollectionDetail?.isNotEmpty ?? false)
-        ? modeOfCollectionDetail!.first.title
-        : '';
-    if (mode == 'okcredit' && (employeeDetail?.isNotEmpty ?? false)) {
-      return employeeDetail!.first.employeeName;
-    } else if (mode == 'online' && (bankNameDetail?.isNotEmpty ?? false)) {
-      return bankNameDetail!.first.bankName;
-    } else if (mode == 'partner') {
-      return 'N/A';
-    }
-    return 'N/A'; // Default return value if no conditions are met
-  }*/
 
   String get paymentPerson {
     final mode = (modeOfCollectionDetail?.isNotEmpty ?? false)

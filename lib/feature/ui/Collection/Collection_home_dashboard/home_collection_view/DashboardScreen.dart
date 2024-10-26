@@ -149,12 +149,8 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-
-   // ref.read(apiResponseProvider.notifier).fetchEmployeeDetails();
-
     var apiResponse = ref.watch(apiResponseProvider);
     var userProfile;
-  // final userProfile= apiResponse?.employeeDetail;
 
     // If the API response is null, call fetchEmployeeDetails if it's not already called
     if (apiResponse == null) {
@@ -164,12 +160,6 @@ class DashboardScreen extends ConsumerWidget {
     }else{
       userProfile= apiResponse.employeeDetail;
     }
-
-    /*// If the API response is still not loaded, show a loading indicator
-    if (apiResponse == null) {
-      return Center(child: CircularProgressIndicator());
-    }
-   */
 
     return Scaffold(
       key: _scaffoldKey, // Step 2: Assign the scaffoldKey to the Scaffold

@@ -18,6 +18,7 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
+import '../../../../base/service/session_service.dart';
 import '../model/visit_closure_submit_request_model.dart';
 import '../model/get_visit_pending_response_data.dart';
 import '../model/visit_pending_items_model.dart';
@@ -195,8 +196,10 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
             latitude: data.latitude,
             longitude: data.longitude);
 
-        const String token =
+        /*const String token =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+        */
+        String? token = await SessionService.getToken();
         final response = await dio.post(Api.visitFormSubmit,
             data: requestModel.toJson(),
             options: Options(headers: {"token": token}));
@@ -390,8 +393,10 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         remarkByCollection: state.remark,
         partner: detail.partner!);
 
-    const String token =
+    /*const String token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+*/
+    String? token = await SessionService.getToken();
     final response = await dio.post(Api.visitFormSubmit,
         data: requestModel.toJson(),
         options: Options(headers: {"token": token}));
@@ -553,8 +558,10 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
       settlementForReason: state.reason,
     );
 
-    final String token =
+    String? token = await SessionService.getToken();
+    /*final String token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    */
     final response = await dio.post(Api.visitCloseFormSubmit,
         data: requestModel.toJson(),
         options: Options(headers: {"token": token}));
@@ -1086,8 +1093,10 @@ FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
 
 final fetchVisitPendingDataProvider =
 FutureProvider<List<Map<String, String>>>((ref) async {
-  final String token =
+  String? token = await SessionService.getToken();
+  /*final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+  */
   final Map<String, String> queryParam = {"status": "pending"};
   final dio = ref.read(dioProvider);
   final response = await dio.get(Api.collectionVisitPending,
@@ -1105,8 +1114,10 @@ FutureProvider<List<Map<String, String>>>((ref) async {
 
 final fetchGetAllModeOfCollectionProvider =
 FutureProvider<List<ModeItem>>((ref) async {
-  const String token =
+  String? token = await SessionService.getToken();
+  /*const String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+ */
   final dio = ref.read(dioProvider);
   final response = await dio.get(Api.getAllModeOfCollection,
       options: Options(headers: {"token": token}));

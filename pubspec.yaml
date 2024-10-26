@@ -70,6 +70,8 @@ dependencies:
   app_settings: ^5.1.1
   device_info_plus: ^9.1.2
   flutter_exit_app: ^1.1.4
+  flutter_avif: ^2.5.0
+  path_provider: ^2.0.11
 #  AIzaSyCiUeNk2R6jiihpsymrcQhGC586itXxAYg
 
 
