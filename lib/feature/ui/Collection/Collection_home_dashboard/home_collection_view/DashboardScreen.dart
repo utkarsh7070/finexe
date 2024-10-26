@@ -132,6 +132,7 @@
 //   }
 // }
 
+
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
@@ -186,6 +187,7 @@ class DashboardScreen extends ConsumerWidget {
 
         ],
       ),
+
 
       drawer: const DashBoardSideBar(),
 
@@ -261,18 +263,17 @@ class DashboardScreen extends ConsumerWidget {
                       // Two cards per row
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      childAspectRatio: 1,
-                      // To make the cards square
+                      childAspectRatio: 1, // To make the cards square
                       children: [
-                        buildCard(Icons.person, '100', 'Visits Accepted'),
-                        buildCard(Icons.person, '50', 'Visits Pending'),
-                        buildCard(Icons.person, '10', 'Visits Rejected'),
+                        buildCard(Icons.person, '${apiResponse?.visitAccepted}', 'Visits Accepted'),
+                        buildCard(Icons.person, '${apiResponse?.visitPendingForApproval}', 'Visits Pending'),
+                        buildCard(Icons.person, '${apiResponse?.visitRejected}', 'Visits Rejected'),
                         buildCard(
-                            Icons.attach_money, '200', 'Collections Accepted'),
+                            Icons.currency_rupee, '${apiResponse?.collectionAcceptAmount}', 'Collections Accepted'),
                         buildCard(
-                            Icons.attach_money, '30', 'Collections Pending'),
+                            Icons.currency_rupee, '${apiResponse?.collectionEmiAmountPendingForApproval}', 'Collections Pending'),
                         buildCard(
-                            Icons.attach_money, '5', 'Collections Rejected'),
+                            Icons.currency_rupee, '${apiResponse?.collectionRejectAmount}', 'Collections Rejected'),
                       ],
                     ),
                   ),
@@ -315,6 +316,7 @@ class DashboardScreen extends ConsumerWidget {
       ),
     );
   }
+
 
   Future<void> _showMyDialog(BuildContext context, WidgetRef ref) async {
     return showDialog<void>(
