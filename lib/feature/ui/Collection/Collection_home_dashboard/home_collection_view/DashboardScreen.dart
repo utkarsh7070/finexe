@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import '../home_collection_model/UserProfile.dart';
+// import '../home_collection_model/user_profile_model.dart';
 //
 // class DashboardScreen extends ConsumerWidget {
 //   @override
@@ -132,11 +132,14 @@
 //   }
 // }
 
-
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
+import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../home_collection_model/UserProfile.dart';
+import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
+import '../Widget/punct_in_out_action_dialog_content.dart';
+import '../home_collection_model/user_profile_model.dart';
+import '../home_collection_viewmodel/fetchUserProfile.dart';
 import 'dashboard_side_bar.dart';
 
 class DashboardScreen extends ConsumerWidget {
@@ -168,247 +171,116 @@ class DashboardScreen extends ConsumerWidget {
         ),
         title: const Text("Collection Dashboard"),
         actions: [
-          IconButton(
-            icon: Icon(Icons.punch_clock),
-            onPressed: () {
-              // ref.read(userProfileProvider.notifier).fetchUserProfile();
-              //  ref.read(attendanceProvider.notifier).onPunchOut();
-              _showMyDialog(context, ref);
-            },
-          ),
-          /* CircleAvatar(
-            backgroundImage: NetworkImage("https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png"), // Replace with actual image URL
-          ),*/
+          GestureDetector(
+              onTap: () {
+                _showMyDialog(context, ref);
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Image.asset(
+                  'assets/images/fingerprint.png',
+                  height: displayHeight(context) * 0.04,
+                  width: displayWidth(context) * 0.06,
+                ),
+              )),
+
         ],
       ),
 
-
       drawer: const DashBoardSideBar(),
-      // Padding(
-      //   padding: const EdgeInsets.fromLTRB(0, 20, 80, 20),
-      //   child:
-      //   Drawer(
-      //
-      //     child: Column(
-      //       children: [
-      //         // Top white section with image
-      //         Container(
-      //           color: Colors.white, // White background for the top part
-      //           child: Column(
-      //             children: [
-      //               SizedBox(height: 10),
-      //               SizedBox(
-      //                 height: 100,
-      //                 child: Container(
-      //                   padding: EdgeInsets.all(10), // Reduce padding to give the image more space
-      //                   child: Padding(
-      //                     padding: const EdgeInsets.all(10), // Add padding around the image for spacing
-      //                     child: Image.asset(
-      //                       'assets/images/finexe_text_image.png', // Your image path
-      //                       fit: BoxFit.contain, // Ensure the image is contained within the available space
-      //                     ),
-      //                   ),
-      //                 ),
-      //
-      //               ),
-      //             ],
-      //           ),
-      //         ),
-      //
-      //
-      //         // Bottom blue section with menu items
-      //         Expanded(
-      //           child: Container(
-      //             color: AppColors.primary, // Blue background for the bottom part
-      //             child: ListView(
-      //               padding: EdgeInsets.zero,
-      //               children: [
-      //                 ListTile(
-      //                   contentPadding: EdgeInsets.fromLTRB(20, 30, 0, 10), // Adjust the horizontal padding as needed
-      //                   title: Text(
-      //                     'Menu',
-      //                     style: TextStyle(
-      //                       fontSize: 24,
-      //                       fontWeight: FontWeight.bold,
-      //                       color: AppColors.white,
-      //                     ),
-      //                   ),
-      //                   onTap: () {
-      //                     // Handle navigation to settings
-      //                   },
-      //                 ),
-      //
-      //                 ListTile(
-      //                   leading: Icon(Icons.home, color: AppColors.white),
-      //                   title: Text(
-      //                     'Home',
-      //                     style: TextStyle(color: AppColors.white),
-      //                   ),
-      //                   onTap: () {
-      //                     Navigator.push(
-      //                       context,
-      //                       MaterialPageRoute(
-      //                         builder: (context) => DashboardScreen(),
-      //                       ),
-      //                     );
-      //                   },
-      //                 ),
-      //
-      //                 Divider(
-      //                   color: Colors.white,
-      //                   height: 5,
-      //                   thickness: 1,
-      //                   indent: 20,
-      //                   endIndent: 20,
-      //                 ),
-      //
-      //                 ListTile(
-      //                   leading: Icon(Icons.money, color: AppColors.white),
-      //                   title: Text(
-      //                     'Collection',
-      //                     style: TextStyle(color: AppColors.white),
-      //                   ),
-      //                   onTap: () {
-      //                     Navigator.pop(context);
-      //                     Navigator.pushNamed(
-      //                       context,
-      //                      AppRoutes.cases
-      //                     );
-      //
-      //                   },
-      //                 ),
-      //
-      //                 Divider(
-      //                   color: Colors.white,
-      //                   height: 5,
-      //                   thickness: 1,
-      //                   indent: 20,
-      //                   endIndent: 20,
-      //                 ),
-      //
-      //                 ListTile(
-      //                   leading: Icon(Icons.logout, color: AppColors.white),
-      //                   title: Text(
-      //                     'Logout',
-      //                     style: TextStyle(color: AppColors.white),
-      //                   ),
-      //                   onTap: () {
-      //                     // Handle logout
-      //                     //_logoutAndRedirectToLogin();
-      //                   },
-      //                 ),
-      //
-      //                 Divider(
-      //                   color: Colors.white,
-      //                   height: 5,
-      //                   thickness: 1,
-      //                   indent: 20,
-      //                   endIndent: 20,
-      //                 ),
-      //               ],
-      //             ),
-      //           ),
-      //
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // ),
 
       body: userProfile == null
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-            child: Column(
-              children: [
-                // User profile card
-                Card(
-                  elevation: 2,
-                  margin: const EdgeInsets.all(16),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const CircleAvatar(
-                          radius: 40,
-                          backgroundImage: NetworkImage(
-                              'https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png'), // Replace with actual image URL
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          userProfile.name,
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        Text(userProfile.email),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("Employee Unique Id:"),
-                            Text(userProfile.employeeId),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("Mobile No:"),
-                            Text(userProfile.mobileNo),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("Current Address:"),
-                            Text(userProfile.address),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("Joining Date:"),
-                            Text(userProfile.joiningDate),
-                          ],
-                        ),
-                      ],
-
-
+              child: Column(
+                children: [
+                  // User profile card
+                  Card(
+                    elevation: 2,
+                    margin: const EdgeInsets.all(16),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const CircleAvatar(
+                            radius: 40,
+                            backgroundImage: NetworkImage(
+                                'https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png'), // Replace with actual image URL
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            userProfile.name,
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          Text(userProfile.email),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Employee Unique Id:"),
+                              Text(userProfile.employeeId),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Mobile No:"),
+                              Text(userProfile.mobileNo),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Current Address:"),
+                              Text(userProfile.address),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Joining Date:"),
+                              Text(userProfile.joiningDate),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
 
-                // GridView for six square cards
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: GridView.count(
-                    physics: const NeverScrollableScrollPhysics(),
-                    // To prevent GridView from scrolling
-                    shrinkWrap: true,
-                    // To fit content within the SingleChildScrollView
-                    crossAxisCount: 2,
-                    // Two cards per row
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 1,
-                    // To make the cards square
-                    children: [
-                      buildCard(Icons.person, '100', 'Visits Accepted'),
-                      buildCard(Icons.person, '50', 'Visits Pending'),
-                      buildCard(Icons.person, '10', 'Visits Rejected'),
-                      buildCard(Icons.attach_money, '200',
-                          'Collections Accepted'),
-                      buildCard(
-                          Icons.attach_money, '30', 'Collections Pending'),
-                      buildCard(
-                          Icons.attach_money, '5', 'Collections Rejected'),
-                    ],
+                  // GridView for six square cards
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: GridView.count(
+                      physics: const NeverScrollableScrollPhysics(),
+                      // To prevent GridView from scrolling
+                      shrinkWrap: true,
+                      // To fit content within the SingleChildScrollView
+                      crossAxisCount: 2,
+                      // Two cards per row
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 1,
+                      // To make the cards square
+                      children: [
+                        buildCard(Icons.person, '100', 'Visits Accepted'),
+                        buildCard(Icons.person, '50', 'Visits Pending'),
+                        buildCard(Icons.person, '10', 'Visits Rejected'),
+                        buildCard(
+                            Icons.attach_money, '200', 'Collections Accepted'),
+                        buildCard(
+                            Icons.attach_money, '30', 'Collections Pending'),
+                        buildCard(
+                            Icons.attach_money, '5', 'Collections Rejected'),
+                      ],
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 10),
-              ],
+                  const SizedBox(height: 10),
+                ],
+              ),
             ),
-          ),
     );
   }
 
@@ -449,8 +321,8 @@ class DashboardScreen extends ConsumerWidget {
       context: context,
       barrierDismissible: false, // user must tap button to close dialog
       builder: (BuildContext context) {
-        final checkpunchProvider = ref.watch(attendanceProvider);
-        return AlertDialog(
+        final checkPunchProvider = ref.watch(attendanceProvider);
+        return const AlertDialog(
           title: Text('Punch out'),
           content: SingleChildScrollView(
             child: ListBody(
@@ -460,33 +332,7 @@ class DashboardScreen extends ConsumerWidget {
               ],
             ),
           ),
-          actions: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  child: Text(
-                    'PunchOut',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () {
-                    ref.read(attendanceProvider.notifier).onPunchOut();
-
-                    Navigator.of(context).pop();
-                  },
-                ),
-                ElevatedButton(
-                  child: Text(
-                    'Close',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            )
-          ],
+          actions: <Widget>[PunchOutActionContent()],
         );
       },
     );

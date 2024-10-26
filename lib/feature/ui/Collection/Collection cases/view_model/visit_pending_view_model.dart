@@ -1114,8 +1114,8 @@ final directionsProvider =
 
 final fetchVisitPendingDataProvider =
     FutureProvider<List<Map<String, String>>>((ref) async {
-      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-      String? token =  sharedPreferences.getString('token');
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  String? token = sharedPreferences.getString('token');
   // final String token =
   //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
   final Map<String, String> queryParam = {"status": "pending"};
@@ -1136,8 +1136,8 @@ final fetchVisitPendingDataProvider =
 
 final fetchGetAllModeOfCollectionProvider =
     FutureProvider<List<ModeItem>>((ref) async {
-      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-      String? token =  sharedPreferences.getString('token');
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  String? token = sharedPreferences.getString('token');
   // const String token =
   //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
   final dio = ref.read(dioProvider);
