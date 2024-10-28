@@ -147,6 +147,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   Future<void> clickPunch(BuildContext context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? role = await preferences.getString('roleName');
+    print(role);
     state = state.copyWith(isLoading: true);
     // if (state.punchStatus) {
     await onPunchIn(context).then(
@@ -180,7 +181,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
             Navigator.pushNamed(context, AppRoutes.dashBoard);
 
             break;
-          case 'collection':
+          case 'cashCollection':
             log("Navigating to collection dashboard");
             Navigator.pushNamed(context, AppRoutes.collectionHome);
             break;

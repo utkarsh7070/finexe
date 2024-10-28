@@ -19,24 +19,26 @@ import '../../model/visit_pending_items_model.dart';
 import '../../view_model/visit_detail_view_model.dart';
 import '../../view_model/visit_pending_view_model.dart';
 
-
 class CollectionMoreInfoScreen extends ConsumerStatefulWidget {
-
   @override
   _MoreInfoScreen createState() => _MoreInfoScreen();
 
   final int index;
-  CollectionMoreInfoScreen({required int this.index});
 
+  CollectionMoreInfoScreen({required int this.index});
 }
-class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with SingleTickerProviderStateMixin {
+
+class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
+
   //final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this, initialIndex: widget.index.clamp(0, 0));
+    _tabController = TabController(
+        length: 5, vsync: this, initialIndex: widget.index.clamp(0, 0));
   }
 
   @override
@@ -45,37 +47,42 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
 
     // Update the TabController's index without disposing of it
     if (widget.index != oldWidget.index) {
-      _tabController.index = widget.index.clamp(0,0); // ensure it's within bounds
+      _tabController.index =
+          widget.index.clamp(0, 0); // ensure it's within bounds
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final data = ref.watch(fetchVisitPendingDataProvider);
-   // navigatorKey: navigatorKey;
+    // navigatorKey: navigatorKey;
     return data.when(
       data: (data) {
         List<ItemsDetails> listOfLists = data.map((map) {
           return ItemsDetails.fromJson(map);
         }).toList();
 
-        final safeIndex = widget.index != null && widget.index < listOfLists.length ? widget.index : 0;
+        final safeIndex =
+            widget.index != null && widget.index < listOfLists.length
+                ? widget.index
+                : 0;
         ItemsDetails item = listOfLists[safeIndex];
 
         // Extract the LD number from the item
-        final String? ldNumber = item.ld;  // Assuming 'ldNumber' is the correct field in ItemsDetails
+        final String? ldNumber =
+            item.ld; // Assuming 'ldNumber' is the correct field in ItemsDetails
 
         // Fetch visit details data
-        final visitData = ref.watch(fetchVisitDetailsProvider(ldNumber!)); // Watch the visit details provider
-
+        final visitData = ref.watch(fetchVisitDetailsProvider(
+            ldNumber!)); // Watch the visit details provider
 
         // Fetch collection details data
-        final collectionData = ref.watch(fetchVisitCollectionProvider(ldNumber));
+        final collectionData =
+            ref.watch(fetchVisitCollectionProvider(ldNumber));
 
         // Fetch collection details data
 
         final callingData = ref.watch(fetchVisitCallingProvider(ldNumber));
-
 
         // Fetch collection details data
         final noticeData = ref.watch(fetchVisitNoticeProvider(ldNumber));
@@ -87,128 +94,130 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
           appBar: AppBar(
             title: const Text('More Info'),
           ),
-          body: Column(
-            children: [
-              // First Section: Applicant Details, Co-Applicant Details, Guarantor, Payment Summary
-              _buildApplicantDetails(item),
-              _buildCoApplicantDetails(item),
-              _buildGuarantorDetails(item),
-              _buildPaymentSummary(item),
+          body: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: SizedBox(
+              height: displayHeight(context),
+              child: Column(
+                children: [
+                  // First Section: Applicant Details, Co-Applicant Details, Guarantor, Payment Summary
+                  _buildApplicantDetails(item),
+                  _buildCoApplicantDetails(item),
+                  _buildGuarantorDetails(item),
+                  _buildPaymentSummary(item),
 
-              // Spacer or separator (optional)
-              SizedBox(height: displayHeight(context) * 0.03),
+                  // Spacer or separator (optional)
+                  SizedBox(height: displayHeight(context) * 0.03),
 
-              // Tabs Section: Visit, Collection, Calling, Notice, Closure
-              Container(
-                color: AppColors.primaryLight1, // Optional: style background color of tab section
-                child: TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  tabs: const [
-                    Tab(text: 'Visit'),
-                    Tab(text: 'Collection'),
-                    Tab(text: 'Calling'),
-                    Tab(text: 'Notice'),
-                    Tab(text: 'Closure'),
-                  ],
-                ),
+                  // Tabs Section: Visit, Collection, Calling, Notice, Closure
+                  Container(
+                    color: AppColors.primaryLight1,
+                    // Optional: style background color of tab section
+                    child: TabBar(
+                      controller: _tabController,
+                      isScrollable: true,
+                      tabs: const [
+                        Tab(text: 'Visit'),
+                        Tab(text: 'Collection'),
+                        Tab(text: 'Calling'),
+                        Tab(text: 'Notice'),
+                        Tab(text: 'Closure'),
+                      ],
+                    ),
+                  ),
+                  /* Container(
+                    color: AppColors.primaryLight1, // Background color of the tab section
+                    child: TabBar(
+                      controller: _tabController,
+                      isScrollable: true,
+                      indicatorColor: Colors.blue, // Color of the selected tab indicator
+                      labelColor: Colors.white, // Color of the selected tab text
+                      unselectedLabelColor: Colors.grey, // Color of the unselected tab text
+                      tabs: const [
+                        Tab(text: 'Visit'),
+                        Tab(text: 'Collection'),
+                        Tab(text: 'Calling'),
+                        Tab(text: 'Notice'),
+                        Tab(text: 'Closure'),
+                      ],
+                    ),
+                  ),*/
+
+                  // TabBarView with disabled swipe
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      // Disable swipe gestures
+                      children: [
+                        visitData.when(
+                          data: (visitDetails) {
+                            return _buildVisitTab(
+                                visitDetails); // Pass the visit data here
+                          },
+                          error: (error, stackTrace) {
+                            return const Text('Error loading visit details');
+                          },
+                          loading: () {
+                            return const Center(child: CircularProgressIndicator());
+                          },
+                        ),
+                        collectionData.when(
+                          data: (collectionDetails) {
+                            debugPrint('Collection data loaded successfully');
+                            return _buildCollectionTab(collectionDetails);
+                          },
+                          error: (error, stackTrace) {
+                            debugPrint('Error loading collection details: $error');
+                            return const Text('Error loading collection details');
+                          },
+                          loading: () {
+                            debugPrint('Collection data loading...');
+                            return const Center(child: CircularProgressIndicator());
+                          },
+                        ),
+                        callingData.when(
+                          data: (visitCalling) {
+                            return _buildCallingTab(
+                                visitCalling); // Pass the visit data here
+                          },
+                          error: (error, stackTrace) {
+                            return const Text('Error loading visit Calling');
+                          },
+                          loading: () {
+                            return const Center(child: CircularProgressIndicator());
+                          },
+                        ),
+                        noticeData.when(
+                          data: (visitNotice) {
+                            return _buildNoticeTab(
+                                visitNotice); // Pass the visit data here
+                          },
+                          error: (error, stackTrace) {
+                            return const Text('Error loading visit Notice');
+                          },
+                          loading: () {
+                            return const Center(child: CircularProgressIndicator());
+                          },
+                        ),
+                        closureData.when(
+                          data: (closureDetails) {
+                            return _buildClosureTab(
+                                closureDetails); // Pass the visit data here
+                          },
+                          error: (error, stackTrace) {
+                            return const Text('Error loading visit Closure');
+                          },
+                          loading: () {
+                            return const Center(child: CircularProgressIndicator());
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-             /* Container(
-                color: AppColors.primaryLight1, // Background color of the tab section
-                child: TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  indicatorColor: Colors.blue, // Color of the selected tab indicator
-                  labelColor: Colors.white, // Color of the selected tab text
-                  unselectedLabelColor: Colors.grey, // Color of the unselected tab text
-                  tabs: const [
-                    Tab(text: 'Visit'),
-                    Tab(text: 'Collection'),
-                    Tab(text: 'Calling'),
-                    Tab(text: 'Notice'),
-                    Tab(text: 'Closure'),
-                  ],
-                ),
-              ),*/
-
-
-
-              // TabBarView with disabled swipe
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  physics: const NeverScrollableScrollPhysics(), // Disable swipe gestures
-                  children: [
-                    visitData.when(
-                      data: (visitDetails) {
-                        return _buildVisitTab(visitDetails); // Pass the visit data here
-                      },
-                      error: (error, stackTrace) {
-                        return const Text('Error loading visit details');
-                      },
-                      loading: () {
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-
-
-                    collectionData.when(
-                      data: (collectionDetails) {
-                        debugPrint('Collection data loaded successfully');
-                        return _buildCollectionTab(collectionDetails);
-                      },
-                      error: (error, stackTrace) {
-                        debugPrint('Error loading collection details: $error');
-                        return const Text('Error loading collection details');
-                      },
-                      loading: () {
-                        debugPrint('Collection data loading...');
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-
-
-                    callingData.when(
-                      data: (visitCalling) {
-                        return _buildCallingTab(visitCalling); // Pass the visit data here
-                      },
-                      error: (error, stackTrace) {
-                        return const Text('Error loading visit Calling');
-                      },
-                      loading: () {
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-
-
-                    noticeData.when(
-                      data: (visitNotice) {
-                        return _buildNoticeTab(visitNotice); // Pass the visit data here
-                      },
-                      error: (error, stackTrace) {
-                        return const Text('Error loading visit Notice');
-                      },
-                      loading: () {
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-
-                    closureData.when(
-                      data: (closureDetails) {
-                        return _buildClosureTab(closureDetails); // Pass the visit data here
-                      },
-                      error: (error, stackTrace) {
-                        return const Text('Error loading visit Closure');
-                      },
-                      loading: () {
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
         );
       },
@@ -253,8 +262,10 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
       title: const Text('Co-Applicant Details'),
       children: <Widget>[
         textData(context, text1: 'Name', text2: '${item.coBorrower1Name}'),
-        textData(context, text1: 'Mobile No', text2: '${item.coBorrower1Mobile}'),
-        textData(context, text1: 'Address', text2: '${item.coBorrower1Address}'),
+        textData(context,
+            text1: 'Mobile No', text2: '${item.coBorrower1Mobile}'),
+        textData(context,
+            text1: 'Address', text2: '${item.coBorrower1Address}'),
       ],
     );
   }
@@ -285,14 +296,15 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
         textData(context, text1: 'Partner', text2: '${item.partner}'),
         textData(context, text1: 'EMI Amount', text2: '${item.emiAmount}'),
         textData(context, text1: 'Net Due', text2: '${item.netDue}'),
-        textData(context, text1: 'Collection Type', text2: '${item.collectionType}'),
-        textData(context, text1: 'POS/Closure Amt', text2: '${item.posClosureAmount}'),
+        textData(context,
+            text1: 'Collection Type', text2: '${item.collectionType}'),
+        textData(context,
+            text1: 'POS/Closure Amt', text2: '${item.posClosureAmount}'),
       ],
     );
   }
 
   Widget _buildVisitTab(List<VisitItemDetail> visitData) {
-
     if (visitData.isEmpty) {
       return Center(
         child: Padding(
@@ -311,7 +323,8 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
         children: [
           // Horizontal scroll for table headings and data
           SingleChildScrollView(
-            scrollDirection: Axis.horizontal, // Allow horizontal scrolling for many columns
+            scrollDirection: Axis.horizontal,
+            // Allow horizontal scrolling for many columns
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -320,11 +333,15 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                   padding: const EdgeInsets.all(8.0),
                   child: Table(
                     border: TableBorder(
-                      horizontalInside: BorderSide(color: Colors.grey, width: 0.5), // Horizontal lines
+                      horizontalInside: BorderSide(
+                          color: Colors.grey, width: 0.5), // Horizontal lines
                       verticalInside: BorderSide.none, // No vertical lines
-                      bottom: BorderSide(color: Colors.grey, width: 0.5), // Bottom line of the table
+                      bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 0.5), // Bottom line of the table
                     ),
-                    defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width for data rows
+                    defaultColumnWidth: const FixedColumnWidth(150.0),
+                    // Set a fixed column width for data rows
                     /*border: TableBorder.all(color: Colors.grey),
 
                     defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width*/
@@ -370,197 +387,6 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                             padding: EdgeInsets.all(8.0),
                             child: Text(
                               'STATUS',
-                             /* style: TextStyle(color: Colors.black45, fontWeight: FontWeight.bold),*/
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'REJECT REASON',
-                             /* style: TextStyle(fontWeight: FontWeight.bold),*/
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                // Table Rows (Dynamic Data)
-               /* Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Table(
-                    border: TableBorder.all(color: Colors.grey),
-                    defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width for data rows
-                    children: visitData.map((item) {
-                      return TableRow(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(item.visitDate, textAlign: TextAlign.center),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(item.customerResponse, textAlign: TextAlign.center),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text('${item.paymentAmount}', textAlign: TextAlign.center),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(item.solution.isNotEmpty ? item.solution : 'N/A', textAlign: TextAlign.center),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(item.status, textAlign: TextAlign.center),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(item.reasonForNotPay.isNotEmpty ? item.reasonForNotPay : 'N/A', textAlign: TextAlign.center),
-                          ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                ),*/
-
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Table(
-                    // Define a custom TableBorder with only horizontal lines
-                    border: TableBorder(
-                      horizontalInside: BorderSide(color: Colors.grey, width: 0.5), // Horizontal lines
-                      verticalInside: BorderSide.none, // No vertical lines
-                      bottom: BorderSide(color: Colors.grey, width: 0.5), // Bottom line of the table
-                    ),
-                    defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width for data rows
-                    children: visitData.map((item) {
-                      return TableRow(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(item.visitDate, textAlign: TextAlign.center,style:TextStyle(color: Colors.black45) ,),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(item.customerResponse, textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text('₹${item.paymentAmount}', textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(item.solution.isNotEmpty ? item.solution : 'N/A', textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(item.status, textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(item.reasonForNotPay.isNotEmpty ? item.reasonForNotPay : 'N/A', textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
-                          ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                ),
-
-
-
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget textData(context, {required String text1, required String text2}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        SizedBox(width: displayWidth(context) * 0.30, child: Text(text1)),
-        SizedBox(width: displayWidth(context) * 0.10, child: const Text('-')),
-        SizedBox(width: displayWidth(context) * 0.50, child: Text(text2)),
-      ],
-    );
-  }
-
-
-  Widget _buildCollectionTab(List<VisitItemCollection> collectionData) {
-
-    if (collectionData.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            'No data available',
-            style: TextStyle(color: Colors.grey, fontSize: 16),
-          ),
-        ),
-      );
-    }
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Horizontal scroll for table headings and data
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal, // Allow horizontal scrolling for many columns
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Table Headers
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Table(
-                    border: TableBorder(
-                      horizontalInside: BorderSide(color: Colors.grey, width: 0.5), // Horizontal lines
-                      verticalInside: BorderSide.none, // No vertical lines
-                      bottom: BorderSide(color: Colors.grey, width: 0.5), // Bottom line of the table
-                    ),
-                    defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width for data rows
-                    /*border: TableBorder.all(color: Colors.grey),
-
-                    defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width*/
-                    children: [
-                      TableRow(
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                        ),
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'DATE TIME',
-                              /*style: TextStyle(color: Colors.black45, fontWeight: FontWeight.bold),*/
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'RECEIVED AMOUNT',
-                              /*style: TextStyle(color: Colors.black45, fontWeight: FontWeight.bold),*/
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'TRANSACTION ID',
-                              /*style: TextStyle(color: Colors.black45, fontWeight: FontWeight.bold),*/
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'CUSTOMER EMAIL',
                               /* style: TextStyle(color: Colors.black45, fontWeight: FontWeight.bold),*/
                               textAlign: TextAlign.center,
                             ),
@@ -568,39 +394,11 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                           Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Text(
-                              'MODE OF COLLECTION',
+                              'REJECT REASON',
                               /* style: TextStyle(fontWeight: FontWeight.bold),*/
                               textAlign: TextAlign.center,
                             ),
                           ),
-
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'OK CREDIT PERSON/ BANK/PARTNER',
-                              /* style: TextStyle(fontWeight: FontWeight.bold),*/
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'REMARK',
-                              /* style: TextStyle(fontWeight: FontWeight.bold),*/
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'STATUS',
-                              /* style: TextStyle(fontWeight: FontWeight.bold),*/
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-
                         ],
                       ),
                     ],
@@ -650,11 +448,254 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                   child: Table(
                     // Define a custom TableBorder with only horizontal lines
                     border: TableBorder(
-                      horizontalInside: BorderSide(color: Colors.grey, width: 0.5), // Horizontal lines
+                      horizontalInside: BorderSide(
+                          color: Colors.grey, width: 0.5), // Horizontal lines
                       verticalInside: BorderSide.none, // No vertical lines
-                      bottom: BorderSide(color: Colors.grey, width: 0.5), // Bottom line of the table
+                      bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 0.5), // Bottom line of the table
                     ),
+                    defaultColumnWidth: const FixedColumnWidth(150.0),
+                    // Set a fixed column width for data rows
+                    children: visitData.map((item) {
+                      return TableRow(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              item.visitDate,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.black45),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item.customerResponse,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text('₹${item.paymentAmount}',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                                item.solution.isNotEmpty
+                                    ? item.solution
+                                    : 'N/A',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item.status,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                                item.reasonForNotPay.isNotEmpty
+                                    ? item.reasonForNotPay
+                                    : 'N/A',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget textData(context, {required String text1, required String text2}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        SizedBox(width: displayWidth(context) * 0.30, child: Text(text1)),
+        SizedBox(width: displayWidth(context) * 0.10, child: const Text('-')),
+        SizedBox(width: displayWidth(context) * 0.50, child: Text(text2)),
+      ],
+    );
+  }
+
+  Widget _buildCollectionTab(List<VisitItemCollection> collectionData) {
+    if (collectionData.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'No data available',
+            style: TextStyle(color: Colors.grey, fontSize: 16),
+          ),
+        ),
+      );
+    }
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Horizontal scroll for table headings and data
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            // Allow horizontal scrolling for many columns
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Table Headers
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Table(
+                    border: TableBorder(
+                      horizontalInside: BorderSide(
+                          color: Colors.grey, width: 0.5), // Horizontal lines
+                      verticalInside: BorderSide.none, // No vertical lines
+                      bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 0.5), // Bottom line of the table
+                    ),
+                    defaultColumnWidth: const FixedColumnWidth(150.0),
+                    // Set a fixed column width for data rows
+                    /*border: TableBorder.all(color: Colors.grey),
+
+                    defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width*/
+                    children: [
+                      TableRow(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                        ),
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'DATE TIME',
+                              /*style: TextStyle(color: Colors.black45, fontWeight: FontWeight.bold),*/
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'RECEIVED AMOUNT',
+                              /*style: TextStyle(color: Colors.black45, fontWeight: FontWeight.bold),*/
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'TRANSACTION ID',
+                              /*style: TextStyle(color: Colors.black45, fontWeight: FontWeight.bold),*/
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'CUSTOMER EMAIL',
+                              /* style: TextStyle(color: Colors.black45, fontWeight: FontWeight.bold),*/
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'MODE OF COLLECTION',
+                              /* style: TextStyle(fontWeight: FontWeight.bold),*/
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'OK CREDIT PERSON/ BANK/PARTNER',
+                              /* style: TextStyle(fontWeight: FontWeight.bold),*/
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'REMARK',
+                              /* style: TextStyle(fontWeight: FontWeight.bold),*/
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'STATUS',
+                              /* style: TextStyle(fontWeight: FontWeight.bold),*/
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                // Table Rows (Dynamic Data)
+                /* Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Table(
+                    border: TableBorder.all(color: Colors.grey),
                     defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width for data rows
+                    children: visitData.map((item) {
+                      return TableRow(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item.visitDate, textAlign: TextAlign.center),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item.customerResponse, textAlign: TextAlign.center),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text('${item.paymentAmount}', textAlign: TextAlign.center),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item.solution.isNotEmpty ? item.solution : 'N/A', textAlign: TextAlign.center),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item.status, textAlign: TextAlign.center),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item.reasonForNotPay.isNotEmpty ? item.reasonForNotPay : 'N/A', textAlign: TextAlign.center),
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ),*/
+
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Table(
+                    // Define a custom TableBorder with only horizontal lines
+                    border: TableBorder(
+                      horizontalInside: BorderSide(
+                          color: Colors.grey, width: 0.5), // Horizontal lines
+                      verticalInside: BorderSide.none, // No vertical lines
+                      bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 0.5), // Bottom line of the table
+                    ),
+                    defaultColumnWidth: const FixedColumnWidth(150.0),
+                    // Set a fixed column width for data rows
                     children: collectionData.map((item) {
                       return TableRow(
                         children: [
@@ -669,7 +710,8 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              '₹${item.receivedAmount.toString()}', // Convert double to String
+                              '₹${item.receivedAmount.toString()}',
+                              // Convert double to String
                               textAlign: TextAlign.center,
                               style: TextStyle(color: Colors.black45),
                             ),
@@ -685,7 +727,8 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              item.customerEmail != null && item.customerEmail!.isNotEmpty
+                              item.customerEmail != null &&
+                                      item.customerEmail!.isNotEmpty
                                   ? item.customerEmail!
                                   : 'N/A',
                               textAlign: TextAlign.center,
@@ -705,22 +748,23 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              item.paymentPerson.isNotEmpty ? item.paymentPerson : 'N/A',
+                              item.paymentPerson.isNotEmpty
+                                  ? item.paymentPerson
+                                  : 'N/A',
                               textAlign: TextAlign.center,
                               style: TextStyle(color: Colors.black45),
                             ),
                           ),
-
-
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              item.remarkByCollection.isNotEmpty ? item.remarkByCollection : 'N/A',
+                              item.remarkByCollection.isNotEmpty
+                                  ? item.remarkByCollection
+                                  : 'N/A',
                               textAlign: TextAlign.center,
                               style: TextStyle(color: Colors.black45),
                             ),
                           ),
-
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
@@ -729,15 +773,11 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                               style: TextStyle(color: Colors.black45),
                             ),
                           ),
-
                         ],
                       );
                     }).toList(),
                   ),
                 ),
-
-
-
               ],
             ),
           ),
@@ -745,7 +785,6 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
       ),
     );
   }
-
 
   Widget _buildCallingTab(List<VisitItemCalling> visitCalling) {
     if (visitCalling.isEmpty) {
@@ -765,7 +804,8 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
         children: [
           // Horizontal scroll for table headings and data
           SingleChildScrollView(
-            scrollDirection: Axis.horizontal, // Allow horizontal scrolling for many columns
+            scrollDirection: Axis.horizontal,
+            // Allow horizontal scrolling for many columns
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -774,11 +814,15 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                   padding: const EdgeInsets.all(8.0),
                   child: Table(
                     border: TableBorder(
-                      horizontalInside: BorderSide(color: Colors.grey, width: 0.5), // Horizontal lines
+                      horizontalInside: BorderSide(
+                          color: Colors.grey, width: 0.5), // Horizontal lines
                       verticalInside: BorderSide.none, // No vertical lines
-                      bottom: BorderSide(color: Colors.grey, width: 0.5), // Bottom line of the table
+                      bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 0.5), // Bottom line of the table
                     ),
-                    defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width for data rows
+                    defaultColumnWidth: const FixedColumnWidth(150.0),
+                    // Set a fixed column width for data rows
                     /*border: TableBorder.all(color: Colors.grey),
 
                     defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width*/
@@ -836,7 +880,6 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                               textAlign: TextAlign.center,
                             ),
                           ),
-
                           Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Text(
@@ -845,7 +888,6 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                               textAlign: TextAlign.center,
                             ),
                           ),
-
                           Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Text(
@@ -854,7 +896,6 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                               textAlign: TextAlign.center,
                             ),
                           ),
-
                           Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Text(
@@ -863,7 +904,6 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                               textAlign: TextAlign.center,
                             ),
                           ),
-
                           Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Text(
@@ -872,7 +912,6 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                               textAlign: TextAlign.center,
                             ),
                           ),
-
                           Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Text(
@@ -881,7 +920,6 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                               textAlign: TextAlign.center,
                             ),
                           ),
-
                         ],
                       ),
                     ],
@@ -931,57 +969,103 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                   child: Table(
                     // Define a custom TableBorder with only horizontal lines
                     border: TableBorder(
-                      horizontalInside: BorderSide(color: Colors.grey, width: 0.5), // Horizontal lines
+                      horizontalInside: BorderSide(
+                          color: Colors.grey, width: 0.5), // Horizontal lines
                       verticalInside: BorderSide.none, // No vertical lines
-                      bottom: BorderSide(color: Colors.grey, width: 0.5), // Bottom line of the table
+                      bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 0.5), // Bottom line of the table
                     ),
-                    defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width for data rows
+                    defaultColumnWidth: const FixedColumnWidth(150.0),
+                    // Set a fixed column width for data rows
                     children: visitCalling.map((item) {
                       return TableRow(
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.date, textAlign: TextAlign.center,style:TextStyle(color: Colors.black45) ,),
+                            child: Text(
+                              item.date,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.black45),
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.reCallDate, textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
+                            child: Text(item.reCallDate,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.callBy, textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
+                            child: Text(item.callBy,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.callStatus.isNotEmpty ? item.callStatus : 'N/A', textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
+                            child: Text(
+                                item.callStatus.isNotEmpty
+                                    ? item.callStatus
+                                    : 'N/A',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text('₹${item.paymentAmount}', textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
+                            child: Text('₹${item.paymentAmount}',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.callRemark.isNotEmpty ? item.callRemark : 'N/A', textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
+                            child: Text(
+                                item.callRemark.isNotEmpty
+                                    ? item.callRemark
+                                    : 'N/A',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.customerResponse.isNotEmpty ? item.customerResponse : 'N/A', textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
+                            child: Text(
+                                item.customerResponse.isNotEmpty
+                                    ? item.customerResponse
+                                    : 'N/A',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.reasonForNotPay.isNotEmpty ? item.reasonForNotPay : 'N/A', textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
+                            child: Text(
+                                item.reasonForNotPay.isNotEmpty
+                                    ? item.reasonForNotPay
+                                    : 'N/A',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.solution.isNotEmpty ? item.solution : 'N/A', textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
+                            child: Text(
+                                item.solution.isNotEmpty
+                                    ? item.solution
+                                    : 'N/A',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.reasonForCustomerNotContactable.isNotEmpty ? item.reasonForCustomerNotContactable : 'N/A', textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
+                            child: Text(
+                                item.reasonForCustomerNotContactable.isNotEmpty
+                                    ? item.reasonForCustomerNotContactable
+                                    : 'N/A',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.newContactNumber ? 'Yes' : 'No', // or use 'True' : 'False'
+                            child: Text(
+                              item.newContactNumber ? 'Yes' : 'No',
+                              // or use 'True' : 'False'
                               textAlign: TextAlign.center,
                               style: TextStyle(color: Colors.black45),
                             ),
@@ -991,9 +1075,6 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                     }).toList(),
                   ),
                 ),
-
-
-
               ],
             ),
           ),
@@ -1021,7 +1102,8 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
         children: [
           // Horizontal scroll for table headings and data
           SingleChildScrollView(
-            scrollDirection: Axis.horizontal, // Allow horizontal scrolling for many columns
+            scrollDirection: Axis.horizontal,
+            // Allow horizontal scrolling for many columns
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1030,11 +1112,15 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                   padding: const EdgeInsets.all(8.0),
                   child: Table(
                     border: TableBorder(
-                      horizontalInside: BorderSide(color: Colors.grey, width: 0.5), // Horizontal lines
+                      horizontalInside: BorderSide(
+                          color: Colors.grey, width: 0.5), // Horizontal lines
                       verticalInside: BorderSide.none, // No vertical lines
-                      bottom: BorderSide(color: Colors.grey, width: 0.5), // Bottom line of the table
+                      bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 0.5), // Bottom line of the table
                     ),
-                    defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width for data rows
+                    defaultColumnWidth: const FixedColumnWidth(150.0),
+                    // Set a fixed column width for data rows
                     /*border: TableBorder.all(color: Colors.grey),
 
                     defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width*/
@@ -1141,46 +1227,66 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                   child: Table(
                     // Define a custom TableBorder with only horizontal lines
                     border: TableBorder(
-                      horizontalInside: BorderSide(color: Colors.grey, width: 0.5), // Horizontal lines
+                      horizontalInside: BorderSide(
+                          color: Colors.grey, width: 0.5), // Horizontal lines
                       verticalInside: BorderSide.none, // No vertical lines
-                      bottom: BorderSide(color: Colors.grey, width: 0.5), // Bottom line of the table
+                      bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 0.5), // Bottom line of the table
                     ),
-                    defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width for data rows
+                    defaultColumnWidth: const FixedColumnWidth(150.0),
+                    // Set a fixed column width for data rows
                     children: closureData.map((item) {
                       return TableRow(
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.posCloserBy, textAlign: TextAlign.center,style:TextStyle(color: Colors.black45) ,),
+                            child: Text(
+                              item.posCloserBy,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.black45),
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text('₹${item.amountToBeReceivedFromCustomer}', textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
+                            child: Text(
+                                '₹${item.amountToBeReceivedFromCustomer}',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text('₹${item.settlementAmountByApproval}', textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
+                            child: Text('₹${item.settlementAmountByApproval}',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.settlementForReason.isNotEmpty ? item.settlementForReason : 'N/A', textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
+                            child: Text(
+                                item.settlementForReason.isNotEmpty
+                                    ? item.settlementForReason
+                                    : 'N/A',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.dateOfDeposit, textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
+                            child: Text(item.dateOfDeposit,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.status.isNotEmpty ? item.status : 'N/A', textAlign: TextAlign.center,style:TextStyle(color: Colors.black45)),
+                            child: Text(
+                                item.status.isNotEmpty ? item.status : 'N/A',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.black45)),
                           ),
                         ],
                       );
                     }).toList(),
                   ),
                 ),
-
-
-
               ],
             ),
           ),
@@ -1188,7 +1294,6 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
       ),
     );
   }
-
 
   Widget _buildNoticeTab(List<VisitItemNotice> visitNotice) {
     if (visitNotice.isEmpty) {
@@ -1215,7 +1320,8 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
         final isAvif = document.document.endsWith('.avif');
         final imageUrl = '${Api.imageUrl}${document.document}';
 
-        return SingleChildScrollView( // Wrap in SingleChildScrollView
+        return SingleChildScrollView(
+          // Wrap in SingleChildScrollView
           child: Column(
             children: [
               if (isPdf)
@@ -1231,21 +1337,28 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                   imageUrl,
                   height: 100,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 80, color: Colors.grey),
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.broken_image,
+                      size: 80,
+                      color: Colors.grey),
                 ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue, // Set button background color
+                      backgroundColor: Colors.blue,
+                      // Set button background color
                       foregroundColor: Colors.white, // Set button text color
                     ),
                     onPressed: () {
                       // Open image or PDF viewer
-                      _showImageDialog(context, imageUrl, isPdf, document.document);
+                      _showImageDialog(
+                          context, imageUrl, isPdf, document.document);
                     },
-                    child: Text(isPdf ? 'View PDF' : 'View Image' ,),
+                    child: Text(
+                      isPdf ? 'View PDF' : 'View Image',
+                    ),
                   ),
                 ],
               ),
@@ -1257,7 +1370,8 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
   }
 
   // Method to show dialog with large image or PDF
-  void _showImageDialog(BuildContext context, String url, bool isPdf, String documentName) {
+  void _showImageDialog(
+      BuildContext context, String url, bool isPdf, String documentName) {
     showDialog(
       context: context,
       builder: (context) {
@@ -1267,13 +1381,13 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (isPdf)
-              const Icon(Icons.picture_as_pdf, size: 100, color: Colors.red)
+                  const Icon(Icons.picture_as_pdf, size: 100, color: Colors.red)
                 // Show PDF as an image (you might want to use a PDF viewer package for actual PDFs)
-                  /*Image.network(
+                /*Image.network(
                     url, // URL for the PDF cover or thumbnail
                     fit: BoxFit.cover,
                   )*/
-                  else if(url.endsWith('.avif'))
+                else if (url.endsWith('.avif'))
                   AvifImage.network(
                     url,
                     height: 300,
@@ -1284,7 +1398,10 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                     url,
                     fit: BoxFit.cover,
                     height: 300, // Set a height for the large image
-                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 80, color: Colors.grey),
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.broken_image,
+                        size: 80,
+                        color: Colors.grey),
                   ),
                 const SizedBox(height: 20),
                 Row(
@@ -1292,16 +1409,22 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                   children: [
                     ElevatedButton(
                       onPressed: () async {
-                        await _downloadFile(context, url, documentName); // Pass context here
-
+                        await _downloadFile(
+                            context, url, documentName); // Pass context here
                       },
-                      child: const Text('Download',style: TextStyle(color: Colors.white),),
+                      child: const Text(
+                        'Download',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pop(); // Close dialog
                       },
-                      child: const Text('Cancel',style: TextStyle(color: Colors.white),),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 ),
@@ -1313,20 +1436,23 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
     );
   }
 
-
-  Future<void> _downloadFile(BuildContext context, String url, String documentName) async {
+  Future<void> _downloadFile(
+      BuildContext context, String url, String documentName) async {
     try {
       Dio dio = Dio();
 
       // Use the "Downloads" directory to make it more accessible
-      Directory downloadDir = Directory('/storage/emulated/0/Download/Finexe Document');
+      Directory downloadDir =
+          Directory('/storage/emulated/0/Download/Finexe Document');
       if (!await downloadDir.exists()) {
-        await downloadDir.create(recursive: true);  // Create the folder if it doesn't exist
+        await downloadDir.create(
+            recursive: true); // Create the folder if it doesn't exist
       }
 
       // Set the file name and path
       if (documentName.isEmpty) {
-        documentName = url.split('/').last;  // Extract file name from URL if not provided
+        documentName =
+            url.split('/').last; // Extract file name from URL if not provided
       }
       String filePath = '${downloadDir.path}/$documentName';
 
@@ -1344,6 +1470,4 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
       );
     }
   }
-
 }
-

@@ -1,154 +1,10 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import '../home_collection_model/user_profile_model.dart';
-//
-// class DashboardScreen extends ConsumerWidget {
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     // Automatically trigger profile fetch when the widget is built
-//     ref.read(userProfileProvider.notifier).fetchUserProfile();
-//
-//     final userProfile = ref.watch(userProfileProvider);
-//
-//     return Scaffold(
-//       appBar: AppBar(
-//         leading: Icon(Icons.menu),
-//         title: Text("Ho Dashboard"),
-//         actions: [
-//           IconButton(
-//             icon: Icon(Icons.refresh),
-//             onPressed: () {
-//               ref.read(userProfileProvider.notifier).fetchUserProfile();
-//             },
-//           ),
-//           CircleAvatar(
-//             backgroundImage: NetworkImage("https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png"), // Replace with actual image URL
-//           ),
-//         ],
-//       ),
-//       body: userProfile == null
-//           ? Center(child: CircularProgressIndicator())
-//           : SingleChildScrollView(
-//         child: Column(
-//           children: [
-//             Card(
-//               elevation: 2,
-//               margin: EdgeInsets.all(16),
-//               child: Padding(
-//                 padding: const EdgeInsets.all(16.0),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.center,
-//                   children: [
-//                     CircleAvatar(
-//                       radius: 40,
-//                       backgroundImage: NetworkImage('https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png'), // Replace with actual image URL
-//                     ),
-//                     SizedBox(height: 10),
-//                     Text(
-//                       userProfile.name,
-//                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-//                     ),
-//                     Text(userProfile.email),
-//                     SizedBox(height: 10),
-//                     Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                       children: [
-//                         Text("Employee Unique Id:"),
-//                         Text(userProfile.employeeId),
-//                       ],
-//                     ),
-//                     Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                       children: [
-//                         Text("Mobile No:"),
-//                         Text(userProfile.mobileNo),
-//                       ],
-//                     ),
-//                     Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                       children: [
-//                         Text("Current Address:"),
-//                         Text(userProfile.address),
-//                       ],
-//                     ),
-//                     Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                       children: [
-//                         Text("Joining Date:"),
-//                         Text(userProfile.joiningDate),
-//                       ],
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//             // Visit status cards
-//             Card(
-//               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//               child: ListTile(
-//                 leading: Icon(Icons.person),
-//                 title: Text('0 Visit Accepted'),
-//               ),
-//             ),
-//             Card(
-//               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//               child: ListTile(
-//                 leading: Icon(Icons.person),
-//                 title: Text('0 Visit Pending'),
-//               ),
-//             ),
-//             Card(
-//               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//               child: ListTile(
-//                 leading: Icon(Icons.person),
-//                 title: Text('0 Visit Rejected'),
-//               ),
-//             ),
-//             Card(
-//               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//               child: ListTile(
-//                 leading: Icon(Icons.person),
-//                 title: Text('0 Collection Accepted'),
-//               ),
-//             ),
-//             Card(
-//               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//               child: ListTile(
-//                 leading: Icon(Icons.person),
-//                 title: Text('0 Collection Pending'),
-//               ),
-//             ),
-//             Card(
-//               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//               child: ListTile(
-//                 leading: Icon(Icons.person),
-//                 title: Text('0 Collection Rejected'),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-
-import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../../base/api/api.dart';
-import '../../Collection cases/view/cases_screen.dart';
-import '../../Collection cases/view/visitPending/visit_pending_screen.dart';
-import '../home_collection_model/UserProfile.dart';
 import '../home_collection_viewmodel/fetchUserProfile.dart';
-
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../Widget/punct_in_out_action_dialog_content.dart';
-import '../home_collection_model/user_profile_model.dart';
-import '../home_collection_viewmodel/fetchUserProfile.dart';
-
 import 'dashboard_side_bar.dart';
 
 
@@ -159,22 +15,7 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    var apiResponse = ref.watch(apiResponseProvider);
-    var userProfile;
-
-
-
-    // If the API response is null, call fetchEmployeeDetails if it's not already called
-    if (apiResponse == null) {
-      ref.read(apiResponseProvider.notifier).fetchEmployeeDetails();
-      apiResponse = ref.watch(apiResponseProvider);
-       userProfile= apiResponse?.employeeDetail;
-    }else{
-      userProfile= apiResponse.employeeDetail;
-    }
-
-
+    var responseData = ref.watch(fetchEmployeeData);
     return Scaffold(
       key: _scaffoldKey,
       // Step 2: Assign the scaffoldKey to the Scaffold
@@ -215,106 +56,115 @@ class DashboardScreen extends ConsumerWidget {
 
       drawer: const DashBoardSideBar(),
 
-      body: userProfile == null
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  // User profile card
-                  Card(
-                    elevation: 2,
-                    margin: const EdgeInsets.all(16),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          /*CircleAvatar(
+      body:responseData.when(data: (data) {
+        return
+          SingleChildScrollView(
+          child: Column(
+            children: [
+              // User profile card
+              Card(
+                elevation: 2,
+                margin: const EdgeInsets.all(16),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      /*CircleAvatar(
                             radius: 40,
                             backgroundImage: NetworkImage(
                                 'https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png'), // Replace with actual image URL
                           ),*/
-                          CircleAvatar(
-                            radius: 40,
-                            backgroundImage: NetworkImage(
-                              '${Api.imageUrl}${userProfile.employeePhoto ?? ''}',
-                            ),
-                          ),
 
-
-                          SizedBox(height: 10),
-                          Text(
-                            userProfile.employeName,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          Text(userProfile.email),
-                          SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Employee Unique Id:"),
-                              Text(userProfile.employeUniqueId),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Mobile No:"),
-                              Text(userProfile.mobileNo),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Current Address:"),
-                              Text(userProfile.currentAddress),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Joining Date:"),
-                              Text(userProfile.formattedJoiningDate),
-                            ],
-                          ),
-                        ],
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundImage: data.items.employeeDetail.employeePhoto!=null
+                            ? NetworkImage('${Api.imageUrl}${data.items.employeeDetail.employeePhoto}')
+                            : const AssetImage('assets/images/check.png'), // Placeholder image
+                        onBackgroundImageError: (error, stackTrace) {
+                          // Set a default image if the API image fails to load
+                        },
                       ),
 
-                    ),
+                      const SizedBox(height: 10),
+                      Text(
+                        data.items.employeeDetail.employeName!,
+                        style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      Text(data.items.employeeDetail.email!),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Employee Unique Id:"),
+                          Text(data.items.employeeDetail.employeUniqueId!),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Mobile No:"),
+                          Text(data.items.employeeDetail.mobileNo.toString()),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Current Address:"),
+                          Text(data.items.employeeDetail.currentAddress!),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Joining Date:"),
+                          Text(data.items.employeeDetail.joiningDate.toString()),
+                        ],
+                      ),
+                    ],
                   ),
 
-
-                  // GridView for six square cards
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: GridView.count(
-                      physics:
-                          NeverScrollableScrollPhysics(), // To prevent GridView from scrolling
-                      shrinkWrap:
-                          true, // To fit content within the SingleChildScrollView
-                      crossAxisCount: 2, // Two cards per row
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 1, // To make the cards square
-                      children: [
-                        buildCard(Icons.person, '${apiResponse?.visitAccepted}', 'Visits Accepted'),
-                        buildCard(Icons.person, '${apiResponse?.visitPendingForApproval}', 'Visits Pending'),
-                        buildCard(Icons.person, '${apiResponse?.visitRejected}', 'Visits Rejected'),
-                        buildCard(
-                            Icons.currency_rupee, '${apiResponse?.collectionAcceptAmount}', 'Collections Accepted'),
-                        buildCard(
-                            Icons.currency_rupee, '${apiResponse?.collectionEmiAmountPendingForApproval}', 'Collections Pending'),
-                        buildCard(
-                            Icons.currency_rupee, '${apiResponse?.collectionRejectAmount}', 'Collections Rejected'),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: 10),
-                ],
+                ),
               ),
-            ),
+
+
+              // GridView for six square cards
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: GridView.count(
+                  physics:
+                  const NeverScrollableScrollPhysics(), // To prevent GridView from scrolling
+                  shrinkWrap:
+                  true, // To fit content within the SingleChildScrollView
+                  crossAxisCount: 2, // Two cards per row
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1, // To make the cards square
+                  children: [
+                    buildCard(Icons.person, '${data.items.visitAccepted??''}', 'Visits Accepted'),
+                    buildCard(Icons.person, '${data.items.visitPendingForApproval??''}', 'Visits Pending'),
+                    buildCard(Icons.person, '${data.items.visitRejected??''}', 'Visits Rejected'),
+                    buildCard(
+                        Icons.currency_rupee, '${data.items.collectionAcceptAmount??''}', 'Collections Accepted'),
+                    buildCard(
+                        Icons.currency_rupee, '${data.items.collectionEmiAmountPendingForApproval??''}', 'Collections Pending'),
+                    buildCard(
+                        Icons.currency_rupee, '${data.items.collectionRejectAmount??''}', 'Collections Rejected'),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      }, error: (error, stackTrace) {
+        return Text('$error');
+      }, loading: () {
+        return const CircularProgressIndicator();
+      },)
+
     );
   }
 

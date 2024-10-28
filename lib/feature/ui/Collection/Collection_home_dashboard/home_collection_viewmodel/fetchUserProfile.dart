@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:finexe/feature/base/api/dio.dart';
@@ -9,11 +10,11 @@ import '../../../../base/api/api.dart';
 
 import '../../../../base/service/session_service.dart';
 
-import '../home_collection_model/UserProfile.dart';
+import '../home_collection_model/user_profile_response_model.dart';
 
-class ApiResponseNotifier extends StateNotifier<ApiResponse?> {
+class ApiResponseNotifier extends StateNotifier<String>{
   final Dio dio;
-  ApiResponseNotifier(this.dio) : super(null);
+  ApiResponseNotifier(this.dio) : super('');
 
 
   Future<void> clickPunchOut() async {
@@ -37,26 +38,44 @@ class ApiResponseNotifier extends StateNotifier<ApiResponse?> {
     sharedPreferences.clear();
   }
 
-  Future<void> fetchEmployeeDetails() async {
-    try {
-      String? token = await SessionService.getToken();
-      final response = await Dio().get(Api.getAllocationDashboard,options: Options(headers: {"token": token}));
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.data}');
-      if (response.statusCode == 200) {
-        state = ApiResponse.fromJson(response.data);
-        print('dashboard response $response');
-      } else {
-        throw Exception('Failed to load data');
-      }
-    } catch (e) {
-      throw Exception('Error: $e');
-    }
-  }
+
 }
 
 final apiResponseProvider =
-StateNotifierProvider<ApiResponseNotifier, ApiResponse?>((ref) {
+StateNotifierProvider<ApiResponseNotifier, String?>((ref) {
   final dio = ref.read(dioProvider);
   return ApiResponseNotifier(dio);
 });
+
+final fetchEmployeeData = FutureProvider<UserprofileResponseModel>((ref) async {
+  final dio = ref.read(dioProvider);
+  String? token = await SessionService.getToken();
+  print('token  $token');
+
+    final response = await dio.get(Api.getAllocationDashboard,options: Options(headers: {"token": token}));
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.data}');
+    if (response.statusCode == 200) {
+      final UserprofileResponseModel responseModel =  UserprofileResponseModel.fromJson(response.data);
+      return responseModel;
+
+    } else {
+      throw Exception('Failed to load data');
+    }
+},);
+
+
+// FutureOr<void> fetchEmployeeDetails() async {
+//   String? token = await SessionService.getToken();
+//   print('token  $token');
+//   final response = await dio.get(Api.getAllocationDashboard,options: Options(headers: {"token": token}));
+//   print('Response status: ${response.statusCode}');
+//   print('Response body: ${response.data}');
+//   if (response.statusCode == 200) {
+//     state = ApiResponse.fromJson(response.data);
+//     print('dashboard response $response');
+//   } else {
+//     throw Exception('Failed to load data');
+//
+//   }
+// }

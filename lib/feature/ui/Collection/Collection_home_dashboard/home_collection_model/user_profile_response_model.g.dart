@@ -1,0 +1,228 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'user_profile_response_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+UserprofileResponseModel _$UserprofileResponseModelFromJson(
+        Map<String, dynamic> json) =>
+    UserprofileResponseModel(
+      status: json['status'] as bool,
+      subCode: (json['subCode'] as num).toInt(),
+      message: json['message'] as String,
+      error: json['error'] as String,
+      items: Items.fromJson(json['items'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$UserprofileResponseModelToJson(
+        UserprofileResponseModel instance) =>
+    <String, dynamic>{
+      'status': instance.status,
+      'subCode': instance.subCode,
+      'message': instance.message,
+      'error': instance.error,
+      'items': instance.items,
+    };
+
+Items _$ItemsFromJson(Map<String, dynamic> json) => Items(
+      employeeDetail: EmployeeDetail.fromJson(
+          json['employeeDetail'] as Map<String, dynamic>),
+      totalVisits: (json['totalVisits'] as num).toInt(),
+      totalNetDueAmount: (json['totalNetDueAmount'] as num).toInt(),
+      visitPendingForApproval: (json['visitPendingForApproval'] as num).toInt(),
+      visitAccepted: (json['visitAccepted'] as num).toInt(),
+      visitRejected: (json['visitRejected'] as num).toInt(),
+      collectionEmiAmountPendingForApproval:
+          (json['collectionEmiAmountPendingForApproval'] as num).toInt(),
+      collectionAcceptAmount: (json['collectionAcceptAmount'] as num).toInt(),
+      collectionRejectAmount: (json['collectionRejectAmount'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$ItemsToJson(Items instance) => <String, dynamic>{
+      'employeeDetail': instance.employeeDetail,
+      'totalVisits': instance.totalVisits,
+      'totalNetDueAmount': instance.totalNetDueAmount,
+      'visitPendingForApproval': instance.visitPendingForApproval,
+      'visitAccepted': instance.visitAccepted,
+      'visitRejected': instance.visitRejected,
+      'collectionEmiAmountPendingForApproval':
+          instance.collectionEmiAmountPendingForApproval,
+      'collectionAcceptAmount': instance.collectionAcceptAmount,
+      'collectionRejectAmount': instance.collectionRejectAmount,
+    };
+
+EmployeeDetail _$EmployeeDetailFromJson(Map<String, dynamic> json) =>
+    EmployeeDetail(
+      location: json['location'] == null
+          ? null
+          : Location.fromJson(json['location'] as Map<String, dynamic>),
+      subDepartmentId: json['subDepartmentId'],
+      secondaryDepartmentId: json['secondaryDepartmentId'],
+      seconSubDepartmentId: json['seconSubDepartmentId'],
+      uanNumber: json['uanNumber'],
+      id: json['_id'] as String?,
+      employeName: json['employeName'] as String?,
+      userName: json['userName'] as String?,
+      email: json['email'] as String?,
+      workEmail: json['workEmail'] as String?,
+      mobileNo: (json['mobileNo'] as num).toInt(),
+      password: json['password'] as String?,
+      joiningDate: json['joiningDate'] as String?,
+      dateOfBirth: json['dateOfBirth'] as String?,
+      fatherName: json['fatherName'] as String?,
+      employeePhoto: json['employeePhoto'] as String?,
+      currentAddress: json['currentAddress'] as String?,
+      permanentAddress: json['permanentAddress'] as String?,
+      branchId: json['branchId'] as String?,
+      companyId: json['companyId'] as String?,
+      roleId: json['roleId'] as String?,
+      reportingManagerId: json['reportingManagerId'] as String?,
+      departmentId: json['departmentId'] as String?,
+      designationId: json['designationId'] as String?,
+      workLocationId: json['workLocationId'] as String?,
+      constCenterId: json['constCenterId'] as String?,
+      employementTypeId: json['employementTypeId'] as String?,
+      employeeTypeId: json['employeeTypeId'] as String?,
+      status: json['status'] as String?,
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+      v: (json['__v'] as num).toInt(),
+      employeUniqueId: json['employeUniqueId'] as String?,
+      description: json['description'] as String?,
+      bankAccount: json['bankAccount'],
+      emergencyNumber: json['emergencyNumber'],
+      gender: json['gender'] as String?,
+      maritalStatus: json['maritalStatus'] as String?,
+      offerLetter: json['offerLetter'] as String?,
+      package: json['package'],
+      referedById: json['referedById'] as String?,
+      resume: json['resume'] as String?,
+      salutation: json['salutation'] as String?,
+      bankDetails: json['bankDetails'] as String?,
+      ifscCode: json['ifscCode'] as String?,
+      aadhar: json['aadhar'] as String?,
+      bankAccountProof: json['bankAccountProof'] as String?,
+      bankName: json['bankName'] as String?,
+      currentAddressCity: json['currentAddressCity'] as String?,
+      currentAddressPincode: json['currentAddressPincode'],
+      currentAddressState: json['currentAddressState'] as String?,
+      currentCtc: json['currentCTC'] as String?,
+      currentDesignation: json['currentDesignation'] as String?,
+      educationCertification: json['educationCertification'] as String?,
+      employmentProof: json['employmentProof'] as String?,
+      endDate: json['endDate'],
+      experienceLetter: json['experienceLetter'] as String?,
+      familyIncome: json['familyIncome'],
+      fathersMobileNo: json['fathersMobileNo'],
+      fathersOccupation: json['fathersOccupation'] as String?,
+      highestQualification: json['highestQualification'] as String?,
+      lastOrganization: json['lastOrganization'] as String?,
+      motherName: json['motherName'] as String?,
+      mothersMobileNo: json['mothersMobileNo'],
+      nameAsPerBank: json['nameAsPerBank'] as String?,
+      panCard: json['panCard'] as String?,
+      permanentAddressCity: json['permanentAddressCity'] as String?,
+      permanentAddressPincode: json['permanentAddressPincode'],
+      permanentAddressState: json['permanentAddressState'] as String?,
+      startDate: json['startDate'],
+      totalExperience: json['totalExperience'],
+      university: json['university'] as String?,
+      websiteListing: json['websiteListing'] as String?,
+      onlineStatus: json['OnlineStatus'] as String?,
+      socketId: json['socketId'] as String?,
+      esicNumber: json['esicNumber'] as String?,
+    );
+
+Map<String, dynamic> _$EmployeeDetailToJson(EmployeeDetail instance) =>
+    <String, dynamic>{
+      'location': instance.location,
+      'subDepartmentId': instance.subDepartmentId,
+      'secondaryDepartmentId': instance.secondaryDepartmentId,
+      'seconSubDepartmentId': instance.seconSubDepartmentId,
+      'uanNumber': instance.uanNumber,
+      '_id': instance.id,
+      'employeName': instance.employeName,
+      'userName': instance.userName,
+      'email': instance.email,
+      'workEmail': instance.workEmail,
+      'mobileNo': instance.mobileNo,
+      'password': instance.password,
+      'joiningDate': instance.joiningDate,
+      'dateOfBirth': instance.dateOfBirth,
+      'fatherName': instance.fatherName,
+      'employeePhoto': instance.employeePhoto,
+      'currentAddress': instance.currentAddress,
+      'permanentAddress': instance.permanentAddress,
+      'branchId': instance.branchId,
+      'companyId': instance.companyId,
+      'roleId': instance.roleId,
+      'reportingManagerId': instance.reportingManagerId,
+      'departmentId': instance.departmentId,
+      'designationId': instance.designationId,
+      'workLocationId': instance.workLocationId,
+      'constCenterId': instance.constCenterId,
+      'employementTypeId': instance.employementTypeId,
+      'employeeTypeId': instance.employeeTypeId,
+      'status': instance.status,
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
+      '__v': instance.v,
+      'employeUniqueId': instance.employeUniqueId,
+      'description': instance.description,
+      'bankAccount': instance.bankAccount,
+      'emergencyNumber': instance.emergencyNumber,
+      'gender': instance.gender,
+      'maritalStatus': instance.maritalStatus,
+      'offerLetter': instance.offerLetter,
+      'package': instance.package,
+      'referedById': instance.referedById,
+      'resume': instance.resume,
+      'salutation': instance.salutation,
+      'bankDetails': instance.bankDetails,
+      'ifscCode': instance.ifscCode,
+      'aadhar': instance.aadhar,
+      'bankAccountProof': instance.bankAccountProof,
+      'bankName': instance.bankName,
+      'currentAddressCity': instance.currentAddressCity,
+      'currentAddressPincode': instance.currentAddressPincode,
+      'currentAddressState': instance.currentAddressState,
+      'currentCTC': instance.currentCtc,
+      'currentDesignation': instance.currentDesignation,
+      'educationCertification': instance.educationCertification,
+      'employmentProof': instance.employmentProof,
+      'endDate': instance.endDate,
+      'experienceLetter': instance.experienceLetter,
+      'familyIncome': instance.familyIncome,
+      'fathersMobileNo': instance.fathersMobileNo,
+      'fathersOccupation': instance.fathersOccupation,
+      'highestQualification': instance.highestQualification,
+      'lastOrganization': instance.lastOrganization,
+      'motherName': instance.motherName,
+      'mothersMobileNo': instance.mothersMobileNo,
+      'nameAsPerBank': instance.nameAsPerBank,
+      'panCard': instance.panCard,
+      'permanentAddressCity': instance.permanentAddressCity,
+      'permanentAddressPincode': instance.permanentAddressPincode,
+      'permanentAddressState': instance.permanentAddressState,
+      'startDate': instance.startDate,
+      'totalExperience': instance.totalExperience,
+      'university': instance.university,
+      'websiteListing': instance.websiteListing,
+      'OnlineStatus': instance.onlineStatus,
+      'socketId': instance.socketId,
+      'esicNumber': instance.esicNumber,
+    };
+
+Location _$LocationFromJson(Map<String, dynamic> json) => Location(
+      type: json['type'] as String,
+      coordinates: (json['coordinates'] as List<dynamic>)
+          .map((e) => (e as num).toDouble())
+          .toList(),
+    );
+
+Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
+      'type': instance.type,
+      'coordinates': instance.coordinates,
+    };
