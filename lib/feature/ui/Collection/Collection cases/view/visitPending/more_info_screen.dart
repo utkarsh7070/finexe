@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
+
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/VisitItemClosureModelData.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 
 import '../../../../../base/api/api.dart';
 import '../../model/VisitItemCallingModelData.dart';
@@ -54,7 +56,6 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
     final data = ref.watch(fetchVisitPendingDataProvider);
    // navigatorKey: navigatorKey;
     return data.when(
-
       data: (data) {
         List<ItemsDetails> listOfLists = data.map((map) {
           return ItemsDetails.fromJson(map);
@@ -74,6 +75,7 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
         final collectionData = ref.watch(fetchVisitCollectionProvider(ldNumber));
 
         // Fetch collection details data
+
         final callingData = ref.watch(fetchVisitCallingProvider(ldNumber));
 
 
@@ -150,6 +152,7 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                         return const Center(child: CircularProgressIndicator());
                       },
                     ),
+
 
                     collectionData.when(
                       data: (collectionDetails) {
@@ -291,6 +294,7 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
   }
 
   Widget _buildVisitTab(List<VisitItemDetail> visitData) {
+
     if (visitData.isEmpty) {
       return Center(
         child: Padding(
@@ -302,6 +306,7 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
         ),
       );
     }
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -489,6 +494,7 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
 
 
   Widget _buildCollectionTab(List<VisitItemCollection> collectionData) {
+
     if (collectionData.isEmpty) {
       return Center(
         child: Padding(
@@ -741,6 +747,7 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
       ),
     );
   }
+
 
   Widget _buildCallingTab(List<VisitItemCalling> visitCalling) {
     if (visitCalling.isEmpty) {
@@ -1009,6 +1016,7 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
         ),
       );
     }
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1182,6 +1190,7 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
       ),
     );
   }
+
 
   Widget _buildNoticeTab(List<VisitItemNotice> visitNotice) {
     if (visitNotice.isEmpty) {

@@ -1133,6 +1133,7 @@ FutureProvider<List<Map<String, String>>>((ref) async {
   print(response.statusCode);
   if (response.statusCode == 200) {
     print(response.data);
+
     GetVisitPendingResponseData apiResponseList =
     GetVisitPendingResponseData.fromJson(response.data);
     return apiResponseList.items;
@@ -1140,6 +1141,7 @@ FutureProvider<List<Map<String, String>>>((ref) async {
     throw Exception('Failed to load data');
   }
 });
+
   final fetchGetAllModeOfCollectionProvider =
   FutureProvider<List<ModeItem>>((ref) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();

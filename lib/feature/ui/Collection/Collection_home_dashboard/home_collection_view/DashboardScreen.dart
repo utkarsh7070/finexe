@@ -137,16 +137,20 @@ import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../../base/api/api.dart';
 import '../../Collection cases/view/cases_screen.dart';
 import '../../Collection cases/view/visitPending/visit_pending_screen.dart';
 import '../home_collection_model/UserProfile.dart';
 import '../home_collection_viewmodel/fetchUserProfile.dart';
+
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../Widget/punct_in_out_action_dialog_content.dart';
 import '../home_collection_model/user_profile_model.dart';
 import '../home_collection_viewmodel/fetchUserProfile.dart';
+
 import 'dashboard_side_bar.dart';
+
 
 class DashboardScreen extends ConsumerWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -155,8 +159,11 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
     var apiResponse = ref.watch(apiResponseProvider);
     var userProfile;
+
+
 
     // If the API response is null, call fetchEmployeeDetails if it's not already called
     if (apiResponse == null) {
@@ -166,6 +173,7 @@ class DashboardScreen extends ConsumerWidget {
     }else{
       userProfile= apiResponse.employeeDetail;
     }
+
 
     return Scaffold(
       key: _scaffoldKey,
@@ -183,8 +191,10 @@ class DashboardScreen extends ConsumerWidget {
           iconSize: 30, // Set the size of the icon
           color: Colors.black, // Set the color of the icon
         ),
+
         title: const Text("Collection Dashboard"),
         actions: [
+
           GestureDetector(
               onTap: () {
                 _showMyDialog(context, ref);
@@ -197,6 +207,7 @@ class DashboardScreen extends ConsumerWidget {
                   width: displayWidth(context) * 0.06,
                 ),
               )),
+
 
         ],
       ),
@@ -229,6 +240,7 @@ class DashboardScreen extends ConsumerWidget {
                               '${Api.imageUrl}${userProfile.employeePhoto ?? ''}',
                             ),
                           ),
+
 
                           SizedBox(height: 10),
                           Text(
@@ -268,8 +280,10 @@ class DashboardScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
+
                     ),
                   ),
+
 
                   // GridView for six square cards
                   Padding(
