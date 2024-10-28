@@ -137,6 +137,11 @@ import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../base/api/api.dart';
+import '../../Collection cases/view/cases_screen.dart';
+import '../../Collection cases/view/visitPending/visit_pending_screen.dart';
+import '../home_collection_model/UserProfile.dart';
+import '../home_collection_viewmodel/fetchUserProfile.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../Widget/punct_in_out_action_dialog_content.dart';
 import '../home_collection_model/user_profile_model.dart';
@@ -150,9 +155,17 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.read(userProfileProvider.notifier).fetchUserProfile();
-    final userProfile = ref.watch(userProfileProvider);
-    // final checkpunchProvider = ref.watch(attendanceProvider);
+    var apiResponse = ref.watch(apiResponseProvider);
+    var userProfile;
+
+    // If the API response is null, call fetchEmployeeDetails if it's not already called
+    if (apiResponse == null) {
+      ref.read(apiResponseProvider.notifier).fetchEmployeeDetails();
+      apiResponse = ref.watch(apiResponseProvider);
+       userProfile= apiResponse?.employeeDetail;
+    }else{
+      userProfile= apiResponse.employeeDetail;
+    }
 
     return Scaffold(
       key: _scaffoldKey,
@@ -205,45 +218,52 @@ class DashboardScreen extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const CircleAvatar(
+                          /*CircleAvatar(
                             radius: 40,
                             backgroundImage: NetworkImage(
                                 'https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png'), // Replace with actual image URL
+                          ),*/
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundImage: NetworkImage(
+                              '${Api.imageUrl}${userProfile.employeePhoto ?? ''}',
+                            ),
                           ),
-                          const SizedBox(height: 10),
+
+                          SizedBox(height: 10),
                           Text(
-                            userProfile.name,
-                            style: const TextStyle(
+                            userProfile.employeName,
+                            style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                           Text(userProfile.email),
-                          const SizedBox(height: 10),
+                          SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Employee Unique Id:"),
-                              Text(userProfile.employeeId),
+                              Text("Employee Unique Id:"),
+                              Text(userProfile.employeUniqueId),
                             ],
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Mobile No:"),
+                              Text("Mobile No:"),
                               Text(userProfile.mobileNo),
                             ],
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Current Address:"),
-                              Text(userProfile.address),
+                              Text("Current Address:"),
+                              Text(userProfile.currentAddress),
                             ],
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Joining Date:"),
-                              Text(userProfile.joiningDate),
+                              Text("Joining Date:"),
+                              Text(userProfile.formattedJoiningDate),
                             ],
                           ),
                         ],
@@ -255,12 +275,11 @@ class DashboardScreen extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: GridView.count(
-                      physics: const NeverScrollableScrollPhysics(),
-                      // To prevent GridView from scrolling
-                      shrinkWrap: true,
-                      // To fit content within the SingleChildScrollView
-                      crossAxisCount: 2,
-                      // Two cards per row
+                      physics:
+                          NeverScrollableScrollPhysics(), // To prevent GridView from scrolling
+                      shrinkWrap:
+                          true, // To fit content within the SingleChildScrollView
+                      crossAxisCount: 2, // Two cards per row
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
                       childAspectRatio: 1, // To make the cards square
@@ -278,7 +297,7 @@ class DashboardScreen extends ConsumerWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                 ],
               ),
             ),
