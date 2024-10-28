@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:finexe/feature/Punch_In_Out/viewmodel/viewmodel.dart';
+import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart';
 import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
@@ -34,6 +34,12 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+  }
+  @override
+  void dispose() {
+    _tabController.dispose();
+    // TODO: implement dispose
+    super.dispose();
   }
 
   // final SessionService userSession = SessionService();

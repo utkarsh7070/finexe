@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/collection_mode_response_model.dart';
@@ -19,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
+import '../../../../base/service/session_service.dart';
 import '../model/visit_closure_submit_request_model.dart';
 import '../model/get_visit_pending_response_data.dart';
 import '../model/visit_pending_items_model.dart';
@@ -198,8 +198,11 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
             address: datas.address!,
             latitude: data.latitude,
             longitude: data.longitude);
-        // const String token =
-        //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+
+        /*const String token =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+        */
+        String? token = await SessionService.getToken();
         final response = await dio.post(Api.visitFormSubmit,
             data: requestModel.toJson(),
             options: Options(headers: {"token": token}));
@@ -396,11 +399,10 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         remarkByCollection: state.remark,
         partner: detail.partner!);
 
-    // const String token =
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    String? tokens = await SessionService.getToken();
     final response = await dio.post(Api.visitFormSubmit,
         data: requestModel.toJson(),
-        options: Options(headers: {"token": token}));
+        options: Options(headers: {"token": tokens}));
     print(response.statusMessage);
     print(response.statusCode);
     if (response.statusCode == 200) {
@@ -566,11 +568,13 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
       settlementForReason: state.reason,
     );
 
-    // final String token =
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    String? toke = await SessionService.getToken();
+    /*final String token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    */
     final response = await dio.post(Api.visitCloseFormSubmit,
         data: requestModel.toJson(),
-        options: Options(headers: {"token": token}));
+        options: Options(headers: {"token": toke}));
     print(response.statusMessage);
     print(response.statusCode);
     if (response.statusCode == 200) {
@@ -1058,7 +1062,7 @@ final polylineProvider = StateProvider<List<Polyline>>((ref) => []);
 
 // Provider to fetch directions between two points
 final directionsProvider =
-    FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
+FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
   final currentLocation = await ref.watch(currentLocationProvider.future);
 
   // final polylinePoints = PolylinePoints();
@@ -1075,6 +1079,7 @@ final directionsProvider =
         .map((point) => LatLng(point.latitude, point.longitude))
         .toList();
   }
+
 
   final response = await http.get(Uri.parse(url));
 
@@ -1110,12 +1115,14 @@ final directionsProvider =
   //   return [];
   // }
 });
+
 //-----------------------------end map--------------------------------------------------------
 
+
 final fetchVisitPendingDataProvider =
-    FutureProvider<List<Map<String, String>>>((ref) async {
-      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-      String? token =  sharedPreferences.getString('token');
+FutureProvider<List<Map<String, String>>>((ref) async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  String? token = sharedPreferences.getString('token');
   // final String token =
   //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
   final Map<String, String> queryParam = {"status": "pending"};
@@ -1126,34 +1133,35 @@ final fetchVisitPendingDataProvider =
   print(response.statusCode);
   if (response.statusCode == 200) {
     print(response.data);
-    GetVisitPendingResponseData apiResponseList = GetVisitPendingResponseData.fromJson(response.data);
 
+    GetVisitPendingResponseData apiResponseList =
+    GetVisitPendingResponseData.fromJson(response.data);
     return apiResponseList.items;
   } else {
     throw Exception('Failed to load data');
   }
 });
 
-final fetchGetAllModeOfCollectionProvider =
-    FutureProvider<List<ModeItem>>((ref) async {
-      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-      String? token =  sharedPreferences.getString('token');
-  // const String token =
-  //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
-  final dio = ref.read(dioProvider);
-  final response = await dio.get(Api.getAllModeOfCollection,
-      options: Options(headers: {"token": token}));
-  print(response.statusMessage);
-  print(response.statusCode);
-  if (response.statusCode == 200) {
-    print(response.data);
-    CollectionModeResponseModel apiResponseList =
-        CollectionModeResponseModel.fromJson(response.data);
-    return apiResponseList.items;
-  } else {
-    throw Exception('Failed to load data');
-  }
-});
+  final fetchGetAllModeOfCollectionProvider =
+  FutureProvider<List<ModeItem>>((ref) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString('token');
+// const String token =
+//     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+    final dio = ref.read(dioProvider);
+    final response = await dio.get(Api.getAllModeOfCollection,
+        options: Options(headers: {"token": token}));
+    print(response.statusMessage);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      print(response.data);
+      CollectionModeResponseModel apiResponseList =
+      CollectionModeResponseModel.fromJson(response.data);
+      return apiResponseList.items;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  });
 
 // return GetVisitPendingResponseData(status: status, subCode: subCode, message: message, error: error, items: items)
 // // final content = json.decode(

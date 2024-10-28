@@ -3,15 +3,18 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/extentions/dio_extension.dart';
+
 // import 'package:finexe_attendance/feature/attendance/model/response_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 // import '../../constant/api/api.dart';
 // import '../../constant/extension/dio_extension.dart';
 import 'punch_in_repository.dart';
 
 class PunchInRepositoryImp extends PunchInRepository {
   final dio = DioClientExtension.client;
+
   // Map<String, String> _headers = <String, String>{
   //   'Content-Type': 'application/json',
   //   'Accept': 'application/json',
@@ -48,6 +51,10 @@ class PunchInRepositoryImp extends PunchInRepository {
       Response response =
           await dio.get(Api.punchOut, options: Options(headers: token));
       log('punchOut api: ${Api.punchOut.toString()}');
+      print('punch out response $response');
+      if (response.statusCode == 200) {
+        return response;
+      }
       if (kDebugMode) {
         // log(">>>L " + response.data);
       }

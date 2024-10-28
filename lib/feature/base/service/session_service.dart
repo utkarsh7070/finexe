@@ -15,6 +15,12 @@ class SessionService {
     preferences.setString('roleName', role ?? '');
   }
 
+  // Method to retrieve the token
+  static Future<String?> getToken() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString('token');
+  }
+
   static Future<void> customerIdSave({
     String? customerId,
   }) async {

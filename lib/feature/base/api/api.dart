@@ -16,7 +16,7 @@ class Api {
   static const String punchIn =
       '${baseUrl}v1/adminMaster/employe/punch?action=in';
   static const String checkPunchIn =
-      '${baseUrl}v1/adminMaster/employe/attendance?';
+      '${baseUrl}v1/adminMaster/employe/attendance';
   static const String submitNewLoan =
       '${baseUrl}v1/salesMan/createDraftLoginFees';
   static const String submitApplicantForm =
@@ -34,14 +34,16 @@ class Api {
   static const String uploadImageCollection =
       '${baseUrl}v1/formData/ImageUpload';
   static const String visitFormSubmit = '${baseUrl}v1/googleSheet/visitFormAdd';
-  static const String visitDetailsTable = '${baseUrl}v1/googleSheet/visitDetail';
+  static const String visitDetailsTable =
+      '${baseUrl}v1/googleSheet/visitDetail';
 
   static const String getModeById =
       '${baseUrl}v1/adminMaster/modeOfCollection/getModeById';
   static const String updateEmiSubmit =
       '${baseUrl}v1/googleSheet/collectionEmiFormAdd';
 
-  static const String visitCloseFormSubmit = '${baseUrl}v1/googleSheet/posCloserForm';
+  static const String visitCloseFormSubmit =
+      '${baseUrl}v1/googleSheet/posCloserForm';
 
   static const String getAllocationDashboard = '${baseUrl}v1/googleSheet/getAllocationDashboard';
 
@@ -51,6 +53,8 @@ class Api {
 
   static const String getVisitCollection = '${baseUrl}v1/googleSheet/collectionDetail';
   static const String getVisitClosure = '${baseUrl}v1/googleSheet/getCloserDetailBy';
+  static const String getVisitNotice = '${baseUrl}v1/googleSheet/getLegalNoticeBy';
+  static const String getVisitCalling = '${baseUrl}v1/googleSheet/callDoneBy';
 
 
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd

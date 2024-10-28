@@ -5,13 +5,20 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../base/api/api.dart';
-import '../model/CloserDetailItem.dart';
-import '../model/VisitItemCollection.dart';
-import '../model/VisitItemDetail.dart';
+
+import '../../../../base/service/session_service.dart';
+import '../model/VisitItemCallingModelData.dart';
+import '../model/VisitItemClosureModelData.dart';
+import '../model/VisitItemCollectionModelData.dart';
+import '../model/VisitItemDetailModelData.dart';
+import '../model/VisitItemNoticeModelData.dart';
+
 
 final fetchVisitDetailsProvider = FutureProvider.family<List<VisitItemDetail>,String>((ref,ldNumber) async {
-  final String token =
+  String? token = await SessionService.getToken();
+ /* final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+*/
 
   final response = await Dio().get(
     Api.getVisitDetail,
@@ -31,8 +38,11 @@ final fetchVisitDetailsProvider = FutureProvider.family<List<VisitItemDetail>,St
 });
 
 final fetchVisitCollectionProvider = FutureProvider.family<List<VisitItemCollection>,String>((ref,ldNumber) async {
-  final String token =
+
+  String? token = await SessionService.getToken();
+  /*final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+*/
 
   final response = await Dio().get(
     Api.getVisitCollection,
@@ -51,9 +61,34 @@ final fetchVisitCollectionProvider = FutureProvider.family<List<VisitItemCollect
   }
 });
 
-final fetchVisitClosureProvider = FutureProvider.family<List<VisitItemClosure>,String>((ref,ldNumber) async {
-  final String token =
+
+final fetchVisitCallingProvider = FutureProvider.family<List<VisitItemCalling>,String>((ref,ldNumber) async {
+  String? token = await SessionService.getToken();
+  /*final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+*/
+  final response = await Dio().get(
+    Api.getVisitCalling,
+    queryParameters: {'LD': ldNumber},
+    options: Options(headers: {"token": token}),
+  );
+
+  print('Response Calling status: ${response.statusCode}');
+  print('Response Calling body: ${response.data}');
+
+  if (response.statusCode == 200) {
+    final List items = response.data['items'];
+    return items.map((item) => VisitItemCalling.fromJson(item)).toList();
+  } else {
+    throw Exception('Failed to load visit Calling');
+  }
+});
+
+final fetchVisitClosureProvider = FutureProvider.family<List<VisitItemClosure>,String>((ref,ldNumber) async {
+  String? token = await SessionService.getToken();
+  /*final String token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+*/
 
   final response = await Dio().get(
     Api.getVisitClosure,
@@ -61,8 +96,10 @@ final fetchVisitClosureProvider = FutureProvider.family<List<VisitItemClosure>,S
     options: Options(headers: {"token": token}),
   );
 
-  print('Response collection status: ${response.statusCode}');
-  print('Response collection body: ${response.data}');
+
+  print('Response Closure status: ${response.statusCode}');
+  print('Response Closure body: ${response.data}');
+
 
   if (response.statusCode == 200) {
     final List items = response.data['items'];
@@ -70,4 +107,28 @@ final fetchVisitClosureProvider = FutureProvider.family<List<VisitItemClosure>,S
   } else {
     throw Exception('Failed to load visit details');
   }
+
+});
+
+final fetchVisitNoticeProvider = FutureProvider.family<List<VisitItemNotice>,String>((ref,ldNumber) async {
+  String? token = await SessionService.getToken();
+  /*final String token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+*/
+  final response = await Dio().get(
+    Api.getVisitNotice,
+    queryParameters: {'LD': ldNumber},
+    options: Options(headers: {"token": token}),
+  );
+
+  print('Response Notice status: ${response.statusCode}');
+  print('Response Notice body: ${response.data}');
+
+  if (response.statusCode == 200) {
+    final List items = response.data['items'];
+    return items.map((item) => VisitItemNotice.fromJson(item)).toList();
+  } else {
+    throw Exception('Failed to load visit details');
+  }
+
 });

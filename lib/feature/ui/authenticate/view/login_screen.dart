@@ -50,7 +50,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   void startTokenExpiryTimer() {
-    Timer(Duration(hours: 12), removeToken);
+    Timer(const Duration(hours: 12), removeToken);
   }
 
   Future<void> removeToken() async {
@@ -78,7 +78,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Container(
             width: displayWidth(context),
             decoration: const BoxDecoration(
@@ -220,78 +220,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       // const Remember(),
                       SizedBox(height: displayHeight(context) * 0.04),
-                      // _loginButton(
-                      //     passValidate: passwordValidations,
-                      //     userValidate: userValidations),
-
-                      // loginState.when(
-                      //   data: (data) {
-                      //     return
-
-                      // AnimatedSwitcher(
-                      //   duration: const Duration(
-                      //       milliseconds: 300), // Animation duration
-                      //   switchInCurve: Curves.easeIn,
-                      //   switchOutCurve: Curves.easeOut,
-                      //   child: loginState.isLoading
-                      //       ? SizedBox(
-                      //           width: displayWidth(context),
-                      //           height: 25,
-                      //           child: Center(
-                      //             child: const CircularProgressIndicator(
-                      //               key: ValueKey(
-                      //                   'loading'), // Key for progress indicator
-                      //             ),
-                      //           ),
-                      //         )
-                      //       : AppButton(
-                      //           key: const ValueKey('button'), // Key for button
-                      //           width: displayWidth(context),
-                      //           height: displayHeight(context) * 0.06,
-                      //           textStyle:
-                      //               const TextStyle(color: AppColors.white),
-                      //           label: 'Log In',
-                      //           onTap: () {
-                      //             final user = _emailController.text.isEmpty;
-                      //             final pass = _passwordController.text.isEmpty;
-                      //             if (user || pass) {
-                      //               ref
-                      //                   .read(userValidationProvider.notifier)
-                      //                   .checkUsername(_emailController.text);
-                      //               ref
-                      //                   .read(
-                      //                       passwordValidationProvider.notifier)
-                      //                   .checkPassword(
-                      //                       _passwordController.text);
-                      //             } else {
-                      //               // Trigger the login and show snackbar or navigate based on success
-                      //               loginStateViewModel
-                      //                   .login(_emailController.text,
-                      //                       _passwordController.text)
-                      //                   .then((value) {
-                      //                 if (value) {
-                      //                   showCustomSnackBar(context,
-                      //                       'Login Successful', Colors.green);
-                      //                   // Navigator.pushReplacementNamed(
-                      //                   //     context, AppRoutes.dashBoard);
-                      //                   // Navigate to the login screen and remove all previous routes
-                      //                   Navigator.pushNamedAndRemoveUntil(
-                      //                     context,
-                      //                     AppRoutes
-                      //                         .dashBoard, // Name of your login route
-                      //                     (route) =>
-                      //                         false, // Remove all routes until the login route
-                      //                   );
-                      //                 } else {
-                      //                   log('value:: ' + value.toString());
-                      //                   showCustomSnackBar(context,
-                      //                       'User Name Not Found', Colors.red);
-                      //                 }
-                      //               });
-                      //             }
-                      //           },
-                      //         ),
-                      // ),
 
                       SizedBox(
                         height: displayHeight(context) * 0.06,
@@ -317,79 +245,85 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   .read(passwordValidationProvider.notifier)
                                   .checkPassword(_passwordController.text);
                             } else {
-                              // Trigger the login and show snackbar or navigate based on success
-                              loginStateViewModel
-                                  .login(_emailController.text,
-                                      _passwordController.text)
-                                  .then((value) async {
-                                if (value) {
-                                  // bool isLoggedIn = false;
-                                  setState(() {
-                                    isLoggedIn = value;
-                                    log('isLoggedIn: ' + isLoggedIn.toString());
-                                  });
-                                  startTokenExpiryTimer();
-                                  // Fetch the stored roleName from SharedPreferences
-                                  // SharedPreferences preferences =
-                                  //     await SharedPreferences.getInstance();
-                                  // String? role =
-                                  //     await preferences.getString('roleName');
-
-                                  log("Login Success: " + value.toString());
-                                  //  log("Role: " + role.toString());
-
-                                  showCustomSnackBar(context,
-                                      'Login Successful', Colors.green);
-                                  // Navigator.pushNamedAndRemoveUntil(
-                                  //   context,
-                                  //   AppRoutes.attendance,
-                                  //   (route) => false,
-                                  // );
-                                  // Navigate the user according to their role
-                                  // switch (role) {
-                                  //   case 'admin':
-                                  //     log("Navigating to admin dashboard");
-
-                                  //     Navigator.pushNamedAndRemoveUntil(
-                                  //       context,
-                                  //       AppRoutes
-                                  //           .dashBoard, // Admin dashboard route
-                                  //       (route) =>
-                                  //           false, // Remove all previous routes
-                                  //     );
-
-                                  //     break;
-                                  //   case 'sales':
-                                  //     log("Navigating to sales dashboard");
-                                  //     Navigator.pushNamedAndRemoveUntil(
-                                  //       context,
-                                  //       AppRoutes
-                                  //           .saleApplicationForm, // Sales dashboard route
-                                  //       (route) =>
-                                  //           false, // Remove all previous routes
-                                  //     );
-                                  //     break;
-                                  //   case 'collection':
-                                  //     log("Navigating to collection dashboard");
-                                  //     Navigator.pushNamedAndRemoveUntil(
-                                  //       context,
-                                  //       AppRoutes
-                                  //           .collectionHome, // Collection dashboard route
-                                  //       (route) =>
-                                  //           false, // Remove all previous routes
-                                  //     );
-                                  //     break;
-                                  //   default:
-                                  //     // Handle unknown roles or navigate to a default screen
-                                  //     log('No matching role found');
-                                  //     break;
-                                  // }
-                                } else {
-                                  log('value:: ' + value.toString());
-                                  showCustomSnackBar(context,
-                                      'User Name Not Found', Colors.red);
-                                }
-                              });
+                             loginStateViewModel.clickPunchInButton(context: context,email:_emailController.text,
+                                 password:_passwordController.text);
+                             // loginStateViewModel
+                             //      .login(_emailController.text,
+                             //          _passwordController.text)
+                             //      .then((value) async {
+                             //    if (value) {
+                             //      if(!loginState.value!.checkPunch){
+                             //        switch (loginState.value!.role) {
+                             //          case 'admin':
+                             //            log("Navigating to admin dashboard");
+                             //
+                             //            Navigator.pushNamedAndRemoveUntil(
+                             //              context,
+                             //              AppRoutes
+                             //                  .dashBoard, // Admin dashboard route
+                             //              (route) =>
+                             //                  false, // Remove all previous routes
+                             //            );
+                             //
+                             //            break;
+                             //          case 'sales':
+                             //            log("Navigating to sales dashboard");
+                             //            Navigator.pushNamedAndRemoveUntil(
+                             //              context,
+                             //              AppRoutes
+                             //                  .saleApplicationForm, // Sales dashboard route
+                             //              (route) =>
+                             //                  false, // Remove all previous routes
+                             //            );
+                             //            break;
+                             //          case 'collection':
+                             //            log("Navigating to collection dashboard");
+                             //            Navigator.pushNamedAndRemoveUntil(
+                             //              context,
+                             //              AppRoutes
+                             //                  .collectionHome, // Collection dashboard route
+                             //              (route) =>
+                             //                  false, // Remove all previous routes
+                             //            );
+                             //            break;
+                             //          default:
+                             //            // Handle unknown roles or navigate to a default screen
+                             //            log('No matching role found');
+                             //            break;
+                             //        }
+                             //      }else{
+                             //        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.attendance, (route) => false,);
+                             //      }
+                             //      // bool isLoggedIn = false;
+                             //      setState(() {
+                             //        isLoggedIn = value;
+                             //        log('isLoggedIn: ' + isLoggedIn.toString());
+                             //      });
+                             //      startTokenExpiryTimer();
+                             //      // Fetch the stored roleName from SharedPreferences
+                             //      // SharedPreferences preferences =
+                             //      //     await SharedPreferences.getInstance();
+                             //      // String? role =
+                             //      //     await preferences.getString('roleName');
+                             //
+                             //      log("Login Success: " + value.toString());
+                             //      //  log("Role: " + role.toString());
+                             //
+                             //      showCustomSnackBar(context,
+                             //          'Login Successful', Colors.green);
+                             //      // Navigator.pushNamedAndRemoveUntil(
+                             //      //   context,
+                             //      //   AppRoutes.attendance,
+                             //      //   (route) => false,
+                             //      // );
+                             //      // Navigate the user according to their role
+                             //
+                             //    } else {
+                             //      log('value:: ' + value.toString());
+                             //      showCustomSnackBar(context,
+                             //          'User Name Not Found', Colors.red);
+                             //    }
+                             //  });
                             }
                           },
                           child: loginState.isLoading
@@ -397,17 +331,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 24, // Specify the width
                                         height: 24, // Specify the height
-                                        child: const CircularProgressIndicator(
+                                        child: CircularProgressIndicator(
                                           color: Colors.white,
                                           strokeWidth: 3,
                                           key: ValueKey(
                                               'loading'), // Key for progress indicator
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 10,
                                       ),
                                       Text(
@@ -421,7 +355,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     ],
                                   ),
                                 )
-                              : Text(
+                              : const Text(
                                   'Login',
                                   style: TextStyle(color: Colors.white),
                                 ),
@@ -434,187 +368,187 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       //   child: CircularProgressIndicator(),
                       // ),
                       // ),
-                      SizedBox(
-                        height: displayHeight(context) * 0.02,
-                      ),
-                      isLoggedIn
-                          ? Center(
-                              child: ElevatedButton(
-                                  onPressed: () async {
-                                    // Fetch the stored roleName from SharedPreferences
-                                    SharedPreferences preferences =
-                                        await SharedPreferences.getInstance();
-                                    String? role =
-                                        await preferences.getString('roleName');
-
-                                    // ref
-                                    //     .read(attendanceProvider.notifier)
-                                    //     .checkPunch()
-                                    //     .then(
-                                    //   (value) {
-                                    //     if (value == true) {
-                                    //       //   log('not punchIn');
-                                    //       log('already punchIn');
-                                    //       switch (role) {
-                                    //         case 'admin':
-                                    //           log("Navigating to admin dashboard");
-                                    //           Navigator.pushNamedAndRemoveUntil(
-                                    //             context,
-                                    //             AppRoutes
-                                    //                 .collectionHome, // Admin dashboard route
-                                    //             (route) =>
-                                    //                 false, // Remove all previous routes
-                                    //           );
-                                    //           break;
-                                    //         case 'sales':
-                                    //           log("Navigating to sales dashboard");
-                                    //           Navigator.pushNamedAndRemoveUntil(
-                                    //             context,
-                                    //             AppRoutes
-                                    //                 .dashBoard, // Sales dashboard route
-                                    //             (route) =>
-                                    //                 false, // Remove all previous routes
-                                    //           );
-                                    //           break;
-                                    //         case 'collection':
-                                    //           log("Navigating to collection dashboard");
-                                    //           Navigator.pushNamedAndRemoveUntil(
-                                    //             context,
-                                    //             AppRoutes
-                                    //                 .collectionHome, // Collection dashboard route
-                                    //             (route) =>
-                                    //                 false, // Remove all previous routes
-                                    //           );
-                                    //           break;
-                                    //         default:
-                                    //           // Handle unknown roles or navigate to a default screen
-                                    //           log('No matching role found');
-                                    //           break;
-                                    //       }
-                                    //       // Navigator.pushNamedAndRemoveUntil(
-                                    //       //   context,
-                                    //       //   AppRoutes.attendance,
-                                    //       //   (route) => false,
-                                    //       // );
-                                    //     } else {
-                                    //       // log('not punchIn');
-                                    //       // Navigator.pushNamedAndRemoveUntil(
-                                    //       //   context,
-                                    //       //   AppRoutes.attendance,
-                                    //       //   (route) => false,
-                                    //       // );
-                                    //     }
-                                    //   },
-                                    // );
-                                    ref
-                                        .read(attendanceProvider.notifier)
-                                        .onPunchIn(context)
-                                        .then(
-                                      (value) {
-                                        ref
-                                            .read(attendanceProvider.notifier)
-                                            .checkPunch()
-                                            .then(
-                                          (value) {
-                                            if (value == false) {
-                                              log('punchedIn');
-                                              switch (role) {
-                                                case 'admin':
-                                                  log("Navigating to admin dashboard");
-                                                  Navigator
-                                                      .pushNamedAndRemoveUntil(
-                                                    context,
-                                                    AppRoutes
-                                                        .collectionHome, // Admin dashboard route
-                                                    (route) =>
-                                                        false, // Remove all previous routes
-                                                  );
-                                                  break;
-                                                case 'sales':
-                                                  log("Navigating to sales dashboard");
-                                                  Navigator
-                                                      .pushNamedAndRemoveUntil(
-                                                    context,
-                                                    AppRoutes
-                                                        .dashBoard, // Sales dashboard route
-                                                    (route) =>
-                                                        false, // Remove all previous routes
-                                                  );
-                                                  break;
-                                                case 'collection':
-                                                  log("Navigating to collection dashboard");
-                                                  Navigator
-                                                      .pushNamedAndRemoveUntil(
-                                                    context,
-                                                    AppRoutes
-                                                        .collectionHome, // Collection dashboard route
-                                                    (route) =>
-                                                        false, // Remove all previous routes
-                                                  );
-                                                  break;
-                                                default:
-                                                  // Handle unknown roles or navigate to a default screen
-                                                  log('No matching role found');
-                                                  break;
-                                              }
-                                            } else {
-                                              log('not punch out');
-                                            }
-                                          },
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: checkpunchProvider.isLoading
-                                      ? const Center(
-                                          child: CircularProgressIndicator(
-                                            color: Colors.blue,
-                                          ),
-                                        )
-                                      : Text(
-                                          'PunchIn',
-                                          style: TextStyle(color: Colors.white),
-                                        )),
-                            )
-                          : SizedBox.shrink(),
-                      SizedBox(
-                        height: displayHeight(context) * 0.05,
-                      ),
-                      Center(
-                        child: SizedBox(
-                            width: displayWidth(context) * 0.03,
-                            child: const Divider(
-                              height: 2,
-                              color: AppColors.gray,
-                            )),
-                      ),
-                      SizedBox(
-                        height: displayHeight(context) * 0.05,
-                      ),
-                      Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Container(
-                            padding: const EdgeInsets.only(right: 10, left: 10),
-                            height: displayHeight(context) * 0.04,
-                            child: RichText(
-                              text: TextSpan(
-                                text:
-                                    'If you have not any id for the log in purpose\nso you ca get you id send request for ',
-                                style: AppStyles.headingTextStyleFooter,
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    text: 'Get ID',
-                                    style: AppStyles.smallTextStyleRich,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                          // Text(
-                          //   '© 2024 - Fincoopers Capital Private Limited *All Rights Reserved',
-                          //   style: AppStyles.smallTextStyle,
-                          // ),
-                          ),
+                      // SizedBox(
+                      //   height: displayHeight(context) * 0.02,
+                      // ),
+                      // isLoggedIn
+                      //     ? Center(
+                      //         child: ElevatedButton(
+                      //             onPressed: () async {
+                      //               // Fetch the stored roleName from SharedPreferences
+                      //               SharedPreferences preferences =
+                      //                   await SharedPreferences.getInstance();
+                      //               String? role =
+                      //                   await preferences.getString('roleName');
+                      //
+                      //               // ref
+                      //               //     .read(attendanceProvider.notifier)
+                      //               //     .checkPunch()
+                      //               //     .then(
+                      //               //   (value) {
+                      //               //     if (value == true) {
+                      //               //       //   log('not punchIn');
+                      //               //       log('already punchIn');
+                      //               //       switch (role) {
+                      //               //         case 'admin':
+                      //               //           log("Navigating to admin dashboard");
+                      //               //           Navigator.pushNamedAndRemoveUntil(
+                      //               //             context,
+                      //               //             AppRoutes
+                      //               //                 .collectionHome, // Admin dashboard route
+                      //               //             (route) =>
+                      //               //                 false, // Remove all previous routes
+                      //               //           );
+                      //               //           break;
+                      //               //         case 'sales':
+                      //               //           log("Navigating to sales dashboard");
+                      //               //           Navigator.pushNamedAndRemoveUntil(
+                      //               //             context,
+                      //               //             AppRoutes
+                      //               //                 .dashBoard, // Sales dashboard route
+                      //               //             (route) =>
+                      //               //                 false, // Remove all previous routes
+                      //               //           );
+                      //               //           break;
+                      //               //         case 'collection':
+                      //               //           log("Navigating to collection dashboard");
+                      //               //           Navigator.pushNamedAndRemoveUntil(
+                      //               //             context,
+                      //               //             AppRoutes
+                      //               //                 .collectionHome, // Collection dashboard route
+                      //               //             (route) =>
+                      //               //                 false, // Remove all previous routes
+                      //               //           );
+                      //               //           break;
+                      //               //         default:
+                      //               //           // Handle unknown roles or navigate to a default screen
+                      //               //           log('No matching role found');
+                      //               //           break;
+                      //               //       }
+                      //               //       // Navigator.pushNamedAndRemoveUntil(
+                      //               //       //   context,
+                      //               //       //   AppRoutes.attendance,
+                      //               //       //   (route) => false,
+                      //               //       // );
+                      //               //     } else {
+                      //               //       // log('not punchIn');
+                      //               //       // Navigator.pushNamedAndRemoveUntil(
+                      //               //       //   context,
+                      //               //       //   AppRoutes.attendance,
+                      //               //       //   (route) => false,
+                      //               //       // );
+                      //               //     }
+                      //               //   },
+                      //               // );
+                      //               ref
+                      //                   .read(attendanceProvider.notifier)
+                      //                   .onPunchIn(context)
+                      //                   .then(
+                      //                 (value) {
+                      //                   ref
+                      //                       .read(attendanceProvider.notifier)
+                      //                       .checkPunch()
+                      //                       .then(
+                      //                     (value) {
+                      //                       if (value == false) {
+                      //                         log('punchedIn');
+                      //                         switch (role) {
+                      //                           case 'admin':
+                      //                             log("Navigating to admin dashboard");
+                      //                             Navigator
+                      //                                 .pushNamedAndRemoveUntil(
+                      //                               context,
+                      //                               AppRoutes
+                      //                                   .collectionHome, // Admin dashboard route
+                      //                               (route) =>
+                      //                                   false, // Remove all previous routes
+                      //                             );
+                      //                             break;
+                      //                           case 'sales':
+                      //                             log("Navigating to sales dashboard");
+                      //                             Navigator
+                      //                                 .pushNamedAndRemoveUntil(
+                      //                               context,
+                      //                               AppRoutes
+                      //                                   .dashBoard, // Sales dashboard route
+                      //                               (route) =>
+                      //                                   false, // Remove all previous routes
+                      //                             );
+                      //                             break;
+                      //                           case 'collection':
+                      //                             log("Navigating to collection dashboard");
+                      //                             Navigator
+                      //                                 .pushNamedAndRemoveUntil(
+                      //                               context,
+                      //                               AppRoutes
+                      //                                   .collectionHome, // Collection dashboard route
+                      //                               (route) =>
+                      //                                   false, // Remove all previous routes
+                      //                             );
+                      //                             break;
+                      //                           default:
+                      //                             // Handle unknown roles or navigate to a default screen
+                      //                             log('No matching role found');
+                      //                             break;
+                      //                         }
+                      //                       } else {
+                      //                         log('not punch out');
+                      //                       }
+                      //                     },
+                      //                   );
+                      //                 },
+                      //               );
+                      //             },
+                      //             child: checkpunchProvider.isLoading
+                      //                 ? const Center(
+                      //                     child: CircularProgressIndicator(
+                      //                       color: Colors.blue,
+                      //                     ),
+                      //                   )
+                      //                 : Text(
+                      //                     'PunchIn',
+                      //                     style: TextStyle(color: Colors.white),
+                      //                   )),
+                      //       )
+                      //     : SizedBox.shrink(),
+                      // SizedBox(
+                      //   height: displayHeight(context) * 0.05,
+                      // ),
+                      // Center(
+                      //   child: SizedBox(
+                      //       width: displayWidth(context) * 0.03,
+                      //       child: const Divider(
+                      //         height: 2,
+                      //         color: AppColors.gray,
+                      //       )),
+                      // ),
+                      // SizedBox(
+                      //   height: displayHeight(context) * 0.05,
+                      // ),
+                      // Align(
+                      //     alignment: Alignment.bottomCenter,
+                      //     child: Container(
+                      //       padding: const EdgeInsets.only(right: 10, left: 10),
+                      //       height: displayHeight(context) * 0.04,
+                      //       child: RichText(
+                      //         text: TextSpan(
+                      //           text:
+                      //               'If you have not any id for the log in purpose\nso you ca get you id send request for ',
+                      //           style: AppStyles.headingTextStyleFooter,
+                      //           children: <TextSpan>[
+                      //             TextSpan(
+                      //               text: 'Get ID',
+                      //               style: AppStyles.smallTextStyleRich,
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     )
+                      //     // Text(
+                      //     //   '© 2024 - Fincoopers Capital Private Limited *All Rights Reserved',
+                      //     //   style: AppStyles.smallTextStyle,
+                      //     // ),
+                      //     ),
                     ],
                   ),
                 ),

@@ -2,6 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../base/api/api.dart';
+
+import '../../../../base/service/session_service.dart';
+
 import '../home_collection_model/UserProfile.dart';
 
 class ApiResponseNotifier extends StateNotifier<ApiResponse?> {
@@ -9,8 +12,11 @@ class ApiResponseNotifier extends StateNotifier<ApiResponse?> {
 
   Future<void> fetchEmployeeDetails() async {
     try {
-      final String token =
+
+      String? token = await SessionService.getToken();
+      /*final String token =
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+*/
 
       final response = await Dio().get(Api.getAllocationDashboard,options: Options(headers: {"token": token}));
       print('Response status: ${response.statusCode}');

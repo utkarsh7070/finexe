@@ -6,16 +6,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../base/routes/routes.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
+import '../home_collection_model/user_profile_model.dart';
+import '../home_collection_viewmodel/fetchUserProfile.dart';
 
 class DashBoardSideBar extends ConsumerWidget{
   const DashBoardSideBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final sessionOut =  ref.read(userProfileProvider.notifier);
   return SafeArea(
     child: Container(
       height: displayHeight(context)*0.95,
-      width: displayWidth(context)*0.80,
+      width: displayWidth(context)*0.60,
       decoration:  const BoxDecoration(
           gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -54,20 +57,20 @@ class DashBoardSideBar extends ConsumerWidget{
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  ListTile(
-                    contentPadding: const EdgeInsets.fromLTRB(20, 30, 0, 10), // Adjust the horizontal padding as needed
-                    title: const Text(
-                      'Menu',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.white,
-                      ),
-                    ),
-                    onTap: () {
-                      // Handle navigation to settings
-                    },
-                  ),
+                  // ListTile(
+                  //   contentPadding: const EdgeInsets.fromLTRB(20, 30, 0, 10), // Adjust the horizontal padding as needed
+                  //   title: const Text(
+                  //     'Menu',
+                  //     style: TextStyle(
+                  //       fontSize: 24,
+                  //       fontWeight: FontWeight.bold,
+                  //       color: AppColors.white,
+                  //     ),
+                  //   ),
+                  //   onTap: () {
+                  //     // Handle navigation to settings
+                  //   },
+                  // ),
 
                   ListTile(
                     leading: const Icon(Icons.home, color: AppColors.white),
@@ -125,7 +128,9 @@ class DashBoardSideBar extends ConsumerWidget{
                     ),
                     onTap: () {
                       // Handle logout
-                      //_logoutAndRedirectToLogin();
+                      sessionOut.logoutSession().then((value) {
+                        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) => false,);
+                      },);
                     },
                   ),
 

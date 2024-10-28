@@ -5,7 +5,6 @@ import 'api.dart';
 
 
 final dioProvider = Provider<Dio>((ref) {
-
   final dio = Dio(BaseOptions(
     baseUrl: Api.baseUrl, // Change to your base URL
     connectTimeout:  Api.connectionTimeout,  // 5 seconds timeout
