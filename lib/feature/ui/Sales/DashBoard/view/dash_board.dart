@@ -2,9 +2,7 @@ import 'dart:developer';
 
 import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart';
 import 'package:finexe/feature/base/dialog/logout_dialog.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
-import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

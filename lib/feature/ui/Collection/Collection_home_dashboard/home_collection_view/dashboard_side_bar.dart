@@ -128,7 +128,8 @@ class DashBoardSideBar extends ConsumerWidget{
                     ),
                     onTap: () {
                       // Handle logout
-                      sessionOut.logoutSession().then((value) {
+                      sessionOut.logoutSession(ref).then((value) {
+                        ref.read(apiResponseProvider.notifier).clearData();
                         Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) => false,);
                       },);
                     },

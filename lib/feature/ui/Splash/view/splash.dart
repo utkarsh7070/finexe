@@ -10,7 +10,6 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
@@ -63,7 +62,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           print(isLoggedIn.value?.role);
           Future.microtask(() {
             if (isLoggedIn.value!.token!) {
-              if (isLoggedIn.value?.puntchStatus == true) {
+              if (isLoggedIn.value?.puntchStatus == false) {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   AppRoutes.attendance,
@@ -87,7 +86,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       (route) => false, // Remove all previous routes
                     );
                     break;
-                  case 'collection':
+                  case 'cashCollection':
                     log("Navigating to collection dashboard");
                     Navigator.pushNamedAndRemoveUntil(
                       context,
@@ -101,11 +100,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                     break;
                 }
               }
-            }else{
+            } else {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.login, // Collection dashboard route
-                    (route) => false, // Remove all previous routes
+                (route) => false, // Remove all previous routes
               );
             }
           });

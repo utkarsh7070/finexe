@@ -3,53 +3,87 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // Create a user profile model
 class UserProfile {
+  final bool isLoading;
   final String name;
   final String email;
   final String employeeId;
   final String mobileNo;
   final String address;
   final String joiningDate;
-  final String? imageUrl; // Add image URL (optional)
+  final String imageUrl;
+  final String employeeUniqueId;
+  final int visitAccepted;
+  final int visitPendingForApproval;
+  final int visitRejected;
+  final int collectionAcceptAmount;
+  final int collectionEmiAmountPendingForApproval;
+  final int collectionRejectAmount;
 
-
-  UserProfile({
-    required this.name,
-    required this.email,
-    required this.employeeId,
-    required this.mobileNo,
-    required this.address,
-    required this.joiningDate,
-    this.imageUrl, // Add this field to handle profile picture
+  UserProfile( {
+    this.isLoading = true,
+    this.employeeUniqueId = '',
+    this.visitAccepted = 0,
+    this.collectionAcceptAmount = 0,
+    this.visitPendingForApproval = 0,
+    this.visitRejected = 0,
+    this.collectionEmiAmountPendingForApproval = 0,
+    this.collectionRejectAmount = 0,
+    this.name = '',
+    this.email = '',
+    this.employeeId = '',
+    this.mobileNo = '',
+    this.address = '',
+    this.joiningDate = '',
+    this.imageUrl = '', // Add this field to handle profile picture
   });
-}
 
-// State notifier to manage API data
-// class UserProfileNotifier extends StateNotifier<UserProfile?> {
-//   UserProfileNotifier() : super(null);
-//
-//   // Future<void> logoutSession() async {
-//   //   SharedPreferences sharedPreferences =  await SharedPreferences.getInstance();
-//   //   sharedPreferences.clear();
-//   // }
-//
-//   // Future<void> fetchUserProfile() async {
-//   //   // Call your API here and parse the response
-//   //   // Example: final response = await http.get('your_api_endpoint');
-//   //
-//   //   // Simulate API response
-//   //   await Future.delayed(Duration(seconds: 2));
-//   //   state = UserProfile(
-//   //     name: "Nikit Sir",
-//   //     email: "rinkesh@270698@gmail.com",
-//   //     employeeId: "C171",
-//   //     mobileNo: "98765431234",
-//   //     address: "Indore",
-//   //     joiningDate: "July 28, 2024",
-//   //   );
-//   // }
-// }
-//
-// // Provider to access the state
-// final userProfileProvider = StateNotifierProvider<UserProfileNotifier, UserProfile?>(
-//       (ref) => UserProfileNotifier(),
-// );
+  copyWth({
+    bool? isLoading,
+    String? name,
+    String? email,
+    String? employeeId,
+    String? mobileNo,
+    String? address,
+    String? joiningDate,
+    String? imageUrl,
+    int? visitAccepted,
+    String? employeeUniqueId,
+    int? visitPendingForApproval,
+    int? visitRejected,
+    int? collectionAcceptAmount,
+    int? collectionEmiAmountPendingForApproval,
+    int? collectionRejectAmount,
+  }) {
+    UserProfile(
+      isLoading: isLoading??this.isLoading,
+        employeeUniqueId: employeeUniqueId?? this.employeeUniqueId,
+        collectionAcceptAmount:
+            collectionAcceptAmount ?? this.collectionAcceptAmount,
+        collectionEmiAmountPendingForApproval:
+            collectionEmiAmountPendingForApproval ??
+                this.collectionEmiAmountPendingForApproval,
+        collectionRejectAmount:
+            collectionRejectAmount ?? this.collectionRejectAmount,
+        visitAccepted: visitAccepted ?? this.visitAccepted,
+        visitPendingForApproval:
+            visitPendingForApproval ?? this.visitPendingForApproval,
+        visitRejected: visitRejected ?? this.visitRejected,
+        name: name ?? this.name,
+        joiningDate: joiningDate ?? this.joiningDate,
+        address: address ?? this.address,
+        employeeId: employeeId ?? this.employeeId,
+        email: email ?? this.email,
+        mobileNo: mobileNo ?? this.mobileNo,
+        imageUrl: imageUrl ?? this.imageUrl);
+  }
+}
+// ${data.value?.items.visitAccepted??''}', 'Visits Accepted'),
+// buildCard(Icons.person, '${data.value?.items.visitPendingForApproval??''}', 'Visits Pending'),
+// buildCard(Icons.person, '${data.value?.items.visitRejected??''}', 'Visits Rejected'),
+// buildCard(
+// Icons.currency_rupee, '${data.value?.items.collectionAcceptAmount??''}', 'Collections Accepted'),
+// buildCard(
+// Icons.currency_rupee, '${data.value?.items.collectionEmiAmountPendingForApproval??''}', 'Collections Pending'),
+// buildCard(
+// Icons.currency_rupee, '${data.value?.items.collectionRejectAmount??''}', 'Collections Rejected'),
+// ],
