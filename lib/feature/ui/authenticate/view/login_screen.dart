@@ -1,13 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-import 'package:finexe/feature/Punch_In_Out/viewmodel/viewmodel.dart';
 import 'package:finexe/feature/base/dialog/all_permission_dialog.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
-import 'package:finexe/feature/base/utils/widget/app_button.dart';
-import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -63,7 +60,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     log('isLoggedIn: ' + isLoggedIn.toString());
-    final checkpunchProvider = ref.watch(attendanceProvider);
+    // final checkPunchProvider = ref.watch(attendanceProvider);
 
     final focusStates = ref.watch(dualFocusProvider);
     final focusViewModel = ref.read(dualFocusProvider.notifier);

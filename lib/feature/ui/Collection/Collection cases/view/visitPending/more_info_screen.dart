@@ -10,8 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-
 import '../../../../../base/api/api.dart';
 import '../../model/VisitItemCallingModelData.dart';
 import '../../model/VisitItemCollectionModelData.dart';
@@ -1282,7 +1280,6 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                     fit: BoxFit.contain,
                   )
                 else
-                // Show image
                   Image.network(
                     url,
                     fit: BoxFit.cover,

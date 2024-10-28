@@ -14,7 +14,7 @@ class DashBoardSideBar extends ConsumerWidget{
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sessionOut =  ref.read(userProfileProvider.notifier);
+    final sessionOut =  ref.read(apiResponseProvider.notifier);
   return SafeArea(
     child: Container(
       height: displayHeight(context)*0.95,

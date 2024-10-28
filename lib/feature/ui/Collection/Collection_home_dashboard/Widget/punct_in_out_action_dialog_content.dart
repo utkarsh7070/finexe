@@ -11,7 +11,7 @@ class PunchOutActionContent extends ConsumerWidget{
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-final punchOut = ref.read(userProfileProvider.notifier);
+final punchOut = ref.read(apiResponseProvider.notifier);
     return  Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
