@@ -118,7 +118,7 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
                     ElevatedButton(
                       onPressed: () {
                         log('onPunchOut');
-                        ref.read(attendanceProvider.notifier).onPunchOut().then(
+                        ref.read(attendanceProvider.notifier).onPunchOut(context).then(
                           (value) {
                             log('punchout');
                             // Navigator.pushNamedAndRemoveUntil(

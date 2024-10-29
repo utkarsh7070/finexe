@@ -18,7 +18,7 @@ class AttendanceState {
   final bool punchStatus;
   final Position? currentPosition;
   final String? distanceMessage;
-  final CheckAttendanceResponceModel? checkAttendanceResponse;
+  final CheckAttendanceResponseModel? checkAttendanceResponse;
 
   AttendanceState({
     this.employeeName = '',
@@ -35,7 +35,7 @@ class AttendanceState {
     bool? punchStatus,
     Position? currentPosition,
     String? distanceMessage,
-    CheckAttendanceResponceModel? checkAttendanceResponse,
+    CheckAttendanceResponseModel? checkAttendanceResponse,
   }) {
     return AttendanceState(
       employeeName: employeeName ?? this.employeeName,
@@ -97,13 +97,12 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
         distanceFilter: 100,
       ),
     );
-
     state = state.copyWith(currentPosition: position);
-
     await getToken();
     await checkPunch().then(
       (value) {
         state = state.copyWith(isLoading: false);
+        print('puch>>>>>>>> ');
         log('puch>>>>>>>> ');
       },
     );
@@ -111,10 +110,13 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 
   Future<void> getToken() async {
     SharedPreferences preferences = await SessionService.getSession();
+    final String? name = preferences.getString('email');
+    print('set in pinchin screen name $name');
+
     storedToken = preferences.getString('token');
-    final name = preferences.getString('email');
+    // final name = preferences.getString('email');
     state = state.copyWith(isLoading: false);
-    state = state.copyWith(employeeName: name);
+    state = state.copyWith(employeeName: preferences.getString('email'));
     log("storedToken: $storedToken");
   }
 
@@ -128,8 +130,8 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 
       try {
         var response = await _punchInRepository.checkPunch(location, token);
-        var checkAttendanceResponse =
-            CheckAttendanceResponceModel.fromJson(response.data);
+        CheckAttendanceResponseModel checkAttendanceResponse =
+        CheckAttendanceResponseModel.fromJson(response.data);
         state =
             state.copyWith(checkAttendanceResponse: checkAttendanceResponse);
         state = state.copyWith(
@@ -138,7 +140,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
         return checkAttendanceResponse.items.viewButton;
       } on DioException catch (error) {
         state = state.copyWith(isLoading: false);
-        DioExceptions.fromDioError(error);
+        // DioExceptions.fromDioError(error,context);
       }
     }
     return null;
@@ -162,28 +164,29 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
         switch (role) {
           case 'admin':
             log("Navigating to admin dashboard");
-
             Navigator.pushNamedAndRemoveUntil(
               context,
-              AppRoutes.dashBoard, // Admin dashboard route
+              AppRoutes.collectionHome, // Admin dashboard route
               (route) => false, // Remove all previous routes
             );
-            Navigator.pushNamed(context, AppRoutes.collectionHome);
 
             break;
           case 'sales':
             log("Navigating to sales dashboard");
             Navigator.pushNamedAndRemoveUntil(
               context,
-              AppRoutes.saleApplicationForm, // Sales dashboard route
+              AppRoutes.dashBoard, // Sales dashboard route
               (route) => false, // Remove all previous routes
             );
-            Navigator.pushNamed(context, AppRoutes.dashBoard);
 
             break;
           case 'cashCollection':
             log("Navigating to collection dashboard");
-            Navigator.pushNamed(context, AppRoutes.collectionHome);
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              AppRoutes.collectionHome,
+              (route) => false,
+            );
             break;
           default:
             // Handle unknown roles or navigate to a default screen
@@ -235,13 +238,13 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       return true;
       // Navigator.pushNamed(context, AppRoutes.eod);
     } on DioException catch (error) {
-      DioExceptions.fromDioError(error);
+      DioExceptions.fromDioError(error,context);
       state = state.copyWith(isLoading: false);
     }
     return false;
   }
 
-  Future<bool?> onPunchOut() async {
+  Future<bool?> onPunchOut(BuildContext context) async {
     print(storedToken);
     Map<String, String> token = {"token": storedToken!};
     // Map<String, String> tokens = {"token": token!};
@@ -277,7 +280,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       await checkPunch();
       return true;
     } on DioException catch (error) {
-      DioExceptions.fromDioError(error);
+      DioExceptions.fromDioError(error,context);
     }
     return null;
   }
@@ -293,6 +296,45 @@ final attendanceProvider =
   return AttendanceNotifier(ref.watch(punchInRepositoryProvider));
 });
 
-// final checkPunch =  StateProvider<AsyncValue<bool>>((ref) {
-//   return false;
-// },);
+
+//
+// class UserSession extends AsyncNotifier<String?> {
+//   @override
+//   Future<String?> build() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     return prefs.getString('email'); // Loads username if available
+//   }
+//
+//   // Future<void> setUser(String username) async {
+//   //   final prefs = await SharedPreferences.getInstance();
+//   //   await prefs.setString('username', username);
+//   //   state = AsyncData(username);
+//   // }
+//   //
+//   // Future<void> clearUser() async {
+//   //   final prefs = await SharedPreferences.getInstance();
+//   //   await prefs.clear();
+//   //   state = const AsyncData(null);
+//   // }
+// }
+//
+// final userSessionProvider = AsyncNotifierProvider<UserSession, String?>(UserSession.new);
+
+
+// final checkCurrentLocation = FutureProvider<String>(
+//   (ref) async {
+//     SharedPreferences preferences = await SessionService.getSession();
+//     final String? name = await preferences.getString('email');
+//     print('set in punch in screen name $name');
+//     return name!;
+//   },
+// );
+//
+// Future<Position> getCurrentLocation() async {
+//   await Geolocator.requestPermission();
+//   LocationSettings locationSettings = const LocationSettings(
+//     accuracy: LocationAccuracy.high,
+//     distanceFilter: 100,
+//   );
+//   return Geolocator.getCurrentPosition(locationSettings: locationSettings);
+// }

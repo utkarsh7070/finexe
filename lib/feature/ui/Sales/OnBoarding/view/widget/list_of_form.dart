@@ -15,6 +15,7 @@ class DashBoardFormList extends ConsumerStatefulWidget {
 class _DashBoardFormList extends ConsumerState<DashBoardFormList>
     with SingleTickerProviderStateMixin{
   bool _isAnimationPlayed = false;
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -34,7 +35,12 @@ class _DashBoardFormList extends ConsumerState<DashBoardFormList>
     parent: _controller,
     curve: Curves.easeInOut,
   );
-
+  @override
+  void dispose() {
+    _controller.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
 // class DashBoardFormList extends ConsumerWidget {
   final List<Color> gradientColors = [
     Colors.cyan,

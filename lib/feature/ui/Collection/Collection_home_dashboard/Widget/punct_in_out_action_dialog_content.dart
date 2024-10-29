@@ -21,7 +21,7 @@ final punchOut = ref.read(apiResponseProvider.notifier);
             style: TextStyle(color: Colors.white),
           ),
           onPressed: ()  {
-             punchOut.clickPunchOut();
+             punchOut.clickPunchOut(context);
              Navigator.pop(context);
 
             // Navigator.pushNamedAndRemoveUntil(context, AppRoutes.attendance, (route) => true,);

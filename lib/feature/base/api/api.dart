@@ -16,7 +16,7 @@ class Api {
   static const String punchIn =
       '${baseUrl}v1/adminMaster/employe/punch?action=in';
   static const String checkPunchIn =
-      '${baseUrl}v1/adminMaster/employe/attendance';
+      '${baseUrl}v1/adminMaster/employe/attendanceCheck';
   static const String submitNewLoan =
       '${baseUrl}v1/salesMan/createDraftLoginFees';
   static const String submitApplicantForm =

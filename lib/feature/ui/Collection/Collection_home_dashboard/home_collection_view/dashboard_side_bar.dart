@@ -1,3 +1,4 @@
+import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/home_collection_view/DashboardScreen.dart';
 import 'package:flutter/material.dart';
@@ -17,18 +18,19 @@ class DashBoardSideBar extends ConsumerWidget{
     final sessionOut =  ref.read(apiResponseProvider.notifier);
   return SafeArea(
     child: Container(
-      height: displayHeight(context)*0.95,
-      width: displayWidth(context)*0.60,
+      height: displayHeight(context)*0.40,
+      width: displayWidth(context)*0.35,
       decoration:  const BoxDecoration(
-          gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFFFFFFFF),
-            Color(0xFF3CBCFF),
-            Color(0xFF09ABFF),
-            Color(0xFF0082C6),
-          ]),
+color: AppColors.white,
+          // gradient: LinearGradient(
+          // begin: Alignment.topCenter,
+          // end: Alignment.bottomCenter,
+          // colors: [
+          //   Color(0xFFFFFFFF),
+          //   Color(0xFF3CBCFF),
+          //   Color(0xFF09ABFF),
+          //   Color(0xFF0082C6),
+          // ]),
           borderRadius: BorderRadius.all(Radius.circular(20))),
       // padding: const EdgeInsets.only(top: 15),
       child: Column(
@@ -36,18 +38,17 @@ class DashBoardSideBar extends ConsumerWidget{
             // Top white section with image
             Column(
               children: [
-                const SizedBox(height: 10),
-                SizedBox(
-                  height: 100,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10), // Add padding around the image for spacing
-                    child: Image.asset(
-                      'assets/images/finexe_text_image.png',height: displayHeight(context)*0.10,width: displayWidth(context)*0.30, // Your image path
-                      fit: BoxFit.contain, // Ensure the image is contained within the available space
-                    ),
-                  ),
-
-                ),
+                // SizedBox(
+                //   height: 100,
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(10), // Add padding around the image for spacing
+                //     child: Image.asset(
+                //       'assets/images/finexe_text_image.png',height: displayHeight(context)*0.10,width: displayWidth(context)*0.30, // Your image path
+                //       fit: BoxFit.contain, // Ensure the image is contained within the available space
+                //     ),
+                //   ),
+                //
+                // ),
               ],
             ),
       
@@ -73,10 +74,16 @@ class DashBoardSideBar extends ConsumerWidget{
                   // ),
 
                   ListTile(
-                    leading: const Icon(Icons.home, color: AppColors.white),
-                    title: const Text(
-                      'Home',
-                      style: TextStyle(color: AppColors.white),
+
+                    title:
+                    Column(
+                      children: [
+                        Image.asset('assets/images/home.png',width: displayWidth(context)*0.10,height: displayHeight(context)*0.07,),
+                        const Text(
+                          'Home',
+                          style: TextStyle(color: AppColors.black),
+                        ),
+                      ],
                     ),
                     onTap: () {
                       Navigator.push(
@@ -97,10 +104,16 @@ class DashBoardSideBar extends ConsumerWidget{
                   ),
 
                   ListTile(
-                    leading: const Icon(Icons.money, color: AppColors.white),
-                    title: const Text(
-                      'Collection',
-                      style: TextStyle(color: AppColors.white),
+                    // leading: const Icon(Icons.money, color: AppColors.black),
+                    title:
+                    Column(
+                      children: [
+                        Image.asset('assets/images/package.png',width: displayWidth(context)*0.10,height: displayHeight(context)*0.07,),
+                        const Text(
+                          'Collection',
+                          style: TextStyle(color: AppColors.black),
+                        ),
+                      ],
                     ),
                     onTap: () {
                       Navigator.pop(context);
@@ -121,17 +134,21 @@ class DashBoardSideBar extends ConsumerWidget{
                   ),
 
                   ListTile(
-                    leading: const Icon(Icons.logout, color: AppColors.white),
-                    title: const Text(
-                      'Logout',
-                      style: TextStyle(color: AppColors.white),
+                    title:
+                    Column(
+                      children: [
+                        Image.asset('assets/images/logout.png',width: displayWidth(context)*0.10,height: displayHeight(context)*0.07,),
+                        const Text(
+                          'Logout',
+                          style: TextStyle(color: AppColors.black),
+                        ),
+                      ],
                     ),
                     onTap: () {
                       // Handle logout
-                      sessionOut.logoutSession(ref).then((value) {
-                        ref.read(apiResponseProvider.notifier).clearData();
-                        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) => false,);
-                      },);
+                      ref.read(apiResponseProvider.notifier).clearData();
+                      SessionService.deleteSession();
+                      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) =>false,);
                     },
                   ),
 

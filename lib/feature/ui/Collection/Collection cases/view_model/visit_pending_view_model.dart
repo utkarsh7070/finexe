@@ -372,7 +372,6 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
 
   void updatePhotoValue(String value, context) {
     state = state.copyWith(photoFile: value);
-
     Navigator.pop(context);
   }
 
@@ -380,7 +379,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     state = state.copyWith(commonId: id);
   }
 
-  Future<void> updateEmiSubmitButton({required ItemsDetails detail}) async {
+  Future<void> updateEmiSubmitButton({required ItemsDetails detail,required BuildContext context}) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
     UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
@@ -406,6 +405,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     print(response.statusMessage);
     print(response.statusCode);
     if (response.statusCode == 200) {
+      updatePhotoValue('',context);
       // return true;
       if (kDebugMode) {
         print('image ${response.data}');

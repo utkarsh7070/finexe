@@ -437,7 +437,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         textStyle: AppStyles.buttonLightTextStyle,
                         width: displayWidth(context),
                         onTap: () {
-                          paymentViewModel.updateEmiSubmitButton(detail: item!);
+                          paymentViewModel.updateEmiSubmitButton(detail: item!,context: context);
                         },
                         label: 'Submit',
                       )

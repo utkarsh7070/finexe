@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:finexe/feature/base/extentions/capital_letter.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:roam_flutter/roam_flutter.dart';
 import '../../../../base/api/api.dart';
 import '../home_collection_viewmodel/fetchUserProfile.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
@@ -17,7 +21,38 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+    initialiseRoamSdk();
     ref.read(apiResponseProvider.notifier).fetchDashboardData();
+  }
+  Future<void> initialiseRoamSdk() async {
+    print("Roam SDK initialization started.");
+    // await _requestLocationPermission(); // Ensure permission is granted first
+    await Roam.initialize(
+      publishKey: '58f73be503e069888cf19289bf728c14c2e841c47e5842a1054f9e5f12f52583',
+    );
+    // Roam.createUser(description:'${apiResponsePrPovider.name}',callBack: ({user}) {
+// do something on create user
+//       print(user);
+//     });
+
+    Permission.locationAlways.request();
+
+    Roam.startTracking(trackingMode: 'active');
+
+    Roam.onLocation((location) {
+      print(jsonEncode(location));
+      print('our location ${jsonEncode(location)}');
+    });
+  }
+
+  void startTracking() {
+    try {
+      Roam.startTracking(trackingMode: 'active');
+      print("Tracking started successfully.");
+    } catch (e, stackTrace) {
+      print("Failed to start tracking: $e");
+      print("Stack trace: $stackTrace");
+    }
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -35,6 +70,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         appBar: AppBar(
           // automaticallyImplyLeading: true,
           actions: [
+   GestureDetector(
+                onTap: () {
+                  _showMyDialog(context, ref);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 5.0),
+                  child: Image.asset(
+                    'assets/images/fingerprint.png',
+                    height: displayHeight(context) * 0.06,
+                    width: displayWidth(context) * 0.10,
+                  ),
+                )),
+            SizedBox(width: displayWidth(context)*0.05,),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: CircleAvatar(
@@ -48,46 +96,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 },
               ),
             ),
-            // CircleAvatar(
-            //   radius: 20,
-            //   child: ClipOval(
-            //     child: Image.asset(
-            //       'assets/images/prof.jpeg',
-            //       fit: BoxFit.cover,
-            //       width:
-            //       40, // Adjust width and height to match CircleAvatar radius
-            //       height: 40,
-            //     ),
-            //   ),
-            // ),
           ],
           flexibleSpace: Container(
             color: Colors.white,
           ),
           backgroundColor: Colors.white,
 
-          // title: Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     Image(
-          //       image: AssetImage('assets/images/drawer.png'),
-          //       height: displayHeight(context) * 0.1,
-          //       width: displayWidth(context) * 0.15,
-          //     ),
-          //     CircleAvatar(
-          //       radius: 20,
-          //       child: ClipOval(
-          //         child: Image.asset(
-          //           'assets/images/prof.jpeg',
-          //           fit: BoxFit.cover,
-          //           width:
-          //           40, // Adjust width and height to match CircleAvatar radius
-          //           height: 40,
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ),
+
         ),
         body:
         SingleChildScrollView(
@@ -98,19 +113,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   SizedBox(
                     width: displayWidth(context) * 0.05,
                   ),
-                  Container(
+                  SizedBox(
                       height: displayHeight(context) * 0.08,
                       width: displayWidth(context) * 0.1,
                       child:
-                      Image(image: AssetImage('assets/images/Morning.png'))),
+                      const Image(image: AssetImage('assets/images/Morning.png'))),
                   SizedBox(
                     width: displayWidth(context) * 0.04,
                   ),
                   Text(
-                    'Good morning',
-                    style: TextStyle(
+                    dataViewModel.greeting(),
+                    style: const TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w600,
                         color: Color(0xff475467)),
                   )
                 ],
@@ -121,10 +136,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 child: Text(
                  data.name.capitalize(),
                   textAlign: TextAlign.left,
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xff101828)),
+                      color: Colors.black),
                 ),
               ),
               SizedBox(
@@ -135,14 +150,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   SizedBox(
                     width: displayWidth(context) * 0.05,
                   ),
-                  Text(
+                  const Text(
                     'Get Ready- ',
                     style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                         color: Color(0xff0082C6)),
                   ),
-                  Text(
+                  const Text(
                     'You will do your best on today we will meet',
                     style: TextStyle(
                         fontSize: 11,
@@ -152,46 +167,43 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ],
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.03,
               ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Image(
-                      image: AssetImage(
-                        'assets/images/leftside.png',
-                      ),
-                      height: displayHeight(context) * 0.02,
-                      width: displayWidth(context) * 0.25,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Image(
+                    image: const AssetImage(
+                      'assets/images/leftside.png',
                     ),
-                    SizedBox(
-                      width: displayWidth(context) * 0.025,
-                    ),
-                    Text(
-                      'Visit Update’s',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18,
-                          color: Color(0xff475467)),
-                    ),
-                    SizedBox(
-                      width: displayWidth(context) * 0.025,
-                    ),
-                    Image(
-                      image: AssetImage('assets/images/rightside.png'),
-                      height: displayHeight(context) * 0.02,
-                      width: displayWidth(context) * 0.25,
-                    ),
-                  ],
-                ),
+                    height: displayHeight(context) * 0.02,
+                    width: displayWidth(context) * 0.25,
+                  ),
+                  SizedBox(
+                    width: displayWidth(context) * 0.02,
+                  ),
+                  const Text(
+                    'Visit Update’s',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        color: Color(0xff475467)),
+                  ),
+                  SizedBox(
+                    width: displayWidth(context) * 0.02,
+                  ),
+                  Image(
+                    image: const AssetImage('assets/images/rightside.png'),
+                    height: displayHeight(context) * 0.02,
+                    width: displayWidth(context) * 0.25,
+                  ),
+                ],
               ),
               rectBox(
                   backImage: 'assets/images/backgreen.png',
                   iconImage: 'assets/images/right.png',
                   title: 'Visit Updated',
-                  stitle: 'Case 180+ Now',
+                  stitle: 'Case ${data.visitAccepted} Now',
                   context: context),
               Row(
                 children: [
@@ -199,30 +211,30 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       backImage: 'assets/images/square.png',
                       iconImage: 'assets/images/watch.png',
                       title: 'Visit pending',
-                      stitle: 'Case 180+ Now',
+                      stitle: 'Case ${data.visitPendingForApproval} Now',
                       context: context,
-                      titleColor: Color(0xffFFA500),
+                      titleColor: const Color(0xffFFA500),
                       stitleColor: Colors.orange),
                   SquareBox(
                       backImage: 'assets/images/rejected.png',
                       iconImage: 'assets/images/rejected_icon.png',
                       title: 'Visit rejected',
-                      stitle: 'Case 180+ Now',
+                      stitle: 'Case ${data.visitRejected} Now',
                       context: context,
-                      titleColor: Color(0xffEE6C52),
+                      titleColor: const Color(0xffEE6C52),
                       stitleColor: const Color.fromARGB(255, 218, 96, 87)),
                 ],
               ),
               SizedBox(
-                height: displayHeight(context) * 0.03,
+                height: displayHeight(context) * 0.02,
               ),
               Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.only(left: 20,right: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Image(
-                      image: AssetImage(
+                      image: const AssetImage(
                         'assets/images/leftside.png',
                       ),
                       height: displayHeight(context) * 0.02,
@@ -231,7 +243,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     SizedBox(
                       width: displayWidth(context) * 0.025,
                     ),
-                    Text(
+                    const Text(
                       'Collection Update’s',
                       style: TextStyle(
                           fontWeight: FontWeight.w600,
@@ -242,7 +254,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       width: displayWidth(context) * 0.025,
                     ),
                     Image(
-                      image: AssetImage('assets/images/rightside.png'),
+                      image: const AssetImage('assets/images/rightside.png'),
                       height: displayHeight(context) * 0.02,
                       width: displayWidth(context) * 0.18,
                     ),
@@ -255,7 +267,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     backImage: 'assets/images/rectgreen.png',
                     iconImage: 'assets/images/rectgreen_icon.png',
                     title: 'Collection Accepted',
-                    stitle: 'Case 180+ Now',
+                    stitle: 'Case ${data.collectionAcceptAmount} Now',
                     context: context),
               ),
               SizedBox(
@@ -267,17 +279,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       backImage: 'assets/images/tback.png',
                       iconImage: 'assets/images/orange_dollar.png',
                       title: 'Collection pending',
-                      stitle: 'Case 180+ Now',
+                      stitle: 'Case ${data.collectionEmiAmountPendingForApproval} Now',
                       context: context,
-                      titleColor: Color(0xffFFA500),
+                      titleColor: const Color(0xffFFA500),
                       stitleColor: Colors.orange),
                   SquareBoxBottom(
                       backImage: 'assets/images/pinkback.png',
                       iconImage: 'assets/images/pink_dollar.png',
                       title: 'Collection rejected',
-                      stitle: 'Case 180+ Now',
+                      stitle: 'Case ${data.collectionRejectAmount} Now',
                       context: context,
-                      titleColor: Color(0xffEE6C52),
+                      titleColor: const Color(0xffEE6C52),
                       stitleColor: const Color.fromARGB(255, 218, 96, 87)),
                 ],
               ),
@@ -289,9 +301,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
       );
     }, error: (error, stackTrace) {
-      return Scaffold();
+      return const Scaffold();
     }, loading: () {
-      return Scaffold(body: Center(child: CircularProgressIndicator()),);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()),);
     },) ;
 
 
@@ -555,14 +567,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 children: [
                   Text(
                     title ?? 'Visit Updated',
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
                         color: Color(0xff05BA65)),
                   ),
                   Text(
                     stitle ?? 'Case 180+ Now ',
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 12,
                         // color: Color(0xff05BA65B2),

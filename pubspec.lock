@@ -1178,6 +1178,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.0"
+  roam_flutter:
+    dependency: "direct main"
+    description:
+      name: roam_flutter
+      sha256: "539aa4a11b9d50ab94921f192a1e49163e679f834eb2134ccfa78b7d932617fe"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.6"
   rxdart:
     dependency: transitive
     description:

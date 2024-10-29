@@ -13,6 +13,8 @@ class SessionService {
     preferences.setString('name', name ?? '');
     preferences.setString('email', email ?? '');
     preferences.setString('roleName', role ?? '');
+
+    print('session values ${preferences.getString('token')}  ${preferences.getString('employeId')}   ${preferences.getString('name')}   ${preferences.getString('email') }  ${preferences.getString('roleName') }');
   }
 
   // Method to retrieve the token

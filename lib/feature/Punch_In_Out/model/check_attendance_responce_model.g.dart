@@ -6,18 +6,18 @@ part of 'check_attendance_responce_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-CheckAttendanceResponceModel _$CheckAttendanceResponceModelFromJson(
+CheckAttendanceResponseModel _$CheckAttendanceResponseModelFromJson(
         Map<String, dynamic> json) =>
-    CheckAttendanceResponceModel(
+    CheckAttendanceResponseModel(
       status: json['status'] as bool,
       subCode: (json['subCode'] as num).toInt(),
       message: json['message'] as String,
       error: json['error'] as String,
-      items: Item.fromJson(json['items'] as Map<String, dynamic>),
+      items: Items.fromJson(json['items'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$CheckAttendanceResponceModelToJson(
-        CheckAttendanceResponceModel instance) =>
+Map<String, dynamic> _$CheckAttendanceResponseModelToJson(
+        CheckAttendanceResponseModel instance) =>
     <String, dynamic>{
       'status': instance.status,
       'subCode': instance.subCode,
@@ -26,12 +26,16 @@ Map<String, dynamic> _$CheckAttendanceResponceModelToJson(
       'items': instance.items,
     };
 
-Item _$ItemFromJson(Map<String, dynamic> json) => Item(
+Items _$ItemsFromJson(Map<String, dynamic> json) => Items(
       allowed: json['allowed'] as bool,
       viewButton: json['viewButton'] as bool,
+      punchIn: json['punchIn'] as bool,
+      punchOut: json['punchOut'] as bool,
     );
 
-Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
+Map<String, dynamic> _$ItemsToJson(Items instance) => <String, dynamic>{
       'allowed': instance.allowed,
       'viewButton': instance.viewButton,
+      'punchIn': instance.punchIn,
+      'punchOut': instance.punchOut,
     };

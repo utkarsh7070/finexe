@@ -1,8 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 part 'check_attendance_responce_model.g.dart';
 
+
 @JsonSerializable()
-class CheckAttendanceResponceModel {
+class CheckAttendanceResponseModel {
   @JsonKey(name: "status")
   bool status;
   @JsonKey(name: "subCode")
@@ -12,9 +13,9 @@ class CheckAttendanceResponceModel {
   @JsonKey(name: "error")
   String error;
   @JsonKey(name: "items")
-  Item items;
+  Items items;
 
-  CheckAttendanceResponceModel({
+  CheckAttendanceResponseModel({
     required this.status,
     required this.subCode,
     required this.message,
@@ -22,24 +23,31 @@ class CheckAttendanceResponceModel {
     required this.items,
   });
 
-  factory CheckAttendanceResponceModel.fromJson(Map<String, dynamic> json) => _$CheckAttendanceResponceModelFromJson(json);
+  factory CheckAttendanceResponseModel.fromJson(Map<String, dynamic> json) => _$CheckAttendanceResponseModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$CheckAttendanceResponceModelToJson(this);
+  Map<String, dynamic> toJson() => _$CheckAttendanceResponseModelToJson(this);
 }
 
 @JsonSerializable()
-class Item {
+class Items {
   @JsonKey(name: "allowed")
   bool allowed;
   @JsonKey(name: "viewButton")
   bool viewButton;
+  @JsonKey(name: "punchIn")
+  bool punchIn;
+  @JsonKey(name: "punchOut")
+  bool punchOut;
 
-  Item({
+  Items({
     required this.allowed,
     required this.viewButton,
+    required this.punchIn,
+    required this.punchOut,
   });
 
-  factory Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
+  factory Items.fromJson(Map<String, dynamic> json) => _$ItemsFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ItemToJson(this);
+  Map<String, dynamic> toJson() => _$ItemsToJson(this);
 }
+

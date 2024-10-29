@@ -33,10 +33,11 @@ final sessionProvider = FutureProvider.autoDispose((ref) async {
     try {
       var response = await _punchInRepository.checkPunch(location, token);
       var checkAttendanceResponse =
-          CheckAttendanceResponceModel.fromJson(response.data);
-      punchStatus =  checkAttendanceResponse.items.viewButton;
+      CheckAttendanceResponseModel.fromJson(response.data);
+      punchStatus =  checkAttendanceResponse.items.punchIn;
     } on DioException catch (error) {
-      DioExceptions.fromDioError(error);
+
+      // DioExceptions.fromDioError(error,context);
     }
   }
   return AsyncValue.data(SesstionModel(

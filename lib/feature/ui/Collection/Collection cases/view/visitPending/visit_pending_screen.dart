@@ -41,54 +41,54 @@ class VisitPendingScreen extends ConsumerWidget {
           width: displayWidth(context),
           child: Column(
             children: [
-              AdvancedSearch(
-                // data: ,
-                maxElementsToDisplay: 10,
-                singleItemHeight: 50,
-                borderColor: Colors.grey,
-                minLettersForSearch: 0,
-                selectedTextColor: const Color(0xFF3363D9),
-                fontSize: 14,
-                borderRadius: 12.0,
-                hintText: 'Search Me',
-                cursorColor: Colors.blueGrey,
-                autoCorrect: false,
-                focusedBorderColor: Colors.blue,
-                searchResultsBgColor: const Color(0xFAFAFA),
-                disabledBorderColor: Colors.cyan,
-                enabledBorderColor: Colors.black,
-                enabled: true,
-                caseSensitive: false,
-                inputTextFieldBgColor: Colors.white10,
-                clearSearchEnabled: true,
-                itemsShownAtStart: 10,
-                searchMode: SearchMode.CONTAINS,
-                showListOfResults: true,
-                unSelectedTextColor: Colors.black54,
-                verticalPadding: 10,
-                horizontalPadding: 10,
-                hideHintOnTextInputFocus: true,
-                hintTextColor: Colors.grey,
-                onItemTap: (index, value) {
-                  if (kDebugMode) {
-                    print("selected item index is $index");
-                  }
-                },
-                onSearchClear: () {
-                  if (kDebugMode) {
-                    print("Cleared Search");
-                  }
-                },
-                onSubmitted: (searchText, listOfResults) {
-                  print("Submitted: " + searchText);
-                },
-                onEditingProgress: (searchText, listOfResults) {
-                  print("TextEdited: " + searchText);
-                  print("LENGTH: " + listOfResults.length.toString());
-                },
-
-                searchItems:[]
-              ),
+              // AdvancedSearch(
+              //   // data: ,
+              //   maxElementsToDisplay: 10,
+              //   singleItemHeight: 50,
+              //   borderColor: Colors.grey,
+              //   minLettersForSearch: 0,
+              //   selectedTextColor: const Color(0xFF3363D9),
+              //   fontSize: 14,
+              //   borderRadius: 12.0,
+              //   hintText: 'Search Me',
+              //   cursorColor: Colors.blueGrey,
+              //   autoCorrect: false,
+              //   focusedBorderColor: Colors.blue,
+              //   searchResultsBgColor: const Color(0xFAFAFA),
+              //   disabledBorderColor: Colors.cyan,
+              //   enabledBorderColor: Colors.black,
+              //   enabled: true,
+              //   caseSensitive: false,
+              //   inputTextFieldBgColor: Colors.white10,
+              //   clearSearchEnabled: true,
+              //   itemsShownAtStart: 10,
+              //   searchMode: SearchMode.CONTAINS,
+              //   showListOfResults: true,
+              //   unSelectedTextColor: Colors.black54,
+              //   verticalPadding: 10,
+              //   horizontalPadding: 10,
+              //   hideHintOnTextInputFocus: true,
+              //   hintTextColor: Colors.grey,
+              //   onItemTap: (index, value) {
+              //     if (kDebugMode) {
+              //       print("selected item index is $index");
+              //     }
+              //   },
+              //   onSearchClear: () {
+              //     if (kDebugMode) {
+              //       print("Cleared Search");
+              //     }
+              //   },
+              //   onSubmitted: (searchText, listOfResults) {
+              //     print("Submitted: " + searchText);
+              //   },
+              //   onEditingProgress: (searchText, listOfResults) {
+              //     print("TextEdited: " + searchText);
+              //     print("LENGTH: " + listOfResults.length.toString());
+              //   },
+              //
+              //   searchItems:[]
+              // ),
               SizedBox(
                 height: displayHeight(context) * 0.03,
               ),

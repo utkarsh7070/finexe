@@ -35,7 +35,7 @@ class ItemViewModel extends StateNotifier<List<DashBoardDrawerItem>> {
 }
 
 class TabViewModel extends StateNotifier<TabModel> {
-  TabViewModel() : super(TabModel(selectedIndex: 0));
+  TabViewModel() : super(TabModel(selectedIndex: 1));
 
   void setTabIndex(int index) {
     state = state.copyWith(selectedIndex: index);
