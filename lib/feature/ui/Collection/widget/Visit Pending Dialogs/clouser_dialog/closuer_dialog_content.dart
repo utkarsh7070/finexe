@@ -149,6 +149,7 @@ class ClosuerDialogContent extends ConsumerWidget {
                   SizedBox(
                     height: displayHeight(context) * 0.01,
                   ),
+
                   AppFloatTextField(
                     focusNode: paymentFocusViewModel.dateClosuerFocusNode,
                     currentState: paymentFocusStates['dateClosuerFocusNode'],
@@ -209,6 +210,7 @@ class ClosuerDialogContent extends ConsumerWidget {
                     textStyle: AppStyles.buttonLightTextStyle,
                     width: displayWidth(context),
                     onTap: () {
+
                       bool isValidate = paymentViewModel.validateClosuerForm();
                       if (isValidate) {
                         paymentViewModel
@@ -221,6 +223,7 @@ class ClosuerDialogContent extends ConsumerWidget {
                           },
                         );
                       }
+
                     },
                     label: 'Submit',
                   )

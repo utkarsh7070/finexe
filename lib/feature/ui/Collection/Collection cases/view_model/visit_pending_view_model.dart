@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/collection_mode_response_model.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/get_mode_by_id_response_model.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/update_emi_submit_request_model.dart';
@@ -92,7 +93,7 @@ final updateEmiFocusProvider =
 });
 
 final updateEmiViewModelProvider =
-    StateNotifierProvider<UpdateEmiViewModel, UpdateEmiModel>((ref)    {
+    StateNotifierProvider<UpdateEmiViewModel, UpdateEmiModel>((ref) {
   final dio = ref.read(dioProvider);
   return UpdateEmiViewModel(dio);
 });
@@ -124,7 +125,6 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
       state = state.copyWith(photoFile: pickedFile.path);
       return pickedFile;
     }
-    state = state.copyWith(isLoading: false);
     return null;
   }
 
@@ -232,10 +232,14 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
         }
 
         if (response.statusCode == 200) {
-          return true;
-          if (kDebugMode) {
-            print('image ${response.data}');
-          }
+          log('updated vist test');
+          showCustomSnackBar(
+              context, 'Visit Updated Successfully', Colors.green);
+
+          // return true;
+          // if (kDebugMode) {
+          //   print('image ${response.data}');
+          // }
         } else {
           throw Exception('Failed to load data');
           return false;
@@ -447,10 +451,14 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     if (response.statusCode == 200) {
       updatePhotoValue('',context);
       ref.invalidate(updateEmiViewModelProvider);
+
       // return true;
-      if (kDebugMode) {
-        print('image ${response.data}');
-      }
+      // if (kDebugMode) {
+      //   print('image ${response.data}');
+      // }
+      print('VisitClosureResponse ${response.data}');
+      showCustomSnackBar(context, 'EMI Submitted', Colors.green);
+      Navigator.pop(context);
     } else {
       throw Exception('Failed to load data');
       // return false;
@@ -637,6 +645,10 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
     print(response.statusMessage);
     print(response.statusCode);
     if (response.statusCode == 200) {
+
+      print('VisitClosureResponse ${response.data}');
+      showCustomSnackBar(context, 'Closure submitted', Colors.green);
+
       if (kDebugMode) {
         print('VisitClosureResponse ${response.data}');
       }
