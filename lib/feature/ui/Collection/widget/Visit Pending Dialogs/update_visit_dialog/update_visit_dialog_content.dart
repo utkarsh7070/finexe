@@ -60,7 +60,9 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                               ))),
                       IconButton(
                           onPressed: () {
-                            paymentViewModel.updatePhotoValue('', context);
+
+                            paymentViewModel.updatePhotoValue( context);
+                            ref.invalidate(paymentStatusViewModelProvider);
                           },
                           icon: const Icon(Icons.cancel_sharp))
                     ],
@@ -137,7 +139,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     listTextStyle: const TextStyle(color: AppColors.primary),
                     dropDownItemCount: 4,
                     // onChanged: (val) {
-                    //   // paymentViewModel.updatePaymentStatus(val);
+                    //   paymentViewModel.updatePaymentStatus(val);
                     // },
                     textFieldFocusNode:
                         paymentFocusViewModel.paymentStatusFocusNode,
@@ -301,6 +303,9 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                         (value) {
                           if (value != null) {
                             imagePath = value.path;
+
+                            paymentViewModel.updateTransactionImage(imagePath!);
+
                             print('imagepath ${imagePath}');
                             paymentViewModel.uploadImage(value.path);
                           } else {
@@ -339,9 +344,25 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     textStyle: AppStyles.buttonLightTextStyle,
                     width: displayWidth(context),
                     onTap: () {
-                      paymentViewModel.visitFormSubmit(
-                          datas: item!, context: context);
-                      paymentViewModel.updatePhotoValue('', context);
+
+                      if (paymentViewModel.dropDownControllerProvider
+                              .dropDownValue?.value !=
+                          null) {
+                        print(
+                            ' valyue  ${paymentViewModel.validateForm(paymentViewModel.dropDownControllerProvider.dropDownValue?.value)}');
+                        final isValid = paymentViewModel.validateForm(
+                            paymentViewModel.dropDownControllerProvider
+                                .dropDownValue?.value);
+                        if (isValid) {
+                          paymentViewModel.visitFormSubmit(datas: item!).then(
+                            (value) {
+                              paymentViewModel.updatePhotoValue(context);
+                              ref.invalidate(paymentStatusViewModelProvider);
+                            },
+                          );
+                          // paymentViewModel.updatePhotoValue('',context);
+                        }
+                      }
                     },
                     label: 'Submit',
                   )

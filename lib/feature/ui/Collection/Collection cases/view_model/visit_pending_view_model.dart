@@ -180,8 +180,27 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     } else {}
   }
 
-  Future<void> visitFormSubmit(
-      {required ItemsDetails datas, required BuildContext context}) async {
+
+  bool validateForm(String value){
+    if(value!=null){
+      switch(value){
+        case 'CustomerWillPayEmi':
+          return validateCustomerPayForm();
+        case 'CustomerWillNotPayEmi':
+          return validateCustomerNotPay();
+        case 'CustomerNotContactable':
+          return validateCustomerNotContactable();
+        case '':
+          return false;
+        default:
+          return false;
+      }
+    }
+    return false;
+
+  }
+
+  Future<void> visitFormSubmit({required ItemsDetails datas}) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
     position.when(
@@ -209,13 +228,15 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
         final response = await dio.post(Api.visitFormSubmit,
             data: requestModel.toJson(),
             options: Options(headers: {"token": token}));
-        print(response.statusMessage);
-        print(response.statusCode);
+        if (kDebugMode) {
+          print(response.statusMessage);
+          print(response.statusCode);
+        }
+
         if (response.statusCode == 200) {
           log('updated vist test');
           showCustomSnackBar(
               context, 'Visit Updated Successfully', Colors.green);
-          Navigator.pop(context);
 
           // return true;
           // if (kDebugMode) {
@@ -240,9 +261,9 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     super.dispose();
   }
 
-  void updatePhotoValue(String value, context) {
-    state = state.copyWith(photoFile: value);
-    dateController.text = '';
+  void updatePhotoValue(context) {
+    // state = state.copyWith(photoFile: value);
+    // dateController.text = '';
     Navigator.pop(context);
   }
 
@@ -275,17 +296,31 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     state = state.copyWith(solution: value, isSolutionValid: isValid);
     // copyWith(kycDocument: value, isKycValid: isValid);
   }
+  void updateTransactionImage(String value) {
+    final isValid = _validateTransactionImage(value);
+    state =
+        state.copyWith(photoFile: value, isPhotoFile: isValid);
+  }
 
-  bool validateCustomerPayForm(int index) {
-    final isPaymentStatusValid = _validatePaymentStatus(state.paymentStatus);
+  bool validateCustomerPayForm() {
     final isPaymentAmountValid = _validatePaymentAmount(state.paymentAmount);
     final isDateValid = _validateDate(state.date);
     state = state.copyWith(
-      isPaymentStatusValid: isPaymentStatusValid,
       isPaymentAmountValid: isPaymentAmountValid,
       isDateValid: isDateValid,
+
     );
-    return isPaymentAmountValid && isPaymentStatusValid;
+    return isPaymentAmountValid && isDateValid;
+  }
+
+  bool validateCustomerNotContactable(){
+    final isDate =  _validateDate(state.date);
+    final isReasonValid = _validateReason(state.reason);
+    final isImage = _validateTransactionImage(state.photoFile);
+    state = state.copyWith(
+        isDateValid: isDate,isPhotoFile: isImage,isReasonValid: isReasonValid
+    );
+    return isDate && isReasonValid && isImage;
   }
 
   bool validateCustomerNotPay() {
@@ -311,6 +346,8 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
 //
 // }
 }
+
+
 
 bool _validatePaymentStatus(String paymentStatus) {
   return paymentStatus.isNotEmpty;
@@ -387,8 +424,8 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     state = state.copyWith(commonId: id);
   }
 
-  Future<void> updateEmiSubmitButton(
-      {required ItemsDetails detail, required BuildContext context}) async {
+
+  Future<void> updateEmiSubmitButton({required ItemsDetails detail,required BuildContext context,required WidgetRef ref}) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
     UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
@@ -414,7 +451,9 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     print(response.statusMessage);
     print(response.statusCode);
     if (response.statusCode == 200) {
-      updatePhotoValue('', context);
+      updatePhotoValue('',context);
+      ref.invalidate(updateEmiViewModelProvider);
+
       // return true;
       // if (kDebugMode) {
       //   print('image ${response.data}');
@@ -437,6 +476,8 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     }
     return null;
   }
+
+
 
   Future<void> uploadImage(String image) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -551,6 +592,19 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
     state = state.copyWith(reason: value, isReason: isValid);
   }
 
+  bool validateClosuerForm(){
+    final isDate = _validateDate(state.date);
+    final isReason = _validateReason(state.reason);
+    final isAmount = _validatePaymentAmount(state.amount);
+    state = state.copyWith(isDate: isDate,isReason: isReason,isAmount: isAmount);
+    return isDate && isReason && isAmount;
+  }
+
+  void closeClosureDialog(BuildContext context){
+
+    Navigator.pop(context);
+}
+
   Future<void> openDatePicker(WidgetRef ref, DateTime? initialDate) async {
     final pickedDate = await showDatePicker(
       context: ref.context,
@@ -565,6 +619,8 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
           .updateDate(pickedDate); // Use ref to read the provider
     }
   }
+
+
 
   Future<void> visitClosureFormSubmit(BuildContext context,
       {required ItemsDetails data}) async {
@@ -590,14 +646,13 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
     print(response.statusMessage);
     print(response.statusCode);
     if (response.statusCode == 200) {
-      // if (kDebugMode) {
-      //   print('VisitClosureResponse ${response.data}');
-      //   showCustomSnackBar(context, 'form submitted', Colors.green);
-      //   Navigator.pop(context);
-      // }
+
       print('VisitClosureResponse ${response.data}');
       showCustomSnackBar(context, 'Closure submitted', Colors.green);
-      Navigator.pop(context);
+
+      if (kDebugMode) {
+        print('VisitClosureResponse ${response.data}');
+      }
     } else {
       throw Exception('Failed to load data');
     }
@@ -742,6 +797,7 @@ class PaymentStatusModel {
   final bool isLoading;
   final int selectedValue;
   final String photoFile;
+  final bool isPhotoFile;
   final String paymentStatus;
   final bool isPaymentStatusValid;
   final String paymentAmount;
@@ -754,6 +810,7 @@ class PaymentStatusModel {
   final bool isSolutionValid;
 
   PaymentStatusModel({
+    this.isPhotoFile=true,
     this.isLoading = false,
     this.photoFile = '',
     this.selectedValue = 0,
@@ -770,6 +827,7 @@ class PaymentStatusModel {
   });
 
   PaymentStatusModel copyWith({
+    bool? isPhotoFile,
     String? photoFile,
     bool? isLoading,
     int? selectedValue,
@@ -785,6 +843,7 @@ class PaymentStatusModel {
     bool? isSolutionValid,
   }) {
     return PaymentStatusModel(
+      isPhotoFile: isPhotoFile??this.isPhotoFile,
       isLoading: isLoading ?? this.isLoading,
       photoFile: photoFile ?? this.photoFile,
       selectedValue: selectedValue ?? this.selectedValue,
