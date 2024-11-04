@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/collection_mode_response_model.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/get_mode_by_id_response_model.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/update_emi_submit_request_model.dart';
@@ -178,7 +180,8 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     } else {}
   }
 
-  Future<void> visitFormSubmit({required ItemsDetails datas}) async {
+  Future<void> visitFormSubmit(
+      {required ItemsDetails datas, required BuildContext context}) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
     position.when(
@@ -209,13 +212,18 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
         print(response.statusMessage);
         print(response.statusCode);
         if (response.statusCode == 200) {
-          return true;
-          if (kDebugMode) {
-            print('image ${response.data}');
-          }
+          log('updated vist test');
+          showCustomSnackBar(
+              context, 'Visit Updated Successfully', Colors.green);
+          Navigator.pop(context);
+
+          // return true;
+          // if (kDebugMode) {
+          //   print('image ${response.data}');
+          // }
         } else {
           throw Exception('Failed to load data');
-          return false;
+          // return false;
         }
       },
       error: (error, stackTrace) {
@@ -379,7 +387,8 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     state = state.copyWith(commonId: id);
   }
 
-  Future<void> updateEmiSubmitButton({required ItemsDetails detail,required BuildContext context}) async {
+  Future<void> updateEmiSubmitButton(
+      {required ItemsDetails detail, required BuildContext context}) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
     UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
@@ -405,11 +414,14 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     print(response.statusMessage);
     print(response.statusCode);
     if (response.statusCode == 200) {
-      updatePhotoValue('',context);
+      updatePhotoValue('', context);
       // return true;
-      if (kDebugMode) {
-        print('image ${response.data}');
-      }
+      // if (kDebugMode) {
+      //   print('image ${response.data}');
+      // }
+      print('VisitClosureResponse ${response.data}');
+      showCustomSnackBar(context, 'EMI Submitted', Colors.green);
+      Navigator.pop(context);
     } else {
       throw Exception('Failed to load data');
       // return false;
@@ -578,10 +590,14 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
     print(response.statusMessage);
     print(response.statusCode);
     if (response.statusCode == 200) {
-      if (kDebugMode) {
-        print('VisitClosureResponse ${response.data}');
-        Navigator.pop(context);
-      }
+      // if (kDebugMode) {
+      //   print('VisitClosureResponse ${response.data}');
+      //   showCustomSnackBar(context, 'form submitted', Colors.green);
+      //   Navigator.pop(context);
+      // }
+      print('VisitClosureResponse ${response.data}');
+      showCustomSnackBar(context, 'Closure submitted', Colors.green);
+      Navigator.pop(context);
     } else {
       throw Exception('Failed to load data');
     }
@@ -1062,7 +1078,7 @@ final polylineProvider = StateProvider<List<Polyline>>((ref) => []);
 
 // Provider to fetch directions between two points
 final directionsProvider =
-FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
+    FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
   final currentLocation = await ref.watch(currentLocationProvider.future);
 
   // final polylinePoints = PolylinePoints();
@@ -1079,7 +1095,6 @@ FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
         .map((point) => LatLng(point.latitude, point.longitude))
         .toList();
   }
-
 
   final response = await http.get(Uri.parse(url));
 
@@ -1118,9 +1133,8 @@ FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
 
 //-----------------------------end map--------------------------------------------------------
 
-
 final fetchVisitPendingDataProvider =
-FutureProvider<List<Map<String, String>>>((ref) async {
+    FutureProvider<List<Map<String, String>>>((ref) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String? token = sharedPreferences.getString('token');
   // final String token =
@@ -1135,33 +1149,33 @@ FutureProvider<List<Map<String, String>>>((ref) async {
     print(response.data);
 
     GetVisitPendingResponseData apiResponseList =
-    GetVisitPendingResponseData.fromJson(response.data);
+        GetVisitPendingResponseData.fromJson(response.data);
     return apiResponseList.items;
   } else {
     throw Exception('Failed to load data');
   }
 });
 
-  final fetchGetAllModeOfCollectionProvider =
-  FutureProvider<List<ModeItem>>((ref) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
+final fetchGetAllModeOfCollectionProvider =
+    FutureProvider<List<ModeItem>>((ref) async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  String? token = sharedPreferences.getString('token');
 // const String token =
 //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
-    final dio = ref.read(dioProvider);
-    final response = await dio.get(Api.getAllModeOfCollection,
-        options: Options(headers: {"token": token}));
-    print(response.statusMessage);
-    print(response.statusCode);
-    if (response.statusCode == 200) {
-      print(response.data);
-      CollectionModeResponseModel apiResponseList =
-      CollectionModeResponseModel.fromJson(response.data);
-      return apiResponseList.items;
-    } else {
-      throw Exception('Failed to load data');
-    }
-  });
+  final dio = ref.read(dioProvider);
+  final response = await dio.get(Api.getAllModeOfCollection,
+      options: Options(headers: {"token": token}));
+  print(response.statusMessage);
+  print(response.statusCode);
+  if (response.statusCode == 200) {
+    print(response.data);
+    CollectionModeResponseModel apiResponseList =
+        CollectionModeResponseModel.fromJson(response.data);
+    return apiResponseList.items;
+  } else {
+    throw Exception('Failed to load data');
+  }
+});
 
 // return GetVisitPendingResponseData(status: status, subCode: subCode, message: message, error: error, items: items)
 // // final content = json.decode(
