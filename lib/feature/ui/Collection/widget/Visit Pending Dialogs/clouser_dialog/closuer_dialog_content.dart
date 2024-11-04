@@ -13,17 +13,14 @@ import '../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../Collection cases/model/visit_pending_items_model.dart';
 import '../../../Collection cases/view_model/visit_pending_view_model.dart';
 
-
 class ClosuerDialogContent extends ConsumerWidget {
   final ItemsDetails? item;
   final int? index;
+
   /*const ClosuerDialogContent({super.key});*/
 
-  const ClosuerDialogContent({
-    super.key,
-    required this.index,
-    required this.item
-  });
+  const ClosuerDialogContent(
+      {super.key, required this.index, required this.item});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,9 +46,11 @@ class ClosuerDialogContent extends ConsumerWidget {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
                     children: [
-                      SizedBox(height: displayHeight(context)*0.02,width: displayWidth(context)*0.10,),
+                      SizedBox(
+                        height: displayHeight(context) * 0.02,
+                        width: displayWidth(context) * 0.10,
+                      ),
                       SizedBox(
                           child: Align(
                               alignment: Alignment.center,
@@ -61,8 +60,11 @@ class ClosuerDialogContent extends ConsumerWidget {
                               ))),
                       IconButton(
                           onPressed: () {
+                            ref.invalidate(closuerViewModelProvider);
+                            ref.invalidate(dateProvider);
                             Navigator.pop(context);
-                          }, icon: const Icon(Icons.cancel_sharp))
+                          },
+                          icon: const Icon(Icons.cancel_sharp))
                     ],
                   ),
                   SizedBox(
@@ -75,7 +77,8 @@ class ClosuerDialogContent extends ConsumerWidget {
                   nameField(
                       text1: 'Customer Name',
                       text2: '${item?.customerName}  S/O ${item?.fatherName}'),
-                  nameField(text1: 'Collection Type', text2: item!.collectionType),
+                  nameField(
+                      text1: 'Collection Type', text2: item!.collectionType),
                   SizedBox(
                     height: displayHeight(context) * 0.02,
                   ),
@@ -140,109 +143,35 @@ class ClosuerDialogContent extends ConsumerWidget {
                     errorText: "Payment Amount is a required field",
                     isError: !paymentState.isAmount,
                     textInputAction: TextInputAction.done,
-                   /* textAlignVertical: TextAlignVertical.center, // This aligns the text properly inside the field
+                    /* textAlignVertical: TextAlignVertical.center, // This aligns the text properly inside the field
                     contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),*/ // Adjust padding to give more space
                   ),
                   SizedBox(
                     height: displayHeight(context) * 0.01,
                   ),
-                 /* AppFloatTextField(
+                  AppFloatTextField(
                     focusNode: paymentFocusViewModel.dateClosuerFocusNode,
                     currentState: paymentFocusStates['dateClosuerFocusNode'],
-                    // controller: licenseController,
                     onChange: (value) {
-                      paymentViewModel.updateDate(value);
+                      paymentViewModel.updateDate(DateTime.parse(
+                          value)); // Parse the date string into DateTime
                     },
                     height: !paymentState.isDate
                         ? displayHeight(context) * 0.09
                         : null,
                     inerHint: 'Date To Receive/Revisit Date',
                     errorText:
-                    "Date To Receive/Revisit Date is a required field",
-                    isError: !paymentState.isDate,
-                    textInputAction: TextInputAction.done,
-                  ),*/
-
-                 /* // Date field with DatePicker
-                  AppFloatTextField(
-                    focusNode: paymentFocusViewModel.dateClosuerFocusNode,
-                    currentState: paymentFocusStates['dateClosuerFocusNode'],
-                    onChange: (value) {
-                      paymentViewModel.updateDate(DateTime.parse(value));  // Parse the date string into DateTime
-                    },
-                    height: !paymentState.isDate ? displayHeight(context) * 0.09 : null,
-                    inerHint: 'Date To Receive/Revisit Date',
-                    errorText: "Date To Receive/Revisit Date is a required field",
+                        "Date To Receive/Revisit Date is a required field",
                     isError: !paymentState.isDate,
                     controller: TextEditingController(
                       text: ref.watch(dateProvider) != null
-                          ? DateFormat('yyyy-MM-dd').format(ref.watch(dateProvider)!)
+                          ? DateFormat('yyyy-MM-dd')
+                              .format(ref.watch(dateProvider)!)
                           : '',
                     ),
                     onTap: () async {
-                      final pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: ref.watch(dateProvider) ?? DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
-                      );
-                      if (pickedDate != null) {
-                        ref.read(dateProvider.notifier).updateDate(pickedDate);
-                        paymentViewModel.updateDate(pickedDate);  // Pass picked date to view model
-                      }
-                    },
-                    textInputAction: TextInputAction.done,
-                  ),*/
-
-                 /* AppFloatTextField(
-                    focusNode: paymentFocusViewModel.dateClosuerFocusNode,
-                    currentState: paymentFocusStates['dateClosuerFocusNode'],
-                    onChange: (value) {
-                      paymentViewModel.updateDate(DateTime.parse(value));  // Parse the date string into DateTime
-                    },
-                    height: !paymentState.isDate ? displayHeight(context) * 0.09 : null,
-                    inerHint: 'Date To Receive/Revisit Date',
-                    errorText: "Date To Receive/Revisit Date is a required field",
-                    isError: !paymentState.isDate,
-                    controller: TextEditingController(
-                      text: ref.watch(dateProvider) != null
-                          ? DateFormat('yyyy-MM-dd').format(ref.watch(dateProvider)!)
-                          : '',
-                    ),
-                    suffixIcon: Icons.calendar_today,  // Use the calendar icon
-                    isSuffix: true,  // Enable the suffix icon
-                    suffixOnTap: () async {
-                      final pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: ref.watch(dateProvider) ?? DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
-                      );
-                      if (pickedDate != null) {
-                        ref.read(dateProvider.notifier).updateDate(pickedDate);
-                        paymentViewModel.updateDate(pickedDate);  // Pass picked date to view model
-                      }
-                    },
-                    textInputAction: TextInputAction.done,
-                  ),*/
-
-                  AppFloatTextField(
-                    focusNode: paymentFocusViewModel.dateClosuerFocusNode,
-                    currentState: paymentFocusStates['dateClosuerFocusNode'],
-                    onChange: (value) {
-                      paymentViewModel.updateDate(DateTime.parse(value));  // Parse the date string into DateTime
-                    },
-                    height: !paymentState.isDate ? displayHeight(context) * 0.09 : null,
-                    inerHint: 'Date To Receive/Revisit Date',
-                    errorText: "Date To Receive/Revisit Date is a required field",
-                    isError: !paymentState.isDate,
-                    controller: TextEditingController(
-                      text: ref.watch(dateProvider) != null
-                          ? DateFormat('yyyy-MM-dd').format(ref.watch(dateProvider)!)
-                          : '',
-                    ),
-                    onTap: () async {
-                      await paymentViewModel.openDatePicker(ref, ref.watch(dateProvider));
+                      await paymentViewModel.openDatePicker(
+                          ref, ref.watch(dateProvider));
                       // Update the date provider after selection
                       final pickedDate = ref.watch(dateProvider);
                       if (pickedDate != null) {
@@ -250,13 +179,10 @@ class ClosuerDialogContent extends ConsumerWidget {
                       }
                     },
                     textInputAction: TextInputAction.done,
-                    suffixIcon: Icons.calendar_today, // Calendar icon on the right
+                    suffixIcon: Icons.calendar_today,
+                    // Calendar icon on the right
                     isSuffix: true,
-
                   ),
-
-
-
                   SizedBox(
                     height: displayHeight(context) * 0.01,
                   ),
@@ -283,7 +209,18 @@ class ClosuerDialogContent extends ConsumerWidget {
                     textStyle: AppStyles.buttonLightTextStyle,
                     width: displayWidth(context),
                     onTap: () {
-                      paymentViewModel.visitClosureFormSubmit(context ,data:item! );
+                      bool isValidate = paymentViewModel.validateClosuerForm();
+                      if (isValidate) {
+                        paymentViewModel
+                            .visitClosureFormSubmit(context, data: item!)
+                            .then(
+                          (value) {
+                            ref.invalidate(closuerViewModelProvider);
+                            ref.invalidate(dateProvider);
+                            paymentViewModel.closeClosureDialog(context);
+                          },
+                        );
+                      }
                     },
                     label: 'Submit',
                   )
