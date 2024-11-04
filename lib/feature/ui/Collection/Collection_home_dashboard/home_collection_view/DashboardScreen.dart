@@ -13,6 +13,8 @@ import '../Widget/punct_in_out_action_dialog_content.dart';
 import 'dashboard_side_bar.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
+  const DashboardScreen({super.key});
+
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
 }
@@ -26,18 +28,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     ref.read(apiResponseProvider.notifier).fetchDashboardData();
   }
 
-
-
   Future<void> initialiseRoamSdk() async {
     print("Roam SDK initialization started.");
     // await _requestLocationPermission(); // Ensure permission is granted first
     await Roam.initialize(
       publishKey:
-      '58f73be503e069888cf19289bf728c14c2e841c47e5842a1054f9e5f12f52583',
+          '58f73be503e069888cf19289bf728c14c2e841c47e5842a1054f9e5f12f52583',
     );
-  Roam.createUser(description:'utkarsh',callBack: ({user}) {
-      print(user);
-    });
+    Roam.createUser(
+        description: 'utkarsh',
+        callBack: ({user}) {
+          print(user);
+        });
 
     Permission.locationAlways.request();
 
@@ -315,173 +317,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         );
       },
     );
-
-    // Scaffold(
-    //   key: _scaffoldKey,
-    //   // Step 2: Assign the scaffoldKey to the Scaffold
-    //   // backgroundColor: AppColors.primary,
-    //   appBar: AppBar(
-    //     /* leading: Icon(Icons.menu),*/
-    //
-    //     leading: IconButton(
-    //       onPressed: () {
-    //         // Handle the click action here
-    //         _scaffoldKey.currentState?.openDrawer(); // Open the end drawer
-    //       },
-    //       icon: const Icon(Icons.menu), // Choose the appropriate icon
-    //       iconSize: 30, // Set the size of the icon
-    //       color: Colors.black, // Set the color of the icon
-    //     ),
-    //     title: const Text("Collection Dashboard"),
-    //     actions: [
-    //       dataViewModel.isPunchOutStatus? GestureDetector(
-    //           onTap: () {
-    //             _showMyDialog(context, ref);
-    //           },
-    //           child: Padding(
-    //             padding: const EdgeInsets.only(right: 8.0),
-    //             child: Image.asset(
-    //               'assets/images/fingerprint.png',
-    //               height: displayHeight(context) * 0.04,
-    //               width: displayWidth(context) * 0.06,
-    //             ),
-    //           )):SizedBox(),
-    //     ],
-    //   ),
-    //   drawer: const DashBoardSideBar(),
-    //   body: data.when(
-    //     data: (data) {
-    //       DateTime dateTime =
-    //       DateFormat("yyyy-MM-dd'T'h:mm:ssZ").parse(data.joiningDate);
-    //       return SingleChildScrollView(
-    //         child: Column(
-    //           children: [
-    //             // User profile card
-    //             Card(
-    //               elevation: 2,
-    //               margin: const EdgeInsets.all(16),
-    //               child: Padding(
-    //                 padding: const EdgeInsets.all(16.0),
-    //                 child: Column(
-    //                   crossAxisAlignment: CrossAxisAlignment.center,
-    //                   children: [
-    //                     /*CircleAvatar(
-    //                       radius: 40,
-    //                       backgroundImage: NetworkImage(
-    //                           'https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png'), // Replace with actual image URL
-    //                     ),*/
-    //
-    //                     CircleAvatar(
-    //                       radius: 40,
-    //                       backgroundImage: data.imageUrl != null
-    //                           ? NetworkImage(
-    //                               '${Api.imageUrl}${data.imageUrl}')
-    //                           : const AssetImage('assets/images/check.png'),
-    //                       // Placeholder image
-    //                       onBackgroundImageError: (error, stackTrace) {
-    //                         // Set a default image if the API image fails to load
-    //                       },
-    //                     ),
-    //                     const SizedBox(height: 10),
-    //                     Text(
-    //                       data.name,
-    //                       style: const TextStyle(
-    //                           fontSize: 20, fontWeight: FontWeight.bold),
-    //                     ),
-    //                     Text(data.email),
-    //                     const SizedBox(height: 10),
-    //                     Row(
-    //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //                       children: [
-    //                         const Text("Employee Unique Id:"),
-    //                         Text(data.employeeUniqueId),
-    //                       ],
-    //                     ),
-    //                     Row(
-    //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //                       children: [
-    //                         const Text("Mobile No:"),
-    //                         Text(data.mobileNo),
-    //                       ],
-    //                     ),
-    //                     Row(
-    //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //                       children: [
-    //                         const Text("Current Address:"),
-    //                         Text(data.address),
-    //                       ],
-    //                     ),
-    //                     Row(
-    //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //                       children: [
-    //                         const Text("Joining Date:"),
-    //                         Text( DateFormat.yMMMMd().format(dateTime)),
-    //                       ],
-    //                     ),
-    //                   ],
-    //                 ),
-    //               ),
-    //             ),
-    //
-    //             // GridView for six square cards
-    //             Padding(
-    //               padding: const EdgeInsets.symmetric(horizontal: 16),
-    //               child: GridView.count(
-    //                 physics: const NeverScrollableScrollPhysics(),
-    //                 // To prevent GridView from scrolling
-    //                 shrinkWrap: true,
-    //                 // To fit content within the SingleChildScrollView
-    //                 crossAxisCount: 2,
-    //                 // Two cards per row
-    //                 crossAxisSpacing: 16,
-    //                 mainAxisSpacing: 16,
-    //                 childAspectRatio: 1,
-    //                 // To make the cards square
-    //                 children: [
-    //                   buildCard(Icons.person, '${data.visitAccepted ?? ''}',
-    //                       'Visits Accepted'),
-    //                   buildCard(
-    //                       Icons.person,
-    //                       '${data.visitPendingForApproval ?? ''}',
-    //                       'Visits Pending'),
-    //                   buildCard(Icons.person, '${data.visitRejected ?? ''}',
-    //                       'Visits Rejected'),
-    //                   buildCard(
-    //                       Icons.currency_rupee,
-    //                       '${data.collectionAcceptAmount ?? ''}',
-    //                       'Collections Accepted'),
-    //                   buildCard(
-    //                       Icons.currency_rupee,
-    //                       '${data.collectionEmiAmountPendingForApproval ?? ''}',
-    //                       'Collections Pending'),
-    //                   buildCard(
-    //                       Icons.currency_rupee,
-    //                       '${data.collectionRejectAmount ?? ''}',
-    //                       'Collections Rejected'),
-    //                 ],
-    //               ),
-    //             ),
-    //
-    //             const SizedBox(height: 10),
-    //           ],
-    //         ),
-    //       );
-    //     },
-    //     error: (error, stackTrace) {
-    //       print(error);
-    //     },
-    //     loading: () {
-    //       return Center(child: CircularProgressIndicator());
-    //     },
-    //   )
-    //
-    //   // }, error: (error, stackTrace) {
-    //   //   return Text('$error');
-    //   // }, loading: () {
-    //   //   return const CircularProgressIndicator();
-    //   // },)
-    //
-    //   );
   }
 
   // Function to build each card

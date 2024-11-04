@@ -22,8 +22,6 @@ final punchOut = ref.read(apiResponseProvider.notifier);
           ),
           onPressed: ()  {
              punchOut.clickPunchOut(context);
-             Navigator.pop(context);
-
             // Navigator.pushNamedAndRemoveUntil(context, AppRoutes.attendance, (route) => true,);
           },
         ),

@@ -75,7 +75,7 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
     _isInitialized = false; // Reset the flag for future data fetch
   }
 
-  Future<dynamic> employeePunchOut(BuildContext context) async {
+  Future<void> employeePunchOut(BuildContext context) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
     print('token of employee punchout $token');
@@ -86,17 +86,18 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
       print('punch out response $response');
       if (response.statusCode == 200) {
         showCustomSnackBar(context, "Punch Out is Successful", Colors.red);
+        Navigator.pop(context);
         // isPunchOutStatus = true;
-        return response;
+        // return response;
       } else {
         showCustomSnackBar(
-            context, DioExceptionType.badCertificate.name, Colors.red);
+            context, response.statusMessage.toString(), Colors.red);
+        Navigator.pop(context);
       }
-    } catch (error) {
-      print(error);
+    } catch(error) {
       DioExceptions.fromDioError(error as DioException, context);
-      // showCustomSnackBar(context,
-      //     error, Colors.red);
+      Navigator.pop(context);
+
     }
   }
 }
@@ -113,55 +114,3 @@ final apiResponseProvider =
   final dio = ref.read(dioProvider);
   return ApiResponseNotifier(dio);
 });
-
-// final fetchEmployeeData = FutureProvider.autoDispose<UserprofileResponseModel>((
-//     ref) async {
-//   final dio = ref.read(dioProvider);
-//   String? token = await SessionService.getToken();
-//   print('token  $token');
-//
-//   final response = await dio.get(
-//       Api.getAllocationDashboard, options: Options(headers: {"token": token}));
-//   print('Response status: ${response.statusCode}');
-//   print('Response body: ${response.data}');
-//   if (response.statusCode == 200) {
-//     final UserprofileResponseModel responseModel = UserprofileResponseModel
-//         .fromJson(response.data);
-//     return responseModel;
-//   } else {
-//     throw Exception('Failed to load data');
-//   }
-// },);
-
-// class DashboardNotifier
-//     extends StateNotifier<AsyncValue<UserprofileResponseModel>> {
-//   DashboardNotifier(this.dio) : super(const AsyncValue.loading());
-//   final Dio dio;
-//
-//   Future<void> fetchDashboardData() async {
-//     String? token = await SessionService.getToken();
-//     try {
-//       final response = await dio.get(Api.getAllocationDashboard,
-//           options: Options(headers: {"token": token}));
-//       print('Response status: ${response.statusCode}');
-//       print('Response body: ${response.data}');
-//       if (response.statusCode == 200) {
-//         final UserprofileResponseModel responseModel =
-//             UserprofileResponseModel.fromJson(response.data);
-//         state = AsyncValue.data(responseModel);
-//       }
-//     } catch (error) {
-//       state = AsyncValue.error(error, StackTrace as StackTrace);
-//     }
-//     void clearData() {
-//       state = const AsyncValue.loading(); // Reset the state
-//     }
-//   }
-// }
-//
-// // Provide the StateNotifierProvider
-// final dashboardDataProvider = StateNotifierProvider<DashboardNotifier,
-//     AsyncValue<UserprofileResponseModel>>((ref) {
-//   final dio = ref.read(dioProvider);
-//   return DashboardNotifier(dio);
-// });

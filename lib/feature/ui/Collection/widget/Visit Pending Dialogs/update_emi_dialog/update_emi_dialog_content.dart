@@ -67,7 +67,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                                   ))),
                           IconButton(
                               onPressed: () {
-                                paymentViewModel.updatePhotoValue('', context);
+                                paymentViewModel.updatePhotoValue(context);
                                 ref.invalidate(updateEmiViewModelProvider);
 
                               },
@@ -439,7 +439,11 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         textStyle: AppStyles.buttonLightTextStyle,
                         width: displayWidth(context),
                         onTap: () {
-                          paymentViewModel.updateEmiSubmitButton(detail: item!,context: context,ref: ref);
+                          final bool value = paymentViewModel.validation();
+                          if(value){
+                            paymentViewModel.updateEmiSubmitButton(detail: item!,context: context,ref: ref);
+                          }
+
                         },
                         label: 'Submit',
                       )

@@ -12,6 +12,7 @@ import '../../../../../base/utils/namespase/display_size.dart';
 import '../../../../../base/utils/namespase/font_size.dart';
 import '../../../../../base/utils/widget/app_button.dart';
 import '../../../../../base/utils/widget/app_text_filed_login.dart';
+import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../../../Collection cases/view_model/visit_pending_view_model.dart';
 
 class UpdateVisitDialogContent extends ConsumerWidget {
@@ -356,6 +357,8 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                         if (isValid) {
                           paymentViewModel.visitFormSubmit(datas: item!,context: context).then(
                             (value) {
+                              showCustomSnackBar(
+                                  context, 'Visit Updated Successfully', Colors.green);
                               paymentViewModel.updatePhotoValue(context);
                               ref.invalidate(paymentStatusViewModelProvider);
                             },

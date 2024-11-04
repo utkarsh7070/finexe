@@ -38,7 +38,6 @@ class DioExceptions implements Exception {
       case DioExceptionType.cancel:
         showCustomSnackBar(context,
             DioExceptionType.cancel.name, Colors.red);
-
         // Get.snackbar('Finexe', DioExceptionType.cancel.name);
         break;
       case DioExceptionType.connectionError:

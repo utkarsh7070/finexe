@@ -231,8 +231,8 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
 
         if (response.statusCode == 200) {
           log('updated vist test');
-          showCustomSnackBar(
-              context, 'Visit Updated Successfully', Colors.green);
+          // showCustomSnackBar(
+          //     context, 'Visit Updated Successfully', Colors.green);
 
           // return true;
           // if (kDebugMode) {
@@ -300,12 +300,13 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
   bool validateCustomerPayForm() {
     final isPaymentAmountValid = _validatePaymentAmount(state.paymentAmount);
     final isDateValid = _validateDate(state.date);
+    final isPhoto = _validateTransactionImage(state.photoFile);
     state = state.copyWith(
       isPaymentAmountValid: isPaymentAmountValid,
-      isDateValid: isDateValid,
+      isDateValid: isDateValid,isPhotoFile: isPhoto
 
     );
-    return isPaymentAmountValid && isDateValid;
+    return isPaymentAmountValid && isDateValid && isPhoto;
   }
 
   bool validateCustomerNotContactable(){
@@ -323,16 +324,17 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     final isReasonValid = _validateReason(state.reason);
     final isSolutionValid = _validateSolution(state.solution);
     final isDateValid = _validateDate(state.date);
+    final isPhoto = _validateTransactionImage(state.photoFile);
     state = state.copyWith(
       isPaymentStatusValid: isPaymentStatusValid,
       isReasonValid: isReasonValid,
       isSolutionValid: isSolutionValid,
-      isDateValid: isDateValid,
+      isDateValid: isDateValid,isPhotoFile: isPhoto
     );
     return isDateValid &&
         isSolutionValid &&
         isReasonValid &&
-        isPaymentStatusValid;
+        isPaymentStatusValid && isPhoto;
   }
 
 // bool validateSelectedValue() {
@@ -410,13 +412,19 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     super.dispose();
   }
 
-  void updatePhotoValue(String value, context) {
-    state = state.copyWith(photoFile: value);
+  void updatePhotoValue(context) {
+    // state = state.copyWith(photoFile: value);
     Navigator.pop(context);
   }
 
   void updateCreditPerson(String id) {
     state = state.copyWith(commonId: id);
+  }
+
+  bool validation(){
+    final isPhoto = _validateTransactionImage(state.photoFile);
+    state = state.copyWith(isTransactionImage: isPhoto);
+    return isPhoto;
   }
 
 
@@ -449,7 +457,8 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     }
 
     if (response.statusCode == 200) {
-      updatePhotoValue('',context);
+      showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
+      updatePhotoValue(context);
       ref.invalidate(updateEmiViewModelProvider);
 
       // return true;
@@ -459,8 +468,6 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       if (kDebugMode) {
         print('VisitClosureResponse ${response.data}');
       }
-      showCustomSnackBar(context, 'EMI Submitted', Colors.green);
-      Navigator.pop(context);
     } else {
       throw Exception('Failed to load data');
       // return false;
