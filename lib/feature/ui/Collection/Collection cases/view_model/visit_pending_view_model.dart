@@ -438,7 +438,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         mobileNo: int.parse(detail.mobile!),
         receivedAmount: int.parse(state.emiAmount),
         transactionId: state.transactionId,
-        transactionImage: imageApi!,
+        transactionImage: state.transactionImage,
         modeOfCollectionId: state.modeOfCollectionId,
         commonId: state.commonId,
         bankName: state.bankName,
@@ -448,14 +448,13 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         partner: detail.partner!);
 
     String? token = await SessionService.getToken();
-    final response = await dio.post(Api.visitFormSubmit,
+    final response = await dio.post(Api.updateEmiSubmit,
         data: requestModel.toJson(),
         options: Options(headers: {"token": token}));
     if (kDebugMode) {
       print(response.statusMessage);
       print(response.statusCode);
     }
-
     if (response.statusCode == 200) {
       showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
       updatePhotoValue(context);
@@ -468,7 +467,9 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       if (kDebugMode) {
         print('VisitClosureResponse ${response.data}');
       }
-    } else {
+    } if(response.statusCode==400){
+      print(response.statusMessage);
+    }else {
       throw Exception('Failed to load data');
       // return false;
     }
@@ -504,6 +505,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       state = state.copyWith(isLoading: false);
       if (kDebugMode) {
         print('image ${imageResponseModel.items.image}');
+        state = state.copyWith(transactionImage: imageResponseModel.items.image);
         imageApi = imageResponseModel.items.image;
         print(imageApi);
       }
@@ -517,7 +519,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
     state = state.copyWith(modeOfCollectionId: id);
-    print('id $id');
+    print('modeOfCollectionId id $id');
     // const String token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
     Response response = await dio.get(Api.getModeById,
@@ -652,10 +654,8 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
     print(response.statusMessage);
     print(response.statusCode);
     if (response.statusCode == 200) {
-
       print('VisitClosureResponse ${response.data}');
       showCustomSnackBar(context, 'Closure submitted', Colors.green);
-
       if (kDebugMode) {
         print('VisitClosureResponse ${response.data}');
       }

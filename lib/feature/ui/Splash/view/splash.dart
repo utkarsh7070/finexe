@@ -84,7 +84,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       (route) => false, // Remove all previous routes
                     );
                     break;
-                  case 'cashCollection':
+                  case 'collection':
                     log("Navigating to collection dashboard");
                     Navigator.pushNamedAndRemoveUntil(
                       context,

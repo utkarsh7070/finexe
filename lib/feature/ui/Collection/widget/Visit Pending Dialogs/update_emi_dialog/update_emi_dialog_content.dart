@@ -77,14 +77,14 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                       SizedBox(
                         height: displayHeight(context) * 0.02,
                       ),
-                      topWidget(context, text1: 'FINC956', text2: 'UGRO'),
+                      topWidget(context, text1: item!.ld!, text2: item!.partner!),
                       SizedBox(
                         height: displayHeight(context) * 0.01,
                       ),
                       nameField(
                           text1: 'Customer Name',
-                          text2: 'Lakhan S/O  Ramprasad'),
-                      nameField(text1: 'Collection Type', text2: 'Bounce EMI'),
+                          text2: '${item!.customerName} S/O ${item!.fatherName!}'),
+                      nameField(text1: 'Collection Type', text2: item!.collectionType!),
                       SizedBox(
                         height: displayHeight(context) * 0.02,
                       ),
@@ -93,18 +93,18 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         children: [
                           boxData(
                             context,
-                            text1: 'Closure Am.',
-                            text2: '₹14384',
+                            text1: 'EMI Amount',
+                            text2: item!.emiAmount!,
                           ),
                           boxData(
                             context,
-                            text1: 'Closure Am.',
-                            text2: '₹14384',
+                            text1: 'Old Due',
+                            text2: item!.oldDue!,
                           ),
                           boxData(
                             context,
-                            text1: 'Closure Am.',
-                            text2: '₹14384',
+                            text1: 'Net Due.',
+                            text2: item!.netDue!,
                           ),
                         ],
                       ),
@@ -282,6 +282,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                               const TextStyle(color: AppColors.primary),
                           dropDownItemCount: 4,
                           onChanged: (val) {
+                            paymentViewModel.updateCreditPerson(val.value);
                             paymentViewModel.updateBankName(val.value);
                           },
                           textFieldFocusNode:

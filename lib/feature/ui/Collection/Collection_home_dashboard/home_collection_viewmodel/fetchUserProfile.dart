@@ -85,7 +85,7 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
       log('punchOut api: ${Api.punchOut.toString()}');
       print('punch out response $response');
       if (response.statusCode == 200) {
-        showCustomSnackBar(context, "Punch Out is Successful", Colors.red);
+        showCustomSnackBar(context, "Punch Out is Successful", Colors.green);
         Navigator.pop(context);
         // isPunchOutStatus = true;
         // return response;
