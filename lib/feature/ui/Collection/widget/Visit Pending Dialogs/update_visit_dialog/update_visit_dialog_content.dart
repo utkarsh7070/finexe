@@ -60,6 +60,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                               ))),
                       IconButton(
                           onPressed: () {
+
                             paymentViewModel.updatePhotoValue( context);
                             ref.invalidate(paymentStatusViewModelProvider);
                           },
@@ -302,7 +303,9 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                         (value) {
                           if (value != null) {
                             imagePath = value.path;
+
                             paymentViewModel.updateTransactionImage(imagePath!);
+
                             print('imagepath ${imagePath}');
                             paymentViewModel.uploadImage(value.path);
                           } else {
@@ -341,6 +344,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     textStyle: AppStyles.buttonLightTextStyle,
                     width: displayWidth(context),
                     onTap: () {
+
                       if (paymentViewModel.dropDownControllerProvider
                               .dropDownValue?.value !=
                           null) {
