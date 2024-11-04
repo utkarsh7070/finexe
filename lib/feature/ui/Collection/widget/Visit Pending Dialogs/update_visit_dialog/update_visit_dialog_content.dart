@@ -354,7 +354,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                             paymentViewModel.dropDownControllerProvider
                                 .dropDownValue?.value);
                         if (isValid) {
-                          paymentViewModel.visitFormSubmit(datas: item!).then(
+                          paymentViewModel.visitFormSubmit(datas: item!,context: context).then(
                             (value) {
                               paymentViewModel.updatePhotoValue(context);
                               ref.invalidate(paymentStatusViewModelProvider);

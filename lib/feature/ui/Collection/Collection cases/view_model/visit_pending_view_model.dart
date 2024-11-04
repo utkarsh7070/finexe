@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
@@ -134,7 +134,9 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     var formData = FormData.fromMap({
       'image': await MultipartFile.fromFile(image),
     });
-    print(image);
+    if (kDebugMode) {
+      print(image);
+    }
     // final String token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
     final response = await dio.post(Api.uploadImageCollection,
@@ -159,11 +161,11 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     final DateTime? picked = await showDatePicker(
       cancelText: 'reset',
       context: context,
-      initialDate: selectedDate.add(Duration(days: 1)),
+      initialDate: selectedDate.add(const Duration(days: 1)),
       // Start from tomorrow
-      firstDate: selectedDate.add(Duration(days: 1)),
+      firstDate: selectedDate.add(const Duration(days: 1)),
       // First selectable date is tomorrow
-      lastDate: selectedDate.add(Duration(days: 3)),
+      lastDate: selectedDate.add(const Duration(days: 3)),
     );
     if (picked != null && picked != selectedDate) {
       selectedDate = picked;
@@ -173,34 +175,30 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     }
     if (picked != null && picked != '') {
       String? formattedDate = DateFormat('dd/MM/yyyy').format(picked);
-      print(formattedDate);
+      if (kDebugMode) {
+        print(formattedDate);
+      }
       dateController.text = formattedDate;
       state = state.copyWith(date: formattedDate);
     } else {}
   }
 
   bool validateForm(String value){
-    if(value!=null){
-      switch(value){
-        case 'CustomerWillPayEmi':
-          return validateCustomerPayForm();
-        case 'CustomerWillNotPayEmi':
-          return validateCustomerNotPay();
-        case 'CustomerNotContactable':
-          return validateCustomerNotContactable();
-        case '':
-          return false;
-        default:
-          return false;
-      }
+    switch(value){
+      case 'CustomerWillPayEmi':
+        return validateCustomerPayForm();
+      case 'CustomerWillNotPayEmi':
+        return validateCustomerNotPay();
+      case 'CustomerNotContactable':
+        return validateCustomerNotContactable();
+      case '':
+        return false;
+      default:
+        return false;
     }
-    return false;
-
   }
 
-  Future<void> visitFormSubmit({required ItemsDetails datas}) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
+  Future<void> visitFormSubmit({required ItemsDetails datas,required BuildContext context}) async {
     position.when(
       data: (data) async {
         final requestModel = VisitUpdateSubmitRequestModel(
@@ -242,7 +240,6 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
           // }
         } else {
           throw Exception('Failed to load data');
-          return false;
         }
       },
       error: (error, stackTrace) {
@@ -446,8 +443,11 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final response = await dio.post(Api.visitFormSubmit,
         data: requestModel.toJson(),
         options: Options(headers: {"token": token}));
-    print(response.statusMessage);
-    print(response.statusCode);
+    if (kDebugMode) {
+      print(response.statusMessage);
+      print(response.statusCode);
+    }
+
     if (response.statusCode == 200) {
       updatePhotoValue('',context);
       ref.invalidate(updateEmiViewModelProvider);
@@ -456,7 +456,9 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       // if (kDebugMode) {
       //   print('image ${response.data}');
       // }
-      print('VisitClosureResponse ${response.data}');
+      if (kDebugMode) {
+        print('VisitClosureResponse ${response.data}');
+      }
       showCustomSnackBar(context, 'EMI Submitted', Colors.green);
       Navigator.pop(context);
     } else {
@@ -623,14 +625,12 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
 
   Future<void> visitClosureFormSubmit(BuildContext context,
       {required ItemsDetails data}) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
     VisitClosureSubmitRequestModel requestModel =
         VisitClosureSubmitRequestModel(
       ld: data.ld!,
       customerName: data.customerName!,
       mobileNo: int.parse(data.mobile!),
-      amountToBeReceivedFromCustomer: int.parse(state.amount!),
+      amountToBeReceivedFromCustomer: int.parse(state.amount),
       dateOfDeposit: state.date,
       settlementForReason: state.reason,
     );
