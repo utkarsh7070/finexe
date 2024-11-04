@@ -1,5 +1,7 @@
+import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
+import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/Widget/dialog/collection_logout_dialog.dart';
 import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/home_collection_view/DashboardScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -146,9 +148,11 @@ color: AppColors.white,
                     ),
                     onTap: () {
                       // Handle logout
-                      ref.read(apiResponseProvider.notifier).clearData();
-                      SessionService.deleteSession();
-                      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) =>false,);
+                      // LogOutDialog.logOutDialog(context: context);
+                      CollectionLogOutDialog.collectionLogOutDialog(context: context);
+                      // ref.read(apiResponseProvider.notifier).clearData();
+                      // SessionService.deleteSession();
+                      // Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) =>false,);
                     },
                   ),
 

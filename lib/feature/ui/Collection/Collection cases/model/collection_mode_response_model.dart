@@ -4,13 +4,13 @@ part 'collection_mode_response_model.g.dart';
 @JsonSerializable()
 class CollectionModeResponseModel {
   @JsonKey(name: "status")
-  bool status;
+  bool? status;
   @JsonKey(name: "subCode")
-  int subCode;
+  int? subCode;
   @JsonKey(name: "message")
-  String message;
+  String? message;
   @JsonKey(name: "error")
-  String error;
+  String? error;
   @JsonKey(name: "items")
   List<ModeItem> items;
 
@@ -30,25 +30,25 @@ class CollectionModeResponseModel {
 @JsonSerializable()
 class ModeItem {
   @JsonKey(name: "_id")
-  String id;
+  String? id;
   @JsonKey(name: "title")
   String title;
   @JsonKey(name: "extraForm")
-  bool extraForm;
+  bool? extraForm;
   @JsonKey(name: "email")
   bool email;
   @JsonKey(name: "dropdownId")
-  String dropdownId;
+  String? dropdownId;
   @JsonKey(name: "status")
-  String status;
+  String? status;
   @JsonKey(name: "createdAt")
-  DateTime createdAt;
+  DateTime? createdAt;
   @JsonKey(name: "updatedAt")
-  DateTime updatedAt;
+  DateTime? updatedAt;
   @JsonKey(name: "__v")
   int v;
   @JsonKey(name: "dropdownDetail")
-  DropdownDetail dropdownDetail;
+  DropdownDetail? dropdownDetail;
 
   ModeItem({
     required this.id,
@@ -71,13 +71,13 @@ class ModeItem {
 @JsonSerializable()
 class DropdownDetail {
   @JsonKey(name: "_id")
-  String id;
+  String? id;
   @JsonKey(name: "title")
-  String title;
+  String? title;
   @JsonKey(name: "modelName")
-  String modelName;
+  String? modelName;
   @JsonKey(name: "status")
-  String status;
+  String? status;
 
   DropdownDetail({
     required this.id,

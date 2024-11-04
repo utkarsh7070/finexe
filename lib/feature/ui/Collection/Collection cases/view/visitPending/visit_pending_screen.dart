@@ -242,26 +242,29 @@ class VisitPendingScreen extends ConsumerWidget {
                                             ),
                                           );
                                         },
-                                        child: Container(
-                                          height: displayHeight(context) * 0.06,
-                                          width: displayWidth(context) * 0.15,
-                                          decoration: const BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10)),
-                                              color: AppColors.primaryLight),
-                                          child: Center(
-                                              child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Image.asset(
-                                                'assets/images/info.png',
-                                                height: 20,
-                                                width: 20,
-                                              ),
-                                              const Text('info')
-                                            ],
-                                          )),
+                                        child: Padding(
+                                          padding: EdgeInsets.only(top: displayHeight(context)*0.01),
+                                          child: Container(
+                                            height: displayHeight(context) * 0.06,
+                                            width: displayWidth(context) * 0.15,
+                                            decoration: const BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10)),
+                                                color: AppColors.primaryLight),
+                                            child: Center(
+                                                child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Image.asset(
+                                                  'assets/images/info.png',
+                                                  height: 20,
+                                                  width: 20,
+                                                ),
+                                                const Text('info')
+                                              ],
+                                            )),
+                                          ),
                                         ),
                                       )
                                     ],

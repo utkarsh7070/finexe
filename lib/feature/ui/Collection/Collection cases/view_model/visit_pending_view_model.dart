@@ -92,7 +92,7 @@ final updateEmiFocusProvider =
 });
 
 final updateEmiViewModelProvider =
-    StateNotifierProvider<UpdateEmiViewModel, UpdateEmiModel>((ref) {
+    StateNotifierProvider<UpdateEmiViewModel, UpdateEmiModel>((ref)    {
   final dio = ref.read(dioProvider);
   return UpdateEmiViewModel(dio);
 });
@@ -124,6 +124,7 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
       state = state.copyWith(photoFile: pickedFile.path);
       return pickedFile;
     }
+    state = state.copyWith(isLoading: false);
     return null;
   }
 
@@ -417,9 +418,10 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     state = state.copyWith(commonId: id);
   }
 
+
   Future<void> updateEmiSubmitButton({required ItemsDetails detail,required BuildContext context,required WidgetRef ref}) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
+    // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    // String? token = sharedPreferences.getString('token');
     UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
         ld: detail.ld!,
         collectedBy: '',
@@ -436,10 +438,10 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         remarkByCollection: state.remark,
         partner: detail.partner!);
 
-    String? tokens = await SessionService.getToken();
+    String? token = await SessionService.getToken();
     final response = await dio.post(Api.visitFormSubmit,
         data: requestModel.toJson(),
-        options: Options(headers: {"token": tokens}));
+        options: Options(headers: {"token": token}));
     print(response.statusMessage);
     print(response.statusCode);
     if (response.statusCode == 200) {
@@ -457,11 +459,12 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
 
   Future<XFile?> clickPhoto() async {
     state = state.copyWith(isLoading: true);
-    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       state = state.copyWith(photoFile: pickedFile.path);
       return pickedFile;
     }
+    state = state.copyWith(isLoading: false);
     return null;
   }
 
@@ -1201,13 +1204,13 @@ FutureProvider<List<Map<String, String>>>((ref) async {
   }
 });
 
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2YzlmODJmYjY1ZDhjNGRkMWUzMDQ1NSIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MzA3MTYyMzh9.mGoOPIWs1iw1VODnpuRaxTx8Op_HBc-Eb0727uYyoUw
+
   final fetchGetAllModeOfCollectionProvider =
   FutureProvider<List<ModeItem>>((ref) async {
+    final dio = ref.read(dioProvider);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
-// const String token =
-//     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
-    final dio = ref.read(dioProvider);
     final response = await dio.get(Api.getAllModeOfCollection,
         options: Options(headers: {"token": token}));
     print(response.statusMessage);

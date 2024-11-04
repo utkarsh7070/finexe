@@ -1,10 +1,8 @@
 import 'dart:io';
-
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../base/utils/namespase/display_size.dart';
@@ -23,9 +21,9 @@ class UpdateEmiDialogContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final dropDownControllers = ref.watch(dropDownControllerProvider);
-    final dropDownData = ref.read(modeOfCollectionDropDown);
-    final bankDownData = ref.read(bankDropDown);
-    final creditDropData = ref.read(creditDropDown);
+    // final dropDownData = ref.read(modeOfCollectionDropDown);
+    // final bankDownData = ref.read(bankDropDown);
+    // final creditDropData = ref.read(creditDropDown);
     final paymentState = ref.watch(updateEmiViewModelProvider);
     final paymentViewModel = ref.read(updateEmiViewModelProvider.notifier);
     final paymentFocusStates = ref.watch(updateEmiFocusProvider);
@@ -40,7 +38,8 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                 DropDownValueModel(name: element.title, value: element.id));
           }
         }
-        return SingleChildScrollView(
+        return
+          SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: SizedBox(
             width: displayWidth(context),
@@ -399,6 +398,8 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                                 // print('imagepath ${imagePath}');
                                 paymentViewModel.uploadImage(value.path);
                               } else {
+                                // ref.watch(updateEmiViewModelProvider.notifier);
+                                // paymentState.isLoading = false;
                                 print('elsepart');
                               }
                             },
@@ -451,7 +452,8 @@ class UpdateEmiDialogContent extends ConsumerWidget {
         );
       },
       error: (error, stackTrace) {
-        return const Text('Something wrong');
+        print(error.toString());
+        return  Text(error.toString());
       },
       loading: () {
         return SizedBox(
@@ -459,7 +461,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
             width: displayWidth(context),
             child: Center(
                 child: SizedBox(
-                    height: displayHeight(context) * 0.03,
+                    height: displayHeight(context) * 0.04,
                     width: displayWidth(context) * 0.10,
                     child: const CircularProgressIndicator())));
       },

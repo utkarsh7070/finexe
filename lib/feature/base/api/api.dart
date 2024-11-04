@@ -1,6 +1,7 @@
 class Api {
   static const String baseUrl = 'https://stageapi.fincooper.in/';
   static const String login = '${baseUrl}v1/login/employe';
+  // https://prod.fincooper.in
 
   //------------------------ Sales --------------------------------------------------------
   static const String getAllProduct =
@@ -31,6 +32,9 @@ class Api {
       '${baseUrl}v1/googleSheet/overAllEmiData';
   static const String getAllModeOfCollection =
       '${baseUrl}v1/adminMaster/modeOfCollection/getAllModeOfCollection';
+  // https://prod.fincooper.in/v1/adminMaster/modeOfCollection/getAllModeOfCollection
+
+
   static const String uploadImageCollection =
       '${baseUrl}v1/formData/ImageUpload';
   static const String visitFormSubmit = '${baseUrl}v1/googleSheet/visitFormAdd';
