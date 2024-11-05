@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:finexe/feature/base/extentions/capital_letter.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:roam_flutter/roam_flutter.dart';
 import '../../../../base/api/api.dart';
+import '../Widget/profile_update.dart';
 import '../home_collection_viewmodel/fetchUserProfile.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../Widget/punct_in_out_action_dialog_content.dart';
@@ -23,32 +21,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    initialiseRoamSdk();
-    startTracking();
     ref.read(apiResponseProvider.notifier).fetchDashboardData();
-  }
-
-  Future<void> initialiseRoamSdk() async {
-    print("Roam SDK initialization started.");
-    // await _requestLocationPermission(); // Ensure permission is granted first
-    await Roam.initialize(
-      publishKey:
-          '58f73be503e069888cf19289bf728c14c2e841c47e5842a1054f9e5f12f52583',
-    );
-    Roam.createUser(
-        description: 'utkarsh',
-        callBack: ({user}) {
-          print(user);
-        });
-
-    Permission.locationAlways.request();
-
-    Roam.startTracking(trackingMode: 'active');
-
-    Roam.onLocation((location) {
-      print(jsonEncode(location));
-      print('our location ${jsonEncode(location)}');
-    });
   }
 
   void startTracking() {
@@ -67,6 +40,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDialogOpen = ref.watch(dialogVisibilityProvider);
+
+    void _toggleDialog() {
+      // Toggle dialog state
+      ref.read(dialogVisibilityProvider.notifier).state = !isDialogOpen;
+    }
+
     final data = ref.watch(apiResponseProvider);
     final dataViewModel = ref.read(apiResponseProvider.notifier);
     return data.when(
@@ -92,17 +72,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               SizedBox(
                 width: displayWidth(context) * 0.05,
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: CircleAvatar(
-                  radius: 20,
-                  backgroundImage: data.imageUrl != null
-                      ? NetworkImage('${Api.imageUrl}${data.imageUrl}')
-                      : const AssetImage('assets/images/prof.jpeg'),
-                  // Placeholder image
-                  onBackgroundImageError: (error, stackTrace) {
-                    // Set a default image if the API image fails to load
-                  },
+              GestureDetector(
+                onTap: _toggleDialog,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundImage: data.imageUrl != null
+                        ? NetworkImage('${Api.imageUrl}${data.imageUrl}')
+                        : const AssetImage('assets/images/prof.jpeg'),
+                    // Placeholder image
+                    onBackgroundImageError: (error, stackTrace) {
+                      // Set a default image if the API image fails to load
+                    },
+                  ),
                 ),
               ),
             ],
@@ -111,200 +94,216 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
             backgroundColor: Colors.white,
           ),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                Row(
+          body: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
                   children: [
-                    SizedBox(
-                      width: displayWidth(context) * 0.05,
-                    ),
-                    SizedBox(
-                        height: displayHeight(context) * 0.08,
-                        width: displayWidth(context) * 0.1,
-                        child: const Image(
-                            image: AssetImage('assets/images/Morning.png'))),
-                    SizedBox(
-                      width: displayWidth(context) * 0.04,
-                    ),
-                    Text(
-                      dataViewModel.greeting(),
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff475467)),
-                    )
-                  ],
-                ),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.only(left: displayWidth(context) * 0.05),
-                  child: Text(
-                    data.name.capitalize(),
-                    textAlign: TextAlign.left,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black),
-                  ),
-                ),
-                SizedBox(
-                  height: displayHeight(context) * 0.01,
-                ),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: displayWidth(context) * 0.05,
-                    ),
-                    const Text(
-                      'Get Ready- ',
-                      style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xff0082C6)),
-                    ),
-                    const Text(
-                      'You will do your best on today we will meet',
-                      style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xff475467)),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: displayHeight(context) * 0.03,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Image(
-                      image: const AssetImage(
-                        'assets/images/leftside.png',
-                      ),
-                      height: displayHeight(context) * 0.02,
-                      width: displayWidth(context) * 0.25,
-                    ),
-                    SizedBox(
-                      width: displayWidth(context) * 0.02,
-                    ),
-                    const Text(
-                      'Visit Update’s',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18,
-                          color: Color(0xff475467)),
-                    ),
-                    SizedBox(
-                      width: displayWidth(context) * 0.02,
-                    ),
-                    Image(
-                      image: const AssetImage('assets/images/rightside.png'),
-                      height: displayHeight(context) * 0.02,
-                      width: displayWidth(context) * 0.25,
-                    ),
-                  ],
-                ),
-                rectBox(
-                    backImage: 'assets/images/backgreen.png',
-                    iconImage: 'assets/images/right.png',
-                    title: 'Visit Updated',
-                    stitle: 'Case ${data.visitAccepted} Now',
-                    context: context),
-                Row(
-                  children: [
-                    SquareBox(
-                        backImage: 'assets/images/square.png',
-                        iconImage: 'assets/images/watch.png',
-                        title: 'Visit pending',
-                        stitle: 'Case ${data.visitPendingForApproval} Now',
-                        context: context,
-                        titleColor: const Color(0xffFFA500),
-                        stitleColor: Colors.orange),
-                    SquareBox(
-                        backImage: 'assets/images/rejected.png',
-                        iconImage: 'assets/images/rejected_icon.png',
-                        title: 'Visit rejected',
-                        stitle: 'Case ${data.visitRejected} Now',
-                        context: context,
-                        titleColor: const Color(0xffEE6C52),
-                        stitleColor: const Color.fromARGB(255, 218, 96, 87)),
-                  ],
-                ),
-                SizedBox(
-                  height: displayHeight(context) * 0.02,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Image(
-                        image: const AssetImage(
-                          'assets/images/leftside.png',
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: displayWidth(context) * 0.05,
                         ),
-                        height: displayHeight(context) * 0.02,
-                        width: displayWidth(context) * 0.18,
-                      ),
-                      SizedBox(
-                        width: displayWidth(context) * 0.025,
-                      ),
-                      const Text(
-                        'Collection Update’s',
-                        style: TextStyle(
+                        SizedBox(
+                            height: displayHeight(context) * 0.08,
+                            width: displayWidth(context) * 0.1,
+                            child: const Image(
+                                image:
+                                    AssetImage('assets/images/Morning.png'))),
+                        SizedBox(
+                          width: displayWidth(context) * 0.04,
+                        ),
+                        Text(
+                          dataViewModel.greeting(),
+                          style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff475467)),
+                        )
+                      ],
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      padding:
+                          EdgeInsets.only(left: displayWidth(context) * 0.05),
+                      child: Text(
+                        data.name.capitalize(),
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(
+                            fontSize: 20,
                             fontWeight: FontWeight.w600,
-                            fontSize: 18,
-                            color: Color(0xff475467)),
+                            color: Colors.black),
                       ),
-                      SizedBox(
-                        width: displayWidth(context) * 0.025,
+                    ),
+                    SizedBox(
+                      height: displayHeight(context) * 0.01,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: displayWidth(context) * 0.05,
+                        ),
+                        const Text(
+                          'Get Ready- ',
+                          style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xff0082C6)),
+                        ),
+                        const Text(
+                          'You will do your best on today we will meet',
+                          style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xff475467)),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: displayHeight(context) * 0.03,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Image(
+                          image: const AssetImage(
+                            'assets/images/leftside.png',
+                          ),
+                          height: displayHeight(context) * 0.02,
+                          width: displayWidth(context) * 0.25,
+                        ),
+                        SizedBox(
+                          width: displayWidth(context) * 0.02,
+                        ),
+                        const Text(
+                          'Visit Update’s',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18,
+                              color: Color(0xff475467)),
+                        ),
+                        SizedBox(
+                          width: displayWidth(context) * 0.02,
+                        ),
+                        Image(
+                          image:
+                              const AssetImage('assets/images/rightside.png'),
+                          height: displayHeight(context) * 0.02,
+                          width: displayWidth(context) * 0.25,
+                        ),
+                      ],
+                    ),
+                    rectBox(
+                        backImage: 'assets/images/backgreen.png',
+                        iconImage: 'assets/images/right.png',
+                        title: 'Visit Updated',
+                        stitle: 'Case ${data.visitAccepted} Now',
+                        context: context),
+                    Row(
+                      children: [
+                        SquareBox(
+                            backImage: 'assets/images/square.png',
+                            iconImage: 'assets/images/watch.png',
+                            title: 'Visit pending',
+                            stitle: 'Case ${data.visitPendingForApproval} Now',
+                            context: context,
+                            titleColor: const Color(0xffFFA500),
+                            stitleColor: Colors.orange),
+                        SquareBox(
+                            backImage: 'assets/images/rejected.png',
+                            iconImage: 'assets/images/rejected_icon.png',
+                            title: 'Visit rejected',
+                            stitle: 'Case ${data.visitRejected} Now',
+                            context: context,
+                            titleColor: const Color(0xffEE6C52),
+                            stitleColor:
+                                const Color.fromARGB(255, 218, 96, 87)),
+                      ],
+                    ),
+                    SizedBox(
+                      height: displayHeight(context) * 0.02,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20, right: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Image(
+                            image: const AssetImage(
+                              'assets/images/leftside.png',
+                            ),
+                            height: displayHeight(context) * 0.02,
+                            width: displayWidth(context) * 0.18,
+                          ),
+                          SizedBox(
+                            width: displayWidth(context) * 0.025,
+                          ),
+                          const Text(
+                            'Collection Update’s',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                                color: Color(0xff475467)),
+                          ),
+                          SizedBox(
+                            width: displayWidth(context) * 0.025,
+                          ),
+                          Image(
+                            image:
+                                const AssetImage('assets/images/rightside.png'),
+                            height: displayHeight(context) * 0.02,
+                            width: displayWidth(context) * 0.18,
+                          ),
+                        ],
                       ),
-                      Image(
-                        image: const AssetImage('assets/images/rightside.png'),
-                        height: displayHeight(context) * 0.02,
-                        width: displayWidth(context) * 0.18,
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: rectBox(
-                      backImage: 'assets/images/rectgreen.png',
-                      iconImage: 'assets/images/rectgreen_icon.png',
-                      title: 'Collection Accepted',
-                      stitle: 'Case ${data.collectionAcceptAmount} Now',
-                      context: context),
-                ),
-                SizedBox(
-                  height: displayHeight(context) * 0.001,
-                ),
-                Row(
-                  children: [
-                    SquareBoxBottom(
-                        backImage: 'assets/images/tback.png',
-                        iconImage: 'assets/images/orange_dollar.png',
-                        title: 'Collection pending',
-                        stitle:
-                            'Case ${data.collectionEmiAmountPendingForApproval} Now',
-                        context: context,
-                        titleColor: const Color(0xffFFA500),
-                        stitleColor: Colors.orange),
-                    SquareBoxBottom(
-                        backImage: 'assets/images/pinkback.png',
-                        iconImage: 'assets/images/pink_dollar.png',
-                        title: 'Collection rejected',
-                        stitle: 'Case ${data.collectionRejectAmount} Now',
-                        context: context,
-                        titleColor: const Color(0xffEE6C52),
-                        stitleColor: const Color.fromARGB(255, 218, 96, 87)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: rectBox(
+                          backImage: 'assets/images/rectgreen.png',
+                          iconImage: 'assets/images/rectgreen_icon.png',
+                          title: 'Collection Accepted',
+                          stitle: 'Case ${data.collectionAcceptAmount} Now',
+                          context: context),
+                    ),
+                    SizedBox(
+                      height: displayHeight(context) * 0.001,
+                    ),
+                    Row(
+                      children: [
+                        SquareBoxBottom(
+                            backImage: 'assets/images/tback.png',
+                            iconImage: 'assets/images/orange_dollar.png',
+                            title: 'Collection pending',
+                            stitle:
+                                'Case ${data.collectionEmiAmountPendingForApproval} Now',
+                            context: context,
+                            titleColor: const Color(0xffFFA500),
+                            stitleColor: Colors.orange),
+                        SquareBoxBottom(
+                            backImage: 'assets/images/pinkback.png',
+                            iconImage: 'assets/images/pink_dollar.png',
+                            title: 'Collection rejected',
+                            stitle: 'Case ${data.collectionRejectAmount} Now',
+                            context: context,
+                            titleColor: const Color(0xffEE6C52),
+                            stitleColor:
+                                const Color.fromARGB(255, 218, 96, 87)),
+                      ],
+                    ),
+                    SizedBox(
+                      height: displayHeight(context) * 0.1,
+                    ),
                   ],
                 ),
-                SizedBox(
-                  height: displayHeight(context) * 0.1,
-                ),
-              ],
-            ),
+              ),
+              if (isDialogOpen)
+                Positioned(
+                    right: 0,
+                    left: 0,
+                    top: 0,
+                    child: ProfileUpdateContent(userProfile: data))
+            ],
           ),
         );
       },

@@ -38,7 +38,7 @@ class CommonPaginatedDataGrid<T> extends StatelessWidget {
           ),
         ),
         SfDataPagerTheme(
-          data: SfDataPagerThemeData(
+          data: const SfDataPagerThemeData(
             // itemStyle: DataPagerItemStyle(
             //   selectedItemColor: Colors.blue,
             //   itemColor: Colors.white,

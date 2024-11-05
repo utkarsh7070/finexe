@@ -14,7 +14,7 @@ import '../model/VisitItemDetailModelData.dart';
 import '../model/VisitItemNoticeModelData.dart';
 
 
-final fetchVisitDetailsProvider = FutureProvider.family<List<VisitItemDetail>,String>((ref,ldNumber) async {
+final fetchVisitDetailsProvider = FutureProvider.autoDispose.family<List<VisitItemDetail>,String>((ref,ldNumber) async {
   String? token = await SessionService.getToken();
  /* final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
@@ -37,7 +37,7 @@ final fetchVisitDetailsProvider = FutureProvider.family<List<VisitItemDetail>,St
   }
 });
 
-final fetchVisitCollectionProvider = FutureProvider.family<List<VisitItemCollection>,String>((ref,ldNumber) async {
+final fetchVisitCollectionProvider = FutureProvider.autoDispose.family<List<VisitItemCollection>,String>((ref,ldNumber) async {
 
   String? token = await SessionService.getToken();
   /*final String token =
@@ -62,7 +62,7 @@ final fetchVisitCollectionProvider = FutureProvider.family<List<VisitItemCollect
 });
 
 
-final fetchVisitCallingProvider = FutureProvider.family<List<VisitItemCalling>,String>((ref,ldNumber) async {
+final fetchVisitCallingProvider = FutureProvider.autoDispose.family<List<VisitItemCalling>,String>((ref,ldNumber) async {
   String? token = await SessionService.getToken();
   /*final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
@@ -84,7 +84,7 @@ final fetchVisitCallingProvider = FutureProvider.family<List<VisitItemCalling>,S
   }
 });
 
-final fetchVisitClosureProvider = FutureProvider.family<List<VisitItemClosure>,String>((ref,ldNumber) async {
+final fetchVisitClosureProvider = FutureProvider.autoDispose.family<List<VisitItemClosure>,String>((ref,ldNumber) async {
   String? token = await SessionService.getToken();
   /*final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
@@ -110,7 +110,7 @@ final fetchVisitClosureProvider = FutureProvider.family<List<VisitItemClosure>,S
 
 });
 
-final fetchVisitNoticeProvider = FutureProvider.family<List<VisitItemNotice>,String>((ref,ldNumber) async {
+final fetchVisitNoticeProvider = FutureProvider.autoDispose.family<List<VisitItemNotice>,String>((ref,ldNumber) async {
   String? token = await SessionService.getToken();
   /*final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";

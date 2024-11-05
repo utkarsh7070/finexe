@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'collection_logout_dialog_content.dart';
 
 class CollectionLogOutDialog {
-  // final indexCtrl = Get.find<EODController>();
   static Future<void> collectionLogOutDialog({
     required BuildContext context,
   }) async {

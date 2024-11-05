@@ -107,7 +107,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
       required String email,
       required String password,
       required WidgetRef ref}) async {
-    await login(email, password, ref,context).then(
+    await login(email, password, ref, context).then(
       (value) {
         if (value) {
           print('check punch ${state.value!.checkPunch}');
@@ -121,8 +121,8 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                   AppRoutes.collectionHome, // Admin dashboard route
                   (route) => false, // Remove all previous routes
                 );
-
                 break;
+
               case 'sales':
                 log("Navigating to sales dashboard");
                 Navigator.pushNamedAndRemoveUntil(
@@ -131,7 +131,8 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                   (route) => false, // Remove all previous routes
                 );
                 break;
-              case 'cashCollection':
+
+              case 'collection':
                 log("Navigating to collection dashboard");
                 Navigator.pushNamedAndRemoveUntil(
                   context,
@@ -139,6 +140,25 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                   (route) => false, // Remove all previous routes
                 );
                 break;
+
+              case 'salesAndCollection':
+                log("Navigating to collection dashboard");
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.collectionHome, // Collection dashboard route
+                  (route) => false, // Remove all previous routes
+                );
+                break;
+
+              case 'salesPdAndCollection':
+                log("Navigating to collection dashboard");
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.collectionHome, // Collection dashboard route
+                  (route) => false, // Remove all previous routes
+                );
+                break;
+
               default:
                 // Handle unknown roles or navigate to a default screen
                 log('No matching role found');
@@ -156,7 +176,8 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
     );
   }
 
-  Future<bool> login(String email, String password, WidgetRef ref,BuildContext context) async {
+  Future<bool> login(String email, String password, WidgetRef ref,
+      BuildContext context) async {
     isLoading = true;
     LoginRequestModel loginRequestModel =
         LoginRequestModel(userName: email, password: password);
@@ -184,8 +205,11 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
             role: loginResponseModel.items.roleName);
         ref.refresh(attendanceProvider);
 
-        bool punchStatus = await punchStatusFunction(_punchInRepository,
-            loginResponseModel.items.token, loginResponseModel.items.roleName,context);
+        bool punchStatus = await punchStatusFunction(
+            _punchInRepository,
+            loginResponseModel.items.token,
+            loginResponseModel.items.roleName,
+            context);
         // Update state to indicate success
         state = AsyncValue.data(DataModel(
             checkPunch: punchStatus,
@@ -193,13 +217,11 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
             role: loginResponseModel.items.roleName));
         SharedPreferences preferences = await SharedPreferences.getInstance();
         print(' inLogin set username ${preferences.get('email')}');
-        showCustomSnackBar(context,
-            loginResponseModel.message, Colors.green);
+        showCustomSnackBar(context, loginResponseModel.message, Colors.green);
         return true;
-  // Return true here to indicate success
+        // Return true here to indicate success
       } else {
-        showCustomSnackBar(context,
-            response.data.message, Colors.red);
+        showCustomSnackBar(context, response.data.message, Colors.red);
         // If status code is not 200, set state to error
         isLoading = false;
         state = AsyncValue.error(
@@ -208,7 +230,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
         return false;
       }
     } catch (error, stackTrace) {
-      DioExceptions.fromDioError(error as DioException,context);
+      DioExceptions.fromDioError(error as DioException, context);
       // Handle exceptions and set state to error
       isLoading = false;
       state = AsyncValue.error(error, stackTrace);
@@ -310,7 +332,7 @@ Future<Position> _getCurrentLocation() async {
 }
 
 Future<bool> punchStatusFunction(
-    _punchInRepository, String token, String role,BuildContext context) async {
+    _punchInRepository, String token, String role, BuildContext context) async {
   log('stored token:: $token');
   log('stored role:: $role');
   Position position = await _getCurrentLocation();
@@ -326,7 +348,7 @@ Future<bool> punchStatusFunction(
           CheckAttendanceResponseModel.fromJson(response.data);
       return checkAttendanceResponse.items.punchIn;
     } on DioException catch (error) {
-      DioExceptions.fromDioError(error,context);
+      DioExceptions.fromDioError(error, context);
     }
   }
   return false;

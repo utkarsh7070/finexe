@@ -180,12 +180,30 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
             );
 
             break;
-          case 'cashCollection':
+          case 'collection':
             log("Navigating to collection dashboard");
             Navigator.pushNamedAndRemoveUntil(
               context,
               AppRoutes.collectionHome,
               (route) => false,
+            );
+            break;
+
+          case 'salesAndCollection':
+            log("Navigating to collection dashboard");
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              AppRoutes.collectionHome, // Collection dashboard route
+                  (route) => false, // Remove all previous routes
+            );
+            break;
+
+          case 'salesPdAndCollection':
+            log("Navigating to collection dashboard");
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              AppRoutes.collectionHome, // Collection dashboard route
+                  (route) => false, // Remove all previous routes
             );
             break;
           default:

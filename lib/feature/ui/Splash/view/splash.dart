@@ -92,6 +92,23 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       (route) => false, // Remove all previous routes
                     );
                     break;
+                  case 'salesAndCollection':
+                    log("Navigating to collection dashboard");
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      AppRoutes.collectionHome, // Collection dashboard route
+                      (route) => false, // Remove all previous routes
+                    );
+                    break;
+                  case 'salesPdAndCollection':
+                    log("Navigating to collection dashboard");
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      AppRoutes.collectionHome, // Collection dashboard route
+                      (route) => false, // Remove all previous routes
+                    );
+                    break;
+
                   default:
                     // Handle unknown roles or navigate to a default screen
                     log('No matching role found');

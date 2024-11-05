@@ -1,6 +1,6 @@
 class Api {
-  //static const String baseUrl = 'https://stageapi.fincooper.in/';
   static const String baseUrl = 'https://prod.fincooper.in/';
+  // static const String baseUrl = 'https://stageapi.fincooper.in/';
 
   static const String login = '${baseUrl}v1/login/employe';
   // https://prod.fincooper.in
@@ -65,7 +65,10 @@ class Api {
   static const String getVisitNotice =
       '${baseUrl}v1/googleSheet/getLegalNoticeBy';
   static const String getVisitCalling = '${baseUrl}v1/googleSheet/callDoneBy';
+  static const String updateProfile = '${baseUrl}v1/adminMaster/employe/update';
+  static const String updatePassword = '${baseUrl}v1/login/updatePassword';
 
+  // https://stageapi.fincooper.in/v1/login/updatePassword
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
 
