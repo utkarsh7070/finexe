@@ -1,12 +1,7 @@
-import 'dart:developer';
-
 import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:one_clock/one_clock.dart';
-
-import '../../ui/Splash/view_model/splash_vew_model.dart';
 
 class AttendanceScreen extends ConsumerWidget {
   const AttendanceScreen({super.key});
