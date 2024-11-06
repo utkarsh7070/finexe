@@ -107,47 +107,75 @@ class VisitPendingScreen extends ConsumerWidget {
                           elevation: 5,
                           child: IntrinsicHeight(
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(15.0),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   SizedBox(
                                     child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Container(
-                                          decoration: const BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10)),
-                                              color: AppColors.primaryLight),
-                                          padding: const EdgeInsets.all(10),
-                                          height: displayHeight(context) * 0.09,
-                                          width: displayWidth(context) * 0.25,
-                                          child: Center(
-                                              child: Text(
-                                            item.ld!,
-                                            style: AppStyles.cardTextStyle16
-                                                .copyWith(
-                                                    color: AppColors.primary,
-                                                    fontSize:
-                                                        FontSize.fontSizeS),
-                                          )),
-                                        ),
-                                        SizedBox(
-                                          width: displayWidth(context) * 0.02,
-                                        ),
-                                        // Text(
-                                        //  ' ${item.customerName} S/O ${item.fatherName}'.capitalize(),
-                                        //   maxLines: 2,
-                                        //   style: AppStyles.nameText.copyWith(fontSize: FontSize.fontSize),
-                                        // ),
-                                        customerNameDetails(patner: item.partner!,
+                                        customerNameDetails(
+                                          mobile: item.mobile!,
                                           context,
                                           heading: 'Customer Name',
                                           data:
                                               '${item.customerName} S/O ${item.fatherName}',
                                         ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CollectionMoreInfoScreen(
+                                                        index: index),
+                                              ),
+                                            );
+                                          },
+                                          child: Center(
+                                              child: Image.asset(
+                                            'assets/images/info.png',
+                                            height: 20,
+                                            width: 20,
+                                          )),
+                                        )
                                       ],
                                     ),
+                                  ),
+                                  SizedBox(
+                                    height: displayHeight(context) * 0.02,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Center(
+                                          child: Text(
+                                        item.ld!,
+                                        style: AppStyles.cardTextStyle16
+                                            .copyWith(
+                                                color: AppColors.primary,
+                                                fontSize: FontSize.fontSizeS),
+                                      )),
+                                      Container(
+                                          padding: EdgeInsets.all(6),
+                                          decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(10),
+                                                  bottomRight:
+                                                      Radius.circular(10)),
+                                              color: AppColors.primaryOrange),
+                                          child: Center(
+                                              child: Text(
+                                            item.partner!,
+                                            style: const TextStyle(
+                                                color: Colors.orange),
+                                          ))),
+                                    ],
                                   ),
                                   const Divider(
                                     thickness: 1,
@@ -187,15 +215,17 @@ class VisitPendingScreen extends ConsumerWidget {
                                       ),
                                       GestureDetector(
                                         onTap: () {
-                                          MapDialog()
-                                              .mapDialog(context: context,lat: item.lat!,log: item.longValue!);
+                                          MapDialog().mapDialog(
+                                              context: context,
+                                              lat: item.lat!,
+                                              log: item.longValue!);
                                         },
                                         child: Container(
-                                          height: displayHeight(context) * 0.06,
-                                          width: displayWidth(context) * 0.15,
-                                          decoration: const BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10)),
+                                          padding: EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              // borderRadius: BorderRadius.all(
+                                              //     Radius.circular(10)),
                                               color: AppColors.primaryLight),
                                           child: Center(
                                               child: Image.asset(
@@ -207,70 +237,9 @@ class VisitPendingScreen extends ConsumerWidget {
                                       )
                                     ],
                                   ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Number',
-                                            style: AppStyles.subTextStyle,
-                                          ),
-                                          Text(
-                                            item.mobile!,
-                                            style: AppStyles.subHeadingW500
-                                                .copyWith(
-                                                    color: AppColors.black,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                          ),
-                                        ],
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          /*Navigator.pushNamed(
-                                              context, AppRoutes.moreInfo,arguments: {
-                                                "index":index
-                                          });*/
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => CollectionMoreInfoScreen(index: index),
-                                            ),
-                                          );
-                                        },
-                                        child: Padding(
-                                          padding: EdgeInsets.only(top: displayHeight(context)*0.01),
-                                          child: Container(
-                                            height: displayHeight(context) * 0.06,
-                                            width: displayWidth(context) * 0.15,
-                                            decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10)),
-                                                color: AppColors.primaryLight),
-                                            child: Center(
-                                                child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Image.asset(
-                                                  'assets/images/info.png',
-                                                  height: 20,
-                                                  width: 20,
-                                                ),
-                                                const Text('info')
-                                              ],
-                                            )),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
+
                                   SizedBox(
-                                    height: displayHeight(context) * 0.01,
+                                    height: displayHeight(context) * 0.02,
                                   ),
                                   Row(
                                     mainAxisAlignment:
@@ -310,113 +279,100 @@ class VisitPendingScreen extends ConsumerWidget {
                                     ],
                                   ),
                                   SizedBox(
-                                    height: displayHeight(context) * 0.01,
-                                  ),
-                                  const Divider(
-                                    thickness: 1,
-                                    color: AppColors.dividerColors,
-                                    indent: 10,
-                                    endIndent: 10,
-                                  ),
-                                  IntrinsicHeight(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            UpdateVisitDialog()
-                                                .updateVisitDialog(item:item,
-                                                    context: context,index: index);
-                                          },
-                                          child: textPreIcon(context,
-                                              image: 'assets/images/money.png',
-                                              text: 'Update Visit',
-                                              textColor: Colors.green),
-                                        ),
-                                        VerticalDivider(
-                                          width: displayWidth(context) * 0.05,
-                                          color: AppColors.dividerColors,
-                                          thickness: 1,
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            ClosuerDialog().closuerDialog(
-                                                item:item,
-                                                context: context,index: index);
-                                          },
-                                          child: textPreIcon(context,
-                                              image:
-                                                  'assets/images/money_beg.png',
-                                              text: 'Closure',
-                                              textColor: Colors.blue),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
                                     height: displayHeight(context) * 0.02,
                                   ),
-                                  AppButton(
+                                  // const Divider(
+                                  //   thickness: 1,
+                                  //   color: AppColors.dividerColors,
+                                  //   indent: 10,
+                                  //   endIndent: 10,
+                                  // ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: displayWidth(context) * 0.37,
+                                        child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              side: BorderSide(
+                                                  color: AppColors.primary),
+                                              backgroundColor: AppColors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              UpdateVisitDialog()
+                                                  .updateVisitDialog(
+                                                      item: item,
+                                                      context: context,
+                                                      index: index);
+                                            },
+                                            child: Text(
+                                              'Update Visit',
+                                              style: const TextStyle(
+                                                  color: AppColors.primary),
+                                            )),
+                                      ),
+                                      SizedBox(
+                                        width: displayWidth(context) * 0.37,
+                                        child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              side: BorderSide(
+                                                  color: AppColors.primary),
+                                              backgroundColor: AppColors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              ClosuerDialog().closuerDialog(
+                                                  item: item,
+                                                  context: context,
+                                                  index: index);
+                                            },
+                                            child: Text(
+                                              'Closure',
+                                              style: const TextStyle(
+                                                  color: AppColors.primary),
+                                            )),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: displayHeight(context) * 0.01,
+                                  ),
+                                  SizedBox(
                                     width: displayWidth(context),
-                                    onTap: () {
-                                      UpdateEmiDialog()
-                                          .updateEmiDialog(context: context,index: index,item: item);
-                                    },
-                                    label: 'Update EMI',
-                                    textStyle:
-                                        const TextStyle(color: AppColors.white),
-                                  )
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          side: BorderSide(
+                                              color: AppColors.primary),
+                                          backgroundColor: AppColors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          UpdateEmiDialog().updateEmiDialog(
+                                              context: context,
+                                              index: index,
+                                              item: item);
+                                        },
+                                        child: Text(
+                                          'Update EMI',
+                                          style: const TextStyle(
+                                              color: AppColors.primary),
+                                        )),
+                                  ),
                                 ],
                               ),
                             ),
-                          )
-
-                          // Stack(children: [
-                          //   Container(
-                          //     padding: const EdgeInsets.all(16),
-                          //     child: Column(
-                          //       children: [
-                          //         const Text('Costomer Details'),
-                          //         SizedBox(
-                          //           height: displayHeight(context) * 0.01,
-                          //         ),
-                          //         customerDetails(context,
-                          //             heading: 'Name', data: 'Prakash'),
-                          //         customerDetails(context,
-                          //             heading: 'Father Name', data: 'Karulal'),
-                          //         customerDetails(context,
-                          //             heading: 'Address', data: 'GRAM MANGALIYAGOWN, INDORE'),
-                          //         customerDetails(context,
-                          //             heading: 'LD BNumber', data: 'LD-7534'),
-                          //         customerDetails(context,
-                          //             heading: 'Contact Number', data: '2343525'),
-                          //         customerDetails(context,
-                          //             heading: 'EMI Amount', data: '8300'),
-                          //         customerDetails(context,
-                          //             heading: 'Old Due', data: '0'),
-                          //         customerDetails(context,
-                          //             heading: 'Net Due', data: '8,300'),
-                          //         customerDetails(context,
-                          //             heading: 'Partner', data: 'UGRO'),
-                          //         SizedBox(height: displayHeight(context)*0.01,),
-                          //         buttons(context,
-                          //             onTap: () {
-                          //               Navigator.pushNamed(context, AppRoutes.updateVisit);
-                          //             },
-                          //             onTap1: () {},
-                          //             text1: 'Update EMI',
-                          //             text: 'Update Visit'),
-                          //         buttons(context,
-                          //             onTap: () {},
-                          //             onTap1: () {},
-                          //             text1: 'Map',
-                          //             text: 'More Info')
-                          //       ],
-                          //     ),
-                          //   )
-                          // ]),
-                          );
+                          ));
                     },
                   ),
                 ),
@@ -489,15 +445,11 @@ class VisitPendingScreen extends ConsumerWidget {
   }
 
   Widget customerNameDetails(context,
-      {required String heading, required String data,required String patner}) {
+      {required String heading, required String data, required String mobile}) {
     return SizedBox(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Text(
-          //   '$heading:',
-          //   style: AppStyles.subTextStyle,
-          // ),
           SizedBox(
             width: displayWidth(context) * 0.55,
             child: Text(
@@ -507,17 +459,11 @@ class VisitPendingScreen extends ConsumerWidget {
                   fontSize: FontSize.fontSize, fontWeight: FontWeight.w600),
             ),
           ),
-          Container(
-              width: displayWidth(context) * 0.20,
-              height: displayHeight(context) * 0.04,
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: AppColors.primaryOrange),
-              child: const Center(
-                  child: Text(
-                'UGRO',
-                style: TextStyle(color: Colors.orange),
-              )))
+          Text(
+            mobile,
+            style: AppStyles.subHeadingW500
+                .copyWith(color: AppColors.gray, fontWeight: FontWeight.w600),
+          ),
         ],
       ),
     );
@@ -543,29 +489,29 @@ class VisitPendingScreen extends ConsumerWidget {
     );
   }
 
-  Widget textPreIcon(context,
-      {required String image, required String text, required Color textColor}) {
-    return Row(
-      children: [
-        SizedBox(
-          child: Row(
-            children: [
-              Image.asset(
-                image,
-                width: 20,
-                height: 20,
-              ),
-              SizedBox(
-                width: displayWidth(context) * 0.03,
-              ),
-              Text(
-                text,
-                style: AppStyles.cardTextStyle16.copyWith(color: textColor),
-              )
-            ],
-          ),
-        )
-      ],
-    );
-  }
+// Widget textPreIcon(context,
+//     {required String image, required String text, required Color textColor}) {
+//   return Row(
+//     children: [
+//       SizedBox(
+//         child: Row(
+//           children: [
+//             Image.asset(
+//               image,
+//               width: 20,
+//               height: 20,
+//             ),
+//             SizedBox(
+//               width: displayWidth(context) * 0.03,
+//             ),
+//             Text(
+//               text,
+//               style: AppStyles.cardTextStyle16.copyWith(color: textColor),
+//             )
+//           ],
+//         ),
+//       )
+//     ],
+//   );
+// }
 }

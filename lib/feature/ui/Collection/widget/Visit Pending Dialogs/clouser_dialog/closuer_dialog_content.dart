@@ -207,6 +207,7 @@ class ClosuerDialogContent extends ConsumerWidget {
                     height: displayHeight(context) * 0.01,
                   ),
                   AppButton(
+                    bgColor: AppColors.primary,
                     textStyle: AppStyles.buttonLightTextStyle,
                     width: displayWidth(context),
                     onTap: () {

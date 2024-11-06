@@ -162,6 +162,8 @@ class ApplicationDetails extends ConsumerWidget {
                           ),
                         ),
 
+
+
                         // SizedBox(
                         //   height: displayHeight(context) * 0.03,
                         // ),
@@ -244,8 +246,9 @@ class ApplicationDetails extends ConsumerWidget {
                           width: displayWidth(context),
                           label: 'Next',
                           onTap: () {
-                            Navigator.pushNamed(
-                                context, AppRoutes.saleApplicationForm3);
+                            // ref.read(applicantViewModelProvider.notifier).fetchAadhaarNumber();
+                            // Navigator.pushNamed(
+                            //     context, AppRoutes.saleApplicationForm3);
                           },
                         ),
                         SizedBox(

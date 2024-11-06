@@ -1223,6 +1223,27 @@ FutureProvider<List<Map<String, String>>>((ref) async {
   }
 });
 
+final fetchCollectionDueDataProvider =
+FutureProvider<List<Map<String, String>>>((ref) async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  String? token = sharedPreferences.getString('token');
+  // final String token =
+  //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+  final dio = ref.read(dioProvider);
+  final response = await dio.get(Api.collectionVisitPending, options: Options(headers: {"token": token}));
+  print(response.statusMessage);
+  print(response.statusCode);
+  if (response.statusCode == 200) {
+    print(response.data);
+
+    GetVisitPendingResponseData apiResponseList =
+    GetVisitPendingResponseData.fromJson(response.data);
+    return apiResponseList.items;
+  } else {
+    throw Exception('Failed to load data');
+  }
+});
+
 // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2YzlmODJmYjY1ZDhjNGRkMWUzMDQ1NSIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MzA3MTYyMzh9.mGoOPIWs1iw1VODnpuRaxTx8Op_HBc-Eb0727uYyoUw
 
   final fetchGetAllModeOfCollectionProvider =

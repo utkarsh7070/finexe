@@ -175,6 +175,11 @@ class NewLoanScreen extends ConsumerWidget {
                                   dropDownItemCount: 9,
                                   onChanged: (val) {
                                     phoneViewModel.updateProduct(item.id);
+                                    // phoneViewModel
+                                    //     .updateLoanAmount(item.loanAmount.min.toDouble());
+                                    // phoneViewModel.updateTenureRate(item.tenure.min.toDouble());
+                                    // phoneViewModel.updateInterestLone(item.roi.min.toDouble());
+                                    // phoneViewModel.updateEmi();
                                   },
                                   textFieldFocusNode:
                                       phoneFocusViewModel.productFocusNode,
