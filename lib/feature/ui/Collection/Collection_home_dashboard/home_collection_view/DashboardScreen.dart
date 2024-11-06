@@ -51,9 +51,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final dataViewModel = ref.read(apiResponseProvider.notifier);
     return data.when(
       data: (data) {
-        final name = data.name;
-        int idx = name.indexOf(" ");
-        String parts = "${name.substring(0,idx).trim().capitalize()} ${name.substring(idx+1).trim().capitalize()}";
         return Scaffold(
           drawer: const DashBoardSideBar(),
           backgroundColor: Colors.white,
@@ -130,7 +127,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       padding:
                           EdgeInsets.only(left: displayWidth(context) * 0.05),
                       child: Text(
-                        parts,
+                          CaplitalizeSentence().capitalizeEachWord(data.name),
                         textAlign: TextAlign.left,
                         style: const TextStyle(
                             fontSize: 20,
