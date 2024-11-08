@@ -59,6 +59,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final checkUsernameValidation = ref.read(userValidationProvider.notifier);
+    final checkPassValidation = ref.read(passwordValidationProvider.notifier);
     log('isLoggedIn: ' + isLoggedIn.toString());
     // final checkPunchProvider = ref.watch(attendanceProvider);
 
@@ -119,6 +121,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         height: userValidations
                             ? displayHeight(context) * 0.09
                             : null,
+                        onChange: (value) {
+                          checkUsernameValidation.checkUsername(value);
+                        },
                         onFiledSubmitted: (value) {
                           log('onFiledSubmitted');
                           ref
@@ -148,6 +153,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ? displayHeight(context) * 0.09
                             : null,
                         // focusNode: FocusNode(),
+                        onChange: (value) {
+                          checkPassValidation.checkPassword(value);
+                        },
                         onValidate: (value) {
                           print(value);
                           if (value!.isEmpty) {

@@ -441,15 +441,6 @@ class CoApplicantForm2 extends ConsumerWidget {
                                 print(coApplicationFormState.toList());
                               }
                               ref.read(pageViewModelProvider.notifier).setTabIndex(0);
-                              // coApplicationFormViewModel
-                              //     .submitCoApplicantForm(index)
-                              //     .then((value) {
-                              //   if (value) {
-                              //     Navigator.of(context).pushReplacement(MaterialPageRoute(
-                              //         builder: (context) =>
-                              //             const CoApplicantForm1()));
-                              //   }
-                              // });
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,

@@ -1,6 +1,6 @@
 class Api {
-  static const String baseUrl = 'https://prod.fincooper.in/';
-  // static const String baseUrl = 'https://stageapi.fincooper.in/';
+  // static const String baseUrl = 'https://prod.fincooper.in/';
+  static const String baseUrl = 'https://stageapi.fincooper.in/';
 
   static const String login = '${baseUrl}v1/login/employe';
   // https://prod.fincooper.in

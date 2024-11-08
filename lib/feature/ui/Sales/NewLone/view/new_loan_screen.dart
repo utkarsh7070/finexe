@@ -21,6 +21,10 @@ class NewLoanScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //------------------------------payment--------------------------------------------
+    final goPayment = ref.read(paymentProvider.notifier);
+    final goPaymentViewModel = ref.watch(paymentProvider);
+    //-----------------------------------------------------------------------------
     final getAllProduct = ref.watch(fetchDataProvider);
     final phoneState = ref.watch(personalDetailViewModelProvider);
     final phoneViewModel = ref.read(personalDetailViewModelProvider.notifier);
@@ -67,6 +71,14 @@ class NewLoanScreen extends ConsumerWidget {
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: getAllProduct.when(
                       data: (data) {
+                        List<DropDownValueModel> dropdown = [];
+                        for (var element in data) {
+                          if (element.productName.isNotEmpty) {
+                            dropdown.add(DropDownValueModel(
+                                name: element.productName, value: element.id));
+                          }
+                        }
+
                         final item = data.firstWhere(
                           (element) =>
                               element.productName ==
@@ -120,66 +132,17 @@ class NewLoanScreen extends ConsumerWidget {
                                 DropDownTextField(
                                   clearOption: false,
                                   controller: phoneViewModel.dropDownController,
-                                  // initialValue:
-                                  // phoneViewModel.dropDownController.dropDownValue,
                                   listSpace: 20,
-
                                   listPadding: ListPadding(top: 20),
                                   enableSearch: false,
-                                  dropDownList: const [
-                                    DropDownValueModel(
-                                        name: 'MICRO LAP', value: "microLap"),
-                                    DropDownValueModel(
-                                        name: 'LAp', value: "lap"),
-                                    DropDownValueModel(
-                                        name: 'LAp1', value: "lap1"),
-                                    DropDownValueModel(
-                                        name: 'LAp2', value: "lap2"),
-                                    DropDownValueModel(
-                                        name: 'Local stage',
-                                        value: "localStage"),
-                                    DropDownValueModel(
-                                        name: 'Test', value: "test"),
-                                    DropDownValueModel(
-                                        name: 'FIN PRODUCT 1RS',
-                                        value: "finProduct1Rs"),
-                                    DropDownValueModel(
-                                        name: 'FIN PRODUCT',
-                                        value: "finProduct"),
-                                    DropDownValueModel(
-                                        name: 'Test 3', value: "test3"),
-                                    DropDownValueModel(
-                                        name: 'FIN CAR', value: "finCar"),
-                                    DropDownValueModel(
-                                        name: 'New Producet Added ',
-                                        value: "newProducetAdded"),
-                                    DropDownValueModel(
-                                        name: 'LAp4', value: "Lap4"),
-                                    DropDownValueModel(
-                                        name: 'testBT', value: "testBt"),
-                                    DropDownValueModel(
-                                        name: 'NEW PRODUCT FIN COOPERS 28',
-                                        value: "newProductFinCoopers28"),
-                                    DropDownValueModel(
-                                        name: 'Product Name FIN',
-                                        value: "productNameFin"),
-                                    DropDownValueModel(
-                                        name: '3rd product',
-                                        value: "3rdProduct"),
-                                    DropDownValueModel(
-                                        name: 'Secured LAP MICRO',
-                                        value: "securedLapMicro"),
-                                  ],
+                                  dropDownList: dropdown,
                                   listTextStyle:
                                       const TextStyle(color: AppColors.primary),
                                   dropDownItemCount: 9,
-                                  onChanged: (val) {
-                                    phoneViewModel.updateProduct(item.id);
-                                    // phoneViewModel
-                                    //     .updateLoanAmount(item.loanAmount.min.toDouble());
-                                    // phoneViewModel.updateTenureRate(item.tenure.min.toDouble());
-                                    // phoneViewModel.updateInterestLone(item.roi.min.toDouble());
-                                    // phoneViewModel.updateEmi();
+                                  onChanged: (dropDown) {
+                                    print(dropDown.name);
+                                    phoneViewModel.updateProduct(
+                                        dropDown.name, data);
                                   },
                                   textFieldFocusNode:
                                       phoneFocusViewModel.productFocusNode,
@@ -384,13 +347,20 @@ class NewLoanScreen extends ConsumerWidget {
                                 AppButton(
                                   width: displayWidth(context),
                                   onTap: () {
-                                    phoneViewModel.submitNewLoan(item.id).then((value) {
-                                      if(value){
-                                        Navigator.pushNamed(
-                                            context, AppRoutes.saleApplicationForm);
-                                      }
-                                    },);
+                                    bool isValidate =
+                                        phoneViewModel.validation();
+                                    if (isValidate) {
+                                      phoneViewModel
+                                          .submitNewLoan(item.id)
+                                          .then(
+                                        (value) {
+                                          if (value) {
+                                            goPayment.payWithRazorPay(phoneState.loanAmount.toDouble());
 
+                                          }
+                                        },
+                                      );
+                                    }
                                   },
                                   label: 'Submit',
                                   textStyle:
@@ -448,12 +418,6 @@ class NewLoanScreen extends ConsumerWidget {
 
   Widget amountShow(BuildContext context, double loanAmount, double interest,
       double tenure, emi) {
-    // double monthlyRate = interest / (12 * 100);
-    // double emi =
-    //     (loanAmount * monthlyRate * (pow((1 + monthlyRate), tenure.toInt()))) /
-    //         (pow((1 + monthlyRate), tenure.toInt()) - 1);
-    // String formattedNumber = emi.toStringAsFixed(1);
-    // phoneViewModel.updateEmi(double.parse(formattedNumber));
     return Container(
       padding: const EdgeInsets.all(16),
       height: displayHeight(context) * 0.20,

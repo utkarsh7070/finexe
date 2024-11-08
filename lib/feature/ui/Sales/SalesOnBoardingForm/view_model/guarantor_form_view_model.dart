@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../base/api/dio.dart';
@@ -137,6 +138,7 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
 
 
   Future<bool> fetchAadhaarNumber() async {
+    await fetchPanVerify();
     print(state.aadhaar);
     final aadhaarNumberRequestModel = AadhaarNumberRequestModel(
         aadharNo: state.aadhaar.trim().toString(),
@@ -1398,6 +1400,8 @@ class GuarantorDataController {
     required this.otpController,
   });
 }
+
+
 
 enum GuarantorOptionRole { Yes, NO, NON }
 

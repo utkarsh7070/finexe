@@ -127,7 +127,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                 log("Navigating to sales dashboard");
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  AppRoutes.saleApplicationForm, // Sales dashboard route
+                  AppRoutes.dashBoard, // Sales dashboard route
                   (route) => false, // Remove all previous routes
                 );
                 break;

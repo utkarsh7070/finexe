@@ -10,6 +10,7 @@ import '../../../../../../base/utils/namespase/display_size.dart';
 import '../../../../../../base/utils/widget/app_button.dart';
 import '../../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../../../../base/utils/widget/upload_box.dart';
+import '../../../view_model/application_form_view_model.dart';
 import '../../../view_model/guarantor_form_view_model.dart';
 import 'bottom_sheet/bottom_sheet_if_no.dart';
 import 'bottom_sheet/guarantor_bottom_sheet.dart';
@@ -19,6 +20,7 @@ class GuarantorDetails extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
     //----------------controller-------------------------------------------------------
     final formListController = ref.watch(guarantorController);
     final formNotifierController = ref.read(guarantorController.notifier);
@@ -108,149 +110,151 @@ class GuarantorDetails extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Is Customer Mobile No. Linked With Aadhaar ?',
+                                'Customer Mobile No. Is Must Be Linked With Aadhaar.',
                                 maxLines: 2,
                               ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.30,
-                                child: Row(
-                                  children: [
-                                    Radio<GuarantorOptionRole>(
-                                      value: GuarantorOptionRole.Yes,
-                                      groupValue: selectedValue,
-                                      onChanged: (value) {
-                                        if (value != null) {
-                                          ref
-                                              .read(guarantorRoleProvider
-                                                  .notifier)
-                                              .select(value);
-                                        }
-                                        showBottomSheetIfYes(
-                                          context: context,
-                                          ref: ref,
-                                        );
-                                      },
-                                    ),
-                                    const Text(
-                                      'Yes',
-                                    )
-                                  ],
-                                ),
+                              // SizedBox(
+                              //   width: MediaQuery.of(context).size.width * 0.30,
+                              //   child: Row(
+                              //     children: [
+                              //       Radio<GuarantorOptionRole>(
+                              //         value: GuarantorOptionRole.Yes,
+                              //         groupValue: selectedValue,
+                              //         onChanged: (value) {
+                              //           if (value != null) {
+                              //             ref
+                              //                 .read(guarantorRoleProvider
+                              //                     .notifier)
+                              //                 .select(value);
+                              //           }
+                              //           showBottomSheetIfYes(
+                              //             context: context,
+                              //             ref: ref,
+                              //           );
+                              //         },
+                              //       ),
+                              //       const Text(
+                              //         'Yes',
+                              //       )
+                              //     ],
+                              //   ),
+                              // ),
+                              //
+                              // SizedBox(
+                              //   width: MediaQuery.of(context).size.width * 0.30,
+                              //   child: Row(
+                              //     children: [
+                              //       Radio<GuarantorOptionRole>(
+                              //         value: GuarantorOptionRole.NO,
+                              //         groupValue: selectedValue,
+                              //         onChanged: (value) {
+                              //           if (value != null) {
+                              //             ref
+                              //                 .read(guarantorRoleProvider.notifier)
+                              //                 .select(value);
+                              //           }
+                              //           showBottomSheetIfNo(
+                              //             context: context,
+                              //             ref: ref,
+                              //           );
+                              //         },
+                              //       ),
+                              //       const Text(
+                              //         'No',
+                              //       )
+                              //     ],
+                              //   ),
+                              // ),
+                              SizedBox(height: displayHeight(context)*0.02,),
+                              AppFloatTextField(
+                                focusNode: personalFocusViewModel.aadhaarFocusNode,
+                                currentState: personalFocusStates['aadhaarFocusNode'],
+                                onChange: (value) {
+                                  personalFormViewModel.updateAadhar(value);
+                                },
+                                // height: !personalFocusStates.isAadhaarValid
+                                //     ? displayHeight(context) * 0.09
+                                //     : null,
+                                inerHint: 'Enter Aadhaar Number',
+                                errorText: "Aadhaar Number is a required field",
+                                // isError: !applicantFormState.isAadhaarValid,
+                                textInputAction: TextInputAction.done,
                               ),
-
                               SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.30,
-                                child: Row(
-                                  children: [
-                                    Radio<GuarantorOptionRole>(
-                                      value: GuarantorOptionRole.NO,
-                                      groupValue: selectedValue,
-                                      onChanged: (value) {
-                                        if (value != null) {
-                                          ref
-                                              .read(guarantorRoleProvider.notifier)
-                                              .select(value);
-                                        }
-                                        showBottomSheetIfNo(
-                                          context: context,
-                                          ref: ref,
-                                        );
-                                      },
-                                    ),
-                                    const Text(
-                                      'No',
-                                    )
-                                  ],
-                                ),
+                                height: displayHeight(context) * 0.02,
                               ),
-                              SizedBox(
-                                height: displayHeight(context) * 0.04,
-                              ),
-                              SizedBox(
-                                height: displayHeight(context) * 0.10,
+                              AppFloatTextField(
                                 width: displayWidth(context),
-                                child: Row(children: [
-                                  AppFloatTextField(
-                                    width: displayWidth(context) * 0.71,
-                                    focusNode: personalFocusViewModel.panFocusNode,
-                                    currentState: personalFocusStates['panFocusNode'],
-                                    controller: formListController.panController,
-                                    onChange: (value) {
-                                      personalFormViewModel.updatePan(value);
+                                focusNode: personalFocusViewModel.panFocusNode,
+                                currentState: personalFocusStates['panFocusNode'],
+                                controller: formListController.panController,
+                                onChange: (value) {
+                                  personalFormViewModel.updatePan(value);
+                                },
+                                height: !personalFormState.isPanValid
+                                    ? displayHeight(context) * 0.09
+                                    : null,
+                                inerHint: 'Pan',
+                                errorText: "Pan is a required field",
+                                isError: !personalFormState.isPanValid,
+                                textInputAction: TextInputAction.next,
+                              ),
+                              SizedBox(height: displayHeight(context)*0.02,),
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    side: const BorderSide(
+                                        color: AppColors.boxBorderGray, width: 1.5),
+                                    // semanticLabel: 'jkdhsjk',
+                                    value: checkBoxTerms,
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        ref
+                                            .read(checkBoxTermsConditionApplicant.notifier)
+                                            .state = value;
+                                      }
                                     },
-                                    height: !personalFormState.isPanValid
-                                        ? displayHeight(context) * 0.09
-                                        : null,
-                                    inerHint: 'Pan',
-                                    errorText: "Pan is a required field",
-                                    isError: !personalFormState.isPanValid,
-                                    textInputAction: TextInputAction.next,
                                   ),
                                   SizedBox(
-                                    width: displayWidth(context) * 0.02,
-                                  ),
-                                  Container(
-                                      decoration: const BoxDecoration(
-                                          color: AppColors.boxBagGray,
-                                          borderRadius:
-                                          BorderRadius.all(Radius.circular(10))),
-                                      height: displayHeight(context) * 0.07,
-                                      width: displayWidth(context) * 0.15,
-                                      child: IconButton(
-                                          onPressed: () {
-                                            ref.read(isGuarantorPanLoading.notifier).state =
-                                            true;
-                                            personalFormViewModel
-                                                .fetchPanVerify().onError((error, stackTrace) {
-                                             return ref
-                                                  .read(isGuarantorPanLoading.notifier)
-                                                  .state = false;
-                                                })
-                                                .then(
-                                                  (value) {
-                                                if (value) {
-                                                  ref
-                                                      .read(
-                                                      isGuarantorTickColorChange.notifier)
-                                                      .state = true;
-                                                  ref
-                                                      .read(isGuarantorPanLoading.notifier)
-                                                      .state = false;
-                                                } else {
-                                                  ref
-                                                      .read(
-                                                      isGuarantorTickColorChange.notifier)
-                                                      .state = false;
-                                                 
-                                                }
-                                              },
-                                            );
-                                          },
-                                          icon: isPanIconChange
-                                              ? const CircularProgressIndicator()
-                                              : Icon(
-                                            Icons.check_circle_rounded,
-                                            size: 25,
-                                            color: colorChangeState
-                                                ?Colors.green: AppColors.black
-                                            ,
-                                          ))
-                                  )
-                                ]),
+                                      width: displayWidth(context) * 0.68,
+                                      child: Text(
+                                        'I have read the Terms and Conditions and give my consent for the same.',
+                                        style: AppStyles.termsConditionText,
+                                      )),
+                                ],
                               ),
                               AppButton(
-                                textStyle:
-                                const TextStyle(color: AppColors.white),
-                                width: displayWidth(context),
-                                label: 'Next',
+                                textStyle: const TextStyle(color: AppColors.white),
                                 onTap: () {
-                                  Navigator.pushNamed(
-                                      context, AppRoutes.saleGuarantorForm3);
+                                  showBottomSheetIfYes(
+                                    context: context,
+                                    ref: ref,
+                                  );
+                                  personalFormViewModel.fetchAadhaarNumber().then((value) {
+                                    showBottomSheetIfYes(
+                                      context: context,
+                                      ref: ref,
+                                    );
+                                    // ref.read(getOptGuarantor.notifier).state = value;
+                                  },);
+
                                 },
+                                label: 'Get OTP',
+                                width: displayWidth(context),
                               ),
-                              SizedBox(
-                                height: displayHeight(context) * 0.01,
-                              ),
+                              // AppButton(
+                              //   textStyle:
+                              //   const TextStyle(color: AppColors.white),
+                              //   width: displayWidth(context),
+                              //   label: 'Next',
+                              //   onTap: () {
+                              //     Navigator.pushNamed(
+                              //         context, AppRoutes.saleGuarantorForm3);
+                              //   },
+                              // ),
+                              // SizedBox(
+                              //   height: displayHeight(context) * 0.01,
+                              // ),
                               // AppButton(
                               //   textStyle:
                               //       const TextStyle(color: AppColors.white),

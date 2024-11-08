@@ -228,30 +228,17 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
 
 // Add a new text field
 
-  // Update a specific text field's name or last name
-  // void updateTextField(int index, String newValue, bool isNameField) {
-  //   if (index >= 0 && index < state.length) {
-  //     state = [
-  //       for (var i = 0; i < state.length; i++)
-  //         if (i == index)
-  //           KycFormState()
-  //         else
-  //           state[i]
-  //     ];
-  //   }
+  // void removeCoApplicant(int todoId) {
+  //   // Again, our state is immutable. So we're making a new list instead of
+  //   // changing the existing list.
+  //   state = [
+  //     for (final todo in state)
+  //       if (todo.id == todoId) removeItem(index),
+  //   ];
   // }
-  // Update email field
-
-  void removeCoApplicant(String todoId) {
-    // Again, our state is immutable. So we're making a new list instead of
-    // changing the existing list.
-    state = [
-      for (final todo in state)
-        if (todo.id != todoId) todo,
-    ];
-  }
 
   Future<bool> fetchAadhaarNumber(int index) async {
+    await fetchPanVerify(index);
     print(state[index].aadhaar);
     final aadhaarNumberRequestModel = AadhaarNumberRequestModel(
         aadharNo: state[index].aadhaar.trim().toString(),
@@ -488,8 +475,20 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
   // }
 
   void removeItem(int index){
+    state = [
+      for (int i = 0; i < state.length; i++)
+        if (i != index) state[i],
+    ];
+
+      // state = [
+      //   for (final todo in state)
+      //     if (todo.id != index) todo,
+      // ];
 
   }
+  // void removeItem(String item) {
+  //   state = state.where((i) => i != item).toList();
+  // }
 
   Future<void> pickAadhaar1Images(int index) async {
     await Permission.photos.request();

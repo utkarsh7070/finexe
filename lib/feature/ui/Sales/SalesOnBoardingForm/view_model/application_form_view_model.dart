@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:dio/src/dio.dart';
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/aadhaar_number_request_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/aadhaar_otp_request_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/submite_applicant_form_data_model.dart';
@@ -151,7 +152,11 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
   AadhaarOtpResponseModel? aadhaarOtpResponseModel;
   final ImagePicker picker = ImagePicker();
 
+  final SingleValueDropDownController selectIdController =
+  SingleValueDropDownController();
+
   Future<bool> fetchAadhaarNumber() async {
+    await fetchPanVerify();
     print(state.aadhaar);
     final aadhaarNumberRequestModel = AadhaarNumberRequestModel(
         aadharNo: state.aadhaar.trim().toString(),
@@ -173,7 +178,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     }
   }
 
-  Future<bool> fetchOtp() async {
+  Future<bool> submitOtp() async {
     print(state.otp);
     final aadhaarOtpResquestModel = AadhaarOtpRequestModel(
         transId: aadhaarNumberResponseModel!.items.tsTransId,
@@ -404,6 +409,10 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     }
   }
 
+  void verifyOtp(bool value){
+    state = state.copyWith(isOtpVerify: value);
+  }
+
   void setAutoValueByAadhaar(ApplicantDataController formListController) {
     if (aadhaarOtpResponseModel != null) {
       formListController.fullNameController.text =
@@ -437,6 +446,10 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
   void updateAadhaar(String value) {
     final isValid = _validateAadhaar(value);
     state = state.copyWith(aadhaar: value, isAadhaarValid: isValid);
+  }
+
+  void updateIsOpenIdField(){
+    state = state.copyWith(isOpenSelectedIdField: true);
   }
 
   void updateKycDoc(String value) {
@@ -1096,6 +1109,8 @@ class KycFormState {
 
   final String aadhaar;
   final String otp;
+  final bool isOtpVerify;
+  final bool isOpenSelectedIdField;
   final bool isOtpValid;
   final String kycDocument;
   final String pan;
@@ -1161,6 +1176,8 @@ class KycFormState {
   final bool isPermanentPinCodeValid;
 
   KycFormState({
+    this.isOtpVerify = false,
+    this.isOpenSelectedIdField = false,
     this.otp = '',
     this.isOtpValid = true,
     this.applicantPhotoFilePath = '',
@@ -1224,7 +1241,10 @@ class KycFormState {
     this.isRelationWithApplicantValid = true,
   });
 
-  KycFormState copyWith({String? otp,
+  KycFormState copyWith({
+    bool? isOtpVerify,
+    bool? isOpenSelectedIdField,
+    String? otp,
     bool? isOtpValid,
     String? applicantPhotoFilePath,
     String? aadhaarPhotoFilePath1,
@@ -1286,6 +1306,8 @@ class KycFormState {
     bool? isAgeValid,
     bool? isRelationWithApplicantValid}) {
     return KycFormState(
+      isOtpVerify: isOtpVerify??this.isOtpVerify,
+      isOpenSelectedIdField: isOpenSelectedIdField?? this.isOpenSelectedIdField,
         isOtpValid: isOtpValid ?? this.isOtpValid,
         otp: otp ?? this.otp,
         applicantPhotoFilePath:
