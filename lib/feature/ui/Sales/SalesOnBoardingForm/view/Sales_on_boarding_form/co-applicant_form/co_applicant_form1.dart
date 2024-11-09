@@ -30,7 +30,7 @@ class CoApplicantForm1 extends ConsumerWidget {
     final isPanIconChange = ref.watch(isCoPanLoading);
     final colorChangeState = ref.watch(isCoTickColorChange);
     final uploadCoDocs = ref.watch(uploadCoDoc);
-    final checkBoxTerms = ref.watch(checkBoxTermsConditionCoApplicant);
+    // final checkBoxTerms = ref.watch(checkBoxTermsConditionCoApplicant);
     final selectedValue = ref.watch(coApplicantRoleProvider);
 
     final coApplicationFormState = ref.watch(coApplicantViewModelProvider);
@@ -106,7 +106,7 @@ class CoApplicantForm1 extends ConsumerWidget {
                     visible: index > 0,
                     child: Text(
                       'CoApplicant $index',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
                       ),
@@ -122,7 +122,7 @@ class CoApplicantForm1 extends ConsumerWidget {
                           formNotifierController.removeFormData(index);
                           ref.read(listIndex.notifier).state = index - 1;
                         },
-                        icon: Icon(Icons.delete)))
+                        icon: const Icon(Icons.delete)))
               ],
             ),
             SizedBox(
@@ -391,14 +391,12 @@ class CoApplicantForm1 extends ConsumerWidget {
                             Checkbox(
                               side: const BorderSide(
                                   color: AppColors.boxBorderGray, width: 1.5),
-                              // semanticLabel: 'jkdhsjk',
-                              value: checkBoxTerms,
+                              value: coApplicationFormState[index]
+                                  .checkBoxTermsConditionCoApplicant,
                               onChanged: (value) {
                                 if (value != null) {
-                                  ref
-                                      .read(checkBoxTermsConditionCoApplicant
-                                          .notifier)
-                                      .state = value;
+                                  coApplicationFormViewModel.updateCheckBox(
+                                      value, index);
                                 }
                               },
                             ),
@@ -433,38 +431,40 @@ class CoApplicantForm1 extends ConsumerWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.add,
                               ),
                               SizedBox(
                                 width: displayWidth(context) * 0.01,
                               ),
-                              Text('Add   co-applicant')
+                              const Text('Add   co-applicant')
                             ],
                           ),
                         ),
                         SizedBox(
                           height: displayHeight(context) * 0.02,
                         ),
-                        AppButton(
+                        coApplicationFormState[index].isLoading?const CircularProgressIndicator():AppButton(
                           textStyle: const TextStyle(color: AppColors.white),
                           onTap: () {
-                            showBottomSheetIfYes(
-                              context: context,
-                              ref: ref,
-                            );
-
-                            coApplicationFormViewModel
-                                .fetchAadhaarNumber(index)
-                                .then(
-                              (value) {
-                                showBottomSheetIfYes(
-                                  context: context,
-                                  ref: ref,
-                                );
-                                ref.read(getOptCoApp.notifier).state = value;
-                              },
-                            );
+                            // showBottomSheetIfYes(
+                            //   context: context,
+                            //   ref: ref,
+                            // );
+                            bool isValid =  coApplicationFormViewModel.validateCoApplicant(index);
+                            if(isValid){
+                              coApplicationFormViewModel
+                                  .fetchAadhaarNumber(index)
+                                  .then(
+                                    (value) {
+                                  showBottomSheetIfYes(
+                                    context: context,
+                                    ref: ref,
+                                  );
+                                  ref.read(getOptCoApp.notifier).state = value;
+                                },
+                              );
+                            }
                           },
                           label: 'Get OTP',
                           width: displayWidth(context),
@@ -728,6 +728,7 @@ class CoApplicantForm1 extends ConsumerWidget {
     required BuildContext context,
   }) {
     return showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(

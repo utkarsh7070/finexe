@@ -37,7 +37,7 @@ class PunchInRepositoryImp extends PunchInRepository {
         }
       } else if (response.statusCode == 404) {
         if (kDebugMode) {}
-      } else {
+      } else if (response.statusCode == 200){
         return response;
       }
     } catch (exception) {

@@ -21,7 +21,7 @@ class CoApplicationPhotoBottomSheet extends ConsumerWidget {
     final applicantFormState = ref.watch(coApplicantViewModelProvider);
     final applicantFormViewModel =
         ref.read(coApplicantViewModelProvider.notifier);
-    final checkBoxTerms = ref.watch(checkBoxTermsConditionApplicant);
+    // final checkBoxTerms = ref.watch(checkBoxTermsConditionApplicant);
     // final selectedValue = ref.watch(applicantRoleProvider);
     final index = ref.watch(listIndex);
     return Container(

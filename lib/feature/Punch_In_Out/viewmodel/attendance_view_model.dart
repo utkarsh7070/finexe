@@ -5,6 +5,7 @@ import 'package:finexe/feature/Punch_In_Out/repository/puch_In_repository_imp.da
 import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -102,8 +103,11 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     await checkPunch().then(
       (value) {
         state = state.copyWith(isLoading: false);
-        print('puch>>>>>>>> ');
-        log('puch>>>>>>>> ');
+        if (kDebugMode) {
+          print('puch>>>>>>>> ');
+          log('puch>>>>>>>> ');
+        }
+
       },
     );
   }
@@ -111,7 +115,9 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   Future<void> getToken() async {
     SharedPreferences preferences = await SessionService.getSession();
     final String? name = preferences.getString('email');
-    print('set in pinchin screen name $name');
+    if (kDebugMode) {
+      print('set in pinchin screen name $name');
+    }
 
     storedToken = preferences.getString('token');
     // final name = preferences.getString('email');
@@ -129,7 +135,8 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       };
 
       try {
-        var response = await _punchInRepository.checkPunch(location, token);
+        Response response = await _punchInRepository.checkPunch(location, token);
+        print(response.data);
         CheckAttendanceResponseModel checkAttendanceResponse =
         CheckAttendanceResponseModel.fromJson(response.data);
         state =
@@ -139,6 +146,8 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
         log('viewButton: ${checkAttendanceResponse.items.viewButton}');
         return checkAttendanceResponse.items.viewButton;
       } on DioException catch (error) {
+        print(error);
+        throw Exception(error);
         state = state.copyWith(isLoading: false);
         // DioExceptions.fromDioError(error,context);
       }
@@ -148,12 +157,17 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 
   Future<void> clickPunch(BuildContext context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    String? role = await preferences.getString('roleName');
-    print(role);
+    String? role = preferences.getString('roleName');
+    if (kDebugMode) {
+      print(role);
+    }
     state = state.copyWith(isLoading: true);
     // if (state.punchStatus) {
     await onPunchIn(context).then(
       (value) async {
+        if (kDebugMode) {
+          print(value);
+        }
         if (value!) {
           await checkPunch().then(
             (value) {
@@ -161,7 +175,8 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
             },
           );
         }
-        switch (role) {
+        if (value) {
+          switch (role) {
           case 'admin':
             log("Navigating to admin dashboard");
             Navigator.pushNamedAndRemoveUntil(
@@ -211,6 +226,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
             log('No matching role found');
             break;
         }
+        }
       },
     );
     // } else {
@@ -231,14 +247,12 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     try {
       log('onPunchIn');
       state = state.copyWith(isLoading: true);
-
-      var response = await _punchInRepository.punchIn(token);
+      Response response = await _punchInRepository.punchIn(token);
       log('onPunchIn after');
       PunchInModel punchInModel = PunchInModel.fromJson(response.data);
-
-      SharedPreferences preferences = await SessionService.getSession();
-      preferences.setBool('punchIn', true);
-      log(">>>punchin: $response");
+      // SharedPreferences preferences = await SessionService.getSession();
+      // preferences.setBool('punchIn', punchInModel.items.);
+      log(">>>punchin: ${response.data}");
       Fluttertoast.showToast(
         msg: punchInModel.message.toString(),
         toastLength: Toast.LENGTH_SHORT,
@@ -253,7 +267,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
         isLoading: false,
         // punchStatus: false
       );
-      return true;
+        return true;
       // Navigator.pushNamed(context, AppRoutes.eod);
     } on DioException catch (error) {
       DioExceptions.fromDioError(error,context);

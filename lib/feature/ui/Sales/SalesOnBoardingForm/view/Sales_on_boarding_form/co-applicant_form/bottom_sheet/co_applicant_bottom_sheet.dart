@@ -10,6 +10,7 @@ import '../../../../../../../base/utils/namespase/display_size.dart';
 import '../../../../../../../base/utils/namespase/font_size.dart';
 import '../../../../../../../base/utils/widget/app_button.dart';
 import '../../../../../../../base/utils/widget/app_text_filed_login.dart';
+import '../../../../../../../base/utils/widget/custom_snackbar.dart';
 import '../../../../view_model/application_form_view_model.dart';
 import '../../../../view_model/co_applicant_form_view_model.dart';
 
@@ -20,17 +21,17 @@ class CoApplicationBottomSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     //---------------------controller--------------------
     final formListController = ref.watch(coApplicantController);
-    final formNotifierController = ref.read(coApplicantController.notifier);
+    // final formNotifierController = ref.read(coApplicantController.notifier);
     //----------------------------------------------[
-    final checkBoxTerms = ref.watch(checkBoxTermsConditionCoApplicant);
-    final getOtpClicked = ref.watch(getOptCoApp);
+    // final checkBoxTerms = ref.watch(checkBoxTermsConditionCoApplicant);
+    // final getOtpClicked = ref.watch(getOptCoApp);
     final coApplicationFormState = ref.watch(coApplicantViewModelProvider);
     final coApplicationFormViewModel =
         ref.read(coApplicantViewModelProvider.notifier);
-    final coApplicationFocusStates = ref.watch(coApplicantFocusProvider);
-    final isCoApplicationRemember = ref.watch(rememberCoProvider);
-    final coApplicationFocusViewModel =
-        ref.read(coApplicantFocusProvider.notifier);
+    // final coApplicationFocusStates = ref.watch(coApplicantFocusProvider);
+    // final isCoApplicationRemember = ref.watch(rememberCoProvider);
+    // final coApplicationFocusViewModel =
+    //     ref.read(coApplicantFocusProvider.notifier);
     final index = ref.watch(listIndex);
     return  Container(
       padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
@@ -53,14 +54,15 @@ class CoApplicationBottomSheet extends ConsumerWidget {
             height: displayHeight(context) * 0.04,
           ),
           OtpTextField(
-            numberOfFields: 5,
+            numberOfFields: 6,
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             borderColor: AppColors.buttonBorderGray,
             showFieldAsBox: true,
             onCodeChanged: (String code) {
-              coApplicationFormViewModel.updateOtp(code, index);
+              // coApplicationFormViewModel.updateOtp(code, index);
             },
             onSubmit: (String verificationCode) {
+              coApplicationFormViewModel.updateOtp(verificationCode, index);
               showDialog(
                   context: context,
                   builder: (context) {
@@ -87,10 +89,12 @@ class CoApplicationBottomSheet extends ConsumerWidget {
                     coApplicationFormViewModel.setAutoValueByAadhaar(
                         formListController, index);
                     Navigator.pop(context);
-                    if(index < coApplicationFormState.length - 1){
+                    if(index < coApplicationFormState.length - 1 == false){
+                      Navigator.pop(context);
+                      showCustomSnackBar(context,
+                          'Co-Applicant form is Submitted', Colors.green);
                       Navigator.pushNamed(context, AppRoutes.saleGuarantorForm1);
                     }
-
                   }
                 },
               );

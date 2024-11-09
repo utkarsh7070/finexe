@@ -67,6 +67,7 @@ class Api {
   static const String getVisitCalling = '${baseUrl}v1/googleSheet/callDoneBy';
   static const String updateProfile = '${baseUrl}v1/adminMaster/employe/update';
   static const String updatePassword = '${baseUrl}v1/login/updatePassword';
+  static const String paymentAmount = '${baseUrl}v1/salesMan/paymentInitiate';
 
   // https://stageapi.fincooper.in/v1/login/updatePassword
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd

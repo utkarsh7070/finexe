@@ -35,11 +35,11 @@ final isCoTickColorChange = StateProvider(
   },
 );
 
-final checkBoxTermsConditionCoApplicant = StateProvider(
-  (ref) {
-    return false;
-  },
-);
+// final checkBoxTermsConditionCoApplicant = StateProvider(
+//   (ref) {
+//     return false;
+//   },
+// );
 
 final getOptCoApp = StateProvider(
   (ref) {
@@ -173,7 +173,7 @@ class FormDataControllerNotifier
     state[index].dispose();
     state = [
       for (int i = 0; i < state.length; i++)
-        if (i != index) state[i],
+           if (i != index) state[i],
     ];
   }
 
@@ -238,6 +238,13 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
   // }
 
   Future<bool> fetchAadhaarNumber(int index) async {
+    state =[
+      for (final todo in state)
+      if (todo.id == index)
+        todo.copyWith(isLoading: true)
+      else
+        todo
+    ];
     await fetchPanVerify(index);
     print(state[index].aadhaar);
     final aadhaarNumberRequestModel = AadhaarNumberRequestModel(
@@ -251,16 +258,44 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
       if (response.statusCode == 200) {
         aadhaarNumberResponseModel =
             AadhaarNumberResponseModel.fromJson(response.data);
+        state =[
+          for (final todo in state)
+            if (todo.id == index)
+              todo.copyWith(isLoading: false)
+            else
+              todo
+        ];
         return true;
       } else {
+        state =[
+          for (final todo in state)
+            if (todo.id == index)
+              todo.copyWith(isLoading: false)
+            else
+              todo
+        ];
         return false;
       }
     } catch (e) {
+      state =[
+        for (final todo in state)
+          if (todo.id == index)
+            todo.copyWith(isLoading: false)
+          else
+            todo
+      ];
       throw Exception(e);
     }
   }
 
   Future<bool> fetchOtp(int index) async {
+    state =[
+      for (final todo in state)
+        if (todo.id == index)
+          todo.copyWith(isLoading: true)
+        else
+          todo
+    ];
     if (kDebugMode) {
       print(state[index].otp);
     }
@@ -280,6 +315,13 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
       final response = await dio.post(Api.aadhaarOtpVerify,
           data: aadhaarOtpResquestModel.toJson());
       if (response.statusCode == 200) {
+        state =[
+          for (final todo in state)
+            if (todo.id == index)
+              todo.copyWith(isLoading: false)
+            else
+              todo
+        ];
         aadhaarOtpResponseModel =
             AadhaarOtpResponseModel.fromJson(response.data);
         if (aadhaarOtpResponseModel != null) {
@@ -307,9 +349,23 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         // AadhaarNumberResponseModel.fromJson(response.data);
         return true;
       } else {
+        state =[
+          for (final todo in state)
+            if (todo.id == index)
+              todo.copyWith(isLoading: false)
+            else
+              todo
+        ];
         return false;
       }
     } catch (e) {
+      state =[
+        for (final todo in state)
+          if (todo.id == index)
+            todo.copyWith(isLoading: false)
+          else
+            todo
+      ];
       throw Exception(e);
     }
   }
@@ -576,6 +632,19 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     print(
         'permanent add ${state[index].permanentAddress1}, ${state[index].permanentAddress2}');
   }
+  bool validateCoApplicant(int index){
+    final isAadhaar = _validateAadhaar(state[index].aadhaar);
+    final isDoc = _validatePan(state[index].pan);
+    final isCheckBox = state[index].checkBoxTermsConditionCoApplicant;
+    state = state = [
+      for (final todo in state)
+        if (todo.id == index)
+          todo.copyWith(isAadhaarValid: isAadhaar, isPanValid: isDoc)
+        else
+          todo
+    ];
+    return isAadhaar && isDoc && isCheckBox;
+  }
 
   void updateKycDoc(String value, int index) {
     final isValid = _validateKycDoc(value);
@@ -604,7 +673,6 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
 
   void updateOtp(String value, int index) {
     final isValid = _validateOtp(value);
-
     state = [
       for (final todo in state)
         if (todo.id == index)
@@ -857,6 +925,16 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
           todo
     ];
   }
+  void updateCheckBox(bool value , int index){
+    state =  [
+      for (final todo in state)
+        if (todo.id == index)
+          todo.copyWith(
+              checkBoxTermsConditionCoApplicant: value)
+        else
+          todo
+    ];
+  }
 
   void updatePermanentAddress2(String value, int index) {
     final isValid = _validatePermanentAddress2(value);
@@ -1088,7 +1166,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
 
 // License validation logic
   bool _validatePan(String pan) {
-    return pan.length >= 12;
+    return pan.length >= 10;
   }
 
   bool _validateMother(String mother) {
@@ -1470,10 +1548,12 @@ class FormDataController {
 }
 
 class KycFormState {
+  final bool isLoading;
   final int id;
   final String applicantPhotoFilePath;
   final String aadhaarPhotoFilePath1;
   final String aadhaarPhotoFilePath2;
+  final bool checkBoxTermsConditionCoApplicant;
 
   final String aadhaar;
   final String kycDocument;
@@ -1542,6 +1622,8 @@ class KycFormState {
   final bool isPermanentPinCodeValid;
 
   KycFormState({
+    this.isLoading =false,
+    this.checkBoxTermsConditionCoApplicant = false,
     this.id = 0,
     this.otp = '',
     this.isOtpValid = true,
@@ -1607,7 +1689,10 @@ class KycFormState {
   });
 
   KycFormState copyWith(
-      {int? id,
+      {
+        bool? isLoading,
+        bool? checkBoxTermsConditionCoApplicant,
+        int? id,
       String? applicantPhotoFilePath,
       String? aadhaarPhotoFilePath1,
       String? aadhaarPhotoFilePath2,
@@ -1670,6 +1755,8 @@ class KycFormState {
       bool? isAgeValid,
       bool? isRelationWithApplicantValid}) {
     return KycFormState(
+      isLoading: isLoading??this.isLoading,
+      checkBoxTermsConditionCoApplicant: checkBoxTermsConditionCoApplicant??this.checkBoxTermsConditionCoApplicant,
         applicantPhotoFilePath:
             applicantPhotoFilePath ?? this.applicantPhotoFilePath,
         aadhaarPhotoFilePath1:

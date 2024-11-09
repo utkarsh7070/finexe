@@ -13,7 +13,7 @@ import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/applicant
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/applicant_form/appliction_form.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_form2.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_form3.dart';
-import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/guarantor_form.dart';
+import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/guarantor_form_1.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/guarantor_form_2.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/guarantor_form_3.dart';
 import '../../ui/authenticate/forgot_passwaord/view/forgot_password_screen.dart';

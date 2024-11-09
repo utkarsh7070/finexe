@@ -291,64 +291,64 @@ final fetchDataProvider = FutureProvider<List<Item>>((ref) async {
 // });
 
 
-final paymentProvider = StateNotifierProvider<PaymentWithRazorPay, PaymentState>((ref) {
-  return PaymentWithRazorPay();
-});
-
-class PaymentWithRazorPay extends StateNotifier<PaymentState>{
-  final Razorpay _razorpay = Razorpay();
-
-  PaymentWithRazorPay():super(PaymentState(status:'initial')){
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
-  }
-
-  Future<void> payWithRazorPay(double amount) async {
-    var options = {
-      'key': 'rzp_live_qFjwtsJR2qTnPA',
-      'amount': amount * 100,
-      'name': 'Acme Corp.',
-      'description': 'Fine T-Shirt',
-      'retry': {'enabled': true, 'max_count': 1},
-      'send_sms_hash': true,
-      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
-      'external': {
-        'wallets': ['paytm']
-      }
-    };
-    try {
-      _razorpay.open(options);
-    } catch (e) {
-      state = PaymentState(status: 'error', errorMessage: e.toString());
-    }
-  }
-
-  // Handle payment success
-  void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    state = PaymentState(status: 'success', transactionId: response.paymentId);
-  }
-
-// Handle payment error
-  void _handlePaymentError(PaymentFailureResponse response) {
-    state = PaymentState(status: 'error', errorMessage: response.message);
-  }
-
-// Handle external wallet selection
-  void _handleExternalWallet(ExternalWalletResponse response) {
-    state = PaymentState(status: 'external_wallet', transactionId: response.walletName);
-  }
-
-}
-
-class PaymentState {
-  final String status;
-  final String? transactionId;
-  final String? errorMessage;
-
-  PaymentState({
-    required this.status,
-    this.transactionId,
-    this.errorMessage,
-  });
-}
+// final paymentProvider = StateNotifierProvider<PaymentWithRazorPay, PaymentState>((ref) {
+//   return PaymentWithRazorPay();
+// });
+//
+// class PaymentWithRazorPay extends StateNotifier<PaymentState>{
+//   final Razorpay _razorpay = Razorpay();
+//
+//   PaymentWithRazorPay():super(PaymentState(status:'initial')){
+//     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+//     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+//     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+//   }
+//
+//   Future<void> payWithRazorPay(double amount) async {
+//     var options = {
+//       'key': 'rzp_live_qFjwtsJR2qTnPA',
+//       'amount': amount * 100,
+//       'name': 'Acme Corp.',
+//       'description': 'Fine T-Shirt',
+//       'retry': {'enabled': true, 'max_count': 1},
+//       'send_sms_hash': true,
+//       'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+//       'external': {
+//         'wallets': ['paytm']
+//       }
+//     };
+//     try {
+//       _razorpay.open(options);
+//     } catch (e) {
+//       state = PaymentState(status: 'error', errorMessage: e.toString());
+//     }
+//   }
+//
+//   // Handle payment success
+//   void _handlePaymentSuccess(PaymentSuccessResponse response) {
+//     state = PaymentState(status: 'success', transactionId: response.paymentId);
+//   }
+//
+// // Handle payment error
+//   void _handlePaymentError(PaymentFailureResponse response) {
+//     state = PaymentState(status: 'error', errorMessage: response.message);
+//   }
+//
+// // Handle external wallet selection
+//   void _handleExternalWallet(ExternalWalletResponse response) {
+//     state = PaymentState(status: 'external_wallet', transactionId: response.walletName);
+//   }
+//
+// }
+//
+// class PaymentState {
+//   final String status;
+//   final String? transactionId;
+//   final String? errorMessage;
+//
+//   PaymentState({
+//     required this.status,
+//     this.transactionId,
+//     this.errorMessage,
+//   });
+// }

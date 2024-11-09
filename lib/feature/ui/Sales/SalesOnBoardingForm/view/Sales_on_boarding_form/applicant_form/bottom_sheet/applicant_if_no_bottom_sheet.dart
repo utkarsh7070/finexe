@@ -23,7 +23,7 @@ class ApplicationPhotoBottomSheet extends ConsumerWidget {
     final applicantFormState = ref.watch(applicantViewModelProvider);
     final applicantFormViewModel =
         ref.read(applicantViewModelProvider.notifier);
-    final checkBoxTerms = ref.watch(checkBoxTermsConditionApplicant);
+    // final checkBoxTerms = ref.watch(checkBoxTermsConditionApplicant);
     // final selectedValue = ref.watch(applicantRoleProvider);
     return Container(
       padding: const EdgeInsets.all(16),

@@ -14,13 +14,29 @@ import '../../../view_model/application_form_view_model.dart';
 import '../../../view_model/guarantor_form_view_model.dart';
 import 'bottom_sheet/bottom_sheet_if_no.dart';
 import 'bottom_sheet/guarantor_bottom_sheet.dart';
+import 'dialog/form_completed_dialog.dart';
 
-class GuarantorDetails extends ConsumerWidget {
+class GuarantorDetails extends ConsumerStatefulWidget {
   const GuarantorDetails({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _GuarantorDetails createState() => _GuarantorDetails();
+}
 
+class _GuarantorDetails extends ConsumerState<GuarantorDetails> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // if (ref.watch(paymentProvider).status == 'success') {
+    //   FormSubmitDialog().formSubmitDialog(context: context);
+    // }
+  }
+
+  // const GuarantorDetails({super.key});
+  // FormSubmitDialog().formSubmitDialog(context: context);
+  @override
+  Widget build(BuildContext context) {
     //----------------controller-------------------------------------------------------
     final formListController = ref.watch(guarantorController);
     final formNotifierController = ref.read(guarantorController.notifier);
@@ -28,7 +44,7 @@ class GuarantorDetails extends ConsumerWidget {
     final isPanIconChange = ref.watch(isGuarantorPanLoading);
     final colorChangeState = ref.watch(isGuarantorTickColorChange);
     final upload = ref.watch(uploadGuarantorDoc);
-    final checkBoxTerms = ref.watch(checkBoxTermsConditionGuarantor);
+    // final checkBoxTerms = ref.watch(checkBoxTermsConditionGuarantor);
     final selectedValue = ref.watch(guarantorRoleProvider);
 
     final personalFormState = ref.watch(guarantorViewModelProvider);
@@ -80,15 +96,20 @@ class GuarantorDetails extends ConsumerWidget {
                     child: Wrap(
                         runSpacing: displayHeight(context) * 0.04,
                         children: [
-                          GestureDetector(onTap: () {
-                            personalFormViewModel.pickImages();
-                          },
+                          GestureDetector(
+                            onTap: () {
+                              personalFormViewModel.pickImages();
+                            },
                             child: Visibility(
-                              visible: personalFormState.applicantPhotoFilePath=='',
+                              visible:
+                                  personalFormState.applicantPhotoFilePath ==
+                                      '',
                               replacement: SizedBox(
                                 height: displayHeight(context) * 0.16,
                                 width: displayWidth(context),
-                                child: Image.file(File(personalFormState.applicantPhotoFilePath)),),
+                                child: Image.file(File(
+                                    personalFormState.applicantPhotoFilePath)),
+                              ),
                               child: UploadBox(
                                 isImage: true,
                                 height: displayHeight(context) * 0.16,
@@ -165,10 +186,14 @@ class GuarantorDetails extends ConsumerWidget {
                               //     ],
                               //   ),
                               // ),
-                              SizedBox(height: displayHeight(context)*0.02,),
+                              SizedBox(
+                                height: displayHeight(context) * 0.02,
+                              ),
                               AppFloatTextField(
-                                focusNode: personalFocusViewModel.aadhaarFocusNode,
-                                currentState: personalFocusStates['aadhaarFocusNode'],
+                                focusNode:
+                                    personalFocusViewModel.aadhaarFocusNode,
+                                currentState:
+                                    personalFocusStates['aadhaarFocusNode'],
                                 onChange: (value) {
                                   personalFormViewModel.updateAadhar(value);
                                 },
@@ -186,7 +211,8 @@ class GuarantorDetails extends ConsumerWidget {
                               AppFloatTextField(
                                 width: displayWidth(context),
                                 focusNode: personalFocusViewModel.panFocusNode,
-                                currentState: personalFocusStates['panFocusNode'],
+                                currentState:
+                                    personalFocusStates['panFocusNode'],
                                 controller: formListController.panController,
                                 onChange: (value) {
                                   personalFormViewModel.updatePan(value);
@@ -199,19 +225,27 @@ class GuarantorDetails extends ConsumerWidget {
                                 isError: !personalFormState.isPanValid,
                                 textInputAction: TextInputAction.next,
                               ),
-                              SizedBox(height: displayHeight(context)*0.02,),
+                              SizedBox(
+                                height: displayHeight(context) * 0.02,
+                              ),
                               Row(
                                 children: [
                                   Checkbox(
                                     side: const BorderSide(
-                                        color: AppColors.boxBorderGray, width: 1.5),
+                                        color: AppColors.boxBorderGray,
+                                        width: 1.5),
                                     // semanticLabel: 'jkdhsjk',
-                                    value: checkBoxTerms,
+                                    value: personalFormState
+                                        .checkBoxTermsConditionGuarantor,
                                     onChanged: (value) {
                                       if (value != null) {
-                                        ref
-                                            .read(checkBoxTermsConditionApplicant.notifier)
-                                            .state = value;
+                                        personalFormViewModel
+                                            .updateCheckBox(value);
+                                        // ref
+                                        //     .read(
+                                        //         checkBoxTermsConditionApplicant
+                                        //             .notifier)
+                                        //     .state = value;
                                       }
                                     },
                                   ),
@@ -223,21 +257,24 @@ class GuarantorDetails extends ConsumerWidget {
                                       )),
                                 ],
                               ),
-                              AppButton(
-                                textStyle: const TextStyle(color: AppColors.white),
+                              personalFormState.isLoading?const CircularProgressIndicator():AppButton(
+                                textStyle:
+                                    const TextStyle(color: AppColors.white),
                                 onTap: () {
-                                  showBottomSheetIfYes(
-                                    context: context,
-                                    ref: ref,
-                                  );
-                                  personalFormViewModel.fetchAadhaarNumber().then((value) {
-                                    showBottomSheetIfYes(
-                                      context: context,
-                                      ref: ref,
+                                  bool isValid =
+                                      personalFormViewModel.validateForm();
+                                  if (isValid) {
+                                    personalFormViewModel
+                                        .fetchAadhaarNumber()
+                                        .then(
+                                      (value) {
+                                        showBottomSheetIfYes(
+                                          context: context,
+                                          ref: ref,
+                                        );
+                                      },
                                     );
-                                    // ref.read(getOptGuarantor.notifier).state = value;
-                                  },);
-
+                                  }
                                 },
                                 label: 'Get OTP',
                                 width: displayWidth(context),
@@ -262,7 +299,6 @@ class GuarantorDetails extends ConsumerWidget {
                               //   label: 'Back',
                               //   onTap: () {},
                               // ),
-
 
                               // Row(
                               //   children: [
@@ -333,77 +369,79 @@ class GuarantorDetails extends ConsumerWidget {
     );
   }
 
-  Widget ifYesLinkedAadhaar(
-      {required WidgetRef ref,
-      required BuildContext context,
-      // required TextEditingController aadhaarController,
-      required formState,
-      required formViewModel,
-      required Map<String, bool> aadhaarFocusStates,
-      required aadhaarFocusViewModel,
-      required bool checkBoxTerms}) {
-    return Container(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 30, bottom: 16),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.boxBorderGray),
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-      ),
-      width: displayWidth(context),
-      child: Column(
-        children: [
-          // const Text('Aadhar Number'),
-          AppFloatTextField(
-            focusNode: aadhaarFocusViewModel.aadhaarFocusNode,
-            currentState: aadhaarFocusStates['aadhaarFocusNode'],
-            // controller: aadhaarController,
-            onChange: (value) {
-              formViewModel.updateAadhaar(value);
-            },
-            height: !formState.isAadhaarValid
-                ? displayHeight(context) * 0.09
-                : null,
-            inerHint: 'Enter Aadhaar Number',
-            errorText: "Aadhaar Number is a required field",
-            isError: !formState.isAadhaarValid,
-            textInputAction: TextInputAction.done,
-            // hint: 'Password',
-          ),
-          Row(
-            children: [
-              Checkbox(
-                side: const BorderSide(
-                    color: AppColors.boxBorderGray, width: 1.5),
-                // semanticLabel: 'jkdhsjk',
-                value: checkBoxTerms,
-                onChanged: (value) {
-                  if (value != null) {
-                    ref.read(checkBoxTermsConditionGuarantor.notifier).state =
-                        value;
-                  }
-                },
-              ),
-              SizedBox(
-                  width: displayWidth(context) * 0.68,
-                  child: Text(
-                    'I have read the Terms and Conditions and give my consent for the same.',
-                    style: AppStyles.termsConditionText,
-                  )),
-            ],
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(onPressed: () {}, child: const Text('Get OTP')),
-          )
-        ],
-      ),
-    );
-  }
+  // Widget ifYesLinkedAadhaar(
+  //     {required WidgetRef ref,
+  //     required BuildContext context,
+  //     // required TextEditingController aadhaarController,
+  //     required formState,
+  //     required formViewModel,
+  //     required Map<String, bool> aadhaarFocusStates,
+  //     required aadhaarFocusViewModel,
+  //     required bool checkBoxTerms}) {
+  //   return Container(
+  //     padding: const EdgeInsets.only(left: 16, right: 16, top: 30, bottom: 16),
+  //     decoration: BoxDecoration(
+  //       border: Border.all(color: AppColors.boxBorderGray),
+  //       borderRadius: const BorderRadius.all(Radius.circular(10)),
+  //     ),
+  //     width: displayWidth(context),
+  //     child: Column(
+  //       children: [
+  //         // const Text('Aadhar Number'),
+  //         AppFloatTextField(
+  //           focusNode: aadhaarFocusViewModel.aadhaarFocusNode,
+  //           currentState: aadhaarFocusStates['aadhaarFocusNode'],
+  //           // controller: aadhaarController,
+  //           onChange: (value) {
+  //             formViewModel.updateAadhaar(value);
+  //           },
+  //           height: !formState.isAadhaarValid
+  //               ? displayHeight(context) * 0.09
+  //               : null,
+  //           inerHint: 'Enter Aadhaar Number',
+  //           errorText: "Aadhaar Number is a required field",
+  //           isError: !formState.isAadhaarValid,
+  //           textInputAction: TextInputAction.done,
+  //           // hint: 'Password',
+  //         ),
+  //         Row(
+  //           children: [
+  //             Checkbox(
+  //               side: const BorderSide(
+  //                   color: AppColors.boxBorderGray, width: 1.5),
+  //               // semanticLabel: 'jkdhsjk',
+  //               value: checkBoxTerms,
+  //               onChanged: (value) {
+  //
+  //                 if (value != null) {
+  //                   ref.read(checkBoxTermsConditionGuarantor.notifier).state =
+  //                       value;
+  //                 }
+  //               },
+  //             ),
+  //             SizedBox(
+  //                 width: displayWidth(context) * 0.68,
+  //                 child: Text(
+  //                   'I have read the Terms and Conditions and give my consent for the same.',
+  //                   style: AppStyles.termsConditionText,
+  //                 )),
+  //           ],
+  //         ),
+  //         Align(
+  //           alignment: Alignment.centerRight,
+  //           child: TextButton(onPressed: () {}, child: const Text('Get OTP')),
+  //         )
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Future<void> showBottomSheetIfYes({
     required WidgetRef ref,
     required BuildContext context,
   }) {
     return showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -414,6 +452,7 @@ class GuarantorDetails extends ConsumerWidget {
       },
     );
   }
+
   Future<void> showBottomSheetIfNo({
     required WidgetRef ref,
     required BuildContext context,
@@ -430,4 +469,3 @@ class GuarantorDetails extends ConsumerWidget {
     );
   }
 }
-

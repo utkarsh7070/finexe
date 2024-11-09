@@ -9,7 +9,6 @@ import '../../../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../../../base/utils/namespase/display_size.dart';
 import '../../../../../../../base/utils/namespase/font_size.dart';
 import '../../../../../../../base/utils/widget/app_button.dart';
-import '../../../../view_model/application_form_view_model.dart';
 import '../../../../view_model/co_applicant_form_view_model.dart';
 import '../../../../view_model/guarantor_form_view_model.dart';
 

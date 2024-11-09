@@ -7,6 +7,7 @@ import '../../../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../../../base/utils/namespase/display_size.dart';
 import '../../../../../../../base/utils/widget/app_button.dart';
+import '../../../../../../../base/utils/widget/custom_snackbar.dart';
 import '../../../../view_model/application_form_view_model.dart';
 
 class ApplicationBottomSheet extends ConsumerWidget {
@@ -18,11 +19,11 @@ class ApplicationBottomSheet extends ConsumerWidget {
     final getOtpClicked = ref.watch(getOpt);
     final personalFormState = ref.watch(applicantViewModelProvider);
     final personalFormViewModel = ref.read(applicantViewModelProvider.notifier);
-    final checkBoxTerms = ref.watch(checkBoxTermsConditionApplicant);
+    // final checkBoxTerms = ref.watch(checkBoxTermsConditionApplicant);
     final personalFocusStates = ref.watch(applicantFocusProvider);
     final personalFocusViewModel = ref.read(applicantFocusProvider.notifier);
     // final selectedValue = ref.watch(applicantRoleProvider);
-    return  Container(
+    return Container(
       padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
       width: displayWidth(context),
       child: Column(
@@ -36,9 +37,9 @@ class ApplicationBottomSheet extends ConsumerWidget {
           ),
           const Flexible(
               child: Text(
-                'We have just sent you 6 digit code Phone Number +7489455607',
-                textAlign: TextAlign.center,
-              )),
+            'We have just sent you 6 digit code Phone Number +7489455607',
+            textAlign: TextAlign.center,
+          )),
           SizedBox(
             height: displayHeight(context) * 0.04,
           ),
@@ -68,18 +69,19 @@ class ApplicationBottomSheet extends ConsumerWidget {
           AppButton(
             textStyle: const TextStyle(color: AppColors.white),
             onTap: () {
-              Navigator.pushNamed(context, AppRoutes.saleCoApplicationForm1);
-              ref
-                  .read(applicantViewModelProvider.notifier)
-                  .submitOtp()
-                  .then(
-                    (value) {
+              // Navigator.pushNamed(context, AppRoutes.saleCoApplicationForm1);
+              personalFormViewModel.submitOtp().then(
+                (value) {
                   if (value) {
+
+                    showCustomSnackBar(context,
+                        'Applicant form is Submitted', Colors.green);
                     personalFormViewModel.verifyOtp(value);
                     personalFormViewModel
                         .setAutoValueByAadhaar(formListController);
                     Navigator.pop(context);
-                    Navigator.pushNamed(context, AppRoutes.saleCoApplicationForm1);
+                    Navigator.pushNamed(
+                        context, AppRoutes.saleCoApplicationForm1);
                   }
                 },
               );

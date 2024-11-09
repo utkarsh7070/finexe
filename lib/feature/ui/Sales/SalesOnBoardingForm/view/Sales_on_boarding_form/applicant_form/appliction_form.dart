@@ -16,6 +16,7 @@ import '../../../../../../base/utils/widget/upload_box.dart';
 import '../../../view_model/application_form_view_model.dart';
 import 'bottom_sheet/applicant_if_no_bottom_sheet.dart';
 import 'bottom_sheet/bottom_sheet.dart';
+import 'dialog/back_to_dashboard.dart';
 
 class ApplicationDetails extends ConsumerWidget {
   const ApplicationDetails({super.key});
@@ -27,7 +28,7 @@ class ApplicationDetails extends ConsumerWidget {
     final formNotifierController = ref.read(applicantController.notifier);
     //-----------------------------------------------------
     final selectedValue = ref.watch(applicantRoleProvider);
-    final checkBoxTerms = ref.watch(checkBoxTermsConditionApplicant);
+    // final checkBoxTerms = ref.watch(checkBoxTermsConditionApplicant);
     final isPanIconChange = ref.watch(isPanLoading);
     final colorChangeState = ref.watch(isTickColorChange);
     final personalFormState = ref.watch(applicantViewModelProvider);
@@ -55,7 +56,11 @@ class ApplicationDetails extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const BackButton(),
+                IconButton(
+                    onPressed: () {
+                      confirmBackToForm(context);
+                    },
+                    icon: const Icon(Icons.arrow_back)),
                 const Text(
                   textAlign: TextAlign.center,
                   'Applicant Details',
@@ -113,13 +118,17 @@ class ApplicationDetails extends ConsumerWidget {
                           'Customer Mobile No. Is Must Be Linked With Aadhaar.',
                           maxLines: 2,
                         ),
-                        SizedBox(height: displayHeight(context)*0.02,),
+                        SizedBox(
+                          height: displayHeight(context) * 0.02,
+                        ),
 
                         Column(
                           children: [
                             AppFloatTextField(
-                              focusNode: personalFocusViewModel.aadhaarFocusNode,
-                              currentState: personalFocusStates['aadhaarFocusNode'],
+                              focusNode:
+                                  personalFocusViewModel.aadhaarFocusNode,
+                              currentState:
+                                  personalFocusStates['aadhaarFocusNode'],
                               onChange: (value) {
                                 personalFormViewModel.updateAadhaar(value);
                               },
@@ -129,6 +138,7 @@ class ApplicationDetails extends ConsumerWidget {
                               inerHint: 'Enter Aadhaar Number',
                               errorText: "Aadhaar Number is a required field",
                               isError: !personalFormState.isAadhaarValid,
+                              textInputType: TextInputType.number,
                               textInputAction: TextInputAction.done,
                             ),
                             SizedBox(
@@ -199,24 +209,31 @@ class ApplicationDetails extends ConsumerWidget {
                               inerHint: 'Enter Pan No',
                               errorText: "Id is a required field",
                               isError: !personalFormState.isPanValid,
-                              textInputAction: TextInputAction.done,
+                              textCapitalize: TextCapitalization.characters,
+                              textInputType: TextInputType.text,
+                              textInputAction: TextInputAction.next,
                             ),
                             Row(
                               children: [
                                 Checkbox(
                                   side: const BorderSide(
-                                      color: AppColors.boxBorderGray, width: 1.5),
+                                      color: AppColors.boxBorderGray,
+                                      width: 1.5),
                                   // semanticLabel: 'jkdhsjk',
-                                  value: checkBoxTerms,
+                                  value: personalFormState.checkBoxTermsConditionApplicant,
                                   onChanged: (value) {
                                     if (value != null) {
-                                      ref
-                                          .read(checkBoxTermsConditionApplicant.notifier)
-                                          .state = value;
+                                      personalFormViewModel.updateCheckBox(value);
+                                      // ref
+                                      //     .read(checkBoxTermsConditionApplicant
+                                      //         .notifier)
+                                      //     .state = value;
                                     }
                                   },
                                 ),
-                                SizedBox(height: displayHeight(context)*0.02,),
+                                SizedBox(
+                                  height: displayHeight(context) * 0.02,
+                                ),
                                 SizedBox(
                                     width: displayWidth(context) * 0.68,
                                     child: Text(
@@ -225,26 +242,31 @@ class ApplicationDetails extends ConsumerWidget {
                                     )),
                               ],
                             ),
-                            SizedBox(height: displayHeight(context)*0.02,),
-                            AppButton(
-                              textStyle: const TextStyle(color: AppColors.white),
+                            SizedBox(
+                              height: displayHeight(context) * 0.02,
+                            ),
+                            personalFormState.isLoading?const CircularProgressIndicator():AppButton(
+                              textStyle:
+                                  const TextStyle(color: AppColors.white),
                               onTap: () async {
-                                showBottomSheetIfYes(
-                                  context: context,
-                                  ref: ref,
-                                );
-                                ref
-                                    .read(applicantViewModelProvider.notifier)
-                                    .fetchAadhaarNumber()
-                                    .then(
-                                      (value) {
-                                        showBottomSheetIfYes(
-                                          context: context,
-                                          ref: ref,
-                                        );
-                                    // ref.read(getOpt.notifier).state = value;
-                                  },
-                                );
+                                // showBottomSheetIfYes(
+                                //   context: context,
+                                //   ref: ref,
+                                // );
+                                final validate = personalFormViewModel.validateForm();
+                                if(validate){
+                                  personalFormViewModel
+                                      .fetchAadhaarNumber()
+                                      .then(
+                                        (value) {
+                                      showBottomSheetIfYes(
+                                        context: context,
+                                        ref: ref,
+                                      );
+                                      // ref.read(getOpt.notifier).state = value;
+                                    },
+                                  );
+                                }
                               },
                               label: 'Get OTP',
                               width: displayWidth(context),
@@ -301,8 +323,6 @@ class ApplicationDetails extends ConsumerWidget {
                         //     ],
                         //   ),
                         // ),
-
-
 
                         // SizedBox(
                         //   height: displayHeight(context) * 0.03,
@@ -617,13 +637,46 @@ class ApplicationDetails extends ConsumerWidget {
     required BuildContext context,
   }) {
     return showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
       ),
       builder: (ctx) {
-        return ApplicationBottomSheet();
+        return const ApplicationBottomSheet();
+      },
+    );
+  }
+
+  Future<void> confirmBackToForm(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          // insetAnimationCurve: Easing.linear,
+          // insetAnimationDuration: Duration(milliseconds: 1000),
+          // insetPadding: EdgeInsets.all(20),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          actions: const [ConfirmBackToDashBoard()],
+          content: Container(
+            height: displayHeight(context) * 0.17,
+            child: Column(
+              children: [
+                Image.asset(
+                  'assets/images/alert.png',
+                  height: displayHeight(context) * 0.05,
+                  width: displayWidth(context) * 0.10,
+                ),
+                SizedBox(height: displayHeight(context)*0.03,),
+                const Text('Are you sure?'),
+                SizedBox(height: displayHeight(context)*0.01,),
+                const Text('If you do this Process, you will have to start the process again.',textAlign: TextAlign.center,style: TextStyle(color: AppColors.gray),),
+              ],
+            ),
+          ),
+        );
       },
     );
   }

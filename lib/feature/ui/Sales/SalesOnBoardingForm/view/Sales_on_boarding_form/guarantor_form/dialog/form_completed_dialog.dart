@@ -3,7 +3,6 @@ import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boardi
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-
 class FormSubmitDialog {
   FormSubmitDialog();
 
@@ -11,10 +10,11 @@ class FormSubmitDialog {
     required BuildContext context,
   }) async {
     return showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) {
-        return  const AlertDialog(
-          backgroundColor: AppColors.primary,
+        return const AlertDialog(
+            backgroundColor: AppColors.primary,
             // insetAnimationCurve: Easing.linear,
             // insetAnimationDuration: Duration(milliseconds: 1000),
             // insetPadding: EdgeInsets.all(20),

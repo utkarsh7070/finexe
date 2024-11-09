@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 class AppFloatTextField extends StatelessWidget {
   final String? hint;
+  final TextCapitalization textCapitalize;
   final String? inerHint;
   final double? width;
   final String? errorText;
@@ -32,6 +33,7 @@ class AppFloatTextField extends StatelessWidget {
 
   const AppFloatTextField(
       {super.key,
+        this.textCapitalize = TextCapitalization.none,
       this.maxLine,
       this.width,
       this.hint,
@@ -66,7 +68,9 @@ class AppFloatTextField extends StatelessWidget {
       height: height ?? displayHeight(context) * 0.06,
 
       alignment: Alignment.center,
-      child: TextFormField(readOnly: isReadOnly,
+      child: TextFormField(
+        textCapitalization: textCapitalize,
+        readOnly: isReadOnly,
         // initialValue: initialValue,
         maxLines: maxLine,
         focusNode: focusNode,

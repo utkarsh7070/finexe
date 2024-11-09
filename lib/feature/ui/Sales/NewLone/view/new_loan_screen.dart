@@ -4,7 +4,9 @@ import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,9 +23,6 @@ class NewLoanScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //------------------------------payment--------------------------------------------
-    final goPayment = ref.read(paymentProvider.notifier);
-    final goPaymentViewModel = ref.watch(paymentProvider);
     //-----------------------------------------------------------------------------
     final getAllProduct = ref.watch(fetchDataProvider);
     final phoneState = ref.watch(personalDetailViewModelProvider);
@@ -124,6 +123,7 @@ class NewLoanScreen extends ConsumerWidget {
                                   inerHint: 'Customer Mobile no',
                                   errorText: "Mobile no is a required field",
                                   isError: !phoneState.isPhoneNumberValid,
+                                  textInputType: TextInputType.phone,
                                   textInputAction: TextInputAction.done,
                                 ),
                                 SizedBox(
@@ -140,7 +140,9 @@ class NewLoanScreen extends ConsumerWidget {
                                       const TextStyle(color: AppColors.primary),
                                   dropDownItemCount: 9,
                                   onChanged: (dropDown) {
-                                    print(dropDown.name);
+                                    if (kDebugMode) {
+                                      print(dropDown.name);
+                                    }
                                     phoneViewModel.updateProduct(
                                         dropDown.name, data);
                                   },
@@ -355,8 +357,16 @@ class NewLoanScreen extends ConsumerWidget {
                                           .then(
                                         (value) {
                                           if (value) {
-                                            goPayment.payWithRazorPay(phoneState.loanAmount.toDouble());
-
+                                            showCustomSnackBar(
+                                                context,
+                                                'New Lone is Created SuccessFully',
+                                                Colors.green);
+                                            Navigator.pushNamedAndRemoveUntil(
+                                              context,
+                                              AppRoutes.saleApplicationForm,
+                                              (route) => false,
+                                            );
+                                            // goPayment.payWithRazorPay(phoneState.loanAmount.toDouble());
                                           }
                                         },
                                       );

@@ -1,37 +1,34 @@
-import 'package:finexe/feature/base/routes/routes.dart';
-import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view_model/guarantor_form_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import '../../../../../../../base/routes/routes.dart';
 import '../../../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../../../base/utils/namespase/display_size.dart';
 import '../../../../../../../base/utils/widget/app_button.dart';
-import '../../../../../../../base/utils/widget/app_text_filed_login.dart';
-import '../../../../view_model/application_form_view_model.dart';
+import '../../../../../NewLone/view_model/new_loan_view_model.dart';
 import '../dialog/form_completed_dialog.dart';
+
 
 class GuarantorBottomSheet extends ConsumerWidget {
   const GuarantorBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final formListController = ref.watch(guarantorController);
-    final upload = ref.watch(uploadGuarantorDoc);
-    final checkBoxTerms = ref.watch(checkBoxTermsConditionGuarantor);
-    final selectedValue = ref.watch(guarantorRoleProvider);
-
-    final personalFormState = ref.watch(guarantorViewModelProvider);
+    final getMobileNo = ref.watch(personalDetailViewModelProvider);
+    // final formListController = ref.watch(guarantorController);
+    // final upload = ref.watch(uploadGuarantorDoc);
+    // final checkBoxTerms = ref.watch(checkBoxTermsConditionGuarantor);
+    // final selectedValue = ref.watch(guarantorRoleProvider);
+    final paymentViewModel = ref.read(paymentProvider(context).notifier);
+    // final personalFormState = ref.watch(guarantorViewModelProvider);
     final personalFormViewModel = ref.read(guarantorViewModelProvider.notifier);
-    final personalFocusStates = ref.watch(guarantorFocusProvider);
-    final isRemember = ref.watch(guarantorRememberProvider);
-    final personalFocusViewModel = ref.read(guarantorFocusProvider.notifier);
-
-    final getOtpClicked = ref.watch(getOptGuarantor);
-
+    // final personalFocusStates = ref.watch(guarantorFocusProvider);
+    // final isRemember = ref.watch(guarantorRememberProvider);
+    // final personalFocusViewModel = ref.read(guarantorFocusProvider.notifier);
+    // final getOtpClicked = ref.watch(getOptGuarantor);
     // final selectedValue = ref.watch(applicantRoleProvider);
     return
       Container(
@@ -55,14 +52,15 @@ class GuarantorBottomSheet extends ConsumerWidget {
               height: displayHeight(context) * 0.04,
             ),
             OtpTextField(
-              numberOfFields: 5,
+              numberOfFields: 6,
               borderRadius: const BorderRadius.all(Radius.circular(10)),
               borderColor: AppColors.buttonBorderGray,
               showFieldAsBox: true,
               onCodeChanged: (String code) {
-                // applicantFormViewModel.updateOtp(code);
+                //
               },
               onSubmit: (String verificationCode) {
+                personalFormViewModel.updateOtp(verificationCode);
                 showDialog(
                     context: context,
                     builder: (context) {
@@ -83,8 +81,18 @@ class GuarantorBottomSheet extends ConsumerWidget {
                 // Navigator.pushNamedAndRemoveUntil(context, AppRoutes.dashBoard,(route) => false,);
                 personalFormViewModel.fetchOtp().then((value) {
                   if(value){
-                    Navigator.pop(context);
-                    FormSubmitDialog().formSubmitDialog(context: context);
+                    personalFormViewModel.paymentInitiate().then((value) {
+                      Navigator.pop(context);
+                      print(getMobileNo.phoneNumber);
+                      paymentViewModel.payWithRazorPay(1,getMobileNo.phoneNumber);
+                    },);
+
+                    // personalFormViewModel.paymentInitiate().then((value) {
+                    //   Navigator.pop(context);
+                    //   paymentViewModel.payWithRazorPay(100);
+                    //   // FormSubmitDialog().formSubmitDialog(context: context);
+                    // },);
+
                     // Navigator.pushNamedAndRemoveUntil(context, AppRoutes.dashBoard,(route) => false,);
                     // personalFormViewModel.setAutoValueByAadhaar(formListController);
                   }
