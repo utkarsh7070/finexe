@@ -74,6 +74,9 @@ class Api {
   static const String cibilPending = '${baseUrl}v1/calculator/getCustomer?status=cibilPending';
   static const String cibilOk = '${baseUrl}v1/calculator/getCustomer?status=cibilOk';
   static const String cibilReject = '${baseUrl}v1/calculator/getCustomer?status=cibilReject';
+  static const String salesDashboardData = '${baseUrl}v1/salesMan/listAllProductLogin';
+  static const String leadFormSubmit = '${baseUrl}v1/salesMan/leadGenerate';
+  static const String leadShowPendingList = '${baseUrl}v1/salesMan/leadGenerateList';
 
   // https://stageapi.fincooper.in/v1/login/updatePassword
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd

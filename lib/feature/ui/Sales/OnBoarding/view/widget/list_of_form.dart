@@ -22,6 +22,7 @@ class _DashBoardFormList extends ConsumerState<DashBoardFormList>
       if (!_isAnimationPlayed) {
         _controller.forward();
         _isAnimationPlayed = true;
+        ref.read(dashboardShowViewModelProvider).fetchLeads(context, ref);
       }
     });
     super.initState();
@@ -49,7 +50,7 @@ class _DashBoardFormList extends ConsumerState<DashBoardFormList>
   // DashBoardFormList({super.key});
   @override
   Widget build(BuildContext context) {
-    final gridItems = ref.watch(gridItem);
+    final gridItems = ref.watch(gridItemProvider);
     return Column(
       children: [
         SizeTransition(

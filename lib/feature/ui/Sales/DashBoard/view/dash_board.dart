@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../base/routes/routes.dart';
+import '../../LeadGeneration/view/lead_dashboard_form.dart';
 import '../../OnBoarding/view/on_boarding_screen.dart';
 import '../../OnBoarding/view/sales_cases/sales_cases_screen.dart';
 import '../view_model/dashboard_view_model.dart';
@@ -31,7 +32,7 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
 
   }
   @override
@@ -149,6 +150,7 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
                   ],
                 ),
               )),
+              LeadListScreen()
             ],
           )),
     );

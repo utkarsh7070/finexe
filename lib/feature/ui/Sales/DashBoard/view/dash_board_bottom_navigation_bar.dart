@@ -19,9 +19,10 @@ class DashBoardBottomNavigationBar extends ConsumerWidget {
       Icon(CupertinoIcons.bag),
       Icon(CupertinoIcons.house_alt_fill),
       Icon(CupertinoIcons.person),
+      Icon(CupertinoIcons.person),
     ];
 
-    final List<String> _labels = ['Cases', 'Home', 'Profile'];
+    final List<String> _labels = ['Cases', 'Home', 'Profile','Lead'];
 
     return Container(
       height: displayHeight(context) * 0.12,
