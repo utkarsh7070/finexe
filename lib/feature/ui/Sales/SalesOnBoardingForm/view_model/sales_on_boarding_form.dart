@@ -2,7 +2,6 @@ import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/Aadhaar_Model/
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../view/Sales_on_boarding_form/co_applicant_form.dart';
-import '../view/widget/stepper_content.dart';
 
 final checkBoxTermsCondition = StateProvider(
   (ref) {

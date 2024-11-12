@@ -9,8 +9,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../../base/api/dio.dart';
+import '../model/payment_initiate_response_model.dart';
 import '../model/request_model/aadhaar_number_request_model.dart';
 import '../model/request_model/aadhaar_otp_request_model.dart';
 import '../model/request_model/pan_request_model.dart';
@@ -310,7 +310,7 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     }
   }
 
-  Future<bool> paymentInitiate() async {
+  Future<PaymentInitiateResponseModel> paymentInitiate() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final token = sharedPreferences.getString('token');
     final customerId = sharedPreferences.getString('customerId');
@@ -321,12 +321,14 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     }
     final response = await dio.post(Api.paymentAmount,
         data: requestData, options: Options(headers: {'token': token}));
+    PaymentInitiateResponseModel responseModel =
+        PaymentInitiateResponseModel.fromJson(response.data);
     if (kDebugMode) {
       print(response.data);
       print(response.statusCode);
     }
     if (response.statusCode == 200) {
-      return true;
+      return responseModel;
     } else {
       throw Exception('Failed to load data');
     }
@@ -421,7 +423,8 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     print(
         'permanent add ${state.permanentAddress1}, ${state.permanentAddress2}');
   }
-  void updateCheckBox(bool value){
+
+  void updateCheckBox(bool value) {
     state = state.copyWith(checkBoxTermsConditionGuarantor: value);
   }
 
@@ -584,9 +587,8 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     final isPanValid = _validatePan(state.pan);
     final isCheck = state.checkBoxTermsConditionGuarantor;
 
-    state = state.copyWith(
-      isAadhaarValid: isAadhaarValid,isPanValid: isPanValid
-    );
+    state =
+        state.copyWith(isAadhaarValid: isAadhaarValid, isPanValid: isPanValid);
     return isAadhaarValid && isPanValid && isCheck;
   }
 
@@ -1471,8 +1473,8 @@ class GuarantorDataController {
   });
 }
 
-final paymentProvider =
-    StateNotifierProvider.family<PaymentWithRazorPay, PaymentState,BuildContext>((ref,context) {
+final paymentProvider = StateNotifierProvider.family<PaymentWithRazorPay,
+    PaymentState, BuildContext>((ref, context) {
   return PaymentWithRazorPay(context);
 });
 
@@ -1486,12 +1488,13 @@ class PaymentWithRazorPay extends StateNotifier<PaymentState> {
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
-  void payWithRazorPay(double amount, String mobile) {
+  void payWithRazorPay({required int amount,required String mobile,required String orderId}) {
     print(mobile);
-    String mobileNo = mobile;
+    // String mobileNo = mobile;
     var options = {
       'key': 'rzp_live_qFjwtsJR2qTnPA',
       'amount': amount * 100,
+      'order_id': orderId,
       // 'name': 'Acme Corp.',
       'description': 'Login Fees',
       'retry': {'enabled': true, 'max_count': 1},
@@ -1514,6 +1517,7 @@ class PaymentWithRazorPay extends StateNotifier<PaymentState> {
     _razorpay.clear();
     super.dispose();
   }
+
   // Handle payment success
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     if (kDebugMode) {

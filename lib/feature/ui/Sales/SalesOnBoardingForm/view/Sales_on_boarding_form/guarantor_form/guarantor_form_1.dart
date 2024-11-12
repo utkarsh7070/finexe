@@ -1,19 +1,18 @@
 import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../../../../base/routes/routes.dart';
 import '../../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../../base/utils/namespase/display_size.dart';
 import '../../../../../../base/utils/widget/app_button.dart';
 import '../../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../../../../base/utils/widget/upload_box.dart';
-import '../../../view_model/application_form_view_model.dart';
+import '../../../../NewLone/view_model/new_loan_view_model.dart';
 import '../../../view_model/guarantor_form_view_model.dart';
 import 'bottom_sheet/bottom_sheet_if_no.dart';
 import 'bottom_sheet/guarantor_bottom_sheet.dart';
+import 'dialog/QR_dialog.dart';
 import 'dialog/form_completed_dialog.dart';
 
 class GuarantorDetails extends ConsumerStatefulWidget {
@@ -41,16 +40,17 @@ class _GuarantorDetails extends ConsumerState<GuarantorDetails> {
     final formListController = ref.watch(guarantorController);
     final formNotifierController = ref.read(guarantorController.notifier);
 //---------------------------------------------------------------------------------
-    final isPanIconChange = ref.watch(isGuarantorPanLoading);
-    final colorChangeState = ref.watch(isGuarantorTickColorChange);
-    final upload = ref.watch(uploadGuarantorDoc);
-    // final checkBoxTerms = ref.watch(checkBoxTermsConditionGuarantor);
-    final selectedValue = ref.watch(guarantorRoleProvider);
-
+//     final isPanIconChange = ref.watch(isGuarantorPanLoading);
+//     final colorChangeState = ref.watch(isGuarantorTickColorChange);
+//     final upload = ref.watch(uploadGuarantorDoc);
+//     // final checkBoxTerms = ref.watch(checkBoxTermsConditionGuarantor);
+//     final selectedValue = ref.watch(guarantorRoleProvider);
+    final paymentViewModel = ref.read(paymentProvider(context).notifier);
+    final getMobileNo = ref.watch(personalDetailViewModelProvider);
     final personalFormState = ref.watch(guarantorViewModelProvider);
     final personalFormViewModel = ref.read(guarantorViewModelProvider.notifier);
     final personalFocusStates = ref.watch(guarantorFocusProvider);
-    final isRemember = ref.watch(guarantorRememberProvider);
+    // final isRemember = ref.watch(guarantorRememberProvider);
     final personalFocusViewModel = ref.read(guarantorFocusProvider.notifier);
 
     return Scaffold(
@@ -257,28 +257,70 @@ class _GuarantorDetails extends ConsumerState<GuarantorDetails> {
                                       )),
                                 ],
                               ),
-                              personalFormState.isLoading?const CircularProgressIndicator():AppButton(
-                                textStyle:
-                                    const TextStyle(color: AppColors.white),
-                                onTap: () {
-                                  bool isValid =
-                                      personalFormViewModel.validateForm();
-                                  if (isValid) {
+                              personalFormState.isLoading
+                                  ? const CircularProgressIndicator()
+                                  : AppButton(
+                                      textStyle: const TextStyle(
+                                          color: AppColors.white),
+                                      onTap: () {
+                                        // showBottomSheetIfYes(
+                                        //   context: context,
+                                        //   ref: ref,
+                                        // );
+                                        bool isValid = personalFormViewModel
+                                            .validateForm();
+                                        if (isValid) {
+                                          personalFormViewModel
+                                              .fetchAadhaarNumber()
+                                              .then(
+                                            (value) {
+                                              showBottomSheetIfYes(
+                                                context: context,
+                                                ref: ref,
+                                              );
+                                            },
+                                          );
+                                        }
+                                      },
+                                      label: 'Get OTP',
+                                      width: displayWidth(context),
+                                    ),
+                              Center(
+                                child: TextButton(
+                                  child: Text(
+                                    'Skip',
+                                    style: AppStyles.nameText.copyWith(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  onPressed: () {
                                     personalFormViewModel
-                                        .fetchAadhaarNumber()
+                                        .paymentInitiate()
                                         .then(
                                       (value) {
-                                        showBottomSheetIfYes(
-                                          context: context,
-                                          ref: ref,
-                                        );
+                                        if (kDebugMode) {
+                                          print(getMobileNo.phoneNumber);
+                                        }
+                                        if (value.items.customerDetail
+                                                .loginFees !=
+                                            0) {
+                                          paymentViewModel.payWithRazorPay(
+                                              amount: value.items.customerDetail
+                                                  .loginFees,
+                                              mobile: getMobileNo.phoneNumber,
+                                              orderId: value.items
+                                                  .customerDetail.orderId);
+                                          // FormSubmitDialog().formSubmitDialog(
+                                          //     context: context);
+                                        } else {
+                                          FormSubmitDialog().formSubmitDialog(
+                                              context: context);
+                                        }
                                       },
                                     );
-                                  }
-                                },
-                                label: 'Get OTP',
-                                width: displayWidth(context),
-                              ),
+                                  },
+                                ),
+                              )
                               // AppButton(
                               //   textStyle:
                               //   const TextStyle(color: AppColors.white),

@@ -33,7 +33,7 @@ class CoApplicationBottomSheet extends ConsumerWidget {
     // final coApplicationFocusViewModel =
     //     ref.read(coApplicantFocusProvider.notifier);
     final index = ref.watch(listIndex);
-    return  Container(
+    return Container(
       padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
       width: displayWidth(context),
       child: Column(
@@ -47,9 +47,9 @@ class CoApplicationBottomSheet extends ConsumerWidget {
           ),
           const Flexible(
               child: Text(
-                'We have just sent you 6 digit code Phone Number +7489455607',
-                textAlign: TextAlign.center,
-              )),
+            'We have just sent you 6 digit code Phone Number',
+            textAlign: TextAlign.center,
+          )),
           SizedBox(
             height: displayHeight(context) * 0.04,
           ),
@@ -76,32 +76,36 @@ class CoApplicationBottomSheet extends ConsumerWidget {
           SizedBox(
             height: displayHeight(context) * 0.04,
           ),
-          AppButton(
-            textStyle: const TextStyle(color: AppColors.white),
-            onTap: () {
-              if(index < coApplicationFormState.length - 1 == false){
-                Navigator.pop(context);
-                Navigator.pushNamed(context, AppRoutes.saleGuarantorForm1);
-              }
-              coApplicationFormViewModel.fetchOtp(index).then(
-                    (value) {
-                  if (value) {
-                    coApplicationFormViewModel.setAutoValueByAadhaar(
-                        formListController, index);
-                    Navigator.pop(context);
-                    if(index < coApplicationFormState.length - 1 == false){
-                      Navigator.pop(context);
-                      showCustomSnackBar(context,
-                          'Co-Applicant form is Submitted', Colors.green);
-                      Navigator.pushNamed(context, AppRoutes.saleGuarantorForm1);
-                    }
-                  }
-                },
-              );
-            },
-            label: 'Continue',
-            width: displayWidth(context),
-          ),
+          coApplicationFormState[index].isLoading
+              ? const CircularProgressIndicator()
+              : AppButton(
+                  textStyle: const TextStyle(color: AppColors.white),
+                  onTap: () {
+                    // if(index < coApplicationFormState.length - 1 == false){
+                    //   Navigator.pop(context);
+                    //   Navigator.pushNamed(context, AppRoutes.saleGuarantorForm1);
+                    // }
+                    coApplicationFormViewModel.fetchOtp(index).then(
+                      (value) {
+                        if (value) {
+                          coApplicationFormViewModel.setAutoValueByAadhaar(
+                              formListController, index);
+                          Navigator.pop(context);
+                          if (index < coApplicationFormState.length - 1 ==
+                              false) {
+                            Navigator.pop(context);
+                            showCustomSnackBar(context,
+                                'Co-Applicant form is Submitted', Colors.green);
+                            Navigator.pushNamed(
+                                context, AppRoutes.saleGuarantorForm1);
+                          }
+                        }
+                      },
+                    );
+                  },
+                  label: 'Continue',
+                  width: displayWidth(context),
+                ),
           SizedBox(
             height: displayHeight(context) * 0.01,
           ),

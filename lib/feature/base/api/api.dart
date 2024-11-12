@@ -68,6 +68,12 @@ class Api {
   static const String updateProfile = '${baseUrl}v1/adminMaster/employe/update';
   static const String updatePassword = '${baseUrl}v1/login/updatePassword';
   static const String paymentAmount = '${baseUrl}v1/salesMan/paymentInitiate';
+  static const String allCases = '${baseUrl}v1/calculator/getCustomer?status=all';
+  static const String salesNew = '${baseUrl}v1/calculator/getCustomer?status=salesNew';
+  static const String salesToCibil = '${baseUrl}v1/calculator/getCustomer?status=salesToCibil';
+  static const String cibilPending = '${baseUrl}v1/calculator/getCustomer?status=cibilPending';
+  static const String cibilOk = '${baseUrl}v1/calculator/getCustomer?status=cibilOk';
+  static const String cibilReject = '${baseUrl}v1/calculator/getCustomer?status=cibilReject';
 
   // https://stageapi.fincooper.in/v1/login/updatePassword
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd

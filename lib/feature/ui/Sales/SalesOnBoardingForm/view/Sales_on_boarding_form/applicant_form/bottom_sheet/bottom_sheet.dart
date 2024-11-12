@@ -37,7 +37,7 @@ class ApplicationBottomSheet extends ConsumerWidget {
           ),
           const Flexible(
               child: Text(
-            'We have just sent you 6 digit code Phone Number +7489455607',
+            'We have just sent you 6 digit code Phone Number',
             textAlign: TextAlign.center,
           )),
           SizedBox(

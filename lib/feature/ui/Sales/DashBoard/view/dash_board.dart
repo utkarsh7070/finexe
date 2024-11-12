@@ -32,6 +32,7 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+
   }
   @override
   void dispose() {
@@ -46,12 +47,17 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
     final tabViewModel = ref.watch(tabViewModelProvider);
     final checkpunchProvider = ref.watch(attendanceProvider);
 
-    return WillPopScope(
-      onWillPop: () async {
-        // Close the app
+    return PopScope(
+     canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
         SystemNavigator.pop();
-        return false; // Prevents back navigation
       },
+
+      // canPop: () async {
+      //   // Close the app
+      //   SystemNavigator.pop();
+      //   return false; // Prevents back navigation
+      // },
       child: Scaffold(
           floatingActionButton: tabViewModel.selectedIndex == 1
               ? FloatingActionButton(

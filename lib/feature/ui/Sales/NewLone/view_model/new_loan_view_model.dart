@@ -248,14 +248,14 @@ class PhoneNumberState {
 //-------------------------------Api--getAllProduct-------------------------------------------------
 
 final fetchDataProvider = FutureProvider<List<Item>>((ref) async {
+  String? token = await SessionService.getToken();
   final dio = ref.read(dioProvider);
-  final response = await dio.get(Api.getAllProduct);
+  final response = await dio.get(Api.getAllProduct,options: Options(headers: {"token": token}),);
   print(response.statusMessage);
   print(response.statusCode);
-  print(response.data);
   if (response.statusCode == 200) {
     GetAllProductModel apiResponseList =
-        GetAllProductModel.fromJson(response.data);
+    GetAllProductModel.fromJson(response.data);
     // ref.read(personalDetailViewModelProvider.notifier).list =
     //     apiResponseList.items;
     return apiResponseList.items;
