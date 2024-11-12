@@ -41,3 +41,4 @@ class TabViewModel extends StateNotifier<TabModel> {
     state = state.copyWith(selectedIndex: index);
   }
 }
+

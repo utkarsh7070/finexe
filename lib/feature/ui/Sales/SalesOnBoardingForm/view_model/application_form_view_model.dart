@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/src/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/aadhaar_number_request_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/aadhaar_otp_request_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/submite_applicant_form_data_model.dart';
@@ -16,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
+import '../../../../base/api/dio_exception.dart';
 import '../model/request_model/pan_request_model.dart';
 import '../model/responce_model/aadhaar_otp_responce_model.dart';
 import '../view/Sales_on_boarding_form/co_applicant_form.dart';
@@ -158,9 +160,10 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
   final SingleValueDropDownController selectIdController =
       SingleValueDropDownController();
 
-  Future<bool> fetchAadhaarNumber() async {
+  Future<bool> fetchAadhaarNumber(context) async {
     state = state.copyWith(isLoading: true);
-    await fetchPanVerify();
+      await fetchPanVerify(context);
+    // on DioException catch (error)
     print(state.aadhaar);
     final aadhaarNumberRequestModel = AadhaarNumberRequestModel(
         aadharNo: state.aadhaar.trim().toString(),
@@ -186,7 +189,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
   }
 
   Future<bool> submitOtp() async {
-    state=state.copyWith(isLoading: true);
+    state = state.copyWith(isLoading: true);
     print(state.otp);
     final aadhaarOtpResquestModel = AadhaarOtpRequestModel(
         transId: aadhaarNumberResponseModel!.items.tsTransId,
@@ -200,7 +203,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
       final response = await dio.post(Api.aadhaarOtpVerify,
           data: aadhaarOtpResquestModel.toJson());
       if (response.statusCode == 200) {
-        state=state.copyWith(isLoading: false);
+        state = state.copyWith(isLoading: false);
         aadhaarOtpResponseModel =
             AadhaarOtpResponseModel.fromJson(response.data);
         state = state.copyWith(
@@ -218,11 +221,11 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
         // AadhaarNumberResponseModel.fromJson(response.data);
         return true;
       } else {
-        state=state.copyWith(isLoading: false);
+        state = state.copyWith(isLoading: false);
         return false;
       }
     } catch (e) {
-      state=state.copyWith(isLoading: false);
+      state = state.copyWith(isLoading: false);
       throw Exception(e);
     }
   }
@@ -246,7 +249,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     }
   }
 
-  Future<bool> fetchPanVerify() async {
+  Future<bool> fetchPanVerify(BuildContext context) async {
     print(state.otp);
     final panRequestModel = PanRequestModel(
         docType: 523, panNumber: state.pan, transId: "111XXXXX");
@@ -259,8 +262,9 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
       } else {
         return false;
       }
-    } catch (e) {
-      throw Exception(e);
+    } on DioException catch (error){
+      DioExceptions.fromDioError(error,context);
+      throw Exception(error);
     }
   }
 
@@ -611,14 +615,17 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
         permanentPinCode: value, isPermanentPinCodeValid: isValid);
   }
 
-  bool validateForm() {
+  bool validateForm(BuildContext context) {
     final isPanValid = _validatePan(state.pan);
     final isAadhaar = _validateAadhaar(state.aadhaar);
     final isApplicantPhoto =
         _validateApplicantPhoto(state.applicantPhotoFilePath);
     final isTerms = state.checkBoxTermsConditionApplicant;
 
-    state = state.copyWith(isPanValid: isPanValid, isAadhaarValid: isAadhaar);
+    state = state.copyWith(
+        isPanValid: isPanValid,
+        isAadhaarValid: isAadhaar,
+        isApplicantPhoto: isApplicantPhoto);
     return isTerms && isAadhaar && isApplicantPhoto && isTerms;
   }
 
@@ -1106,6 +1113,7 @@ class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
 class KycFormState {
   final bool isLoading;
   final String applicantPhotoFilePath;
+  final bool isApplicantPhoto;
   final String aadhaarPhotoFilePath1;
   final String aadhaarPhotoFilePath2;
   final bool checkBoxTermsConditionApplicant;
@@ -1179,6 +1187,7 @@ class KycFormState {
   final bool isPermanentPinCodeValid;
 
   KycFormState({
+    this.isApplicantPhoto = true,
     this.isLoading = false,
     this.checkBoxTermsConditionApplicant = false,
     this.isOtpVerify = false,
@@ -1291,6 +1300,7 @@ class KycFormState {
       String? communicationState,
       String? communicationDistrict,
       String? communicationPinCode,
+      bool? isApplicantPhoto,
       bool? isCommunicationAddress1Valid,
       bool? isCommunicationAddress2Valid,
       bool? isCommunicationCityValid,
@@ -1313,6 +1323,7 @@ class KycFormState {
       bool? isAgeValid,
       bool? isRelationWithApplicantValid}) {
     return KycFormState(
+        isApplicantPhoto: isApplicantPhoto ?? this.isApplicantPhoto,
         isLoading: isLoading ?? this.isLoading,
         checkBoxTermsConditionApplicant: checkBoxTermsConditionApplicant ??
             this.checkBoxTermsConditionApplicant,

@@ -7,6 +7,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../../../base/utils/namespase/app_colors.dart';
+import '../../../../../NewLone/view_model/new_loan_view_model.dart';
 
 class ConfirmBackToDashBoard extends ConsumerWidget {
   const ConfirmBackToDashBoard({super.key});
@@ -24,6 +25,7 @@ class ConfirmBackToDashBoard extends ConsumerWidget {
                   shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)))),
               onPressed: () {
+                ref.invalidate(personalDetailViewModelProvider);
                 Navigator.pushNamedAndRemoveUntil(context, AppRoutes.dashBoard, (route) => false,);
               },
               child: const Text(

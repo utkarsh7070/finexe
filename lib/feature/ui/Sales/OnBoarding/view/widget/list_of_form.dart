@@ -1,12 +1,11 @@
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../view_model/on_boarding_view_model.dart';
 class DashBoardFormList extends ConsumerStatefulWidget {
-  const DashBoardFormList({Key? key}) : super(key: key);
+  const DashBoardFormList({super.key});
 
   @override
   _DashBoardFormList createState() => _DashBoardFormList();
@@ -43,14 +42,12 @@ class _DashBoardFormList extends ConsumerState<DashBoardFormList>
     super.dispose();
   }
 // class DashBoardFormList extends ConsumerWidget {
-  final List<Color> gradientColors = [
-    Colors.cyan,
-    Colors.blue,
-  ];
   // DashBoardFormList({super.key});
   @override
   Widget build(BuildContext context) {
     final gridItems = ref.watch(gridItemProvider);
+    final customer = ref.watch(customerName);
+
     return Column(
       children: [
         SizeTransition(
@@ -81,22 +78,22 @@ class _DashBoardFormList extends ConsumerState<DashBoardFormList>
                     alignment: Alignment.bottomLeft,
                     child: Container(
                       height: displayHeight(context)*0.35,
-                      padding: EdgeInsets.only(left: 16),
+                      padding: const EdgeInsets.only(left: 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             'Hi,',
                             style: TextStyle(color: AppColors.white,fontSize: 32,fontWeight: FontWeight.w700),
                           ),
                           Text(
-                            'Ajay sagar',
-                            style: TextStyle(color: AppColors.white,fontSize: 32,fontWeight: FontWeight.w700),
+                            customer,
+                            style: const TextStyle(color: AppColors.white,fontSize: 32,fontWeight: FontWeight.w700),
                           ),
                           SizedBox(height: displayHeight(context)*0.01,),
                           SizedBox(
                               width: displayWidth(context) * 0.50,
-                              child: Text(
+                              child: const Text(
                                 '"Welcome! Discover and enjoy the perfect coffee experience with us."',
                                 style: TextStyle(color: AppColors.white),
                               )),
@@ -132,7 +129,7 @@ class _DashBoardFormList extends ConsumerState<DashBoardFormList>
                     Container(
                         height: displayHeight(context) * 0.07,
                         width: displayWidth(context) * 0.17,
-                        padding: EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(15),
                         decoration: const BoxDecoration(
                           color: AppColors.boxBagGray,
                           borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -143,7 +140,7 @@ class _DashBoardFormList extends ConsumerState<DashBoardFormList>
                     ),
                     Text(
                       gridItems[index].title,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontWeight: FontWeight.w600, fontSize: 16),
                     ),
                     SizedBox(

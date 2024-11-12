@@ -8,9 +8,9 @@ class GetAllCasesResponseModel {
   @JsonKey(name: "subCode")
   int subCode;
   @JsonKey(name: "message")
-  dynamic message;
+  String message;
   @JsonKey(name: "error")
-  dynamic error;
+  String error;
   @JsonKey(name: "items")
   List<Item> items;
 
@@ -30,17 +30,17 @@ class GetAllCasesResponseModel {
 @JsonSerializable()
 class Item {
   @JsonKey(name: "_id")
-  dynamic id;
+  String id;
   @JsonKey(name: "employeId")
-  dynamic? employeId;
+  String employeId;
   @JsonKey(name: "cibilId")
-  dynamic? cibilId;
+  String? cibilId;
   @JsonKey(name: "tlPdId")
   dynamic tlPdId;
   @JsonKey(name: "creditPdId")
-  dynamic creditPdId;
+  String? creditPdId;
   @JsonKey(name: "customerId")
-  dynamic customerId;
+  String customerId;
   @JsonKey(name: "customerFormStart")
   bool customerFormStart;
   @JsonKey(name: "customerFormComplete")
@@ -74,47 +74,47 @@ class Item {
   @JsonKey(name: "cibilFormComplete")
   bool cibilFormComplete;
   @JsonKey(name: "remarkByCibil")
-  dynamic remarkByCibil;
+  String remarkByCibil;
   @JsonKey(name: "statusByCibil")
-  dynamic statusByCibil;
+  String statusByCibil;
   @JsonKey(name: "statusByExternalManager")
-  dynamic statusByExternalManager;
+  String statusByExternalManager;
   @JsonKey(name: "remarkByCreditPd")
-  dynamic remarkByCreditPd;
+  String remarkByCreditPd;
   @JsonKey(name: "statusByCreditPd")
-  dynamic statusByCreditPd;
+  String statusByCreditPd;
   @JsonKey(name: "remarkByPd")
-  dynamic? remarkByPd;
+  String? remarkByPd;
   @JsonKey(name: "statusByPd")
-  dynamic? statusByPd;
+  String? statusByPd;
   @JsonKey(name: "createdAt")
   DateTime createdAt;
   @JsonKey(name: "updatedAt")
   DateTime updatedAt;
   @JsonKey(name: "customerName")
-  dynamic customerName;
+  String customerName;
   @JsonKey(name: "customerFinId")
-  dynamic customerFinId;
+  String customerFinId;
   @JsonKey(name: "mobileNo")
-  int mobileNo;
+  dynamic mobileNo;
   @JsonKey(name: "productName")
-  dynamic productName;
+  String productName;
   @JsonKey(name: "loanAmount")
-  int loanAmount;
+  dynamic loanAmount;
   @JsonKey(name: "applicantImage")
-  dynamic? applicantImage;
+  String applicantImage;
   @JsonKey(name: "applicantEmail")
-  dynamic applicantEmail;
+  String applicantEmail;
   @JsonKey(name: "externalvendorDetail")
-  dynamic externalvendorDetail;
+  ExternalvendorDetail externalvendorDetail;
   @JsonKey(name: "remarkMessage")
-  dynamic remarkMessage;
+  String remarkMessage;
   @JsonKey(name: "currentStatus")
-  dynamic currentStatus;
+  String currentStatus;
   @JsonKey(name: "statusByFinalApproval")
-  dynamic? statusByFinalApproval;
+  String? statusByFinalApproval;
   @JsonKey(name: "remarkByExternalManager")
-  dynamic? remarkByExternalManager;
+  String? remarkByExternalManager;
 
   Item({
     required this.id,
@@ -167,106 +167,105 @@ class Item {
   Map<String, dynamic> toJson() => _$ItemToJson(this);
 }
 
+@JsonSerializable()
+class ExternalvendorDetail {
+  @JsonKey(name: "_id")
+  String? id;
+  @JsonKey(name: "externalVendorId")
+  String? externalVendorId;
+  @JsonKey(name: "vendors")
+  List<Vendor>? vendors;
 
-// @JsonSerializable()
-// class ExternalvendorDetail {
-//   @JsonKey(name: "_id")
-//   dynamic? id;
-//   @JsonKey(name: "externalVendorId")
-//   dynamic? externalVendorId;
-//   @JsonKey(name: "vendors")
-//   List<Vendor>? vendors;
-//
-//   ExternalvendorDetail({
-//     this.id,
-//     this.externalVendorId,
-//     this.vendors,
-//   });
-//
-//   factory ExternalvendorDetail.fromJson(Map<dynamic, dynamic> json) => _$ExternalvendorDetailFromJson(json);
-//
-//   Map<dynamic, dynamic> toJson() => _$ExternalvendorDetailToJson(this);
-// }
-//
-// @JsonSerializable()
-// class Vendor {
-//   @JsonKey(name: "vendorType")
-//   dynamic vendorType;
-//   @JsonKey(name: "vendorId")
-//   dynamic vendorId;
-//   @JsonKey(name: "assignDocuments")
-//   List<dynamic> assignDocuments;
-//   @JsonKey(name: "pdfRemark")
-//   dynamic? pdfRemark;
-//   @JsonKey(name: "externalVendorRemark")
-//   dynamic? externalVendorRemark;
-//   @JsonKey(name: "uploadProperty")
-//   List<dynamic> uploadProperty;
-//   @JsonKey(name: "remarkByVendor")
-//   dynamic remarkByVendor;
-//   @JsonKey(name: "sendMail")
-//   dynamic sendMail;
-//   @JsonKey(name: "statusByVendor")
-//   dynamic statusByVendor;
-//   @JsonKey(name: "receiverName")
-//   dynamic? receiverName;
-//   @JsonKey(name: "vendorStatus")
-//   dynamic? vendorStatus;
-//   @JsonKey(name: "reason")
-//   dynamic reason;
-//   @JsonKey(name: "requirement")
-//   List<dynamic> requirement;
-//   @JsonKey(name: "numberOfCattle")
-//   dynamic? numberOfCattle;
-//   @JsonKey(name: "cattlesBreed")
-//   dynamic? cattlesBreed;
-//   @JsonKey(name: "milkLitPerDay")
-//   dynamic? milkLitPerDay;
-//   @JsonKey(name: "areaOfLand")
-//   dynamic? areaOfLand;
-//   @JsonKey(name: "areaOfConstruction")
-//   dynamic? areaOfConstruction;
-//   @JsonKey(name: "fairMarketValue")
-//   dynamic? fairMarketValue;
-//   @JsonKey(name: "vendorUploadDate")
-//   dynamic? vendorUploadDate;
-//   @JsonKey(name: "approverRemark")
-//   dynamic? approverRemark;
-//   @JsonKey(name: "approverDate")
-//   dynamic? approverDate;
-//   @JsonKey(name: "assignDate")
-//   dynamic? assignDate;
-//   @JsonKey(name: "_id")
-//   dynamic id;
-//
-//   Vendor({
-//     required this.vendorType,
-//     required this.vendorId,
-//     required this.assignDocuments,
-//     this.pdfRemark,
-//     this.externalVendorRemark,
-//     required this.uploadProperty,
-//     required this.remarkByVendor,
-//     required this.sendMail,
-//     required this.statusByVendor,
-//     this.receiverName,
-//     this.vendorStatus,
-//     required this.reason,
-//     required this.requirement,
-//     this.numberOfCattle,
-//     this.cattlesBreed,
-//     this.milkLitPerDay,
-//     this.areaOfLand,
-//     this.areaOfConstruction,
-//     this.fairMarketValue,
-//     this.vendorUploadDate,
-//     this.approverRemark,
-//     this.approverDate,
-//     this.assignDate,
-//     required this.id,
-//   });
-//
-//   factory Vendor.fromJson(Map<dynamic, dynamic> json) => _$VendorFromJson(json);
-//
-//   Map<dynamic, dynamic> toJson() => _$VendorToJson(this);
-// }
+  ExternalvendorDetail({
+    this.id,
+    this.externalVendorId,
+    this.vendors,
+  });
+
+  factory ExternalvendorDetail.fromJson(Map<String, dynamic> json) => _$ExternalvendorDetailFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ExternalvendorDetailToJson(this);
+}
+
+@JsonSerializable()
+class Vendor {
+  @JsonKey(name: "vendorType")
+  String vendorType;
+  @JsonKey(name: "vendorId")
+  String? vendorId;
+  @JsonKey(name: "assignDocuments")
+  List<String> assignDocuments;
+  @JsonKey(name: "pdfRemark")
+  String? pdfRemark;
+  @JsonKey(name: "externalVendorRemark")
+  String? externalVendorRemark;
+  @JsonKey(name: "uploadProperty")
+  List<String> uploadProperty;
+  @JsonKey(name: "remarkByVendor")
+  String remarkByVendor;
+  @JsonKey(name: "sendMail")
+  String sendMail;
+  @JsonKey(name: "statusByVendor")
+  String statusByVendor;
+  @JsonKey(name: "receiverName")
+  String? receiverName;
+  @JsonKey(name: "vendorStatus")
+  String? vendorStatus;
+  @JsonKey(name: "reason")
+  String reason;
+  @JsonKey(name: "requirement")
+  List<String> requirement;
+  @JsonKey(name: "numberOfCattle")
+  String? numberOfCattle;
+  @JsonKey(name: "cattlesBreed")
+  String? cattlesBreed;
+  @JsonKey(name: "milkLitPerDay")
+  String? milkLitPerDay;
+  @JsonKey(name: "areaOfLand")
+  String? areaOfLand;
+  @JsonKey(name: "areaOfConstruction")
+  String? areaOfConstruction;
+  @JsonKey(name: "fairMarketValue")
+  String? fairMarketValue;
+  @JsonKey(name: "vendorUploadDate")
+  String? vendorUploadDate;
+  @JsonKey(name: "approverRemark")
+  String? approverRemark;
+  @JsonKey(name: "approverDate")
+  String? approverDate;
+  @JsonKey(name: "assignDate")
+  String? assignDate;
+  @JsonKey(name: "_id")
+  String id;
+
+  Vendor({
+    required this.vendorType,
+    required this.vendorId,
+    required this.assignDocuments,
+    this.pdfRemark,
+    this.externalVendorRemark,
+    required this.uploadProperty,
+    required this.remarkByVendor,
+    required this.sendMail,
+    required this.statusByVendor,
+    this.receiverName,
+    this.vendorStatus,
+    required this.reason,
+    required this.requirement,
+    this.numberOfCattle,
+    this.cattlesBreed,
+    this.milkLitPerDay,
+    this.areaOfLand,
+    this.areaOfConstruction,
+    this.fairMarketValue,
+    this.vendorUploadDate,
+    this.approverRemark,
+    this.approverDate,
+    this.assignDate,
+    required this.id,
+  });
+
+  factory Vendor.fromJson(Map<String, dynamic> json) => _$VendorFromJson(json);
+
+  Map<String, dynamic> toJson() => _$VendorToJson(this);
+}

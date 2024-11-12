@@ -220,10 +220,12 @@ class ApplicationDetails extends ConsumerWidget {
                                       color: AppColors.boxBorderGray,
                                       width: 1.5),
                                   // semanticLabel: 'jkdhsjk',
-                                  value: personalFormState.checkBoxTermsConditionApplicant,
+                                  value: personalFormState
+                                      .checkBoxTermsConditionApplicant,
                                   onChanged: (value) {
                                     if (value != null) {
-                                      personalFormViewModel.updateCheckBox(value);
+                                      personalFormViewModel
+                                          .updateCheckBox(value);
                                       // ref
                                       //     .read(checkBoxTermsConditionApplicant
                                       //         .notifier)
@@ -245,32 +247,31 @@ class ApplicationDetails extends ConsumerWidget {
                             SizedBox(
                               height: displayHeight(context) * 0.02,
                             ),
-                            personalFormState.isLoading?const CircularProgressIndicator():AppButton(
-                              textStyle:
-                                  const TextStyle(color: AppColors.white),
-                              onTap: () async {
-                                // showBottomSheetIfYes(
-                                //   context: context,
-                                //   ref: ref,
-                                // );
-                                final validate = personalFormViewModel.validateForm();
-                                if(validate){
-                                  personalFormViewModel
-                                      .fetchAadhaarNumber()
-                                      .then(
-                                        (value) {
-                                      showBottomSheetIfYes(
-                                        context: context,
-                                        ref: ref,
-                                      );
-                                      // ref.read(getOpt.notifier).state = value;
+                            personalFormState.isLoading
+                                ? const CircularProgressIndicator()
+                                : AppButton(
+                                    textStyle:
+                                        const TextStyle(color: AppColors.white),
+                                    onTap: () async {
+                                      final validate =
+                                          personalFormViewModel.validateForm(context);
+                                      if (validate) {
+                                        personalFormViewModel
+                                            .fetchAadhaarNumber(context)
+                                            .then(
+                                          (value) {
+                                            showBottomSheetIfYes(
+                                              context: context,
+                                              ref: ref,
+                                            );
+                                            // ref.read(getOpt.notifier).state = value;
+                                          },
+                                        );
+                                      }
                                     },
-                                  );
-                                }
-                              },
-                              label: 'Get OTP',
-                              width: displayWidth(context),
-                            ),
+                                    label: 'Get OTP',
+                                    width: displayWidth(context),
+                                  ),
                           ],
                         ),
                         // SizedBox(
@@ -576,6 +577,7 @@ class ApplicationDetails extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               UploadBox(
+
                 height: displayHeight(context) * 0.15,
                 width: displayWidth(context) * 0.35,
                 color: AppColors.buttonBorderGray,
@@ -669,10 +671,18 @@ class ApplicationDetails extends ConsumerWidget {
                   height: displayHeight(context) * 0.05,
                   width: displayWidth(context) * 0.10,
                 ),
-                SizedBox(height: displayHeight(context)*0.03,),
+                SizedBox(
+                  height: displayHeight(context) * 0.03,
+                ),
                 const Text('Are you sure?'),
-                SizedBox(height: displayHeight(context)*0.01,),
-                const Text('If you do this Process, you will have to start the process again.',textAlign: TextAlign.center,style: TextStyle(color: AppColors.gray),),
+                SizedBox(
+                  height: displayHeight(context) * 0.01,
+                ),
+                const Text(
+                  'If you do this Process, you will have to start the process again.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.gray),
+                ),
               ],
             ),
           ),

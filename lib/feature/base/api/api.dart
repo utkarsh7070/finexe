@@ -77,6 +77,7 @@ class Api {
   static const String salesDashboardData = '${baseUrl}v1/salesMan/listAllProductLogin';
   static const String leadFormSubmit = '${baseUrl}v1/salesMan/leadGenerate';
   static const String leadShowPendingList = '${baseUrl}v1/salesMan/leadGenerateList';
+  static const String getEmployeeDetails = '${baseUrl}v1/adminMaster/employe/getEmployeeByToken';
 
   // https://stageapi.fincooper.in/v1/login/updatePassword
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd

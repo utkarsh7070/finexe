@@ -104,12 +104,12 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
   }
 }
 
-Future<void> logoutSession() async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  sharedPreferences.clear();
-  print('email is exit or not ${sharedPreferences.containsKey('email')}');
-  sharedPreferences.containsKey('email');
-}
+// Future<void> logoutSession() async {
+//   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+//   sharedPreferences.clear();
+//   print('email is exit or not ${sharedPreferences.containsKey('email')}');
+//   sharedPreferences.containsKey('email');
+// }
 
 final apiResponseProvider =
     StateNotifierProvider<ApiResponseNotifier, AsyncValue<UserProfile>>((ref) {
