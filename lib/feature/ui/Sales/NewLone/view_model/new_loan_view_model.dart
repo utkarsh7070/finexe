@@ -1,6 +1,5 @@
-import 'dart:ffi';
-import 'dart:math';
 
+import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
@@ -8,14 +7,11 @@ import 'package:finexe/feature/ui/Sales/NewLone/model/submit_new_loan_response_m
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
-import '../../../../base/routes/routes.dart';
 import '../model/get_All_Product_model.dart';
 import '../model/submit_new_loan_form_data.dart';
-
 // final getAllProductsList = StateProvider<List<Item>?>((ref) {
 //   return null;
 // });
