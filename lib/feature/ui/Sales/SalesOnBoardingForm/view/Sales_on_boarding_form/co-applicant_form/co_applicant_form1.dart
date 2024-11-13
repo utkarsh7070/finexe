@@ -46,7 +46,8 @@ class CoApplicantForm1 extends ConsumerWidget {
     // final remove = ref.read(count.notifier);
 
     return Scaffold(
-        body: Container(
+        body:
+        Container(
       width: displayWidth(context),
       height: displayHeight(context),
       color: AppColors.primary,

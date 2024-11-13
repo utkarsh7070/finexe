@@ -35,7 +35,8 @@ class _SalesCasesScreen extends ConsumerState<SalesCasesScreen> {
   Widget build(BuildContext context) {
     final data = ref.watch(getCasesData);
     final dataViewModel = ref.read(getCasesData.notifier);
-    return Container(
+    return
+      Container(
             width: displayWidth(context),
             height: displayHeight(context),
             color: AppColors.primary,

@@ -197,12 +197,14 @@ class NewLoanScreen extends ConsumerWidget {
                                   height: displayHeight(context) * 0.04,
                                 ),
                                 amountTextShow(
-                                    data: 'Loan Amount',
+                                    data: 'Loan Amount (Lack)',
                                     price: '${phoneState.loanAmount.toInt()}'),
                                 SizedBox(
                                   height: displayHeight(context) * 0.01,
                                 ),
                                 SfLinearGauge(
+
+                                  interval: 50000,
                                   axisTrackStyle: const LinearAxisTrackStyle(
                                       edgeStyle: LinearEdgeStyle.bothCurve,
                                       color: AppColors.linearBarColor),
@@ -211,6 +213,7 @@ class NewLoanScreen extends ConsumerWidget {
                                   showTicks: true,
                                   showLabels: false,
                                   minorTicksPerInterval: 1,
+
                                   majorTickStyle:
                                       const LinearTickStyle(length: 7),
                                   minorTickStyle:
@@ -228,14 +231,15 @@ class NewLoanScreen extends ConsumerWidget {
                                         child: const Icon(
                                           Icons.circle,
                                           color: AppColors.primary,
-                                          size: 15,
+                                          size: 20,
                                         )),
                                   ],
                                   ranges: [
                                     LinearGaugeRange(
                                       edgeStyle: LinearEdgeStyle.bothCurve,
                                       position: LinearElementPosition.cross,
-                                      startValue: 0,
+                                      startValue:
+                                          item.loanAmount.min.toDouble(),
                                       endValue: phoneState.loanAmount,
                                       color: AppColors.primary,
                                     ),
@@ -275,14 +279,14 @@ class NewLoanScreen extends ConsumerWidget {
                                         child: const Icon(
                                           Icons.circle,
                                           color: AppColors.primary,
-                                          size: 15,
+                                          size: 20,
                                         )),
                                   ],
                                   ranges: [
                                     LinearGaugeRange(
                                       edgeStyle: LinearEdgeStyle.bothCurve,
                                       position: LinearElementPosition.cross,
-                                      startValue: 0,
+                                      startValue:item.roi.min.toDouble(),
                                       endValue: phoneState.roi,
                                       color: AppColors.primary,
                                     ),
@@ -327,13 +331,13 @@ class NewLoanScreen extends ConsumerWidget {
                                         child: const Icon(
                                           CupertinoIcons.circle_fill,
                                           color: AppColors.primary,
-                                          size: 15,
+                                          size: 20,
                                         )),
                                   ],
                                   ranges: [
                                     LinearGaugeRange(
                                       edgeStyle: LinearEdgeStyle.bothCurve,
-                                      startValue: 0,
+                                      startValue: item.tenure.min.toDouble(),
                                       endValue: phoneState.tenure,
                                       color: AppColors.primary,
                                       position: LinearElementPosition.cross,
@@ -359,7 +363,7 @@ class NewLoanScreen extends ConsumerWidget {
                                           if (value) {
                                             showCustomSnackBar(
                                                 context,
-                                                'New Lone is Created SuccessFully',
+                                                'New Loan is Created Successfully',
                                                 Colors.green);
                                             Navigator.pushNamedAndRemoveUntil(
                                               context,

@@ -16,13 +16,14 @@ class DashBoardBottomNavigationBar extends ConsumerWidget {
     final tabModel =
         ref.watch(tabViewModelProvider); // Get the selected tab index
      List<Widget> _icons = [
+       const Icon(CupertinoIcons.house_alt_fill),
       const Icon(CupertinoIcons.bag),
-      const Icon(CupertinoIcons.house_alt_fill),
+       const Icon(CupertinoIcons.graph_square),
       const Icon(CupertinoIcons.person),
-     const Icon(CupertinoIcons.graph_square)
+
     ];
 
-    final List<String> _labels = ['Cases', 'Home', 'Profile','Lead'];
+    final List<String> _labels = ['Home','Cases','Lead', 'Profile'];
 
     return Container(
       height: displayHeight(context) * 0.12,
@@ -71,7 +72,7 @@ class DashBoardBottomNavigationBar extends ConsumerWidget {
       child: Column(
         children: [
           child,
-          Text(label, style: const TextStyle(fontSize: 9)),
+          Flexible(child: Text(label, style: const TextStyle(fontSize: 9))),
         ],
       ),
     );

@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart';
@@ -9,7 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:roam_flutter/roam_flutter.dart';
 import '../../../../base/routes/routes.dart';
+import '../../../../base/utils/widget/custom_snackbar.dart';
 import '../../LeadGeneration/view/lead_dashboard_form.dart';
 import '../../OnBoarding/view/on_boarding_screen.dart';
 import '../../OnBoarding/view/sales_cases/sales_cases_screen.dart';
@@ -27,20 +33,90 @@ class MyDashBoardWidget extends ConsumerStatefulWidget {
 class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late Timer trackingTimer;
 
 // class DashBoardScreen extends ConsumerWidget {
 //   const DashBoardScreen({super.key});
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this,initialIndex: 1);
 
+    _tabController = TabController(length: 4, vsync: this,initialIndex: 1);
+    initialiseRoamSdk();
   }
   @override
   void dispose() {
     _tabController.dispose();
     // TODO: implement dispose
     super.dispose();
+  }
+
+  Future<void> initialiseRoamSdk() async {
+    print("Attempting to initialize Roam SDK...");
+    try {
+      await requestLocationPermissions();
+      print("Permissions granted, initializing Roam SDK...");
+
+      Roam.initialize(
+        publishKey: '58f73be503e069888cf19289bf728c14c2e841c47e5842a1054f9e5f12f52583',
+      );
+      print("Roam SDK initialized."); // Check if this is reached
+
+      Roam.getUser(userId:'672b16d23e8a8f5a915d743e', callBack: ({user}) {
+        print('User name - $user');
+      });
+
+      Map<String, dynamic> fitnessTracking = {
+        "timeInterval": 10
+      };
+      Roam.startTracking(trackingMode: "custom", customMethods: fitnessTracking);
+      print("Custom tracking started with 10-second interval.");
+
+
+
+      listenToLocationUpdates();
+
+      trackingTimer = Timer(Duration(minutes: 15), () {
+        Roam.stopTracking();
+        print("Tracking stopped after 15 minutes.");
+      });
+
+    } catch (e) {
+      print("Failed to initialize Roam SDK: $e");
+    }
+  }
+
+  Future<void> listenToLocationUpdates() async {
+    print("Setting location listener...");
+    Roam.onLocation((location) {
+      print("Received location from Roam SDK: ${jsonEncode(location)}");
+      showCustomSnackBar(
+          context, "Received location from Roam SDK: ${jsonEncode(location)}", Colors.green);
+    });
+    print("Location listener set.");
+  }
+
+  Future<void> requestLocationPermissions() async {
+    final locationWhenInUse = await Permission.locationWhenInUse.request();
+    if (locationWhenInUse.isGranted) {
+      final locationAlways = await Permission.locationAlways.request();
+      if (!locationAlways.isGranted) {
+        print("Location always permission not granted.");
+      } else {
+        print("Location permissions granted.");
+        await getCurrentLocation();
+      }
+    } else {
+      print("Location permission denied.");
+    }
+  }
+
+  Future<void> getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    print("Initial location: ${position.latitude}, ${position.longitude}");
   }
 
   // final SessionService userSession = SessionService();
@@ -61,7 +137,7 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
       //   return false; // Prevents back navigation
       // },
       child: Scaffold(
-          floatingActionButton: tabViewModel.selectedIndex == 1
+          floatingActionButton: tabViewModel.selectedIndex == 0
               ? FloatingActionButton(
                   foregroundColor: AppColors.black,
                   backgroundColor: AppColors.white,
@@ -80,17 +156,18 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
 
           bottomNavigationBar:
               DashBoardBottomNavigationBar(tabController: _tabController),
-          // appBar: AppBar(
-          //   backgroundColor: AppColors.primary,
-          // ),
-          drawer: tabViewModel.selectedIndex == 1?const DrawerScreen():null,
+          appBar: tabViewModel.selectedIndex == 0?AppBar(iconTheme: const IconThemeData(color: AppColors.white),
+            backgroundColor: AppColors.primary,
+          ):null,
+          drawer:  const DrawerScreen(),
           body: IndexedStack(
             index: tabViewModel.selectedIndex,
             children: <Widget>[
-              const SalesCasesScreen(),
               const OnBoardingScreen(),
+              const SalesCasesScreen(),
+              const LeadListScreen(),
               SalesProfile(),
-              const LeadListScreen()
+
             ],
           )),
     );

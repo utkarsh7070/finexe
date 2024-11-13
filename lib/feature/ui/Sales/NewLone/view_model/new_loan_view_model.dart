@@ -159,7 +159,7 @@ state= state.copyWith(emi:  CalculateEmi());
 }
 
 bool _validatePhoneNumber(String phone) {
-  return phone.isNotEmpty && phone.length >= 9;
+  return phone.isNotEmpty && phone.length >= 10;
 }
 
 class NewLoanFocusProvider extends StateNotifier<Map<String, bool>> {

@@ -53,9 +53,23 @@ class GridItem {
 }
 
 // Provider for storing grid items
-final  customerName = StateProvider<String>((ref) {
-  return '';
+final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs;
+});
+
+final  customerName = Provider<String?>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider).asData?.value;
+    // String? name =  prefs?.getString('name');
+  return  prefs?.getString('email');
 },);
+
+final roleName = Provider<String?>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider).asData?.value;
+  return  prefs?.getString('roleName');
+},);
+
+
 
 final gridItemProvider = StateProvider<List<GridItem>>((ref) {
   return [
@@ -134,6 +148,11 @@ class DashboardShowViewModel extends ChangeNotifier {
 
 }
 
+final openDrawerProvider = StateProvider<bool>((ref) {
+ return false;
+},);
+
+
 final getCasesData = StateNotifierProvider<AllCases, CaseModel>(
   (ref) {
     final dio = ref.watch(dioProvider);
@@ -146,6 +165,8 @@ class AllCases extends StateNotifier<CaseModel> {
 
   // List<Item> list =[];
   AllCases(this.dio) : super(CaseModel());
+
+
 
   // List<Item> listData = [];
 
