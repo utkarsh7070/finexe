@@ -60,8 +60,8 @@ final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) async 
 
 final  customerName = Provider<String?>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider).asData?.value;
-    // String? name =  prefs?.getString('name');
-  return  prefs?.getString('email');
+    String? name =  prefs?.getString('name');
+  return name;
 },);
 
 final roleName = Provider<String?>((ref) {

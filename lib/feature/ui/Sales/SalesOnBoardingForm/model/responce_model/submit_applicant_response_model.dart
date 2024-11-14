@@ -54,7 +54,7 @@ class ApplicantItems {
   @JsonKey(name: "gender")
   String gender;
   @JsonKey(name: "mobileNo")
-  int mobileNo;
+  int? mobileNo;
   @JsonKey(name: "maritalStatus")
   String maritalStatus;
   @JsonKey(name: "email")
@@ -90,7 +90,7 @@ class ApplicantItems {
   @JsonKey(name: "updatedAt")
   DateTime updatedAt;
   @JsonKey(name: "__v")
-  int v;
+  int? v;
 
   ApplicantItems({
     required this.employeId,

@@ -91,7 +91,7 @@ class _DashBoardFormList extends ConsumerState<DashBoardFormList>
                                 fontWeight: FontWeight.w700),
                           ),
                           Text(
-                            customer!,
+                            customer ?? '',
                             style: const TextStyle(
                                 color: AppColors.white,
                                 fontSize: 32,

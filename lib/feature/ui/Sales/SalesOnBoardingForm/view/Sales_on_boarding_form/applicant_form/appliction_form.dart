@@ -15,7 +15,8 @@ import '../../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../../../../base/utils/widget/upload_box.dart';
 import '../../../view_model/application_form_view_model.dart';
 import 'bottom_sheet/applicant_if_no_bottom_sheet.dart';
-import 'bottom_sheet/bottom_sheet.dart';
+import 'bottom_sheet/applicant_otp_screen.dart';
+import 'dialog/back_application_dialog.dart';
 import 'dialog/back_to_dashboard.dart';
 
 class ApplicationDetails extends ConsumerWidget {
@@ -37,7 +38,8 @@ class ApplicationDetails extends ConsumerWidget {
     final personalFocusViewModel = ref.read(applicantFocusProvider.notifier);
 
     return Scaffold(
-        body: Container(
+        body:
+        Container(
       width: displayWidth(context),
       height: displayHeight(context),
       color: AppColors.primary,
@@ -58,7 +60,7 @@ class ApplicationDetails extends ConsumerWidget {
               children: [
                 IconButton(
                     onPressed: () {
-                      confirmBackToForm(context);
+                      ConfirmBackDialog().confirmBackToForm(context: context);
                     },
                     icon: const Icon(Icons.arrow_back)),
                 const Text(
@@ -253,6 +255,7 @@ class ApplicationDetails extends ConsumerWidget {
                                     textStyle:
                                         const TextStyle(color: AppColors.white),
                                     onTap: () async {
+
                                       final validate =
                                           personalFormViewModel.validateForm(context);
                                       if (validate) {
@@ -260,11 +263,17 @@ class ApplicationDetails extends ConsumerWidget {
                                             .fetchAadhaarNumber(context)
                                             .then(
                                           (value) {
-                                            showBottomSheetIfYes(
-                                              context: context,
-                                              ref: ref,
-                                            );
-                                            // ref.read(getOpt.notifier).state = value;
+                                            Navigator.pushReplacement(context,  PageRouteBuilder(
+                                                pageBuilder: (context, animation, secondaryAnimation) =>
+                                                const ApplicationVerify(),
+                                                transitionsBuilder:
+                                                    (context, animation, secondaryAnimation, child) {
+                                                  return FadeTransition(
+                                                    opacity: animation,
+                                                    child: child,
+                                                  );
+                                                },
+                                                transitionDuration: const Duration(milliseconds: 600)));
                                           },
                                         );
                                       }
@@ -634,62 +643,24 @@ class ApplicationDetails extends ConsumerWidget {
     );
   }
 
-  Future<void> showBottomSheetIfYes({
-    required WidgetRef ref,
-    required BuildContext context,
-  }) {
-    return showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-      ),
-      builder: (ctx) {
-        return const ApplicationBottomSheet();
-      },
-    );
-  }
+  // Future<void> showBottomSheetIfYes({
+  //   required WidgetRef ref,
+  //   required BuildContext context,
+  // }) {
+  //   return showModalBottomSheet(
+  //     isScrollControlled: true,
+  //     context: context,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.only(
+  //           topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+  //     ),
+  //     builder: (ctx) {
+  //       return const ApplicationBottomSheet();
+  //     },
+  //   );
+  // }
 
-  Future<void> confirmBackToForm(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          // insetAnimationCurve: Easing.linear,
-          // insetAnimationDuration: Duration(milliseconds: 1000),
-          // insetPadding: EdgeInsets.all(20),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10))),
-          actions: const [ConfirmBackToDashBoard()],
-          content: Container(
-            height: displayHeight(context) * 0.17,
-            child: Column(
-              children: [
-                Image.asset(
-                  'assets/images/alert.png',
-                  height: displayHeight(context) * 0.05,
-                  width: displayWidth(context) * 0.10,
-                ),
-                SizedBox(
-                  height: displayHeight(context) * 0.03,
-                ),
-                const Text('Are you sure?'),
-                SizedBox(
-                  height: displayHeight(context) * 0.01,
-                ),
-                const Text(
-                  'If you do this Process, you will have to start the process again.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.gray),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+
 
   Future<void> showBottomSheetIfNo({
     required WidgetRef ref,

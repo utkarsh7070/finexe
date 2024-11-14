@@ -1,9 +1,6 @@
 import 'dart:io';
-
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
-
-import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/bottom_sheet/co_applicant_if_no_bottom_sheet.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +13,6 @@ import '../../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../../../../base/utils/widget/upload_box.dart';
 import '../../../view_model/co_applicant_form_view_model.dart';
 import 'bottom_sheet/co_applicant_bottom_sheet.dart';
-import 'co_applicant_form3.dart';
 
 class CoApplicantForm1 extends ConsumerWidget {
   const CoApplicantForm1({super.key});
@@ -46,8 +42,7 @@ class CoApplicantForm1 extends ConsumerWidget {
     // final remove = ref.read(count.notifier);
 
     return Scaffold(
-        body:
-        Container(
+        body: Container(
       width: displayWidth(context),
       height: displayHeight(context),
       color: AppColors.primary,
@@ -438,38 +433,43 @@ class CoApplicantForm1 extends ConsumerWidget {
                               SizedBox(
                                 width: displayWidth(context) * 0.01,
                               ),
-                              const Text('Add   co-applicant')
+                              const Text('Add Co-applicant')
                             ],
                           ),
                         ),
                         SizedBox(
                           height: displayHeight(context) * 0.02,
                         ),
-                        coApplicationFormState[index].isLoading?const CircularProgressIndicator():AppButton(
-                          textStyle: const TextStyle(color: AppColors.white),
-                          onTap: () {
-                            // showBottomSheetIfYes(
-                            //   context: context,
-                            //   ref: ref,
-                            // );
-                            bool isValid =  coApplicationFormViewModel.validateCoApplicant(index);
-                            if(isValid){
-                              coApplicationFormViewModel
-                                  .fetchAadhaarNumber(index)
-                                  .then(
-                                    (value) {
-                                  showBottomSheetIfYes(
-                                    context: context,
-                                    ref: ref,
-                                  );
-                                  ref.read(getOptCoApp.notifier).state = value;
-                                },
-                              );
-                            }
-                          },
-                          label: 'Get OTP',
-                          width: displayWidth(context),
-                        ),
+                        coApplicationFormState[index].isLoading
+                            ? const CircularProgressIndicator()
+                            : Visibility(
+                                visible: !coApplicationFormState[index]
+                                    .isOtpVerified,
+                                child: AppButton(
+                                  textStyle:
+                                      const TextStyle(color: AppColors.white),
+                                  onTap: () {
+                                    bool isValid = coApplicationFormViewModel
+                                        .validateCoApplicant(index);
+                                    if (isValid) {
+                                      coApplicationFormViewModel
+                                          .fetchAadhaarNumber(index)
+                                          .then(
+                                        (value) {
+                                          showBottomSheetIfYes(
+                                            context: context,
+                                            ref: ref,
+                                          );
+                                          ref.read(getOptCoApp.notifier).state =
+                                              value;
+                                        },
+                                      );
+                                    }
+                                  },
+                                  label: 'Get OTP',
+                                  width: displayWidth(context),
+                                ),
+                              ),
                         Visibility(
                           visible: index < coApplicationFormState.length - 1,
                           child: AppButton(
@@ -492,61 +492,13 @@ class CoApplicantForm1 extends ConsumerWidget {
                                 Navigator.pushNamed(
                                     context, AppRoutes.saleGuarantorForm1);
                               }
-
-                              // ref
-                              //     .read(pageViewModelProvider.notifier)
-                              //     .setTabIndex(1);
-                              // print(remove.state);
-                              // remove.state = removeScreen + 1;
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (context) =>
-                              //         const CoApplicantForm3()));
-                              // Navigator.pushNamed(
-                              //     context, AppRoutes.saleCoApplicationForm3);
                             },
                           ),
                         ),
                         SizedBox(
                           height: displayHeight(context) * 0.01,
                         ),
-                        // AppButton(
-                        //   textStyle: const TextStyle(color: AppColors.white),
-                        //   width: displayWidth(context),
-                        //   label: 'Back',
-                        //   onTap: () {},
-                        // ),
 
-                        // Row(
-                        //   children: [
-                        //     AppFloatTextField(
-                        //       width: displayWidth(context) * 0.75,
-                        //       focusNode: personalFocusViewModel.panFocusNode,
-                        //       currentState: personalFocusStates['panFocusNode'],
-                        //       // controller: licenseController,
-                        //       onChange: (value) {
-                        //         personalFormViewModel.updatePan(value);
-                        //       },
-                        //       height: !personalFormState.isPanValid
-                        //           ? displayHeight(context) * 0.09
-                        //           : null,
-                        //       inerHint: 'Pan',
-                        //       errorText: "Pan is a required field",
-                        //       isError: !personalFormState.isPanValid,
-                        //       textInputAction: TextInputAction.next,
-                        //     ),
-                        //     SizedBox(
-                        //       width: displayWidth(context) * 0.01,
-                        //     ),
-                        //     Container(
-                        //       color: AppColors.boxBagGray,
-                        //       width: displayWidth(context) * 0.12,
-                        //       child: IconButton(
-                        //         icon: const Icon(Icons.check),
-                        //         onPressed: () {},
-                        //       ),
-                        //     )
-                        //   ],
-                        // ),
                       ],
                     ),
                   ],
@@ -736,26 +688,26 @@ class CoApplicantForm1 extends ConsumerWidget {
             topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
       ),
       builder: (ctx) {
-        return const CoApplicationBottomSheet();
+        return CoApplicationBottomSheet();
       },
     );
   }
 
-  Future<void> showBottomSheetIfNo({
-    required WidgetRef ref,
-    required BuildContext context,
-  }) {
-    return showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-      ),
-      builder: (ctx) {
-        return const CoApplicationPhotoBottomSheet();
-      },
-    );
-  }
+// Future<void> showBottomSheetIfNo({
+//   required WidgetRef ref,
+//   required BuildContext context,
+// }) {
+//   return showModalBottomSheet(
+//     context: context,
+//     shape: const RoundedRectangleBorder(
+//       borderRadius: BorderRadius.only(
+//           topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+//     ),
+//     builder: (ctx) {
+//       return CoApplicationBottomSheet();
+//     },
+//   );
+// }
 }
 
 enum CoApplicantOptionRole { Yes, NO, NON }

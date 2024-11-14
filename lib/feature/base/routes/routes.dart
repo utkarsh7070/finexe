@@ -11,6 +11,7 @@ import '../../ui/Sales/DashBoard/view/dash_board.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/applicant_form/applicant_form_2.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/applicant_form/application_form3.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/applicant_form/appliction_form.dart';
+import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/applicant_form/bottom_sheet/applicant_otp_screen.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_form2.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_form3.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/guarantor_form_1.dart';
@@ -35,6 +36,9 @@ class AppRoutes {
   static const String saleGuarantorForm2 = '/saleGuarantorForm2';
   static const String saleGuarantorForm3 = '/saleGuarantorForm3';
   static const String saleReferenceForm = '/saleReferenceForm';
+  static const String saleApplicationVerify = '/saleApplicationVerify';
+  static const String saleCoApplicationVerify = '/saleCoApplicationVerify';
+
   static const String newLone = '/newLone';
   static const String attendance = '/attendance';
   static const String cases = '/cases';
@@ -163,6 +167,20 @@ class AppRoutes {
         return PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
                 const NewLoanScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 600));
+
+        case saleApplicationVerify:
+
+        return PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                const ApplicationVerify(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               return FadeTransition(

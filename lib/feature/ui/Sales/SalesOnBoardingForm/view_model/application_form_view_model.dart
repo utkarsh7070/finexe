@@ -12,6 +12,7 @@ import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -162,7 +163,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
 
   Future<bool> fetchAadhaarNumber(context) async {
     state = state.copyWith(isLoading: true);
-      await fetchPanVerify(context);
+    await fetchPanVerify(context);
     // on DioException catch (error)
     print(state.aadhaar);
     final aadhaarNumberRequestModel = AadhaarNumberRequestModel(
@@ -191,7 +192,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
   Future<bool> submitOtp() async {
     state = state.copyWith(isLoading: true);
     print(state.otp);
-    final aadhaarOtpResquestModel = AadhaarOtpRequestModel(
+    final aadhaarOtpRequestModel = AadhaarOtpRequestModel(
         transId: aadhaarNumberResponseModel!.items.tsTransId,
         otp: int.parse(state.otp));
     print(int.parse(state.otp));
@@ -201,12 +202,16 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
 
     try {
       final response = await dio.post(Api.aadhaarOtpVerify,
-          data: aadhaarOtpResquestModel.toJson());
+          data: aadhaarOtpRequestModel.toJson());
       if (response.statusCode == 200) {
         state = state.copyWith(isLoading: false);
         aadhaarOtpResponseModel =
             AadhaarOtpResponseModel.fromJson(response.data);
+        print(calculateAge(aadhaarOtpResponseModel!.items.msg.dob).toString());
+        final age = calculateAge(aadhaarOtpResponseModel!.items.msg.dob);
         state = state.copyWith(
+          careOf: aadhaarOtpResponseModel?.items.msg.careof,
+          age: age.toString(),
           fullName: aadhaarOtpResponseModel!.items.msg.name,
           dob: aadhaarOtpResponseModel!.items.msg.dob,
           communicationAddress1:
@@ -228,6 +233,21 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
       state = state.copyWith(isLoading: false);
       throw Exception(e);
     }
+  }
+
+  int calculateAge(String birthOfDate) {
+    DateTime birthDate = DateFormat("dd-MM-yyyy").parse(birthOfDate);
+    // DateTime birthDate = DateTime.parse(birthOfDate);
+    DateTime today = DateTime.now();
+    int age = today.year - birthDate.year;
+
+    // Check if the birthday has occurred this year or not
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+
+    return age;
   }
 
   Future<bool> fetchAadhaarWithPhoto() async {
@@ -262,13 +282,11 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
       } else {
         return false;
       }
-    } on DioException catch (error){
-      DioExceptions.fromDioError(error,context);
+    } on DioException catch (error) {
+      DioExceptions.fromDioError(error, context);
       throw Exception(error);
     }
   }
-
-  Future<void> getApplicationForm() async {}
 
   Future<bool> submittedApplicantForm() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -309,9 +327,9 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
         localAddressstate: state.communicationState);
     FormData dioFormData = formData.toFormData();
 
-    final response = await dio.post(Api.submitNewLoan,
+    final response = await dio.post(Api.submitApplicantForm,
         data: dioFormData, options: Options(headers: {'token': token}));
-    print(response.statusMessage);
+    print(response.data);
     print(response.statusCode);
     if (response.statusCode == 200) {
       SubmitApplicantResponseModel.fromJson(response.data);
@@ -351,8 +369,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     if (await Permission.photos.status.isGranted &&
         await Permission.videos.status.isGranted) {
       try {
-        XFile? pickedImage =
-            await picker.pickImage(source: ImageSource.gallery);
+        XFile? pickedImage = await picker.pickImage(source: ImageSource.camera);
         print('image before null condition  ${pickedImage!.path.toString()}');
         if (pickedImage != null) {
           print('image ${pickedImage.path}');
@@ -512,6 +529,9 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
   void updateGender(String value) {
     final isValid = _validateGender(value);
     state = state.copyWith(gender: value, isGenderValid: isValid);
+  }
+  void updateApplicantFormSubmitted(bool value) {
+    state = state.copyWith(isApplicantFormSubmitted: value);
   }
 
   void updateFullName(String value) {
@@ -1117,6 +1137,7 @@ class KycFormState {
   final String aadhaarPhotoFilePath1;
   final String aadhaarPhotoFilePath2;
   final bool checkBoxTermsConditionApplicant;
+  final String careOf;
 
   final String aadhaar;
   final String otp;
@@ -1185,8 +1206,11 @@ class KycFormState {
   final bool isPermanentStateValid;
   final bool isPermanentDistrictValid;
   final bool isPermanentPinCodeValid;
+  final bool isApplicantFormSubmitted;
 
   KycFormState({
+    this.isApplicantFormSubmitted = false,
+    this.careOf = '',
     this.isApplicantPhoto = true,
     this.isLoading = false,
     this.checkBoxTermsConditionApplicant = false,
@@ -1258,6 +1282,8 @@ class KycFormState {
   KycFormState copyWith(
       {bool? isLoading,
       bool? checkBoxTermsConditionApplicant,
+        bool? isApplicantFormSubmitted,
+      String? careOf,
       bool? isOtpVerify,
       bool? isOpenSelectedIdField,
       String? otp,
@@ -1323,6 +1349,8 @@ class KycFormState {
       bool? isAgeValid,
       bool? isRelationWithApplicantValid}) {
     return KycFormState(
+      isApplicantFormSubmitted: isApplicantFormSubmitted?? this.isApplicantFormSubmitted,
+        careOf: careOf ?? this.careOf,
         isApplicantPhoto: isApplicantPhoto ?? this.isApplicantPhoto,
         isLoading: isLoading ?? this.isLoading,
         checkBoxTermsConditionApplicant: checkBoxTermsConditionApplicant ??
@@ -1535,56 +1563,3 @@ class ApplicantDataController {
     required this.otpController,
   });
 }
-
-//
-// class TextFieldControllerModel {
-//   final SingleValueDropDownController _kycDocumentController ;
-//   // = SingleValueDropDownController();
-//   final TextEditingController licenseController;
-//   // = TextEditingController();
-//   final motherController = TextEditingController();
-//   final contactController = TextEditingController();
-//   final emailController = TextEditingController();
-//   final maritalController = TextEditingController();
-//   final religionController = TextEditingController();
-//   final casteController = TextEditingController();
-//   final educationOfApplicantController = TextEditingController();
-//
-// }
-// class FormModel {
-//   List<KycFormState> textFields; // 10 text fields
-//   String dropdownValue; // Dropdown selected value
-//   int radioButtonValue; // Radio button selected index
-//   List<String> filePaths; // File holder paths
-//   FormModel({
-//     required this.textFields,
-//     required this.dropdownValue,
-//     required this.radioButtonValue,
-//     required this.filePaths,
-//   });
-//
-//   // Factory constructor to create an initial empty form
-//   factory FormModel.initial() {
-//     return FormModel(
-//       textFields: List.filled(28, KycFormState()),
-//       dropdownValue: '',
-//       radioButtonValue: -1,
-//       filePaths: List.filled(3, ''),
-//     );
-//   }
-//
-//   // Update the form model immutably
-//   FormModel copyWith({
-//     List<String>? textFields,
-//     String? dropdownValue,
-//     int? radioButtonValue,
-//     List<String>? filePaths,
-//   }) {
-//     return FormModel(
-//       textFields: textFields ?? this.textFields,
-//       dropdownValue: dropdownValue ?? this.dropdownValue,
-//       radioButtonValue: radioButtonValue ?? this.radioButtonValue,
-//       filePaths: filePaths ?? this.filePaths,
-//     );
-//   }
-// }

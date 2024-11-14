@@ -27,7 +27,7 @@ class CoApplicationBottomSheet extends ConsumerWidget {
     // final getOtpClicked = ref.watch(getOptCoApp);
     final coApplicationFormState = ref.watch(coApplicantViewModelProvider);
     final coApplicationFormViewModel =
-        ref.read(coApplicantViewModelProvider.notifier);
+    ref.read(coApplicantViewModelProvider.notifier);
     // final coApplicationFocusStates = ref.watch(coApplicantFocusProvider);
     // final isCoApplicationRemember = ref.watch(rememberCoProvider);
     // final coApplicationFocusViewModel =
@@ -47,9 +47,9 @@ class CoApplicationBottomSheet extends ConsumerWidget {
           ),
           const Flexible(
               child: Text(
-            'We have just sent you 6 digit code Phone Number',
-            textAlign: TextAlign.center,
-          )),
+                'We have just sent you 6 digit code Phone Number',
+                textAlign: TextAlign.center,
+              )),
           SizedBox(
             height: displayHeight(context) * 0.04,
           ),
@@ -79,33 +79,37 @@ class CoApplicationBottomSheet extends ConsumerWidget {
           coApplicationFormState[index].isLoading
               ? const CircularProgressIndicator()
               : AppButton(
-                  textStyle: const TextStyle(color: AppColors.white),
-                  onTap: () {
-                    // if(index < coApplicationFormState.length - 1 == false){
-                    //   Navigator.pop(context);
-                    //   Navigator.pushNamed(context, AppRoutes.saleGuarantorForm1);
-                    // }
-                    coApplicationFormViewModel.fetchOtp(index).then(
-                      (value) {
-                        if (value) {
-                          coApplicationFormViewModel.setAutoValueByAadhaar(
-                              formListController, index);
-                          Navigator.pop(context);
-                          if (index < coApplicationFormState.length - 1 ==
-                              false) {
-                            Navigator.pop(context);
-                            showCustomSnackBar(context,
-                                'Co-Applicant form is Submitted', Colors.green);
-                            Navigator.pushNamed(
-                                context, AppRoutes.saleGuarantorForm1);
-                          }
-                        }
-                      },
-                    );
-                  },
-                  label: 'Continue',
-                  width: displayWidth(context),
-                ),
+            textStyle: const TextStyle(color: AppColors.white),
+            onTap: () {
+              // if(index < coApplicationFormState.length - 1 == false){
+              //   Navigator.pop(context);
+              //   Navigator.pushNamed(context, AppRoutes.saleGuarantorForm1);
+              // }
+              coApplicationFormViewModel.fetchOtp(index).then(
+                    (value) {
+                  if (value) {
+                    coApplicationFormViewModel.updateIsOtpVerified(value, index);
+                    coApplicationFormViewModel.setAutoValueByAadhaar(
+                        formListController, index);
+                    Navigator.pop(context);
+                    if (index < coApplicationFormState.length - 1 ==
+                        false) {
+                      coApplicationFormViewModel.updateIsOtpVerified(value, index);
+                      Navigator.pop(context);
+                      showCustomSnackBar(context,
+                          'Co-Applicant form is Submitted', Colors.green);
+                      //-----------we add other page navigate-------------------------
+                      Navigator.pushNamed(
+                          context, AppRoutes.saleGuarantorForm1);
+
+                    }
+                  }
+                },
+              );
+            },
+            label: 'Continue',
+            width: displayWidth(context),
+          ),
           SizedBox(
             height: displayHeight(context) * 0.01,
           ),

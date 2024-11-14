@@ -202,53 +202,65 @@ class NewLoanScreen extends ConsumerWidget {
                                 SizedBox(
                                   height: displayHeight(context) * 0.01,
                                 ),
-                                SfLinearGauge(
-
-                                  interval: 50000,
-                                  axisTrackStyle: const LinearAxisTrackStyle(
-                                      edgeStyle: LinearEdgeStyle.bothCurve,
-                                      color: AppColors.linearBarColor),
-                                  minimum: item.loanAmount.min.toDouble(),
-                                  maximum: item.loanAmount.max.toDouble(),
-                                  showTicks: true,
-                                  showLabels: false,
-                                  minorTicksPerInterval: 1,
-
-                                  majorTickStyle:
-                                      const LinearTickStyle(length: 7),
-                                  minorTickStyle:
-                                      const LinearTickStyle(length: 5),
-                                  axisLabelStyle: const TextStyle(fontSize: 12),
-                                  markerPointers: [
-                                    // Widget for the draggable pointer
-                                    LinearWidgetPointer(
-                                        value: phoneState.loanAmount,
-                                        onChanged: (double value) {
-                                          phoneViewModel
-                                              .updateLoanAmount(value);
-                                          phoneViewModel.updateEmi();
-                                        },
-                                        child: const Icon(
-                                          Icons.circle,
-                                          color: AppColors.primary,
-                                          size: 20,
-                                        )),
-                                  ],
-                                  ranges: [
-                                    LinearGaugeRange(
-                                      edgeStyle: LinearEdgeStyle.bothCurve,
-                                      position: LinearElementPosition.cross,
-                                      startValue:
-                                          item.loanAmount.min.toDouble(),
-                                      endValue: phoneState.loanAmount,
-                                      color: AppColors.primary,
-                                    ),
-                                  ],
+                                // SfLinearGauge(
+                                //   interval: 50000,
+                                //   axisTrackStyle: const LinearAxisTrackStyle(
+                                //       edgeStyle: LinearEdgeStyle.bothCurve,
+                                //       color: AppColors.linearBarColor),
+                                //   minimum: item.loanAmount.min.toDouble(),
+                                //   maximum: item.loanAmount.max.toDouble(),
+                                //   showTicks: true,
+                                //   showLabels: false,
+                                //   minorTicksPerInterval: 1,
+                                //   majorTickStyle:
+                                //       const LinearTickStyle(length: 7),
+                                //   minorTickStyle:
+                                //       const LinearTickStyle(length: 5),
+                                //   axisLabelStyle: const TextStyle(fontSize: 12),
+                                //   markerPointers: [
+                                //     // Widget for the draggable pointer
+                                //     LinearWidgetPointer(
+                                //         value: phoneState.loanAmount,
+                                //         onChanged: (double value) {
+                                //           phoneViewModel
+                                //               .updateLoanAmount(value);
+                                //           phoneViewModel.updateEmi();
+                                //         },
+                                //         child: const Icon(
+                                //           Icons.circle,
+                                //           color: AppColors.primary,
+                                //           size: 20,
+                                //         )),
+                                //   ],
+                                //   ranges: [
+                                //     LinearGaugeRange(
+                                //       edgeStyle: LinearEdgeStyle.bothCurve,
+                                //       position: LinearElementPosition.cross,
+                                //       startValue:
+                                //           item.loanAmount.min.toDouble(),
+                                //       endValue: phoneState.loanAmount,
+                                //       color: AppColors.primary,
+                                //     ),
+                                //   ],
+                                // ),
+                                Slider(
+                                  activeColor: AppColors.primary,
+                                  inactiveColor: AppColors.linearBarColor,
+                                  value: phoneState.loanAmount,
+                                  min: item.loanAmount.min.toDouble(),
+                                  max: item.loanAmount.max.toDouble(),
+                                  divisions: 6,
+                                  // label: phoneState.loanAmount.round().toString(),
+                                  onChanged: (double value) {
+                                    phoneViewModel.updateLoanAmount(value);
+                                    phoneViewModel.updateEmi();
+                                  },
                                 ),
+
                                 SizedBox(
-                                  height: displayHeight(context) * 0.03,
+                                      height: displayHeight(context) * 0.02,
                                 ),
-                                amountTextShow(
+                                 amountTextShow(
                                     data: 'Interest Rate',
                                     price: '${phoneState.roi.toInt()}%'),
                                 SizedBox(
@@ -286,7 +298,7 @@ class NewLoanScreen extends ConsumerWidget {
                                     LinearGaugeRange(
                                       edgeStyle: LinearEdgeStyle.bothCurve,
                                       position: LinearElementPosition.cross,
-                                      startValue:item.roi.min.toDouble(),
+                                      startValue: item.roi.min.toDouble(),
                                       endValue: phoneState.roi,
                                       color: AppColors.primary,
                                     ),

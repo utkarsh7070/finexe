@@ -414,7 +414,8 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     print(response.statusMessage);
     print(response.statusCode);
     if (response.statusCode == 200) {
-      SubmitCoApplicantResponseModel.fromJson(response.data);
+    SubmitCoApplicantResponseModel.fromJson(response.data);
+
       return true;
     } else {
       throw Exception('Failed to load data');
@@ -502,7 +503,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         await Permission.videos.status.isGranted) {
       try {
         XFile? pickedImage =
-            await picker.pickImage(source: ImageSource.gallery);
+            await picker.pickImage(source: ImageSource.camera);
         if (kDebugMode) {
           print('image before null condition  ${pickedImage!.path.toString()}');
         }
@@ -913,6 +914,18 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
           todo
     ];
   }
+
+  void updateIsOtpVerified(bool value, int index) {
+    state = [
+      for (final todo in state)
+        if (todo.id == index)
+          todo.copyWith(
+              isOtpVerified: value)
+        else
+          todo
+    ];
+  }
+
 
   void updatePermanentAddress1(String value, int index) {
     final isValid = _validatePermanentAddress1(value);
@@ -1554,6 +1567,8 @@ class KycFormState {
   final String aadhaarPhotoFilePath1;
   final String aadhaarPhotoFilePath2;
   final bool checkBoxTermsConditionCoApplicant;
+  final bool isCoApplicantFormSubmitted;
+  final bool isOtpVerified;
 
   final String aadhaar;
   final String kycDocument;
@@ -1622,6 +1637,8 @@ class KycFormState {
   final bool isPermanentPinCodeValid;
 
   KycFormState({
+    this.isOtpVerified = false,
+    this.isCoApplicantFormSubmitted = false,
     this.isLoading =false,
     this.checkBoxTermsConditionCoApplicant = false,
     this.id = 0,
@@ -1690,6 +1707,8 @@ class KycFormState {
 
   KycFormState copyWith(
       {
+        bool? isOtpVerified,
+        bool? isCoApplicantFormSubmitted,
         bool? isLoading,
         bool? checkBoxTermsConditionCoApplicant,
         int? id,
@@ -1755,6 +1774,8 @@ class KycFormState {
       bool? isAgeValid,
       bool? isRelationWithApplicantValid}) {
     return KycFormState(
+      isOtpVerified: isOtpVerified?? this.isOtpVerified,
+      isCoApplicantFormSubmitted: isCoApplicantFormSubmitted?? this.isCoApplicantFormSubmitted,
       isLoading: isLoading??this.isLoading,
       checkBoxTermsConditionCoApplicant: checkBoxTermsConditionCoApplicant??this.checkBoxTermsConditionCoApplicant,
         applicantPhotoFilePath:

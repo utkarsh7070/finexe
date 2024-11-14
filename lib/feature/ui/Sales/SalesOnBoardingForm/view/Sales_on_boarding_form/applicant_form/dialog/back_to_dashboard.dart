@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../NewLone/view_model/new_loan_view_model.dart';
+import '../../../../view_model/application_form_view_model.dart';
 
 class ConfirmBackToDashBoard extends ConsumerWidget {
   const ConfirmBackToDashBoard({super.key});
@@ -26,6 +27,7 @@ class ConfirmBackToDashBoard extends ConsumerWidget {
                       borderRadius: BorderRadius.all(Radius.circular(10)))),
               onPressed: () {
                 ref.invalidate(personalDetailViewModelProvider);
+                ref.invalidate(applicantViewModelProvider);
                 Navigator.pushNamedAndRemoveUntil(context, AppRoutes.dashBoard, (route) => false,);
               },
               child: const Text(

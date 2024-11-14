@@ -72,7 +72,7 @@ class CoApplicantItems {
   @JsonKey(name: "gender")
   String gender;
   @JsonKey(name: "mobileNo")
-  int mobileNo;
+  int? mobileNo;
   @JsonKey(name: "permanentAddress")
   Address permanentAddress;
   @JsonKey(name: "localAddress")
