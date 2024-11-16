@@ -116,7 +116,8 @@ class CoApplicantForm1 extends ConsumerWidget {
                     replacement: SizedBox(
                       width: displayWidth(context) * 0.10,
                     ),
-                    visible: index > 0 &&  !coApplicationFormState[index].isSubmitCoApplicant,
+                    visible: index > 0 &&
+                        !coApplicationFormState[index].isSubmitCoApplicant,
                     child: IconButton(
                         onPressed: () {
                           coApplicationFormViewModel.removeItem(index);
@@ -131,79 +132,86 @@ class CoApplicantForm1 extends ConsumerWidget {
             ),
             //-------------------------WE DO CHANGE -----------------------------------------
             Visibility(
-              visible:!coApplicationFormState[index].isOtpVerified,
+              visible: !coApplicationFormState[index].isOtpVerified,
               replacement: Expanded(
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Co-Applicant Aadhaar Details',
-                          style: AppStyles.headingTextStyleXL2.copyWith(
-                              color: AppColors.black,
-                              fontSize: FontSize.fontSize16),
-                        ),
-                        SizedBox(
-                          height: displayHeight(context) * 0.01,
-                        ),
-                        commonText(
-                            context: context,
-                            heading: 'Name',
-                            value: coApplicationFormState[index].fullName),
-                        commonText(
-                            context: context,
-                            heading: 'Care Of',
-                            value: coApplicationFormState[index].careOf),
-                        commonText(
-                            context: context,
-                            heading: 'Date Of Birth',
-                            value: coApplicationFormState[index].dob),
-                        commonText(
-                            context: context,
-                            heading: 'Gender',
-                            value: coApplicationFormState[index].gender),
-                        commonText(
-                            context: context,
-                            heading: 'Age',
-                            value: coApplicationFormState[index].age),
-                        commonText(
-                            context: context,
-                            heading: 'Address',
-                            value:
-                            '${coApplicationFormState[index].communicationAddress1} ${coApplicationFormState[index].communicationAddress2} ${coApplicationFormState[index].communicationCity} ${coApplicationFormState[index].communicationDistrict} ${coApplicationFormState[index].communicationPinCode}'),
-                        SizedBox(
-                          height: displayHeight(context) * 0.01,
-                        ),
-                        Text(
-                          'Co-Applicant Pan Details',
-                          style: AppStyles.headingTextStyleXL2.copyWith(
-                              color: AppColors.black,
-                              fontSize: FontSize.fontSize16),
-                        ),
-                        SizedBox(
-                          height: displayHeight(context) * 0.01,
-                        ),
-                        commonText(
-                            context: context,
-                            heading: 'Name',
-                            value: coApplicationFormState[index].fullName),
-                        commonText(
-                            context: context,
-                            heading: 'Date Of Birth',
-                            value: coApplicationFormState[index].dob),
-                        commonText(
-                            context: context,
-                            heading: 'Gender',
-                            value: coApplicationFormState[index].gender),
-                      ],
-                    ),
-                    SizedBox(height: displayHeight(context)*0.05,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Co-Applicant Aadhaar Details',
+                            style: AppStyles.headingTextStyleXL2.copyWith(
+                                color: AppColors.black,
+                                fontSize: FontSize.fontSize16),
+                          ),
+                          SizedBox(
+                            height: displayHeight(context) * 0.01,
+                          ),
+                          commonText(
+                              context: context,
+                              heading: 'Name',
+                              value: coApplicationFormState[index].fullName),
+                          commonText(
+                              context: context,
+                              heading: 'Care Of',
+                              value: coApplicationFormState[index].careOf),
+                          commonText(
+                              context: context,
+                              heading: 'Date Of Birth',
+                              value: coApplicationFormState[index].dob),
+                          commonText(
+                              context: context,
+                              heading: 'Gender',
+                              value: coApplicationFormState[index].gender),
+                          commonText(
+                              context: context,
+                              heading: 'Age',
+                              value: coApplicationFormState[index].age),
+                          commonText(
+                              context: context,
+                              heading: 'Address',
+                              value:
+                                  '${coApplicationFormState[index].communicationAddress1} ${coApplicationFormState[index].communicationAddress2} ${coApplicationFormState[index].communicationCity} ${coApplicationFormState[index].communicationDistrict} ${coApplicationFormState[index].communicationPinCode}'),
+                          SizedBox(
+                            height: displayHeight(context) * 0.01,
+                          ),
+                          Text(
+                            'Co-Applicant Pan Details',
+                            style: AppStyles.headingTextStyleXL2.copyWith(
+                                color: AppColors.black,
+                                fontSize: FontSize.fontSize16),
+                          ),
+                          SizedBox(
+                            height: displayHeight(context) * 0.01,
+                          ),
+                          commonText(
+                              context: context,
+                              heading: 'Name',
+                              value: coApplicationFormState[index].panName),
+                          commonText(
+                              context: context,
+                              heading: 'Father Name',
+                              value: coApplicationFormState[index].panFather),
+                          commonText(
+                              context: context,
+                              heading: 'Date Of Birth',
+                              value: coApplicationFormState[index].panDob),
+                          commonText(
+                              context: context,
+                              heading: 'Gender',
+                              value: coApplicationFormState[index].panGender),
+                        ],
+                      ),
+                      SizedBox(
+                        height: displayHeight(context) * 0.05,
+                      ),
 
                       Visibility(
-                        visible: coApplicationFormState[index].isSubmitCoApplicant,
+                        visible:
+                            coApplicationFormState[index].isSubmitCoApplicant,
                         child: InkWell(
                           onTap: () {
                             indexAdd.state = index + 1;
@@ -225,18 +233,20 @@ class CoApplicantForm1 extends ConsumerWidget {
                               const Icon(
                                 Icons.add,
                               ),
-                              SizedBox(
-                                  width: displayWidth(context) * 0.04),
+                              SizedBox(width: displayWidth(context) * 0.04),
                               const Text('Add Co-applicant')
                             ],
                           ),
                         ),
                       ),
 
-                      SizedBox(height: displayHeight(context)*0.03,),
+                      SizedBox(
+                        height: displayHeight(context) * 0.03,
+                      ),
 
                       Visibility(
-                        visible: !coApplicationFormState[index].isSubmitCoApplicant,
+                        visible:
+                            !coApplicationFormState[index].isSubmitCoApplicant,
                         child: AppButton(
                           isFill: true,
                           bgColor: AppColors.primaryLight,
@@ -245,9 +255,10 @@ class CoApplicantForm1 extends ConsumerWidget {
                             coApplicationFormViewModel
                                 .submitCoApplicantForm(index)
                                 .then(
-                                  (value) {
+                              (value) {
                                 if (value) {
-                                  coApplicationFormViewModel.submitCoApplicant(value,index);
+                                  coApplicationFormViewModel.submitCoApplicant(
+                                      value, index);
                                   // if (index < coApplicationFormState.length - 1 ==
                                   //     false) {
                                   //   isSubmitViewModel.state = true;
@@ -273,7 +284,8 @@ class CoApplicantForm1 extends ConsumerWidget {
                       ),
 
                       Visibility(
-                        visible: coApplicationFormState[index].isSubmitCoApplicant,
+                        visible:
+                            coApplicationFormState[index].isSubmitCoApplicant,
                         child: AppButton(
                           textStyle: const TextStyle(color: AppColors.white),
                           width: displayWidth(context),
@@ -290,7 +302,6 @@ class CoApplicantForm1 extends ConsumerWidget {
                                     "$index < ${coApplicationFormState.length - 1}");
                               }
                               indexAdd.state = index + 1;
-
                             } else {
                               Navigator.pushNamed(
                                   context, AppRoutes.saleGuarantorForm1);
@@ -299,9 +310,7 @@ class CoApplicantForm1 extends ConsumerWidget {
                         ),
                       ),
 
-
                       //add coApplicant button
-
                     ],
                   ),
                 ),
@@ -362,22 +371,22 @@ class CoApplicantForm1 extends ConsumerWidget {
                               AppFloatTextField(
                                 controller:
                                     formListController[index].aadhaarController,
-                                focusNode:
-                                    coApplicationFocusViewModel.aadhaarFocusNode,
-                                currentState:
-                                    coApplicationFocusStates['aadhaarFocusNode'],
+                                focusNode: coApplicationFocusViewModel
+                                    .aadhaarFocusNode,
+                                currentState: coApplicationFocusStates[
+                                    'aadhaarFocusNode'],
                                 onChange: (value) {
                                   coApplicationFormViewModel.updateAadhaar(
                                       value, index);
                                 },
-                                height:
-                                    !coApplicationFormState[index].isAadhaarValid
-                                        ? displayHeight(context) * 0.09
-                                        : null,
+                                height: !coApplicationFormState[index]
+                                        .isAadhaarValid
+                                    ? displayHeight(context) * 0.09
+                                    : null,
                                 inerHint: 'Enter Aadhaar Number',
                                 errorText: "Aadhaar Number is a required field",
-                                isError:
-                                    !coApplicationFormState[index].isAadhaarValid,
+                                isError: !coApplicationFormState[index]
+                                    .isAadhaarValid,
                                 textInputAction: TextInputAction.done,
                               ),
 
@@ -436,8 +445,8 @@ class CoApplicantForm1 extends ConsumerWidget {
 
                               // errorText: isError! ? errorText : null,
                               enabledBorder: const OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: AppColors.gray, width: 1),
+                                  borderSide: BorderSide(
+                                      color: AppColors.gray, width: 1),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10))),
                               // filled: true,
@@ -476,7 +485,8 @@ class CoApplicantForm1 extends ConsumerWidget {
                                 coApplicationFocusStates['panFocusNode'],
                             // controller: contactController,
                             onChange: (value) {
-                              coApplicationFormViewModel.updatePan(value, index);
+                              coApplicationFormViewModel.updatePan(
+                                  value, index);
                               print(coApplicationFormState[index].pan);
                             },
                             controller: formListController[index].panController,
@@ -559,35 +569,35 @@ class CoApplicantForm1 extends ConsumerWidget {
                           coApplicationFormState[index].isLoading
                               ? const Center(child: CircularProgressIndicator())
                               : AppButton(
-                                textStyle:
-                                    const TextStyle(color: AppColors.white),
-                                onTap: () {
-                                  //------------------FOR DEBUG----------------
-                                  // showBottomSheetIfYes(
-                                  //   context: context,
-                                  //   ref: ref,
-                                  // );
-                                  //-------------------------------------------------------
-                                  bool isValid = coApplicationFormViewModel
-                                      .validateCoApplicant(index);
-                                  if (isValid) {
-                                    coApplicationFormViewModel
-                                        .fetchAadhaarNumber(index)
-                                        .then(
-                                      (value) {
-                                        showBottomSheetIfYes(
-                                          context: context,
-                                          ref: ref,
-                                        );
-                                        ref.read(getOptCoApp.notifier).state =
-                                            value;
-                                      },
-                                    );
-                                  }
-                                },
-                                label: 'Get OTP',
-                                width: displayWidth(context),
-                              ),
+                                  textStyle:
+                                      const TextStyle(color: AppColors.white),
+                                  onTap: () {
+                                    //------------------FOR DEBUG----------------
+                                    // showBottomSheetIfYes(
+                                    //   context: context,
+                                    //   ref: ref,
+                                    // );
+                                    //-------------------------------------------------------
+                                    bool isValid = coApplicationFormViewModel
+                                        .validateCoApplicant(index);
+                                    if (isValid) {
+                                      coApplicationFormViewModel
+                                          .fetchAadhaarNumber(index)
+                                          .then(
+                                        (value) {
+                                          showBottomSheetIfYes(
+                                            context: context,
+                                            ref: ref,
+                                          );
+                                          ref.read(getOptCoApp.notifier).state =
+                                              value;
+                                        },
+                                      );
+                                    }
+                                  },
+                                  label: 'Get OTP',
+                                  width: displayWidth(context),
+                                ),
 
                           SizedBox(
                             height: displayHeight(context) * 0.01,
@@ -638,7 +648,7 @@ class CoApplicantForm1 extends ConsumerWidget {
   }
 
   Widget view() {
-    return  Column(
+    return Column(
       children: [
         const Icon(
           Icons.remove_red_eye_outlined,
@@ -687,8 +697,8 @@ class CoApplicantForm1 extends ConsumerWidget {
 
   Widget commonText(
       {required BuildContext context,
-        required String heading,
-        required String value}) {
+      required String heading,
+      required String value}) {
     return SizedBox(
       width: displayWidth(context),
       child: Row(

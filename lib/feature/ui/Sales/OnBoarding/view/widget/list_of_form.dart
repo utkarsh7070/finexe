@@ -103,7 +103,7 @@ class _DashBoardFormList extends ConsumerState<DashBoardFormList>
                           SizedBox(
                               width: displayWidth(context) * 0.50,
                               child: const Text(
-                                '"Welcome! Discover and enjoy the perfect coffee experience with us."',
+                                '"Welcome back! Ready to dive into your tasks?"',
                                 style: TextStyle(color: AppColors.white),
                               )),
                         ],

@@ -6,6 +6,8 @@ extension AppColors on Never {
   static const Color textGray = Color(0xff667085);
   static const Color primary = Color(0xff0082C6);
   static const Color primaryBg = Color(0xff74cdff);
+
+  static const Color tintGreen = Color(0xffD1FADF);
   static const Color appBackground = Color(0xfff7f9fa);
   static const Color white = Color(0xffffffff);
   static const Color grayDark = Color(0xff7C86A2);

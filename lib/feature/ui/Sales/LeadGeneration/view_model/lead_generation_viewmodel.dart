@@ -36,7 +36,7 @@ class LeadGenerationViewModel {
     'Above 1 lakh'
   ];
 
-  final fetchDataProvider = FutureProvider<List<Item>>((ref) async {
+  final fetchDataProvider = FutureProvider.autoDispose<List<Item>>((ref) async {
     String? token = await SessionService.getToken();
     final dio = ref.read(dioProvider);
     final response = await dio.get(Api.getAllProduct,options: Options(headers: {"token": token}),);
@@ -82,7 +82,7 @@ class LeadGenerationViewModel {
   }
 }
 
-final fetchAllBranchProvider = FutureProvider<List<Branch>>((ref) async {
+final fetchAllBranchProvider = FutureProvider.autoDispose<List<Branch>>((ref) async {
   String? token = await SessionService.getToken();
   final dio = ref.read(dioProvider);
   final response = await dio.get(Api.getAllBranch,options: Options(headers: {"token": token}),);

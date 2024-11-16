@@ -1,6 +1,7 @@
 import 'package:finexe/feature/Punch_In_Out/view/attendance.dart';
 import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/home_collection_view/DashboardScreen.dart';
 import 'package:finexe/feature/ui/Sales/NewLone/view/new_loan_screen.dart';
+import 'package:finexe/feature/ui/Sales/OnBoarding/view/cases_details.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_screen.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/referance/referance_details.dart';
 import 'package:finexe/feature/ui/Splash/view/splash.dart';
@@ -25,6 +26,7 @@ class AppRoutes {
   static const String login = '/login';
   static const String forgot = '/forgot';
   static const String dashBoard = '/dashBoard';
+  static const String casesDetails = '/casesDetails';
   static const String saleApplicationForm = '/saleApplicationForm';
   static const String saleApplicationForm2 = '/saleApplicationForm2';
   static const String saleApplicationForm3 = '/saleApplicationForm3';
@@ -158,6 +160,18 @@ class AppRoutes {
         return PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
             const GuarantorDetails(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 600));
+        case casesDetails:
+        return PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+            const CasesDetails(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               return FadeTransition(

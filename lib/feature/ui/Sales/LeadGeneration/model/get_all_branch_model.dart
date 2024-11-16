@@ -87,9 +87,9 @@ class Branch {
     required this.updatedBy,
   });
 
-  factory Branch.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
+  factory Branch.fromJson(Map<String, dynamic> json) => _$BranchFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ItemToJson(this);
+  Map<String, dynamic> toJson() => _$BranchToJson(this);
 }
 
 enum CompanyId {

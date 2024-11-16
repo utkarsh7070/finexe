@@ -258,7 +258,27 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     }
   }
 
+  Future<void> fetchPanFatherName() async {
+    final panRequestModel = PanRequestModel(
+        docType: 522, panNumber: state.pan, transId: "12345");
+    try {
+      final response =
+          await dio.post(Api.panFatherName, data: panRequestModel.toJson());
+      if (kDebugMode) {
+        print(response.data);
+      }
+      if (response.statusCode == 200) {
+        state = state.copyWith(
+            panFather: response.data['items']['msg']['data']['father_name']);
+      }
+    } on DioException catch (error) {
+      throw Exception(error);
+      // throw Exception(error);
+    }
+  }
+
   Future<bool> fetchPanVerify() async {
+    await fetchPanFatherName();
     print(state.otp);
     final panRequestModel = PanRequestModel(
         docType: 523, panNumber: state.pan, transId: "111XXXXX");
@@ -1104,6 +1124,7 @@ class GuarantorKycFormState {
   final String panDob;
   final String panGender;
   final String panName;
+  final String panFather;
   final bool isApplicantFormSubmitted;
   final bool isOtpVerify;
 
@@ -1173,6 +1194,7 @@ class GuarantorKycFormState {
   final bool isPermanentPinCodeValid;
 
   GuarantorKycFormState({
+    this.panFather = '',
     this.isOtpVerify = false,
     this.isApplicantFormSubmitted = false,
     this.panDob = '',
@@ -1243,7 +1265,8 @@ class GuarantorKycFormState {
   });
 
   GuarantorKycFormState copyWith(
-      {bool? isOtpVerify,
+      {String? panFather,
+      bool? isOtpVerify,
       bool? isApplicantFormSubmitted,
       bool? isAadhaarValid,
       String? panDob,
@@ -1311,6 +1334,7 @@ class GuarantorKycFormState {
       bool? isAgeValid,
       bool? isRelationWithApplicantValid}) {
     return GuarantorKycFormState(
+        panFather: panFather ?? this.panFather,
         isOtpVerify: isOtpVerify ?? this.isOtpVerify,
         isApplicantFormSubmitted:
             isApplicantFormSubmitted ?? this.isApplicantFormSubmitted,

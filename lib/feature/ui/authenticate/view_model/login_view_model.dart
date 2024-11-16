@@ -19,38 +19,36 @@ import '../../../base/routes/routes.dart';
 import '../../../base/utils/widget/custom_snackbar.dart';
 import '../model/login_response_model.dart';
 
-final radioProvider = StateNotifierProvider<RadioNotifier, Role>((ref) {
-  return RadioNotifier();
-});
+
 
 final userValidationProvider =
-    StateNotifierProvider<UserValidationNotifier, bool>(
+    StateNotifierProvider.autoDispose<UserValidationNotifier, bool>(
   (ref) {
     return UserValidationNotifier();
   },
 );
 final passwordValidationProvider =
-    StateNotifierProvider<PasswordValidationNotifier, bool>(
+    StateNotifierProvider.autoDispose<PasswordValidationNotifier, bool>(
   (ref) {
     return PasswordValidationNotifier();
   },
 );
 
 final dualFocusProvider =
-    StateNotifierProvider<FocusViewModel, Map<String, bool>>((ref) {
+    StateNotifierProvider.autoDispose<FocusViewModel, Map<String, bool>>((ref) {
   return FocusViewModel();
 });
 
-final obscureTextProvider = StateProvider<bool>(
+final obscureTextProvider = StateProvider.autoDispose<bool>(
   (ref) {
     return false;
   },
 );
 
-final isRememberMeCheckedProvider = StateProvider<bool>((ref) => false);
+final isRememberMeCheckedProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 final loginViewModelProvider =
-    StateNotifierProvider<LoginViewModel, AsyncValue<DataModel>>((ref) {
+    StateNotifierProvider.autoDispose<LoginViewModel, AsyncValue<DataModel>>((ref) {
   final punchInRepository = ref.watch(punchInRepositoryProvider);
   final dio = ref.read(dioProvider);
   return LoginViewModel(

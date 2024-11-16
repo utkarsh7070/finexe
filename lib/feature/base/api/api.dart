@@ -86,7 +86,8 @@ class Api {
   static const String leadShowPendingList = '${baseUrl}v1/salesMan/leadGenerateList';
   static const String getEmployeeDetails = '${baseUrl}v1/adminMaster/employe/getEmployeeByToken';
   static const String getAllBranch = '${baseUrl}v1/branch/getAll';
-
+  static const String panFatherName = '${baseUrl}v1/panDetail/PanFatherName';
+  // http://localhost:5500/v1/panDetail/PanFatherName
   // https://stageapi.fincooper.in/v1/login/updatePassword
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd

@@ -26,7 +26,7 @@ Map<String, dynamic> _$GetAllBranchModelToJson(GetAllBranchModel instance) =>
       'items': instance.items,
     };
 
-Branch _$ItemFromJson(Map<String, dynamic> json) => Branch(
+Branch _$BranchFromJson(Map<String, dynamic> json) => Branch(
       location: Location.fromJson(json['location'] as Map<String, dynamic>),
       id: json['_id'] as String,
       companyId: $enumDecode(_$CompanyIdEnumMap, json['companyId']),
@@ -50,7 +50,7 @@ Branch _$ItemFromJson(Map<String, dynamic> json) => Branch(
       updatedBy: json['updatedBy'],
     );
 
-Map<String, dynamic> _$ItemToJson(Branch instance) => <String, dynamic>{
+Map<String, dynamic> _$BranchToJson(Branch instance) => <String, dynamic>{
       'location': instance.location,
       '_id': instance.id,
       'companyId': _$CompanyIdEnumMap[instance.companyId]!,

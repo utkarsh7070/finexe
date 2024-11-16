@@ -37,7 +37,7 @@ class UserProfile {
     this.imageUrl = '', // Add this field to handle profile picture
   });
 
-  copyWth({
+   copyWith({
     bool? isLoading,
     String? name,
     String? email,

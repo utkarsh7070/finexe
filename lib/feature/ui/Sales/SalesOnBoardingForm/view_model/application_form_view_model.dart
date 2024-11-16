@@ -269,10 +269,30 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     }
   }
 
+  Future<void> fetchPanFatherName() async {
+    final panRequestModel = PanRequestModel(
+        docType: 522, panNumber: state.pan, transId: "12345");
+    try {
+      final response =
+          await dio.post(Api.panFatherName, data: panRequestModel.toJson());
+      if (kDebugMode) {
+        print(response.data);
+      }
+      if(response.statusCode ==200){
+        state = state.copyWith(panFather: response.data['items']['msg']['data']['father_name']);
+      }
+    } on DioException catch (error) {
+      throw Exception(error);
+      // throw Exception(error);
+    }
+  }
+
   Future<bool> fetchPanVerify(BuildContext context) async {
+    await fetchPanFatherName();
     print(state.otp);
     final panRequestModel = PanRequestModel(
         docType: 523, panNumber: state.pan, transId: "111XXXXX");
+
     try {
       final response =
           await dio.post(Api.panVerify, data: panRequestModel.toJson());
@@ -282,6 +302,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
         final String dob =
             DateFormat("dd-MM-yyyy").format(panResponseModel.items.data.dob);
         state = state.copyWith(
+            // panFather: panResponseModel.items.data.,
             panDob: dob,
             panGender: panResponseModel.items.data.gender,
             panName: panResponseModel.items.data.fullName);
@@ -1152,6 +1173,7 @@ class KycFormState {
   final String careOf;
 
   final String panName;
+  final String panFather;
   final String panGender;
   final String panDob;
   final String aadhaar;
@@ -1224,6 +1246,7 @@ class KycFormState {
   final bool isApplicantFormSubmitted;
 
   KycFormState({
+    this.panFather = '',
     this.panDob = '',
     this.panGender = '',
     this.panName = '',
@@ -1298,7 +1321,8 @@ class KycFormState {
   });
 
   KycFormState copyWith(
-      {String? panName,
+      {String? panFather,
+      String? panName,
       String? panGender,
       String? panDob,
       bool? isLoading,
@@ -1370,6 +1394,7 @@ class KycFormState {
       bool? isAgeValid,
       bool? isRelationWithApplicantValid}) {
     return KycFormState(
+        panFather: panFather ?? this.panFather,
         panDob: panDob ?? this.panDob,
         panGender: panGender ?? this.panGender,
         panName: panName ?? this.panName,

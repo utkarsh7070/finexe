@@ -103,12 +103,17 @@ class ApplicationVerify extends ConsumerWidget {
                     value: personalFormState.panName),
                 commonText(
                     context: context,
+                    heading: 'Father Name',
+                    value: personalFormState.panFather),
+                commonText(
+                    context: context,
                     heading: 'Date Of Birth',
                     value: personalFormState.panDob),
                 commonText(
                     context: context,
                     heading: 'Gender',
                     value: personalFormState.panGender),
+                SizedBox(height: displayHeight(context)*0.05,),
                 Visibility(
                   replacement: AppButton(
                     width: displayHeight(context),

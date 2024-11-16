@@ -32,11 +32,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(apiResponseProvider.notifier).fetchDashboardData();
-      final data = ref.watch(apiResponseProvider);
-      if(data.value?.name!=null){
-        initialiseRoamSdk(data.value!.name);
-      }
+      ref.read(apiResponseProvider.notifier).fetchDashboardData().then((value) {
+        final data = ref.watch(apiResponseProvider);
+        print('${data.value?.name}');
+        if(data.value?.name != null){
+          initialiseRoamSdk(data.value!.name);
+        }
+      },);
+
 
     });
   }

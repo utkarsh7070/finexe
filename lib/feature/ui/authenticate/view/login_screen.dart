@@ -596,29 +596,3 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 }
 
-Widget radio(
-    {required BuildContext context,
-    required Role selectedValue,
-    required WidgetRef ref,
-    required String title,
-    required Role value}) {
-  return SizedBox(
-    width: MediaQuery.of(context).size.width * 0.30,
-    child: Row(
-      children: [
-        Radio<Role>(
-          value: value,
-          groupValue: selectedValue,
-          onChanged: (value) {
-            if (value != null) {
-              ref.read(radioProvider.notifier).select(value);
-            }
-          },
-        ),
-        Text(
-          title,
-        )
-      ],
-    ),
-  );
-}

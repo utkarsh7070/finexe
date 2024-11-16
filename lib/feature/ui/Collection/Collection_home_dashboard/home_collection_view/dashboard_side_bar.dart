@@ -18,11 +18,14 @@ class DashBoardSideBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sessionOut = ref.read(apiResponseProvider.notifier);
+    // final sessionOut = ref.read(apiResponseProvider.notifier);
     final role = ref.watch(roleName);
+    print('role ${role}');
     return SafeArea(
       child: Container(
-        height: displayHeight(context) * 0.40,
+        height: role == "salesAndCollection" || role == "salesPdAndCollection" || role == 'admin'
+            ? displayHeight(context) * 0.40
+            : displayHeight(context) * 0.26,
         width: displayWidth(context) * 0.35,
         decoration: const BoxDecoration(
             color: AppColors.white,
@@ -40,7 +43,7 @@ class DashBoardSideBar extends ConsumerWidget {
         child: Column(
           children: [
             // Top white section with image
-            Column(
+            const Column(
               children: [
                 // SizedBox(
                 //   height: 100,
@@ -96,7 +99,7 @@ class DashBoardSideBar extends ConsumerWidget {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => MyDashBoardWidget(),
+                            builder: (context) => const MyDashBoardWidget(),
                           ),
                         );
                       },

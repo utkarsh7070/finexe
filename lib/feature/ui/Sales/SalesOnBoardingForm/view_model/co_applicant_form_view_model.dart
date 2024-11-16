@@ -471,7 +471,33 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     }
   }
 
+  Future<void> fetchPanFatherName(int index) async {
+    final panRequestModel = PanRequestModel(
+        docType: 522, panNumber: state[index].pan, transId: "12345");
+    try {
+      final response =
+      await dio.post(Api.panFatherName, data: panRequestModel.toJson());
+      if (kDebugMode) {
+        print(response.data);
+      }
+      if(response.statusCode ==200){
+        state = [
+          for (final todo in state)
+            if (todo.id == index)
+              todo.copyWith(panFather: response.data['items']['msg']['data']['father_name'])
+            else
+              todo
+        ];
+        // state = state.copyWith(panFather: response.data['']);
+      }
+    } on DioException catch (error) {
+      throw Exception(error);
+      // throw Exception(error);
+    }
+  }
+
   Future<bool> fetchPanVerify(int index) async {
+    await fetchPanFatherName(index);
     if (kDebugMode) {
       print(state[index].otp);
     }
@@ -1604,6 +1630,7 @@ class KycFormState {
   final String marital;
   final String religion;
   final String caste;
+  final String panFather;
   final String otp;
   final bool isOtpValid;
 
@@ -1662,6 +1689,7 @@ class KycFormState {
   final bool isPermanentPinCodeValid;
 
   KycFormState({
+    this.panFather = '',
     this.isSubmitCoApplicant = false,
     this.panGender = '',
     this.panDob = '',
@@ -1736,7 +1764,9 @@ class KycFormState {
   });
 
   KycFormState copyWith(
-      {bool? isSubmitCoApplicant,
+      {
+        String? panFather,
+        bool? isSubmitCoApplicant,
       String? panName,
       String? panGender,
       String? panDob,
@@ -1808,6 +1838,7 @@ class KycFormState {
       bool? isAgeValid,
       bool? isRelationWithApplicantValid}) {
     return KycFormState(
+      panFather: panFather??this.panFather,
         isSubmitCoApplicant: isSubmitCoApplicant ?? this.isSubmitCoApplicant,
         panName: panName ?? this.panName,
         panGender: panGender ?? this.panGender,

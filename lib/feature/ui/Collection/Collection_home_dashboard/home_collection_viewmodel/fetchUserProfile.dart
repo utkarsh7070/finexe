@@ -50,32 +50,32 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.data}');
       if (response.statusCode == 200) {
-        final UserprofileResponseModel responseModel =
-            UserprofileResponseModel.fromJson(response.data);
+        // final UserprofileResponseModel responseModel =
+        //     UserprofileResponseModel.fromJson(response.data);
         if (kDebugMode) {
-          print('visitRejected ${responseModel.items.visitRejected}');
-          print('visitAccepted ${responseModel.items.visitAccepted}');
-          print('visitPendingForApproval ${responseModel.items.visitPendingForApproval}');
+          print('visitRejected ${response.data['items']['visitRejected']}');
+          print('visitAccepted ${response.data['items']['visitAccepted']}');
+          print('visitPendingForApproval ${response.data['items']['visitPendingForApproval']}');
         }
 
         state = AsyncValue.data(UserProfile(
-            name: responseModel.items.employeeDetail.employeName!,
-            visitRejected: responseModel.items.visitRejected,
+            name: response.data['items']['employeeDetail']['employeName']??'',
+            visitRejected: response.data['items']['visitRejected']??'',
             visitPendingForApproval:
-                responseModel.items.visitPendingForApproval,
-            visitAccepted: responseModel.items.visitAccepted,
-            collectionRejectAmount: responseModel.items.collectionRejectAmount,
+            response.data['items']['visitPendingForApproval']??'',
+            visitAccepted: response.data['items']['visitAccepted']??'',
+            collectionRejectAmount: response.data['items']['collectionRejectAmount']??'',
             collectionEmiAmountPendingForApproval:
-                responseModel.items.collectionEmiAmountPendingForApproval,
-            collectionAcceptAmount: responseModel.items.collectionAcceptAmount,
+            response.data['items']['collectionEmiAmountPendingForApproval']??'',
+            collectionAcceptAmount: response.data['items']['collectionAcceptAmount']??'',
             employeeUniqueId:
-                responseModel.items.employeeDetail.employeUniqueId!,
-            joiningDate: responseModel.items.employeeDetail.joiningDate!,
-            employeeId: responseModel.items.employeeDetail.id!,
-            email: responseModel.items.employeeDetail.email!,
-            imageUrl: responseModel.items.employeeDetail.employeePhoto ?? '',
-            mobileNo: responseModel.items.employeeDetail.mobileNo.toString(),
-            address: responseModel.items.employeeDetail.currentAddress!));
+            response.data['items']['employeeDetail']['employeUniqueId']??'',
+            joiningDate: response.data['items']['employeeDetail']['joiningDate']??'',
+            employeeId:  response.data['items']['employeeDetail']['id']??'',
+            email:  response.data['items']['employeeDetail']['email']??'',
+            imageUrl:  response.data['items']['employeeDetail']['employeePhoto'] ?? '',
+            mobileNo:  response.data['items']['employeeDetail']['mobileNo'].toString(),
+            address:  response.data['items']['employeeDetail']['currentAddress']??''));
       }
     } catch (error) {
       state = AsyncValue.error(error, StackTrace.current);
@@ -126,7 +126,7 @@ final apiResponseProvider =
   return ApiResponseNotifier(dio);
 });
 
-final roleName = Provider<String?>((ref) {
+final roleName = Provider.autoDispose<String?>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider).asData?.value;
   return  prefs?.getString('roleName');
 },);

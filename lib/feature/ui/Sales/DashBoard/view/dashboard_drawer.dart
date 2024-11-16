@@ -102,7 +102,7 @@ class DrawerScreen extends ConsumerWidget {
                       ),
                       onTap: () {
                         Navigator.pop(context);
-                        Navigator.pushNamed(context, AppRoutes.collectionHome);
+                        Navigator.pushReplacementNamed(context, AppRoutes.collectionHome);
                       },
                     ),
                   ),
