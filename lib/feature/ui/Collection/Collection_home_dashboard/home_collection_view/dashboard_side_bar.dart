@@ -9,33 +9,35 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../base/routes/routes.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
+import '../../../Sales/DashBoard/view/dash_board.dart';
 import '../home_collection_model/user_profile_model.dart';
 import '../home_collection_viewmodel/fetchUserProfile.dart';
 
-class DashBoardSideBar extends ConsumerWidget{
+class DashBoardSideBar extends ConsumerWidget {
   const DashBoardSideBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sessionOut =  ref.read(apiResponseProvider.notifier);
-  return SafeArea(
-    child: Container(
-      height: displayHeight(context)*0.40,
-      width: displayWidth(context)*0.35,
-      decoration:  const BoxDecoration(
-color: AppColors.white,
-          // gradient: LinearGradient(
-          // begin: Alignment.topCenter,
-          // end: Alignment.bottomCenter,
-          // colors: [
-          //   Color(0xFFFFFFFF),
-          //   Color(0xFF3CBCFF),
-          //   Color(0xFF09ABFF),
-          //   Color(0xFF0082C6),
-          // ]),
-          borderRadius: BorderRadius.all(Radius.circular(20))),
-      // padding: const EdgeInsets.only(top: 15),
-      child: Column(
+    final sessionOut = ref.read(apiResponseProvider.notifier);
+    final role = ref.watch(roleName);
+    return SafeArea(
+      child: Container(
+        height: displayHeight(context) * 0.40,
+        width: displayWidth(context) * 0.35,
+        decoration: const BoxDecoration(
+            color: AppColors.white,
+            // gradient: LinearGradient(
+            // begin: Alignment.topCenter,
+            // end: Alignment.bottomCenter,
+            // colors: [
+            //   Color(0xFFFFFFFF),
+            //   Color(0xFF3CBCFF),
+            //   Color(0xFF09ABFF),
+            //   Color(0xFF0082C6),
+            // ]),
+            borderRadius: BorderRadius.all(Radius.circular(20))),
+        // padding: const EdgeInsets.only(top: 15),
+        child: Column(
           children: [
             // Top white section with image
             Column(
@@ -53,8 +55,8 @@ color: AppColors.white,
                 // ),
               ],
             ),
-      
-      
+
+
             // Bottom blue section with menu items
             Expanded(
               child: ListView(
@@ -75,26 +77,30 @@ color: AppColors.white,
                   //   },
                   // ),
 
-                  ListTile(
-
-                    title:
-                    Column(
-                      children: [
-                        Image.asset('assets/images/home.png',width: displayWidth(context)*0.10,height: displayHeight(context)*0.07,),
-                        const Text(
-                          'Home',
-                          style: TextStyle(color: AppColors.black),
-                        ),
-                      ],
+                  Visibility(
+                    visible: role == "salesAndCollection" || role == "salesPdAndCollection" || role == 'admin',
+                    child: ListTile(
+                      title:
+                      Column(
+                        children: [
+                          Image.asset('assets/images/home.png',
+                            width: displayWidth(context) * 0.10,
+                            height: displayHeight(context) * 0.07,),
+                          const Text(
+                            'Sales',
+                            style: TextStyle(color: AppColors.black),
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MyDashBoardWidget(),
+                          ),
+                        );
+                      },
                     ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DashboardScreen(),
-                        ),
-                      );
-                    },
                   ),
 
                   const Divider(
@@ -110,7 +116,9 @@ color: AppColors.white,
                     title:
                     Column(
                       children: [
-                        Image.asset('assets/images/package.png',width: displayWidth(context)*0.10,height: displayHeight(context)*0.07,),
+                        Image.asset('assets/images/package.png',
+                          width: displayWidth(context) * 0.10,
+                          height: displayHeight(context) * 0.07,),
                         const Text(
                           'Collection',
                           style: TextStyle(color: AppColors.black),
@@ -123,7 +131,6 @@ color: AppColors.white,
                           context,
                           AppRoutes.cases
                       );
-
                     },
                   ),
 
@@ -139,7 +146,9 @@ color: AppColors.white,
                     title:
                     Column(
                       children: [
-                        Image.asset('assets/images/logout.png',width: displayWidth(context)*0.10,height: displayHeight(context)*0.07,),
+                        Image.asset('assets/images/logout.png',
+                          width: displayWidth(context) * 0.10,
+                          height: displayHeight(context) * 0.07,),
                         const Text(
                           'Logout',
                           style: TextStyle(color: AppColors.black),
@@ -149,7 +158,8 @@ color: AppColors.white,
                     onTap: () {
                       // Handle logout
                       // LogOutDialog.logOutDialog(context: context);
-                      CollectionLogOutDialog.collectionLogOutDialog(context: context);
+                      CollectionLogOutDialog.collectionLogOutDialog(
+                          context: context);
                       // ref.read(apiResponseProvider.notifier).clearData();
                       // SessionService.deleteSession();
                       // Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) =>false,);
@@ -165,13 +175,12 @@ color: AppColors.white,
                   ),
                 ],
               ),
-      
+
             ),
           ],
         ),
-    ),
-  );
-
+      ),
+    );
   }
 
 }

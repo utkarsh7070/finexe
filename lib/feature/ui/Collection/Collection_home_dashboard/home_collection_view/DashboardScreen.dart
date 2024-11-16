@@ -1,11 +1,17 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:finexe/feature/base/extentions/capital_letter.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/Widget/profile_update_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:roam_flutter/roam_flutter.dart';
 import '../../../../base/api/api.dart';
+import '../../../../base/utils/widget/custom_snackbar.dart';
 import '../Widget/profile_update.dart';
 import '../home_collection_viewmodel/fetchUserProfile.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
@@ -20,23 +26,93 @@ class DashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late Timer trackingTimer;
   @override
   void initState() {
     super.initState();
-    ref.read(apiResponseProvider.notifier).fetchDashboardData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(apiResponseProvider.notifier).fetchDashboardData();
+      final data = ref.watch(apiResponseProvider);
+      if(data.value?.name!=null){
+        initialiseRoamSdk(data.value!.name);
+      }
+
+    });
   }
 
-  void startTracking() {
+  Future<void> initialiseRoamSdk(String name) async {
+    print("Attempting to initialize Roam SDK...");
     try {
-      Roam.startTracking(trackingMode: 'active');
-      print("Tracking started successfully.");
-    } catch (e, stackTrace) {
-      print("Failed to start tracking: $e");
-      print("Stack trace: $stackTrace");
+      await requestLocationPermissions();
+      print("Permissions granted, initializing Roam SDK...");
+
+      Roam.initialize(
+        publishKey: '58f73be503e069888cf19289bf728c14c2e841c47e5842a1054f9e5f12f52583',
+      );
+      print("Roam SDK initialized."); // Check if this is reached
+
+      // Roam.getUser(userId:'672b16d23e8a8f5a915d743e', callBack: ({user}) {
+      //   print('User name - $user');
+      // });
+      Roam.createUser(description:name,callBack: ({user}) {
+// do something on create user
+        print(user);
+      });
+
+      Map<String, dynamic> fitnessTracking = {
+        "timeInterval": 10
+      };
+      Roam.startTracking(trackingMode: "custom", customMethods: fitnessTracking);
+      print("Custom tracking started with 10-second interval.");
+
+
+
+      listenToLocationUpdates();
+
+      trackingTimer = Timer(Duration(minutes: 15), () {
+        Roam.stopTracking();
+        print("Tracking stopped after 15 minutes.");
+      });
+
+    } catch (e) {
+      print("Failed to initialize Roam SDK: $e");
     }
   }
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  Future<void> listenToLocationUpdates() async {
+    print("Setting location listener...");
+    Roam.onLocation((location) {
+      print("Received location from Roam SDK: ${jsonEncode(location)}");
+      showCustomSnackBar(
+          context, "Received location from Roam SDK: ${jsonEncode(location)}", Colors.green);
+    });
+    print("Location listener set.");
+  }
+
+  Future<void> requestLocationPermissions() async {
+    final locationWhenInUse = await Permission.locationWhenInUse.request();
+    if (locationWhenInUse.isGranted) {
+      final locationAlways = await Permission.locationAlways.request();
+      if (!locationAlways.isGranted) {
+        print("Location always permission not granted.");
+      } else {
+        print("Location permissions granted.");
+        await getCurrentLocation();
+      }
+    } else {
+      print("Location permission denied.");
+    }
+  }
+
+  Future<void> getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    print("Initial location: ${position.latitude}, ${position.longitude}");
+  }
+
+
 
   // Step 1: Define the GlobalKey
 

@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,6 +17,7 @@ import '../model/request_model/aadhaar_otp_request_model.dart';
 import '../model/request_model/pan_request_model.dart';
 import '../model/responce_model/aadhaar_otp_responce_model.dart';
 import '../model/responce_model/aadhar_number_response_model.dart';
+import '../model/responce_model/pan_response_model.dart';
 import '../view/Sales_on_boarding_form/guarantor_form/dialog/form_completed_dialog.dart';
 
 final getOptGuarantor = StateProvider(
@@ -199,17 +201,19 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
         state = state.copyWith(isLoading: false);
         aadhaarOtpResponseModel =
             AadhaarOtpResponseModel.fromJson(response.data);
+        final age = calculateAge(aadhaarOtpResponseModel!.items.msg.dob);
         state = state.copyWith(
-          fullName: aadhaarOtpResponseModel!.items.msg.name,
-          dob: aadhaarOtpResponseModel!.items.msg.dob,
+          fullName: aadhaarOtpResponseModel?.items.msg.name,
+          dob: aadhaarOtpResponseModel?.items.msg.dob,
+          age: age.toString(),
           communicationAddress1:
-              '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!.items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark}',
-          communicationAddress2: aadhaarOtpResponseModel!.items.msg.locality,
-          communicationDistrict: aadhaarOtpResponseModel!.items.msg.district,
-          communicationCity: aadhaarOtpResponseModel!.items.msg.villageTownCity,
-          communicationPinCode: aadhaarOtpResponseModel!.items.msg.pincode,
-          communicationState: aadhaarOtpResponseModel!.items.msg.state,
-          gender: aadhaarOtpResponseModel!.items.msg.gender,
+              '${aadhaarOtpResponseModel?.items.msg.house}, ${aadhaarOtpResponseModel?.items.msg.street}, ${aadhaarOtpResponseModel?.items.msg.landmark}',
+          communicationAddress2: aadhaarOtpResponseModel?.items.msg.locality,
+          communicationDistrict: aadhaarOtpResponseModel?.items.msg.district,
+          communicationCity: aadhaarOtpResponseModel?.items.msg.villageTownCity,
+          communicationPinCode: aadhaarOtpResponseModel?.items.msg.pincode,
+          communicationState: aadhaarOtpResponseModel?.items.msg.state,
+          gender: aadhaarOtpResponseModel?.items.msg.gender,
         );
         // AadhaarNumberResponseModel.fromJson(response.data);
         return true;
@@ -221,6 +225,17 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
       state = state.copyWith(isLoading: false);
       throw Exception(e);
     }
+  }
+
+  int calculateAge(String birthOfDate) {
+    DateTime birthDate = DateFormat("dd-MM-yyyy").parse(birthOfDate);
+    DateTime today = DateTime.now();
+    int age = today.year - birthDate.year;
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+    return age;
   }
 
   Future<bool> fetchAadhaarWithPhoto() async {
@@ -251,6 +266,14 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
       final response =
           await dio.post(Api.panVerify, data: panRequestModel.toJson());
       if (response.statusCode == 200) {
+        PanResponseModel panResponseModel =
+            PanResponseModel.fromJson(response.data);
+        final String dob =
+            DateFormat("dd-MM-yyyy").format(panResponseModel.items.data.dob);
+        state = state.copyWith(
+            panDob: dob,
+            panGender: panResponseModel.items.data.gender,
+            panName: panResponseModel.items.data.fullName);
         print(response.data);
         return true;
       } else {
@@ -424,6 +447,10 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
         'permanent add ${state.permanentAddress1}, ${state.permanentAddress2}');
   }
 
+  void verifyOtp(bool value) {
+    state = state.copyWith(isOtpVerify: value);
+  }
+
   void updateCheckBox(bool value) {
     state = state.copyWith(checkBoxTermsConditionGuarantor: value);
   }
@@ -457,6 +484,10 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
   void updateEmail(String value) {
     final isValid = _validateEmail(value);
     state = state.copyWith(email: value, isEmailValid: isValid);
+  }
+
+  void updateApplicantFormSubmitted(bool value) {
+    state = state.copyWith(isApplicantFormSubmitted: value);
   }
 
   void updateMarital(String value) {
@@ -1070,6 +1101,11 @@ class GuarantorKycFormState {
   final String aadhaarPhotoFilePath1;
   final String aadhaarPhotoFilePath2;
   final bool checkBoxTermsConditionGuarantor;
+  final String panDob;
+  final String panGender;
+  final String panName;
+  final bool isApplicantFormSubmitted;
+  final bool isOtpVerify;
 
   final String otp;
   final String aadhaar;
@@ -1137,6 +1173,11 @@ class GuarantorKycFormState {
   final bool isPermanentPinCodeValid;
 
   GuarantorKycFormState({
+    this.isOtpVerify = false,
+    this.isApplicantFormSubmitted = false,
+    this.panDob = '',
+    this.panGender = '',
+    this.panName = '',
     this.checkBoxTermsConditionGuarantor = false,
     this.isLoading = false,
     this.otp = '',
@@ -1202,7 +1243,12 @@ class GuarantorKycFormState {
   });
 
   GuarantorKycFormState copyWith(
-      {bool? isAadhaarValid,
+      {bool? isOtpVerify,
+      bool? isApplicantFormSubmitted,
+      bool? isAadhaarValid,
+      String? panDob,
+      String? panGender,
+      String? panName,
       bool? checkBoxTermsConditionGuarantor,
       bool? isLoading,
       String? otp,
@@ -1265,6 +1311,12 @@ class GuarantorKycFormState {
       bool? isAgeValid,
       bool? isRelationWithApplicantValid}) {
     return GuarantorKycFormState(
+        isOtpVerify: isOtpVerify ?? this.isOtpVerify,
+        isApplicantFormSubmitted:
+            isApplicantFormSubmitted ?? this.isApplicantFormSubmitted,
+        panDob: panDob ?? this.panDob,
+        panGender: panGender ?? this.panGender,
+        panName: panName ?? this.panName,
         checkBoxTermsConditionGuarantor: checkBoxTermsConditionGuarantor ??
             this.checkBoxTermsConditionGuarantor,
         isAadhaarValid: isAadhaarValid ?? this.isAadhaarValid,
@@ -1488,7 +1540,8 @@ class PaymentWithRazorPay extends StateNotifier<PaymentState> {
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
-  void payWithRazorPay({required int amount,required String mobile,required String orderId}) {
+  void payWithRazorPay(
+      {required int amount, required String mobile, required String orderId}) {
     print(mobile);
     // String mobileNo = mobile;
     var options = {

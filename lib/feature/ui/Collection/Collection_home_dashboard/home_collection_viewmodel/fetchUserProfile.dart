@@ -4,6 +4,7 @@ import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/update_password_request_model.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/update_password_responsemodel.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
@@ -13,8 +14,10 @@ import '../../../../base/api/api.dart';
 import '../../../../base/api/dio_exception.dart';
 import '../../../../base/service/session_service.dart';
 import '../../../../base/utils/widget/custom_snackbar.dart';
+
 import '../home_collection_model/user_profile_model.dart';
 import '../home_collection_model/user_profile_response_model.dart';
+
 
 class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
   final Dio dio;
@@ -49,6 +52,12 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
       if (response.statusCode == 200) {
         final UserprofileResponseModel responseModel =
             UserprofileResponseModel.fromJson(response.data);
+        if (kDebugMode) {
+          print('visitRejected ${responseModel.items.visitRejected}');
+          print('visitAccepted ${responseModel.items.visitAccepted}');
+          print('visitPendingForApproval ${responseModel.items.visitPendingForApproval}');
+        }
+
         state = AsyncValue.data(UserProfile(
             name: responseModel.items.employeeDetail.employeName!,
             visitRejected: responseModel.items.visitRejected,
@@ -112,15 +121,25 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
 // }
 
 final apiResponseProvider =
-    StateNotifierProvider<ApiResponseNotifier, AsyncValue<UserProfile>>((ref) {
+    StateNotifierProvider.autoDispose<ApiResponseNotifier, AsyncValue<UserProfile>>((ref) {
   final dio = ref.read(dioProvider);
   return ApiResponseNotifier(dio);
+});
+
+final roleName = Provider<String?>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider).asData?.value;
+  return  prefs?.getString('roleName');
+},);
+
+final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs;
 });
 
 final dialogVisibilityProvider = StateProvider<bool>((ref) => false);
 
 final profileProvider =
-    StateNotifierProvider<UserProfileProvider, ProfileModel>((ref) {
+    StateNotifierProvider.autoDispose<UserProfileProvider, ProfileModel>((ref) {
   final dio = ref.watch(dioProvider);
   return UserProfileProvider(dio);
 });

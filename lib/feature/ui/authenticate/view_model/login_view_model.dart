@@ -46,6 +46,9 @@ final obscureTextProvider = StateProvider<bool>(
     return false;
   },
 );
+
+final isRememberMeCheckedProvider = StateProvider<bool>((ref) => false);
+
 final loginViewModelProvider =
     StateNotifierProvider<LoginViewModel, AsyncValue<DataModel>>((ref) {
   final punchInRepository = ref.watch(punchInRepositoryProvider);
@@ -118,7 +121,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
 
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  AppRoutes.collectionHome, // Admin dashboard route
+                  AppRoutes.dashBoard, // Admin dashboard route
                   (route) => false, // Remove all previous routes
                 );
                 break;
@@ -145,7 +148,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                 log("Navigating to collection dashboard");
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  AppRoutes.collectionHome, // Collection dashboard route
+                  AppRoutes.dashBoard, // Collection dashboard route
                   (route) => false, // Remove all previous routes
                 );
                 break;
@@ -154,7 +157,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                 log("Navigating to collection dashboard");
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  AppRoutes.collectionHome, // Collection dashboard route
+                  AppRoutes.dashBoard, // Collection dashboard route
                   (route) => false, // Remove all previous routes
                 );
                 break;

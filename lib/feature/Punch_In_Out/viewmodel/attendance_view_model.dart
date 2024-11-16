@@ -107,7 +107,6 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
           print('puch>>>>>>>> ');
           log('puch>>>>>>>> ');
         }
-
       },
     );
   }
@@ -135,10 +134,11 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       };
 
       try {
-        Response response = await _punchInRepository.checkPunch(location, token);
+        Response response =
+            await _punchInRepository.checkPunch(location, token);
         print(response.data);
         CheckAttendanceResponseModel checkAttendanceResponse =
-        CheckAttendanceResponseModel.fromJson(response.data);
+            CheckAttendanceResponseModel.fromJson(response.data);
         state =
             state.copyWith(checkAttendanceResponse: checkAttendanceResponse);
         state = state.copyWith(
@@ -177,55 +177,54 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
         }
         if (value) {
           switch (role) {
-          case 'admin':
-            log("Navigating to admin dashboard");
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              AppRoutes.collectionHome, // Admin dashboard route
-              (route) => false, // Remove all previous routes
-            );
+            case 'admin':
+              log("Navigating to admin dashboard");
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.dashBoard, // Admin dashboard route
+                (route) => false, // Remove all previous routes
+              );
 
-            break;
-          case 'sales':
-            log("Navigating to sales dashboard");
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              AppRoutes.dashBoard, // Sales dashboard route
-              (route) => false, // Remove all previous routes
-            );
+              break;
+            case 'sales':
+              log("Navigating to sales dashboard");
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.dashBoard, // Sales dashboard route
+                (route) => false, // Remove all previous routes
+              );
+              break;
+            case 'collection':
+              log("Navigating to collection dashboard");
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.collectionHome,
+                (route) => false,
+              );
+              break;
 
-            break;
-          case 'collection':
-            log("Navigating to collection dashboard");
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              AppRoutes.collectionHome,
-              (route) => false,
-            );
-            break;
+            case 'salesAndCollection':
+              log("Navigating to collection dashboard");
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.dashBoard, // Collection dashboard route
+                (route) => false, // Remove all previous routes
+              );
+              break;
 
-          case 'salesAndCollection':
-            log("Navigating to collection dashboard");
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              AppRoutes.collectionHome, // Collection dashboard route
-                  (route) => false, // Remove all previous routes
-            );
-            break;
-
-          case 'salesPdAndCollection':
-            log("Navigating to collection dashboard");
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              AppRoutes.collectionHome, // Collection dashboard route
-                  (route) => false, // Remove all previous routes
-            );
-            break;
-          default:
-            // Handle unknown roles or navigate to a default screen
-            log('No matching role found');
-            break;
-        }
+            case 'salesPdAndCollection':
+              log("Navigating to collection dashboard");
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.dashBoard, // Collection dashboard route
+                (route) => false, // Remove all previous routes
+              );
+              break;
+            default:
+              // Handle unknown roles or navigate to a default screen
+              log('No matching role found');
+              break;
+          }
         }
       },
     );
@@ -267,10 +266,10 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
         isLoading: false,
         // punchStatus: false
       );
-        return true;
+      return true;
       // Navigator.pushNamed(context, AppRoutes.eod);
     } on DioException catch (error) {
-      DioExceptions.fromDioError(error,context);
+      DioExceptions.fromDioError(error, context);
       state = state.copyWith(isLoading: false);
     }
     return false;
@@ -312,7 +311,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       await checkPunch();
       return true;
     } on DioException catch (error) {
-      DioExceptions.fromDioError(error,context);
+      DioExceptions.fromDioError(error, context);
     }
     return null;
   }
@@ -327,7 +326,6 @@ final attendanceProvider =
     StateNotifierProvider<AttendanceNotifier, AttendanceState>((ref) {
   return AttendanceNotifier(ref.watch(punchInRepositoryProvider));
 });
-
 
 //
 // class UserSession extends AsyncNotifier<String?> {
@@ -351,7 +349,6 @@ final attendanceProvider =
 // }
 //
 // final userSessionProvider = AsyncNotifierProvider<UserSession, String?>(UserSession.new);
-
 
 // final checkCurrentLocation = FutureProvider<String>(
 //   (ref) async {

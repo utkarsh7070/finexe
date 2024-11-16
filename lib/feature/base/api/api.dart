@@ -1,6 +1,8 @@
 class Api {
-  // static const String baseUrl = 'https://prod.fincooper.in/';
+  static const String baseUrlProduction = 'https://prod.fincooper.in/';
   static const String baseUrl = 'https://stageapi.fincooper.in/';
+  static const String baseUrlStageCollection = 'https://stageapi.fincooper.in/';
+  static const String baseUrlStageProduction ='https://prod.fincooper.in/';
 
   static const String login = '${baseUrl}v1/login/employe';
   // https://prod.fincooper.in
@@ -14,6 +16,7 @@ class Api {
       '${baseUrl}v1/aadharDetail/aadhaarSubmitOtp';
   static const String panVerify = '${baseUrl}v1/panDetail/PanComprehensive';
   static const String aadhaarPhoto = '${baseUrl}v1/aadharDetail/aadhaarOCR';
+
   static const String punchOut =
       '${baseUrl}v1/adminMaster/employe/punch?action=out';
   static const String punchIn =
@@ -30,6 +33,8 @@ class Api {
       '${baseUrl}v1/salesMan/guarantorAddDetail';
   static const String getApplicantForm =
       '${baseUrl}v1/salesMan/applicantDetail/:customerId';
+
+
   static const String collectionVisitPending =
       '${baseUrl}v1/googleSheet/overAllEmiData';
   static const String getAllModeOfCollection =
@@ -65,6 +70,8 @@ class Api {
   static const String getVisitNotice =
       '${baseUrl}v1/googleSheet/getLegalNoticeBy';
   static const String getVisitCalling = '${baseUrl}v1/googleSheet/callDoneBy';
+
+
   static const String updateProfile = '${baseUrl}v1/adminMaster/employe/update';
   static const String updatePassword = '${baseUrl}v1/login/updatePassword';
   static const String paymentAmount = '${baseUrl}v1/salesMan/paymentInitiate';
@@ -78,6 +85,7 @@ class Api {
   static const String leadFormSubmit = '${baseUrl}v1/salesMan/leadGenerate';
   static const String leadShowPendingList = '${baseUrl}v1/salesMan/leadGenerateList';
   static const String getEmployeeDetails = '${baseUrl}v1/adminMaster/employe/getEmployeeByToken';
+  static const String getAllBranch = '${baseUrl}v1/branch/getAll';
 
   // https://stageapi.fincooper.in/v1/login/updatePassword
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd

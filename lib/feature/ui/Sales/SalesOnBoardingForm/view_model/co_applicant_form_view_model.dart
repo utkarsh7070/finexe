@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/api/api.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/pan_response_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/submit_co_applicant_response_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/dio.dart';
@@ -42,6 +44,11 @@ final isCoTickColorChange = StateProvider(
 // );
 
 final getOptCoApp = StateProvider(
+  (ref) {
+    return false;
+  },
+);
+final submitCoApplicantForm = StateProvider(
   (ref) {
     return false;
   },
@@ -173,7 +180,7 @@ class FormDataControllerNotifier
     state[index].dispose();
     state = [
       for (int i = 0; i < state.length; i++)
-           if (i != index) state[i],
+        if (i != index) state[i],
     ];
   }
 
@@ -199,7 +206,7 @@ final formDataProvider =
 
 final coApplicantViewModelProvider =
     StateNotifierProvider<ApplicantViewModel, List<KycFormState>>((ref) {
-  final dio = ref.read(dioProvider);
+  final dio = ref.watch(dioProvider);
   return ApplicantViewModel(dio);
 });
 
@@ -238,12 +245,9 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
   // }
 
   Future<bool> fetchAadhaarNumber(int index) async {
-    state =[
+    state = [
       for (final todo in state)
-      if (todo.id == index)
-        todo.copyWith(isLoading: true)
-      else
-        todo
+        if (todo.id == index) todo.copyWith(isLoading: true) else todo
     ];
     await fetchPanVerify(index);
     print(state[index].aadhaar);
@@ -258,43 +262,31 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
       if (response.statusCode == 200) {
         aadhaarNumberResponseModel =
             AadhaarNumberResponseModel.fromJson(response.data);
-        state =[
+        state = [
           for (final todo in state)
-            if (todo.id == index)
-              todo.copyWith(isLoading: false)
-            else
-              todo
+            if (todo.id == index) todo.copyWith(isLoading: false) else todo
         ];
         return true;
       } else {
-        state =[
+        state = [
           for (final todo in state)
-            if (todo.id == index)
-              todo.copyWith(isLoading: false)
-            else
-              todo
+            if (todo.id == index) todo.copyWith(isLoading: false) else todo
         ];
         return false;
       }
     } catch (e) {
-      state =[
+      state = [
         for (final todo in state)
-          if (todo.id == index)
-            todo.copyWith(isLoading: false)
-          else
-            todo
+          if (todo.id == index) todo.copyWith(isLoading: false) else todo
       ];
       throw Exception(e);
     }
   }
 
   Future<bool> fetchOtp(int index) async {
-    state =[
+    state = [
       for (final todo in state)
-        if (todo.id == index)
-          todo.copyWith(isLoading: true)
-        else
-          todo
+        if (todo.id == index) todo.copyWith(isLoading: true) else todo
     ];
     if (kDebugMode) {
       print(state[index].otp);
@@ -315,15 +307,14 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
       final response = await dio.post(Api.aadhaarOtpVerify,
           data: aadhaarOtpResquestModel.toJson());
       if (response.statusCode == 200) {
-        state =[
+        state = [
           for (final todo in state)
-            if (todo.id == index)
-              todo.copyWith(isLoading: false)
-            else
-              todo
+            if (todo.id == index) todo.copyWith(isLoading: false) else todo
         ];
         aadhaarOtpResponseModel =
             AadhaarOtpResponseModel.fromJson(response.data);
+
+        final age = calculateAge(aadhaarOtpResponseModel!.items.msg.dob);
         if (aadhaarOtpResponseModel != null) {
           state = [
             for (final todo in state)
@@ -331,6 +322,8 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
                 todo.copyWith(
                   fullName: aadhaarOtpResponseModel!.items.msg.name,
                   dob: aadhaarOtpResponseModel!.items.msg.dob,
+                  careOf: aadhaarOtpResponseModel!.items.msg.careof,
+                  age: age.toString(),
                   communicationAddress1:
                       '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!.items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark}',
                   communicationAddress2:
@@ -349,37 +342,47 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         // AadhaarNumberResponseModel.fromJson(response.data);
         return true;
       } else {
-        state =[
+        state = [
           for (final todo in state)
-            if (todo.id == index)
-              todo.copyWith(isLoading: false)
-            else
-              todo
+            if (todo.id == index) todo.copyWith(isLoading: false) else todo
         ];
         return false;
       }
     } catch (e) {
-      state =[
+      state = [
         for (final todo in state)
-          if (todo.id == index)
-            todo.copyWith(isLoading: false)
-          else
-            todo
+          if (todo.id == index) todo.copyWith(isLoading: false) else todo
       ];
       throw Exception(e);
     }
   }
 
+  int calculateAge(String birthOfDate) {
+    DateTime birthDate = DateFormat("dd-MM-yyyy").parse(birthOfDate);
+    DateTime today = DateTime.now();
+    int age = today.year - birthDate.year;
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+    return age;
+  }
+
   Future<bool> submitCoApplicantForm(int index) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final token = sharedPreferences.getString('token');
-    final employeId = sharedPreferences.getString('employeId');
-    final customerId = sharedPreferences.getString('customerId');
+    final String? employeId = sharedPreferences.getString('employeId');
+    final String? customerId = sharedPreferences.getString('customerId');
+    if (kDebugMode) {
+      print(employeId);
+      print(customerId);
+    }
+
     final formData = CoApplicantFormData(
         relationWithApplicant: '',
-        docType: dropDownController.dropDownValue!.name,
-        employeId: employeId!,
-        customerId: customerId!,
+        docType: dropDownController.dropDownValue?.value,
+        employeId: employeId ?? '',
+        customerId: customerId ?? '',
         fullName: state[index].fullName,
         email: state[index].email,
         aadharNo: state[index].aadhaar,
@@ -414,7 +417,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     print(response.statusMessage);
     print(response.statusCode);
     if (response.statusCode == 200) {
-    SubmitCoApplicantResponseModel.fromJson(response.data);
+      // SubmitCoApplicantResponseModel.fromJson(response.data);
 
       return true;
     } else {
@@ -478,6 +481,20 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
       final response =
           await dio.post(Api.panVerify, data: panRequestModel.toJson());
       if (response.statusCode == 200) {
+        PanResponseModel panResponseModel =
+            PanResponseModel.fromJson(response.data);
+        final String dob =
+            DateFormat("dd-MM-yyyy").format(panResponseModel.items.data.dob);
+        state = [
+          for (final todo in state)
+            if (todo.id == index)
+              todo.copyWith(
+                  panName: panResponseModel.items.data.fullName,
+                  panGender: panResponseModel.items.data.gender,
+                  panDob: dob)
+            else
+              todo
+        ];
         if (kDebugMode) {
           print(response.data);
         }
@@ -502,8 +519,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     if (await Permission.photos.status.isGranted &&
         await Permission.videos.status.isGranted) {
       try {
-        XFile? pickedImage =
-            await picker.pickImage(source: ImageSource.camera);
+        XFile? pickedImage = await picker.pickImage(source: ImageSource.camera);
         if (kDebugMode) {
           print('image before null condition  ${pickedImage!.path.toString()}');
         }
@@ -531,18 +547,18 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
   //   state = null;
   // }
 
-  void removeItem(int index){
+  void removeItem(int index) {
     state = [
       for (int i = 0; i < state.length; i++)
         if (i != index) state[i],
     ];
 
-      // state = [
-      //   for (final todo in state)
-      //     if (todo.id != index) todo,
-      // ];
-
+    // state = [
+    //   for (final todo in state)
+    //     if (todo.id != index) todo,
+    // ];
   }
+
   // void removeItem(String item) {
   //   state = state.where((i) => i != item).toList();
   // }
@@ -633,7 +649,8 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     print(
         'permanent add ${state[index].permanentAddress1}, ${state[index].permanentAddress2}');
   }
-  bool validateCoApplicant(int index){
+
+  bool validateCoApplicant(int index) {
     final isAadhaar = _validateAadhaar(state[index].aadhaar);
     final isDoc = _validatePan(state[index].pan);
     final isCheckBox = state[index].checkBoxTermsConditionCoApplicant;
@@ -645,6 +662,13 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
           todo
     ];
     return isAadhaar && isDoc && isCheckBox;
+  }
+
+  void submitCoApplicant(bool value, int index) {
+    state = [
+      for (final todo in state)
+        if (todo.id == index) todo.copyWith(isSubmitCoApplicant: value) else todo
+    ];
   }
 
   void updateKycDoc(String value, int index) {
@@ -918,14 +942,9 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
   void updateIsOtpVerified(bool value, int index) {
     state = [
       for (final todo in state)
-        if (todo.id == index)
-          todo.copyWith(
-              isOtpVerified: value)
-        else
-          todo
+        if (todo.id == index) todo.copyWith(isOtpVerified: value) else todo
     ];
   }
-
 
   void updatePermanentAddress1(String value, int index) {
     final isValid = _validatePermanentAddress1(value);
@@ -938,12 +957,12 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
           todo
     ];
   }
-  void updateCheckBox(bool value , int index){
-    state =  [
+
+  void updateCheckBox(bool value, int index) {
+    state = [
       for (final todo in state)
         if (todo.id == index)
-          todo.copyWith(
-              checkBoxTermsConditionCoApplicant: value)
+          todo.copyWith(checkBoxTermsConditionCoApplicant: value)
         else
           todo
     ];
@@ -1569,6 +1588,12 @@ class KycFormState {
   final bool checkBoxTermsConditionCoApplicant;
   final bool isCoApplicantFormSubmitted;
   final bool isOtpVerified;
+  final String careOf;
+
+  final String panName;
+  final String panGender;
+  final String panDob;
+  final bool isSubmitCoApplicant;
 
   final String aadhaar;
   final String kycDocument;
@@ -1637,9 +1662,14 @@ class KycFormState {
   final bool isPermanentPinCodeValid;
 
   KycFormState({
+    this.isSubmitCoApplicant = false,
+    this.panGender = '',
+    this.panDob = '',
+    this.panName = '',
+    this.careOf = '',
     this.isOtpVerified = false,
     this.isCoApplicantFormSubmitted = false,
-    this.isLoading =false,
+    this.isLoading = false,
     this.checkBoxTermsConditionCoApplicant = false,
     this.id = 0,
     this.otp = '',
@@ -1706,12 +1736,16 @@ class KycFormState {
   });
 
   KycFormState copyWith(
-      {
-        bool? isOtpVerified,
-        bool? isCoApplicantFormSubmitted,
-        bool? isLoading,
-        bool? checkBoxTermsConditionCoApplicant,
-        int? id,
+      {bool? isSubmitCoApplicant,
+      String? panName,
+      String? panGender,
+      String? panDob,
+      String? careOf,
+      bool? isOtpVerified,
+      bool? isCoApplicantFormSubmitted,
+      bool? isLoading,
+      bool? checkBoxTermsConditionCoApplicant,
+      int? id,
       String? applicantPhotoFilePath,
       String? aadhaarPhotoFilePath1,
       String? aadhaarPhotoFilePath2,
@@ -1774,10 +1808,17 @@ class KycFormState {
       bool? isAgeValid,
       bool? isRelationWithApplicantValid}) {
     return KycFormState(
-      isOtpVerified: isOtpVerified?? this.isOtpVerified,
-      isCoApplicantFormSubmitted: isCoApplicantFormSubmitted?? this.isCoApplicantFormSubmitted,
-      isLoading: isLoading??this.isLoading,
-      checkBoxTermsConditionCoApplicant: checkBoxTermsConditionCoApplicant??this.checkBoxTermsConditionCoApplicant,
+        isSubmitCoApplicant: isSubmitCoApplicant ?? this.isSubmitCoApplicant,
+        panName: panName ?? this.panName,
+        panGender: panGender ?? this.panGender,
+        panDob: panDob ?? this.panDob,
+        careOf: careOf ?? this.careOf,
+        isOtpVerified: isOtpVerified ?? this.isOtpVerified,
+        isCoApplicantFormSubmitted:
+            isCoApplicantFormSubmitted ?? this.isCoApplicantFormSubmitted,
+        isLoading: isLoading ?? this.isLoading,
+        checkBoxTermsConditionCoApplicant: checkBoxTermsConditionCoApplicant ??
+            this.checkBoxTermsConditionCoApplicant,
         applicantPhotoFilePath:
             applicantPhotoFilePath ?? this.applicantPhotoFilePath,
         aadhaarPhotoFilePath1:
@@ -1863,11 +1904,10 @@ class KycFormState {
   }
 }
 
-
 //-----------------------pageView-------------------------------------------------
 
 final pageViewModelProvider = StateNotifierProvider<CoTabViewModel, CoTabModel>(
-      (ref) => CoTabViewModel(),
+  (ref) => CoTabViewModel(),
 );
 
 class CoTabViewModel extends StateNotifier<CoTabModel> {

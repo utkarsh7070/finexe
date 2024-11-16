@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../base/routes/routes.dart';
 import '../../../../../base/service/session_service.dart';
 import '../../../../../base/utils/namespase/app_colors.dart';
+import '../../../Collection cases/view_model/visit_pending_view_model.dart';
 import '../../home_collection_viewmodel/fetchUserProfile.dart';
 
 class CollectionLogoutDialogContent extends ConsumerWidget{
@@ -30,8 +31,10 @@ return  SizedBox(
           ),
           onPressed: () {
             ref.read(apiResponseProvider.notifier).clearData();
+            ref.invalidate(fetchVisitPendingDataProvider);
             SessionService.deleteSession();
             Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) =>false,);
+            ref.invalidate(apiResponseProvider);
           },
           child: const Text('Logout',
               style: TextStyle(color: AppColors.white)),

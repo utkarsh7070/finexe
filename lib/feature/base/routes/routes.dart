@@ -31,7 +31,6 @@ class AppRoutes {
   static const String saleCoApplicationForm1 = '/saleCoApplicationForm1';
   static const String saleCoApplicationForm2 = '/saleCoApplicationForm2';
   static const String saleCoApplicationForm3 = '/saleCoApplicationForm3';
-  static const String saleGuarantorForm = '/saleGuarantorForm';
   static const String saleGuarantorForm1 = '/saleGuarantorForm1';
   static const String saleGuarantorForm2 = '/saleGuarantorForm2';
   static const String saleGuarantorForm3 = '/saleGuarantorForm3';
@@ -156,7 +155,17 @@ class AppRoutes {
       // case saleGuarantorForm:
       // return MaterialPageRoute(builder: (_) =>  const GuarantorForm());
       case saleGuarantorForm1:
-        return MaterialPageRoute(builder: (_) => const GuarantorDetails());
+        return PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+            const GuarantorDetails(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 600));
       case saleGuarantorForm2:
         return MaterialPageRoute(builder: (_) => const GuarantorForm2());
       case saleGuarantorForm3:

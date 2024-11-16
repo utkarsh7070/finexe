@@ -20,8 +20,9 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
   void initState() {
     super.initState();
 
-    // Fetch user profile once when the widget is initialized
-    Future.microtask(() => ref.read(loginUserProfileProvider.notifier).fetchLoginUserProfile());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.refresh(loginUserProfileProvider);
+    });
 
   }
 
@@ -164,38 +165,44 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
                 child: Column(
                   children: [
                     SizedBox(height: 30),
-                    ElevatedButton(
-                      onPressed: () {
-                        LogOutDialog.logOutDialog(context: context);
-                      },
-                      child: Text(
-                        'Logout',
-                        style: TextStyle(color: Colors.white),
+                    Container(
+                      width: 250,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          LogOutDialog.logOutDialog(context: context);
+                        },
+                        child: Text(
+                          'Logout',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                     SizedBox(
                       height: 20,
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        log('onPunchOut');
-                        ref.read(attendanceProvider.notifier).onPunchOut(context).then(
-                          (value) {
-                            log('punchout');
+                    Container(
+                      width: 250,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          log('onPunchOut');
+                          ref.read(attendanceProvider.notifier).onPunchOut(context).then(
+                            (value) {
+                              log('punchout');
 
-                          },
-                        );
-                      },
-                      child: checkpunchProvider.isLoading
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
+                            },
+                          );
+                        },
+                        child: checkpunchProvider.isLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                'PuchOut',
+                                style: TextStyle(color: Colors.white),
                               ),
-                            )
-                          : Text(
-                              'PuchOut',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                      ),
                     ),
                   ],
                 ),

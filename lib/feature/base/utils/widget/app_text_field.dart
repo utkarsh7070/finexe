@@ -18,6 +18,7 @@ class AppTextField extends StatelessWidget {
   final bool obscureText;
   final VoidCallback? prefixOnTap;
   final double? height;
+  final ValueChanged<String>? onFiledSubmitted;
 
   const AppTextField(
       {super.key,
@@ -26,6 +27,7 @@ class AppTextField extends StatelessWidget {
         this.errorText,
         this.controller,
         this.suffixIcon,
+        this.onFiledSubmitted,
         required this.onChange,
         this.isError = false,
         this.suffixOnTap,
@@ -55,6 +57,7 @@ class AppTextField extends StatelessWidget {
           cursorColor: Colors.blue,
           textInputAction: textInputAction,
           keyboardType: textInputType,
+          onFieldSubmitted: onFiledSubmitted,
           decoration: InputDecoration(
               floatingLabelBehavior:FloatingLabelBehavior.always,
               labelStyle:  TextStyle(color: isError!? Colors.red:null ),

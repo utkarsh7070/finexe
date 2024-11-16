@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -8,7 +9,9 @@ import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/aadhaar_otp_request_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/submite_applicant_form_data_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/aadhar_number_response_model.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/pan_response_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/submit_applicant_response_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -174,6 +177,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     try {
       final response = await dio.post(Api.aadhaarNumber,
           data: aadhaarNumberRequestModel.toJson());
+      print(response.data);
       if (response.statusCode == 200) {
         aadhaarNumberResponseModel =
             AadhaarNumberResponseModel.fromJson(response.data);
@@ -237,16 +241,12 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
 
   int calculateAge(String birthOfDate) {
     DateTime birthDate = DateFormat("dd-MM-yyyy").parse(birthOfDate);
-    // DateTime birthDate = DateTime.parse(birthOfDate);
     DateTime today = DateTime.now();
     int age = today.year - birthDate.year;
-
-    // Check if the birthday has occurred this year or not
     if (today.month < birthDate.month ||
         (today.month == birthDate.month && today.day < birthDate.day)) {
       age--;
     }
-
     return age;
   }
 
@@ -277,7 +277,18 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
       final response =
           await dio.post(Api.panVerify, data: panRequestModel.toJson());
       if (response.statusCode == 200) {
-        print(response.data);
+        PanResponseModel panResponseModel =
+            PanResponseModel.fromJson(response.data);
+        final String dob =
+            DateFormat("dd-MM-yyyy").format(panResponseModel.items.data.dob);
+        state = state.copyWith(
+            panDob: dob,
+            panGender: panResponseModel.items.data.gender,
+            panName: panResponseModel.items.data.fullName);
+        if (kDebugMode) {
+          print('pan details ${response.data}');
+          print('pan details ${json.encode(response.data)}');
+        }
         return true;
       } else {
         return false;
@@ -530,6 +541,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     final isValid = _validateGender(value);
     state = state.copyWith(gender: value, isGenderValid: isValid);
   }
+
   void updateApplicantFormSubmitted(bool value) {
     state = state.copyWith(isApplicantFormSubmitted: value);
   }
@@ -1139,6 +1151,9 @@ class KycFormState {
   final bool checkBoxTermsConditionApplicant;
   final String careOf;
 
+  final String panName;
+  final String panGender;
+  final String panDob;
   final String aadhaar;
   final String otp;
   final bool isOtpVerify;
@@ -1209,6 +1224,9 @@ class KycFormState {
   final bool isApplicantFormSubmitted;
 
   KycFormState({
+    this.panDob = '',
+    this.panGender = '',
+    this.panName = '',
     this.isApplicantFormSubmitted = false,
     this.careOf = '',
     this.isApplicantPhoto = true,
@@ -1280,9 +1298,12 @@ class KycFormState {
   });
 
   KycFormState copyWith(
-      {bool? isLoading,
+      {String? panName,
+      String? panGender,
+      String? panDob,
+      bool? isLoading,
       bool? checkBoxTermsConditionApplicant,
-        bool? isApplicantFormSubmitted,
+      bool? isApplicantFormSubmitted,
       String? careOf,
       bool? isOtpVerify,
       bool? isOpenSelectedIdField,
@@ -1349,7 +1370,11 @@ class KycFormState {
       bool? isAgeValid,
       bool? isRelationWithApplicantValid}) {
     return KycFormState(
-      isApplicantFormSubmitted: isApplicantFormSubmitted?? this.isApplicantFormSubmitted,
+        panDob: panDob ?? this.panDob,
+        panGender: panGender ?? this.panGender,
+        panName: panName ?? this.panName,
+        isApplicantFormSubmitted:
+            isApplicantFormSubmitted ?? this.isApplicantFormSubmitted,
         careOf: careOf ?? this.careOf,
         isApplicantPhoto: isApplicantPhoto ?? this.isApplicantPhoto,
         isLoading: isLoading ?? this.isLoading,

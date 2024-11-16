@@ -2,11 +2,14 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../../../base/routes/routes.dart';
 import '../../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../../base/utils/namespase/display_size.dart';
+import '../../../../../../base/utils/namespase/font_size.dart';
 import '../../../../../../base/utils/widget/app_button.dart';
 import '../../../../../../base/utils/widget/app_text_filed_login.dart';
+import '../../../../../../base/utils/widget/custom_snackbar.dart';
 import '../../../../../../base/utils/widget/upload_box.dart';
 import '../../../../NewLone/view_model/new_loan_view_model.dart';
 import '../../../view_model/guarantor_form_view_model.dart';
@@ -258,15 +261,12 @@ class _GuarantorDetails extends ConsumerState<GuarantorDetails> {
                                 ],
                               ),
                               personalFormState.isLoading
-                                  ? const CircularProgressIndicator()
+                                  ? const Center(
+                                      child: CircularProgressIndicator())
                                   : AppButton(
                                       textStyle: const TextStyle(
                                           color: AppColors.white),
                                       onTap: () {
-                                        // showBottomSheetIfYes(
-                                        //   context: context,
-                                        //   ref: ref,
-                                        // );
                                         bool isValid = personalFormViewModel
                                             .validateForm();
                                         if (isValid) {
@@ -508,6 +508,26 @@ class _GuarantorDetails extends ConsumerState<GuarantorDetails> {
       builder: (ctx) {
         return const GuarantorPhotoBottomSheet();
       },
+    );
+  }
+
+  Widget commonText(
+      {required BuildContext context,
+      required String heading,
+      required String value}) {
+    return SizedBox(
+      width: displayWidth(context),
+      child: Row(
+        children: [
+          SizedBox(width: displayWidth(context) * 0.30, child: Text(heading)),
+          SizedBox(
+              width: displayWidth(context) * 0.50,
+              child: Text(
+                value,
+                maxLines: 4,
+              ))
+        ],
+      ),
     );
   }
 }

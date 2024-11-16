@@ -1,4 +1,6 @@
 import 'package:finexe/feature/base/routes/routes.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/bottom_sheet/submit_co_applicant_form.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
@@ -21,18 +23,16 @@ class CoApplicationBottomSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     //---------------------controller--------------------
     final formListController = ref.watch(coApplicantController);
-    // final formNotifierController = ref.read(coApplicantController.notifier);
+    final formNotifierController = ref.read(coApplicantController.notifier);
     //----------------------------------------------[
-    // final checkBoxTerms = ref.watch(checkBoxTermsConditionCoApplicant);
-    // final getOtpClicked = ref.watch(getOptCoApp);
+    // final indexAdd = ref.watch(listIndex.notifier);
     final coApplicationFormState = ref.watch(coApplicantViewModelProvider);
     final coApplicationFormViewModel =
-    ref.read(coApplicantViewModelProvider.notifier);
-    // final coApplicationFocusStates = ref.watch(coApplicantFocusProvider);
-    // final isCoApplicationRemember = ref.watch(rememberCoProvider);
-    // final coApplicationFocusViewModel =
-    //     ref.read(coApplicantFocusProvider.notifier);
+        ref.read(coApplicantViewModelProvider.notifier);
+    // final isSubmit = ref.watch(submitCoApplicantForm);
+    // final isSubmitViewModel = ref.read(submitCoApplicantForm.notifier);
     final index = ref.watch(listIndex);
+
     return Container(
       padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
       width: displayWidth(context),
@@ -47,9 +47,9 @@ class CoApplicationBottomSheet extends ConsumerWidget {
           ),
           const Flexible(
               child: Text(
-                'We have just sent you 6 digit code Phone Number',
-                textAlign: TextAlign.center,
-              )),
+            'We have just sent you 6 digit code Phone Number',
+            textAlign: TextAlign.center,
+          )),
           SizedBox(
             height: displayHeight(context) * 0.04,
           ),
@@ -58,19 +58,12 @@ class CoApplicationBottomSheet extends ConsumerWidget {
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             borderColor: AppColors.buttonBorderGray,
             showFieldAsBox: true,
+            keyboardType: TextInputType.phone,
             onCodeChanged: (String code) {
               // coApplicationFormViewModel.updateOtp(code, index);
             },
             onSubmit: (String verificationCode) {
               coApplicationFormViewModel.updateOtp(verificationCode, index);
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text("Verification Code"),
-                      content: Text('Code entered is $verificationCode'),
-                    );
-                  });
             },
           ),
           SizedBox(
@@ -79,37 +72,32 @@ class CoApplicationBottomSheet extends ConsumerWidget {
           coApplicationFormState[index].isLoading
               ? const CircularProgressIndicator()
               : AppButton(
-            textStyle: const TextStyle(color: AppColors.white),
-            onTap: () {
-              // if(index < coApplicationFormState.length - 1 == false){
-              //   Navigator.pop(context);
-              //   Navigator.pushNamed(context, AppRoutes.saleGuarantorForm1);
-              // }
-              coApplicationFormViewModel.fetchOtp(index).then(
-                    (value) {
-                  if (value) {
-                    coApplicationFormViewModel.updateIsOtpVerified(value, index);
-                    coApplicationFormViewModel.setAutoValueByAadhaar(
-                        formListController, index);
-                    Navigator.pop(context);
-                    if (index < coApplicationFormState.length - 1 ==
-                        false) {
-                      coApplicationFormViewModel.updateIsOtpVerified(value, index);
-                      Navigator.pop(context);
-                      showCustomSnackBar(context,
-                          'Co-Applicant form is Submitted', Colors.green);
-                      //-----------we add other page navigate-------------------------
-                      Navigator.pushNamed(
-                          context, AppRoutes.saleGuarantorForm1);
-
-                    }
-                  }
-                },
-              );
-            },
-            label: 'Continue',
-            width: displayWidth(context),
-          ),
+                  textStyle: const TextStyle(color: AppColors.white),
+                  onTap: () {
+                    coApplicationFormViewModel.fetchOtp(index).then(
+                      (value) {
+                        if (value) {
+                          // coApplicationFormViewModel.updateIsOtpVerified(
+                          //     value, index);
+                          // coApplicationFormViewModel.setAutoValueByAadhaar(
+                          //     formListController, index);
+                          // Navigator.pop(context);
+                          // if (index < coApplicationFormState.length - 1 ==
+                          //     false) {
+                          //---------------------------------------------------------
+                          coApplicationFormViewModel.updateIsOtpVerified(
+                              value, index);
+                          Navigator.pop(context);
+                          showCustomSnackBar(
+                              context, 'Otp is Verified', Colors.green);
+                          //-----------------------------------------------------------
+                        }
+                      },
+                    );
+                  },
+                  label: 'Continue',
+                  width: displayWidth(context),
+                ),
           SizedBox(
             height: displayHeight(context) * 0.01,
           ),
@@ -126,6 +114,27 @@ class CoApplicationBottomSheet extends ConsumerWidget {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget commonText(
+      {required BuildContext context,
+      required String heading,
+      required String value}) {
+    return SizedBox(
+      width: displayWidth(context),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: displayWidth(context) * 0.30, child: Text(heading)),
+          SizedBox(
+              width: displayWidth(context) * 0.50,
+              child: Text(
+                value,
+                maxLines: 4,
+              ))
         ],
       ),
     );

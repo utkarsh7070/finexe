@@ -36,7 +36,7 @@ class LeadGenerationModel {
     return {
       'customerName': customerName,
       'customerMobileNo': customerMobileNo,
-      'cityVillageName': cityVillageName,
+      'city': cityVillageName,
       'distrctName': districtName,
       'pincode': pincode,
       'branch': branch,

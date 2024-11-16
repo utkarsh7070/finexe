@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../../../base/utils/namespase/display_size.dart';
+import '../../../../../../../base/utils/namespase/font_size.dart';
 import '../../../../../../../base/utils/widget/app_button.dart';
 import '../../../../../../../base/utils/widget/custom_snackbar.dart';
 import '../../../../view_model/application_form_view_model.dart';
@@ -16,13 +17,13 @@ class ApplicationVerify extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final formListController = ref.watch(applicantController);
-    final getOtpClicked = ref.watch(getOpt);
+    // final formListController = ref.watch(applicantController);
+    // final getOtpClicked = ref.watch(getOpt);
     final personalFormState = ref.watch(applicantViewModelProvider);
     final personalFormViewModel = ref.read(applicantViewModelProvider.notifier);
     // final checkBoxTerms = ref.watch(checkBoxTermsConditionApplicant);
-    final personalFocusStates = ref.watch(applicantFocusProvider);
-    final personalFocusViewModel = ref.read(applicantFocusProvider.notifier);
+    // final personalFocusStates = ref.watch(applicantFocusProvider);
+    // final personalFocusViewModel = ref.read(applicantFocusProvider.notifier);
     // final selectedValue = ref.watch(applicantRoleProvider);
     return Scaffold(
       body: Container(
@@ -39,11 +40,26 @@ class ApplicationVerify extends ConsumerWidget {
                   topLeft: Radius.circular(30), topRight: Radius.circular(30))),
           child: Visibility(
             visible: !personalFormState.isOtpVerify,
-            replacement:
-            Column(
+            replacement: Column(
               children: [
-                 Text('Aadhaar Details',style: AppStyles.headingTextStyle,),
-                SizedBox(height: displayHeight(context)*0.01,),
+                Text(
+                  'Aadhaar Details',
+                  style: AppStyles.headingTextStyleXL2
+                      .copyWith(color: AppColors.black),
+                ),
+                SizedBox(
+                  height: displayHeight(context) * 0.04,
+                ),
+
+                Text(
+                  'Applicant Aadhaar Details',
+                  style: AppStyles.headingTextStyleXL2.copyWith(
+                      color: AppColors.black,
+                      fontSize: FontSize.fontSize16),
+                ),
+                SizedBox(
+                  height: displayHeight(context) * 0.01,
+                ),
                 commonText(
                     context: context,
                     heading: 'Name',
@@ -69,23 +85,55 @@ class ApplicationVerify extends ConsumerWidget {
                     heading: 'Address',
                     value:
                         '${personalFormState.communicationAddress1} ${personalFormState.communicationAddress2} ${personalFormState.communicationCity} ${personalFormState.communicationDistrict} ${personalFormState.communicationPinCode}'),
+                SizedBox(
+                  height: displayHeight(context) * 0.01,
+                ),
+                Text(
+                  'Applicant Pan Details',
+                  style: AppStyles.headingTextStyleXL2.copyWith(
+                      color: AppColors.black,
+                      fontSize: FontSize.fontSize16),
+                ),
+                SizedBox(
+                  height: displayHeight(context) * 0.01,
+                ),
+                commonText(
+                    context: context,
+                    heading: 'Name',
+                    value: personalFormState.panName),
+                commonText(
+                    context: context,
+                    heading: 'Date Of Birth',
+                    value: personalFormState.panDob),
+                commonText(
+                    context: context,
+                    heading: 'Gender',
+                    value: personalFormState.panGender),
                 Visibility(
-                  replacement:   AppButton(
+                  replacement: AppButton(
+                    width: displayHeight(context),
                     label: 'Next',
+                    textStyle: AppStyles.buttonLightTextStyle,
                     onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.saleCoApplicationForm1);
+                      Navigator.pushNamed(
+                          context, AppRoutes.saleCoApplicationForm1);
                     },
                   ),
                   visible: !personalFormState.isApplicantFormSubmitted,
-                  child:
-                  AppButton(
+                  child: AppButton(
+                    width: displayHeight(context),
+                    textStyle: AppStyles.buttonLightTextStyle,
                     label: 'Submit',
                     onTap: () {
                       personalFormViewModel.submittedApplicantForm().then(
                         (value) {
                           if (value) {
-                            personalFormViewModel.updateApplicantFormSubmitted(value);
-                            Navigator.pushNamed(context, AppRoutes.saleCoApplicationForm1);
+                            showCustomSnackBar(context,
+                                'Applicant form is Submitted', Colors.green);
+                            personalFormViewModel
+                                .updateApplicantFormSubmitted(value);
+                            Navigator.pushNamed(
+                                context, AppRoutes.saleCoApplicationForm1);
                           }
                         },
                       );
@@ -147,8 +195,8 @@ class ApplicationVerify extends ConsumerWidget {
                     personalFormViewModel.submitOtp().then(
                       (value) {
                         if (value) {
-                          showCustomSnackBar(context,
-                              'Applicant form is Submitted', Colors.green);
+                          showCustomSnackBar(
+                              context, 'Otp is verified', Colors.green);
                           personalFormViewModel.verifyOtp(value);
                           // personalFormViewModel
                           //     .setAutoValueByAadhaar(formListController);

@@ -72,7 +72,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                     log("Navigating to admin dashboard");
                     Navigator.pushNamedAndRemoveUntil(
                       context,
-                      AppRoutes.collectionHome, // Admin dashboard route
+                      AppRoutes.dashBoard, // Admin dashboard route
                       (route) => false, // Remove all previous routes
                     );
                     break;
@@ -96,7 +96,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                     log("Navigating to collection dashboard");
                     Navigator.pushNamedAndRemoveUntil(
                       context,
-                      AppRoutes.collectionHome, // Collection dashboard route
+                      AppRoutes.dashBoard, // Collection dashboard route
                       (route) => false, // Remove all previous routes
                     );
                     break;
@@ -104,7 +104,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                     log("Navigating to collection dashboard");
                     Navigator.pushNamedAndRemoveUntil(
                       context,
-                      AppRoutes.collectionHome, // Collection dashboard route
+                      AppRoutes.dashBoard, // Collection dashboard route
                       (route) => false, // Remove all previous routes
                     );
                     break;
@@ -127,7 +127,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             color: Colors.white,
             child: Center(
               child: Image.asset(
-                'assets/images/logo_finexe.png',
+                'assets/images/login_bottom.png',
                 width: MediaQuery.of(context).size.width * 0.65,
               ),
             ),
@@ -138,7 +138,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               color: Colors.white,
               child: Center(
                 child: Image.asset(
-                  'assets/images/logo_finexe.png',
+                  'assets/images/login_bottom.png',
                   width: MediaQuery.of(context).size.width * 0.65,
                 ),
               ),

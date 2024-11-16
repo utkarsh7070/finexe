@@ -19,7 +19,7 @@ class DrawerScreen extends ConsumerWidget {
     final role = ref.watch(roleName);
     return SafeArea(
       child: Container(
-        height: role == "salesAndCollection" || role == "salesPdAndCollection"
+        height: role == "salesAndCollection" || role == "salesPdAndCollection" || role == 'admin'
             ? displayHeight(context) * 0.40
             : displayHeight(context) * 0.26,
         width: displayWidth(context) * 0.35,
@@ -84,7 +84,7 @@ class DrawerScreen extends ConsumerWidget {
 
                   Visibility(
                     visible: role == "salesAndCollection" ||
-                        role == "salesPdAndCollection",
+                        role == "salesPdAndCollection" || role == 'admin',
                     child: ListTile(
                       // leading: const Icon(Icons.money, color: AppColors.black),
                       title: Column(
