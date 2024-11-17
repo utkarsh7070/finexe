@@ -30,8 +30,8 @@ Map<String, dynamic> _$GetAllCasesResponseModelToJson(
 
 Item _$ItemFromJson(Map<String, dynamic> json) => Item(
       id: json['_id'] as String,
-      employeId: json['employeId'] as String,
-      cibilId: json['cibilId'] as String?,
+      employeId: json['employeId'] as String?,
+      cibilId: json['cibilId'],
       tlPdId: json['tlPdId'],
       creditPdId: json['creditPdId'] as String?,
       customerId: json['customerId'] as String,
@@ -53,11 +53,11 @@ Item _$ItemFromJson(Map<String, dynamic> json) => Item(
       cibilFormComplete: json['cibilFormComplete'] as bool,
       remarkByCibil: json['remarkByCibil'] as String,
       statusByCibil: json['statusByCibil'] as String,
+      statusByFinalApproval: json['statusByFinalApproval'] as String?,
       statusByExternalManager: json['statusByExternalManager'] as String,
+      remarkByExternalManager: json['remarkByExternalManager'] as String?,
       remarkByCreditPd: json['remarkByCreditPd'] as String,
       statusByCreditPd: json['statusByCreditPd'] as String,
-      remarkByPd: json['remarkByPd'] as String?,
-      statusByPd: json['statusByPd'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       customerName: json['customerName'] as String,
@@ -65,14 +65,14 @@ Item _$ItemFromJson(Map<String, dynamic> json) => Item(
       mobileNo: json['mobileNo'],
       productName: json['productName'] as String,
       loanAmount: json['loanAmount'],
-      applicantImage: json['applicantImage'] as String,
+      applicantImage: json['applicantImage'] as String?,
       applicantEmail: json['applicantEmail'] as String,
       externalvendorDetail: ExternalvendorDetail.fromJson(
           json['externalvendorDetail'] as Map<String, dynamic>),
-      remarkMessage: json['remarkMessage'] as String,
-      currentStatus: json['currentStatus'] as String,
-      statusByFinalApproval: json['statusByFinalApproval'] as String?,
-      remarkByExternalManager: json['remarkByExternalManager'] as String?,
+      remarkByPd: json['remarkByPd'] as String?,
+      statusByPd: json['statusByPd'] as String?,
+      remarkMessage: json['remarkMessage'] as String?,
+      currentStatus: json['currentStatus'] as String?,
     );
 
 Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
@@ -100,11 +100,11 @@ Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
       'cibilFormComplete': instance.cibilFormComplete,
       'remarkByCibil': instance.remarkByCibil,
       'statusByCibil': instance.statusByCibil,
+      'statusByFinalApproval': instance.statusByFinalApproval,
       'statusByExternalManager': instance.statusByExternalManager,
+      'remarkByExternalManager': instance.remarkByExternalManager,
       'remarkByCreditPd': instance.remarkByCreditPd,
       'statusByCreditPd': instance.statusByCreditPd,
-      'remarkByPd': instance.remarkByPd,
-      'statusByPd': instance.statusByPd,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
       'customerName': instance.customerName,
@@ -115,10 +115,19 @@ Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
       'applicantImage': instance.applicantImage,
       'applicantEmail': instance.applicantEmail,
       'externalvendorDetail': instance.externalvendorDetail,
+      'remarkByPd': instance.remarkByPd,
+      'statusByPd': instance.statusByPd,
       'remarkMessage': instance.remarkMessage,
       'currentStatus': instance.currentStatus,
-      'statusByFinalApproval': instance.statusByFinalApproval,
-      'remarkByExternalManager': instance.remarkByExternalManager,
+    };
+
+CibilIdClass _$CibilIdClassFromJson(Map<String, dynamic> json) => CibilIdClass(
+      oid: json[r'$oid'],
+    );
+
+Map<String, dynamic> _$CibilIdClassToJson(CibilIdClass instance) =>
+    <String, dynamic>{
+      r'$oid': instance.oid,
     };
 
 ExternalvendorDetail _$ExternalvendorDetailFromJson(
@@ -169,6 +178,7 @@ Vendor _$VendorFromJson(Map<String, dynamic> json) => Vendor(
       approverRemark: json['approverRemark'] as String?,
       approverDate: json['approverDate'] as String?,
       assignDate: json['assignDate'] as String?,
+      approverEmployeeId: json['approverEmployeeId'],
       id: json['_id'] as String,
     );
 
@@ -196,5 +206,6 @@ Map<String, dynamic> _$VendorToJson(Vendor instance) => <String, dynamic>{
       'approverRemark': instance.approverRemark,
       'approverDate': instance.approverDate,
       'assignDate': instance.assignDate,
+      'approverEmployeeId': instance.approverEmployeeId,
       '_id': instance.id,
     };

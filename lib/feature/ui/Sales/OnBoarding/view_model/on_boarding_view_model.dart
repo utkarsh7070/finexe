@@ -64,9 +64,9 @@ final  customerName = Provider.autoDispose<String?>((ref) {
   return name;
 },);
 
-final roleName = Provider.autoDispose<String?>((ref) {
+final roleName = Provider.autoDispose<List<String>?>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider).asData?.value;
-  return  prefs?.getString('roleName');
+  return  prefs?.getStringList('roleName');
 },);
 
 

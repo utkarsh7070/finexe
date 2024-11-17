@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'response_model.g.dart';
 
 @JsonSerializable()
-class PunchInModel{
+class PunchInModel {
   @JsonKey(name: "status")
   bool status;
   @JsonKey(name: "subCode")
@@ -35,6 +35,8 @@ class Items {
   DateTime date;
   @JsonKey(name: "punchInTime")
   DateTime punchInTime;
+  @JsonKey(name: "punchOutTime")
+  dynamic punchOutTime;
   @JsonKey(name: "_id")
   String id;
   @JsonKey(name: "createdAt")
@@ -48,6 +50,7 @@ class Items {
     required this.employeeId,
     required this.date,
     required this.punchInTime,
+    required this.punchOutTime,
     required this.id,
     required this.createdAt,
     required this.updatedAt,
@@ -58,3 +61,4 @@ class Items {
 
   Map<String, dynamic> toJson() => _$ItemsToJson(this);
 }
+

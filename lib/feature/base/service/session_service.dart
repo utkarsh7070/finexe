@@ -6,15 +6,15 @@ class SessionService {
       String? employeeId,
       String? name,
       String? email,
-      String? role}) async {
+        List<String>? role}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setString('token', accessToken!);
     preferences.setString('employeId', employeeId!);
     preferences.setString('name', name ?? '');
     preferences.setString('email', email ?? '');
-    preferences.setString('roleName', role ?? '');
+    preferences.setStringList('roleName', role ?? []);
 
-    print('session values ${preferences.getString('token')}  ${preferences.getString('employeId')}   ${preferences.getString('name')}   ${preferences.getString('email') }  ${preferences.getString('roleName') }');
+    print('session values ${preferences.getString('token')}  ${preferences.getString('employeId')}   ${preferences.getString('name')}   ${preferences.getString('email') }  ${preferences.getStringList('roleName') }');
   }
 
   // Method to retrieve the token

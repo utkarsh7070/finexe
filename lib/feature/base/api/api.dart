@@ -4,7 +4,7 @@ class Api {
   static const String baseUrlStageCollection = 'https://stageapi.fincooper.in/';
   static const String baseUrlStageProduction ='https://prod.fincooper.in/';
 
-  static const String login = '${baseUrl}v1/login/employe';
+  static const String login = '${baseUrl}v1/login/newEmployeeLogin';
   // https://prod.fincooper.in
 
   //------------------------ Sales --------------------------------------------------------

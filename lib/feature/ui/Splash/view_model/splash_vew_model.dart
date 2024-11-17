@@ -17,12 +17,12 @@ final sessionProvider = FutureProvider.autoDispose((ref) async {
   // Fetch the token from SharedPreferences
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? tokens = prefs.getString('token');
-  String? role = prefs.getString('roleName');
+  List<String>? role = prefs.getStringList('roleName');
   bool? punchStatus;
-  print( position.latitude);
-  print( position.longitude);
-  log('stored token:: ' + tokens.toString());
-  log('stored role:: ' + role.toString());
+  print(position.latitude);
+  print(position.longitude);
+  // log('stored token:: ' + tokens.toString());
+  // log('stored role:: ' + role!.first??'');
   if (position != null && tokens != null) {
     Map<String, String> token = {"token": tokens};
     Map<String, double> location = {
@@ -33,16 +33,17 @@ final sessionProvider = FutureProvider.autoDispose((ref) async {
     try {
       var response = await _punchInRepository.checkPunch(location, token);
       var checkAttendanceResponse =
-      CheckAttendanceResponseModel.fromJson(response.data);
-      punchStatus =  checkAttendanceResponse.items.punchIn;
+          CheckAttendanceResponseModel.fromJson(response.data);
+      print(response.data);
+      punchStatus = checkAttendanceResponse.items.punchIn;
     } on DioException catch (error) {
       // DioExceptions.fromDioError(error,context);
     }
   }
   return AsyncValue.data(SesstionModel(
-      token: tokens != null, role: role, puntchStatus: punchStatus));
-    // SesstionModel(
-    //   token: tokens != null, role: role, puntchStatus: punchStatus);
+      token: tokens != null, role: role?.first, puntchStatus: punchStatus));
+  // SesstionModel(
+  //   token: tokens != null, role: role, puntchStatus: punchStatus);
   // Return true if token exists (logged in), false otherwise (not logged in)
 });
 
@@ -58,7 +59,6 @@ class SesstionModel {
 final punchInRepositoryProvider = Provider<PunchInRepositoryImp>((ref) {
   return PunchInRepositoryImp(); // Provides instance of PunchInRepository
 });
-
 
 Future<Position> getCurrentLocation() async {
   await Geolocator.requestPermission();

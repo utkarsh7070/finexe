@@ -142,8 +142,8 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
         state =
             state.copyWith(checkAttendanceResponse: checkAttendanceResponse);
         state = state.copyWith(
-            punchStatus: checkAttendanceResponse.items.viewButton);
-        log('viewButton: ${checkAttendanceResponse.items.viewButton}');
+            punchStatus: checkAttendanceResponse.items.punchIn);
+        log('punchIn Status: ${checkAttendanceResponse.items.punchIn}');
         return checkAttendanceResponse.items.viewButton;
       } on DioException catch (error) {
         print(error);
@@ -157,9 +157,9 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 
   Future<void> clickPunch(BuildContext context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    String? role = preferences.getString('roleName');
+    List<String>? role = preferences.getStringList('roleName');
     if (kDebugMode) {
-      print(role);
+      print(role?.first);
     }
     state = state.copyWith(isLoading: true);
     // if (state.punchStatus) {
@@ -176,7 +176,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
           );
         }
         if (value) {
-          switch (role) {
+          switch (role?.first.toString()) {
             case 'admin':
               log("Navigating to admin dashboard");
               Navigator.pushNamedAndRemoveUntil(

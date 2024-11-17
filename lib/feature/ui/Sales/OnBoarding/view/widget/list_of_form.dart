@@ -69,12 +69,12 @@ class _DashBoardFormList extends ConsumerState<DashBoardFormList>
             height: displayHeight(context) * 0.34,
             child: Stack(
               children: [
-                Align(
-                    alignment: Alignment.bottomRight,
-                    child: Image.asset(
-                      'assets/images/dashboard_design.png',
-                      height: displayHeight(context) * 0.35,
-                    )),
+                // Align(
+                //     alignment: Alignment.bottomRight,
+                //     child: Image.asset(
+                //       'assets/images/dashboard_design.png',
+                //       height: displayHeight(context) * 0.35,
+                //     )),
                 Align(
                     alignment: Alignment.bottomLeft,
                     child: Container(

@@ -111,9 +111,13 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
     await login(email, password, ref, context).then(
       (value) {
         if (value) {
-          print('check punch ${state.value!.checkPunch}');
+          if (kDebugMode) {
+            print('check punch ${state.value?.checkPunch}');
+            print('check punchCheck punch ${state.value?.role}');
+          }
+
           if (state.value!.checkPunch) {
-            switch (state.value!.role) {
+            switch (state.value?.role) {
               case 'admin':
                 log("Navigating to admin dashboard");
 
@@ -196,28 +200,28 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
         }
         if (kDebugMode) {
           print('role:: ${loginResponseModel.items.roleName}');
+          print('role:: ${loginResponseModel.items}');
         }
         // Create session after login
         await SessionService.createSession(
+         role:  loginResponseModel.items.roleName,
             accessToken: loginResponseModel.items.token,
             employeeId: loginResponseModel.items.employeId,
-            name: loginResponseModel.items.roleName,
             email: loginResponseModel.items.userName,
-            role: loginResponseModel.items.roleName);
+            name: loginResponseModel.items.userName,
+           );
         ref.refresh(attendanceProvider);
 
         bool punchStatus = await punchStatusFunction(
             _punchInRepository,
             loginResponseModel.items.token,
-            loginResponseModel.items.roleName,
+            // loginResponseModel.items.roleName.first.toString(),
             context);
         // Update state to indicate success
         state = AsyncValue.data(DataModel(
             checkPunch: punchStatus,
             loginStatus: 'Sucsses',
-            role: loginResponseModel.items.roleName));
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        print(' inLogin set username ${preferences.get('email')}');
+            role: loginResponseModel.items.roleName.first.toString()));
         showCustomSnackBar(context, loginResponseModel.message, Colors.green);
         return true;
         // Return true here to indicate success
@@ -231,9 +235,10 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
         return false;
       }
     } catch (error, stackTrace) {
+      print(error);
+      isLoading = false;
       DioExceptions.fromDioError(error as DioException, context);
       // Handle exceptions and set state to error
-      isLoading = false;
       state = AsyncValue.error(error, stackTrace);
       return false;
     }
@@ -333,9 +338,8 @@ Future<Position> _getCurrentLocation() async {
 }
 
 Future<bool> punchStatusFunction(
-    _punchInRepository, String token, String role, BuildContext context) async {
+    _punchInRepository, String token, BuildContext context) async {
   log('stored token:: $token');
-  log('stored role:: $role');
   Position position = await _getCurrentLocation();
   if (position != null && token != null) {
     Map<String, String> tokens = {"token": token};

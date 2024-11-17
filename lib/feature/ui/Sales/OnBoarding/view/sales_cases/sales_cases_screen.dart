@@ -26,7 +26,7 @@ class _SalesCasesScreen extends ConsumerState<SalesCasesScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ref.read(getCasesData.notifier).fetchAllCases();
+      ref.read(getCasesData.notifier).fetchAllCases();
     });
   }
 
@@ -161,7 +161,7 @@ class _SalesCasesScreen extends ConsumerState<SalesCasesScreen> {
                                                                     .capitalizeEachWord(data
                                                                         .listData[
                                                                             index]
-                                                                        .customerName),
+                                                                        .customerName??''),
                                                                 overflow:
                                                                     TextOverflow
                                                                         .ellipsis,

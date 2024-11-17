@@ -60,6 +60,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           print(isLoggedIn.value?.role);
           Future.microtask(() {
             if (isLoggedIn.value!.token!) {
+              // ---------------------- isLoggedIn.value?.puntchStatus == false --------------------------------
               if (isLoggedIn.value?.puntchStatus == false) {
                 Navigator.pushNamedAndRemoveUntil(
                   context,

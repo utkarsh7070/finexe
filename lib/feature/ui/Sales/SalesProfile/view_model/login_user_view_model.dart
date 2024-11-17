@@ -62,6 +62,7 @@ final loginUserProfileProvider = FutureProvider.autoDispose<LoginUserProfile>((r
       return data;
     } else {
       throw Exception('Failed to load user profile');
+
     }
   } catch (error) {
     // Log the error for debugging
