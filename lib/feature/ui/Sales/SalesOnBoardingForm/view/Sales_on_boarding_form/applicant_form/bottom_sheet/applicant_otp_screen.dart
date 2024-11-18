@@ -125,24 +125,28 @@ class ApplicationVerify extends ConsumerWidget {
                     },
                   ),
                   visible: !personalFormState.isApplicantFormSubmitted,
-                  child: AppButton(
-                    width: displayHeight(context),
-                    textStyle: AppStyles.buttonLightTextStyle,
-                    label: 'Submit',
-                    onTap: () {
-                      personalFormViewModel.submittedApplicantForm().then(
-                        (value) {
-                          if (value) {
-                            showCustomSnackBar(context,
-                                'Applicant form is Submitted', Colors.green);
-                            personalFormViewModel
-                                .updateApplicantFormSubmitted(value);
-                            Navigator.pushNamed(
-                                context, AppRoutes.saleCoApplicationForm1);
-                          }
-                        },
-                      );
-                    },
+                  child: Visibility(
+                    visible: !personalFormState.isLoading,
+                    replacement: const Center(child: CircularProgressIndicator()),
+                    child: AppButton(
+                      width: displayHeight(context),
+                      textStyle: AppStyles.buttonLightTextStyle,
+                      label: 'Submit',
+                      onTap: () {
+                        personalFormViewModel.submittedApplicantForm().then(
+                          (value) {
+                            if (value) {
+                              showCustomSnackBar(context,
+                                  'Applicant form is Submitted', Colors.green);
+                              personalFormViewModel
+                                  .updateApplicantFormSubmitted(value);
+                              Navigator.pushNamed(
+                                  context, AppRoutes.saleCoApplicationForm1);
+                            }
+                          },
+                        );
+                      },
+                    ),
                   ),
                 )
               ],
@@ -157,7 +161,7 @@ class ApplicationVerify extends ConsumerWidget {
                           ConfirmBackDialog()
                               .confirmBackToForm(context: context);
                         },
-                        icon: Icon(Icons.arrow_back)),
+                        icon: const Icon(Icons.arrow_back)),
                     Text(
                       'Enter OTP',
                       style: AppStyles.headingTextStyleXL,
@@ -193,27 +197,31 @@ class ApplicationVerify extends ConsumerWidget {
                 SizedBox(
                   height: displayHeight(context) * 0.04,
                 ),
-                AppButton(
-                  textStyle: const TextStyle(color: AppColors.white),
-                  onTap: () {
-                    // Navigator.pushNamed(context, AppRoutes.saleCoApplicationForm1);
-                    personalFormViewModel.submitOtp().then(
-                      (value) {
-                        if (value) {
-                          showCustomSnackBar(
-                              context, 'Otp is verified', Colors.green);
-                          personalFormViewModel.verifyOtp(value);
-                          // personalFormViewModel
-                          //     .setAutoValueByAadhaar(formListController);
-                          // Navigator.pop(context);
-                          // Navigator.pushNamed(
-                          //     context, AppRoutes.saleCoApplicationForm1);
-                        }
-                      },
-                    );
-                  },
-                  label: 'Continue',
-                  width: displayWidth(context),
+                Visibility(
+                  visible: !personalFormState.isLoading,
+                  replacement: const Center(child: CircularProgressIndicator()),
+                  child: AppButton(
+                    textStyle: const TextStyle(color: AppColors.white),
+                    onTap: () {
+                      // Navigator.pushNamed(context, AppRoutes.saleCoApplicationForm1);
+                      personalFormViewModel.submitOtp().then(
+                        (value) {
+                          if (value) {
+                            showCustomSnackBar(
+                                context, 'Otp is verified', Colors.green);
+                            personalFormViewModel.verifyOtp(value);
+                            // personalFormViewModel
+                            //     .setAutoValueByAadhaar(formListController);
+                            // Navigator.pop(context);
+                            // Navigator.pushNamed(
+                            //     context, AppRoutes.saleCoApplicationForm1);
+                          }
+                        },
+                      );
+                    },
+                    label: 'Continue',
+                    width: displayWidth(context),
+                  ),
                 ),
                 SizedBox(
                   height: displayHeight(context) * 0.01,

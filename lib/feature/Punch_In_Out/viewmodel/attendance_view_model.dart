@@ -317,7 +317,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   }
 }
 
-final punchInRepositoryProvider = Provider<PunchInRepositoryImp>((ref) {
+final punchInRepositoryProvider = Provider.autoDispose<PunchInRepositoryImp>((ref) {
   return PunchInRepositoryImp(); // Provides instance of PunchInRepository
 });
 

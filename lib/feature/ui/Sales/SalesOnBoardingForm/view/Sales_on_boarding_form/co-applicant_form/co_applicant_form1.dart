@@ -247,35 +247,39 @@ class CoApplicantForm1 extends ConsumerWidget {
                       Visibility(
                         visible:
                             !coApplicationFormState[index].isSubmitCoApplicant,
-                        child: AppButton(
-                          isFill: true,
-                          bgColor: AppColors.primaryLight,
-                          borderColor: AppColors.primary,
-                          onTap: () {
-                            coApplicationFormViewModel
-                                .submitCoApplicantForm(index)
-                                .then(
-                              (value) {
-                                if (value) {
-                                  coApplicationFormViewModel.submitCoApplicant(
-                                      value, index);
-                                  // if (index < coApplicationFormState.length - 1 ==
-                                  //     false) {
-                                  //   isSubmitViewModel.state = true;
-                                  // }
-                                  // Navigator.pushNamed(
-                                  //     context, AppRoutes.saleGuarantorForm1);
-                                  // Navigator.pushNamed(context, routeName)
-                                }
-                              },
-                            );
-                          },
-                          label: 'Submit',
-                          textStyle: AppStyles.smallTextStyleRich.copyWith(
-                              color: AppColors.white,
-                              fontSize: FontSize.fontSize16,
-                              fontWeight: FontWeight.w500),
-                          width: displayWidth(context),
+                        child: Visibility(
+                          visible: !coApplicationFormState[index].isLoading,
+                          replacement: const Center(child: CircularProgressIndicator()),
+                          child: AppButton(
+                            isFill: true,
+                            bgColor: AppColors.primaryLight,
+                            borderColor: AppColors.primary,
+                            onTap: () {
+                              coApplicationFormViewModel
+                                  .submitCoApplicantForm(index)
+                                  .then(
+                                (value) {
+                                  if (value) {
+                                    coApplicationFormViewModel.submitCoApplicant(
+                                        value, index);
+                                    // if (index < coApplicationFormState.length - 1 ==
+                                    //     false) {
+                                    //   isSubmitViewModel.state = true;
+                                    // }
+                                    // Navigator.pushNamed(
+                                    //     context, AppRoutes.saleGuarantorForm1);
+                                    // Navigator.pushNamed(context, routeName)
+                                  }
+                                },
+                              );
+                            },
+                            label: 'Submit',
+                            textStyle: AppStyles.smallTextStyleRich.copyWith(
+                                color: AppColors.white,
+                                fontSize: FontSize.fontSize16,
+                                fontWeight: FontWeight.w500),
+                            width: displayWidth(context),
+                          ),
                         ),
                       ),
 

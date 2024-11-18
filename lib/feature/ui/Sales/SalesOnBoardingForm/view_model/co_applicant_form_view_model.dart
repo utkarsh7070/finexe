@@ -472,11 +472,14 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
   }
 
   Future<void> fetchPanFatherName(int index) async {
-    final panRequestModel = PanRequestModel(
-        docType: 522, panNumber: state[index].pan, transId: "12345");
+    final panRequestModel ={
+      "trans_id":"12345",
+      "docType":"522",
+      "docNumber":state[index].pan
+    };
     try {
       final response =
-      await dio.post(Api.panFatherName, data: panRequestModel.toJson());
+      await dio.post(Api.panFatherName, data: panRequestModel);
       if (kDebugMode) {
         print(response.data);
       }
@@ -491,6 +494,10 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         // state = state.copyWith(panFather: response.data['']);
       }
     } on DioException catch (error) {
+      state = [
+        for (final todo in state)
+          if (todo.id == index) todo.copyWith(isLoading: false) else todo
+      ];
       throw Exception(error);
       // throw Exception(error);
     }
@@ -526,9 +533,17 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         }
         return true;
       } else {
+        state = [
+          for (final todo in state)
+            if (todo.id == index) todo.copyWith(isLoading: false) else todo
+        ];
         return false;
       }
     } catch (e) {
+      state = [
+        for (final todo in state)
+          if (todo.id == index) todo.copyWith(isLoading: false) else todo
+      ];
       throw Exception(e);
     }
   }

@@ -259,11 +259,14 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
   }
 
   Future<void> fetchPanFatherName() async {
-    final panRequestModel = PanRequestModel(
-        docType: 522, panNumber: state.pan, transId: "12345");
+    final panRequestModel ={
+      "trans_id":"12345",
+      "docType":"522",
+      "docNumber":state.pan
+    };
     try {
       final response =
-          await dio.post(Api.panFatherName, data: panRequestModel.toJson());
+          await dio.post(Api.panFatherName, data: panRequestModel);
       if (kDebugMode) {
         print(response.data);
       }
@@ -272,6 +275,7 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
             panFather: response.data['items']['msg']['data']['father_name']);
       }
     } on DioException catch (error) {
+      state = state.copyWith(isLoading: false);
       throw Exception(error);
       // throw Exception(error);
     }
@@ -300,11 +304,13 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
         return false;
       }
     } catch (e) {
+      state = state.copyWith(isLoading: false);
       throw Exception(e);
     }
   }
 
   Future<bool> submitGuarantorForm() async {
+    state = state.copyWith(isLoading: true);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final token = sharedPreferences.getString('token');
     final customerId = sharedPreferences.getString('customerId');
@@ -346,9 +352,11 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     print(response.statusMessage);
     print(response.statusCode);
     if (response.statusCode == 200) {
+      state = state.copyWith(isLoading: false);
       SubmitGuarantorResponseModel.fromJson(response.data);
       return true;
     } else {
+      state = state.copyWith(isLoading: false);
       throw Exception('Failed to load data');
     }
   }
@@ -389,7 +397,7 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
         await Permission.videos.status.isGranted) {
       try {
         XFile? pickedImage =
-            await picker.pickImage(source: ImageSource.gallery);
+            await picker.pickImage(source: ImageSource.camera);
         print('image before null condition  ${pickedImage!.path.toString()}');
         if (pickedImage != null) {
           print('image ${pickedImage.path}');

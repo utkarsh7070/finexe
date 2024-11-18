@@ -31,6 +31,8 @@ Items _$ItemsFromJson(Map<String, dynamic> json) => Items(
       viewButton: json['viewButton'] as bool,
       punchIn: json['punchIn'] as bool,
       punchOut: json['punchOut'] as bool,
+      punchInTime: DateTime.parse(json['punchInTime'] as String),
+      punchOutTime: DateTime.parse(json['punchOutTime'] as String),
     );
 
 Map<String, dynamic> _$ItemsToJson(Items instance) => <String, dynamic>{
@@ -38,4 +40,6 @@ Map<String, dynamic> _$ItemsToJson(Items instance) => <String, dynamic>{
       'viewButton': instance.viewButton,
       'punchIn': instance.punchIn,
       'punchOut': instance.punchOut,
+      'punchInTime': instance.punchInTime.toIso8601String(),
+      'punchOutTime': instance.punchOutTime.toIso8601String(),
     };

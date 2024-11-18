@@ -1,5 +1,5 @@
 // user_profile.dart
-class LoginUserProfile {
+class HRMSUserProfile {
   final String employeeId;
   final String employeName;
   final String email;
@@ -9,8 +9,13 @@ class LoginUserProfile {
   final String fatherName;
   final String employeePhoto;
   final String employeUniqueId;
+  final String punchInTime;
+  final String punchOutTime;
 
-  LoginUserProfile({
+
+  HRMSUserProfile({
+    required this.punchInTime,
+    required this.punchOutTime,
     required this.employeeId,
     required this.employeName,
     required this.email,
@@ -22,8 +27,10 @@ class LoginUserProfile {
     required this.employeUniqueId,
   });
 
-  factory LoginUserProfile.fromJson(Map<String, dynamic> json) {
-    return LoginUserProfile(
+  factory HRMSUserProfile.fromJson(Map<String, dynamic> json) {
+    return HRMSUserProfile(
+      punchInTime: json['punchInTime'] ?? '',
+      punchOutTime: json['punchOutTime'] ?? '',
       employeeId: json['_id'] ?? '',
       employeName: json['employeName'] ?? '',
       email: json['email'] ?? '',

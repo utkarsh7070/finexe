@@ -38,16 +38,23 @@ class Items {
   bool punchIn;
   @JsonKey(name: "punchOut")
   bool punchOut;
+  @JsonKey(name: "punchInTime")
+  DateTime punchInTime;
+  @JsonKey(name: "punchOutTime")
+  DateTime punchOutTime;
 
   Items({
     required this.allowed,
     required this.viewButton,
     required this.punchIn,
     required this.punchOut,
+    required this.punchInTime,
+    required this.punchOutTime,
   });
 
   factory Items.fromJson(Map<String, dynamic> json) => _$ItemsFromJson(json);
 
   Map<String, dynamic> toJson() => _$ItemsToJson(this);
 }
+
 

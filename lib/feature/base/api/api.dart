@@ -91,6 +91,11 @@ class Api {
   // https://stageapi.fincooper.in/v1/login/updatePassword
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
   // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
+  //-------------------------------------HRMS------------------------------
+  static const String submitLeaveRequest = '${baseUrl}v1/hrms/leave/addEmployeeLeave';
+
+  static const String getLeaveDetails = '${baseUrl}v1/hrms/leave/getLeaveForEmployee';
+  static const String getAttendanceDetails = '${baseUrl}v1/adminMaster/employe/monthlyAttendance';
 
   //-------------------------------------------------------------------------------------------
   static Duration connectionTimeout = const Duration(milliseconds: 15000);

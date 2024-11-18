@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../base/routes/routes.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
+import '../../../HRMS/LeaveManagement/view/hrms_dashboard_screen.dart';
 import '../../../Sales/DashBoard/view/dash_board.dart';
 import '../home_collection_model/user_profile_model.dart';
 import '../home_collection_viewmodel/fetchUserProfile.dart';
@@ -24,8 +25,8 @@ class DashBoardSideBar extends ConsumerWidget {
     return SafeArea(
       child: Container(
         height: role!.contains('collection') || role.contains('pd')
-            ? displayHeight(context) * 0.40
-            : displayHeight(context) * 0.26,
+            ? displayHeight(context) * 0.50
+            : displayHeight(context) * 0.36,
         width: displayWidth(context) * 0.35,
         decoration: const BoxDecoration(
             color: AppColors.white,
@@ -139,6 +140,36 @@ class DashBoardSideBar extends ConsumerWidget {
 
                   const Divider(
                     color: Colors.white,
+                    height: 5,
+                    thickness: 1,
+                    indent: 20,
+                    endIndent: 20,
+                  ),
+                  ListTile(
+                    title: Column(
+                      children: [
+                        Image.asset(
+                          'assets/images/hrms_icon.png',
+                          width: displayWidth(context) * 0.10,
+                          height: displayHeight(context) * 0.07,
+                        ),
+                        const Text(
+                          'HRMS',
+                          style: TextStyle(color: AppColors.black),
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>  HRMSDashboardScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(
+                    color: Colors.grey,
                     height: 5,
                     thickness: 1,
                     indent: 20,

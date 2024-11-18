@@ -134,24 +134,28 @@ class GuarantorBottomSheet extends ConsumerWidget {
                 },
               ),
               visible: !personalFormState.isApplicantFormSubmitted,
-              child: AppButton(
-                width: displayWidth(context),
-                textStyle: AppStyles.buttonLightTextStyle,
-                label: 'Submit',
-                onTap: () {
-                  personalFormViewModel.submitGuarantorForm().then(
-                        (value) {
-                      if (value) {
-                        showCustomSnackBar(context,
-                            'Applicant form is Submitted', Colors.green);
-                        personalFormViewModel
-                            .updateApplicantFormSubmitted(value);
-                        // Navigator.pushNamed(
-                        //     context, AppRoutes.saleCoApplicationForm1);
-                      }
-                    },
-                  );
-                },
+              child: Visibility(
+                visible: !personalFormState.isLoading,
+                replacement: const Center(child: CircularProgressIndicator()),
+                child: AppButton(
+                  width: displayWidth(context),
+                  textStyle: AppStyles.buttonLightTextStyle,
+                  label: 'Submit',
+                  onTap: () {
+                    personalFormViewModel.submitGuarantorForm().then(
+                          (value) {
+                        if (value) {
+                          showCustomSnackBar(context,
+                              'Applicant form is Submitted', Colors.green);
+                          personalFormViewModel
+                              .updateApplicantFormSubmitted(value);
+                          // Navigator.pushNamed(
+                          //     context, AppRoutes.saleCoApplicationForm1);
+                        }
+                      },
+                    );
+                  },
+                ),
               ),
             )
           ],

@@ -7,6 +7,7 @@ import '../../../../base/routes/routes.dart';
 import '../../../../base/utils/namespase/display_size.dart';
 import '../../../Collection/Collection_home_dashboard/Widget/dialog/collection_logout_dialog.dart';
 import '../../../Collection/Collection_home_dashboard/home_collection_view/DashboardScreen.dart';
+import '../../../HRMS/LeaveManagement/view/hrms_dashboard_screen.dart';
 import '../../OnBoarding/view_model/on_boarding_view_model.dart';
 import '../view_model/dashboard_view_model.dart';
 
@@ -21,8 +22,8 @@ class DrawerScreen extends ConsumerWidget {
       child: Container(
         height: role!.contains('collection') || role.contains('pd') || role.contains('admin')
         // role == "salesAndCollection" || role == "salesPdAndCollection" || role == 'admin'
-            ? displayHeight(context) * 0.40
-            : displayHeight(context) * 0.26,
+            ? displayHeight(context) * 0.50
+            : displayHeight(context) * 0.36,
         width: displayWidth(context) * 0.35,
         decoration: const BoxDecoration(
             color: AppColors.white,
@@ -116,6 +117,38 @@ class DrawerScreen extends ConsumerWidget {
                       indent: 20,
                       endIndent: 20,
                     ),
+                  ),
+
+
+                  ListTile(
+                    title: Column(
+                      children: [
+                        Image.asset(
+                          'assets/images/hrms_icon.png',
+                          width: displayWidth(context) * 0.10,
+                          height: displayHeight(context) * 0.07,
+                        ),
+                        const Text(
+                          'HRMS',
+                          style: TextStyle(color: AppColors.black),
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>  HRMSDashboardScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(
+                    color: Colors.grey,
+                    height: 5,
+                    thickness: 1,
+                    indent: 20,
+                    endIndent: 20,
                   ),
 
                   ListTile(

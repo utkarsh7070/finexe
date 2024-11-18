@@ -270,11 +270,16 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
   }
 
   Future<void> fetchPanFatherName() async {
-    final panRequestModel = PanRequestModel(
-        docType: 522, panNumber: state.pan, transId: "12345");
+    // final panRequestModel = PanRequestModel(
+    //     docType: 522, panNumber: state.pan, transId: "12345");
+    final panRequestModel ={
+      "trans_id":"12345",
+      "docType":"522",
+      "docNumber":state.pan
+    };
     try {
       final response =
-          await dio.post(Api.panFatherName, data: panRequestModel.toJson());
+          await dio.post(Api.panFatherName, data: panRequestModel);
       if (kDebugMode) {
         print(response.data);
       }
@@ -282,6 +287,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
         state = state.copyWith(panFather: response.data['items']['msg']['data']['father_name']);
       }
     } on DioException catch (error) {
+      state = state.copyWith(isLoading: false);
       throw Exception(error);
       // throw Exception(error);
     }
@@ -312,15 +318,18 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
         }
         return true;
       } else {
+        state = state.copyWith(isLoading: false);
         return false;
       }
     } on DioException catch (error) {
+      state = state.copyWith(isLoading: false);
       DioExceptions.fromDioError(error, context);
       throw Exception(error);
     }
   }
 
   Future<bool> submittedApplicantForm() async {
+    state = state.copyWith(isLoading: true);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final token = sharedPreferences.getString('token');
     final employeId = sharedPreferences.getString('employeId');
@@ -364,9 +373,11 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     print(response.data);
     print(response.statusCode);
     if (response.statusCode == 200) {
+      state = state.copyWith(isLoading: false);
       SubmitApplicantResponseModel.fromJson(response.data);
       return true;
     } else {
+      state = state.copyWith(isLoading: false);
       throw Exception('Failed to load data');
     }
   }
