@@ -6,8 +6,18 @@ import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boardi
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/referance/referance_details.dart';
 import 'package:finexe/feature/ui/Splash/view/splash.dart';
 import 'package:flutter/material.dart';
+import '../../Eod/view/addEod.dart';
+import '../../Eod/view/all_task.dart';
+import '../../Eod/view/bodlist.dart';
 import '../../ui/Collection/Collection cases/view/cases_screen.dart';
 import '../../ui/Collection/Collection cases/view/visitPending/more_info_screen.dart';
+import '../../ui/PD/view/pd_approved.dart';
+import '../../ui/PD/view/pd_dashboard_screen.dart';
+import '../../ui/PD/view/pd_filled_form.dart';
+import '../../ui/PD/view/pd_form_screen.dart';
+import '../../ui/PD/view/pd_pending.dart';
+import '../../ui/PD/view/pd_reject.dart';
+import '../../ui/PD/view/pd_request.dart';
 import '../../ui/Sales/DashBoard/view/dash_board.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/applicant_form/applicant_form_2.dart';
 import '../../ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/applicant_form/application_form3.dart';
@@ -47,6 +57,16 @@ class AppRoutes {
   static const String moreInfo = '/moreInfo';
   static const String collectionHome = '/collectionHome';
   static const String attendanceScreen = '/attendanceScreen';
+  static const String pdscreen = '/pdscreen';
+  static const String pdpending = '/pdpending';
+  static const String pdrequest = '/pdrequest';
+  static const String pdformscreen = '/pdformscreen';
+  static const String pdreject = '/pdreject';
+  static const String pdapprove = '/pdapprove'; //BODScreen
+  static const String bodscreen = '/bodscreen';
+  static const String eodscreen = '/eodscreen';
+  static const String getalltask = '/getalltask'; //CustomerDetail
+  static const String pdfilledform = '/pdfilledform';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -239,6 +259,26 @@ class AppRoutes {
             return CollectionMoreInfoScreen(index: index);
           },
         );
+      case pdfilledform:
+        return MaterialPageRoute(builder: (_) => CustomerDetail());
+      case pdformscreen:
+        return MaterialPageRoute(builder: (_) => const PdFormScreen());
+      case eodscreen:
+        return MaterialPageRoute(builder: (_) => const EODScreenAdd());
+      case bodscreen:
+        return MaterialPageRoute(builder: (_) => BODScreen());
+      case getalltask:
+        return MaterialPageRoute(builder: (_) => GetAllTask());
+      case pdpending:
+        return MaterialPageRoute(builder: (_) => const PDPendingScreen());
+      case pdscreen:
+        return MaterialPageRoute(builder: (_) => const PdScreen());
+      case pdrequest:
+        return MaterialPageRoute(builder: (_) => const PdRequestScreen());
+      case pdreject:
+        return MaterialPageRoute(builder: (_) => const PdRejectScreen());
+      case pdapprove:
+        return MaterialPageRoute(builder: (_) => const PdApprovedScreen());
 
       default:
         return MaterialPageRoute(

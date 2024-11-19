@@ -51,7 +51,6 @@ class HRMSDashboardScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Display the employee's photo
-                        if (userProfile.employeePhoto.isNotEmpty)
                           Center(
                             child: CircleAvatar(
                               backgroundColor: Colors.green.shade200,

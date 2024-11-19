@@ -76,8 +76,11 @@ class NewLoanViewModel extends StateNotifier<PhoneNumberState> {
     FormData dioFormData = formData.toFormData();
     final response = await dio.post(Api.submitNewLoan,
         data: dioFormData, options: Options(headers: {'token': token}));
-    print(response.statusMessage);
-    print(response.statusCode);
+    if (kDebugMode) {
+      print(response.statusMessage);
+      print(response.statusCode);
+    }
+
     if (response.statusCode == 200) {
       SubmitNewLoanResponseModel submitNewLoanResponseModel =
           SubmitNewLoanResponseModel.fromJson(response.data);
@@ -97,7 +100,9 @@ class NewLoanViewModel extends StateNotifier<PhoneNumberState> {
         (pow((1 + monthlyRate), state.tenure.toInt()) - 1);
     String formattedNumber = emi.toStringAsFixed(1);
     final emiState = double.parse(formattedNumber);
-    print(emi);
+    if (kDebugMode) {
+      print(emi);
+    }
     return emiState;
   }
 

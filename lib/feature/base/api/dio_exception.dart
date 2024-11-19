@@ -31,7 +31,7 @@ class DioExceptions implements Exception {
       case DioExceptionType.badResponse:
         errorModel=ErrorModel.fromJson(error.response!.data);
         showCustomSnackBar(context,
-            DioExceptionType.badCertificate.name, Colors.red);
+            DioExceptionType.badResponse.name, Colors.red);
 
         // Get.snackbar('Finexe', errorModel!.message,backgroundColor: Colors.red.shade500,colorText: Colors.white);
         break;

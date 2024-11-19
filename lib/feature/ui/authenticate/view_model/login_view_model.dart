@@ -348,7 +348,7 @@ Future<bool> punchStatusFunction(
       "longitude": position.longitude,
     };
     try {
-      var response = await _punchInRepository.checkPunch(location, tokens);
+      Response response = await _punchInRepository.checkPunch(location, tokens);
       var checkAttendanceResponse =
           CheckAttendanceResponseModel.fromJson(response.data);
       return checkAttendanceResponse.items.punchIn;

@@ -41,7 +41,7 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this,initialIndex: 1);
+    _tabController = TabController(length: 4, vsync: this,initialIndex: 0);
     initialiseRoamSdk();
   }
   @override
@@ -76,7 +76,7 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
 
       listenToLocationUpdates();
 
-      trackingTimer = Timer(Duration(minutes: 15), () {
+      trackingTimer = Timer(Duration(hours: 12), () {
         Roam.stopTracking();
         print("Tracking stopped after 15 minutes.");
       });

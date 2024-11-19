@@ -1,5 +1,6 @@
 // viewmodels/lead_generation_viewmodel.dart
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:finexe/feature/ui/Sales/LeadGeneration/model/get_all_branch_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,11 +16,11 @@ import '../../NewLone/model/get_All_Product_model.dart';
 import '../model/lead_generation_model.dart';
 
 
-
 final leadGenerationViewModelProvider = Provider((ref) => LeadGenerationViewModel());
 
 class LeadGenerationViewModel {
   final Dio _dio = Dio();
+  String? uploadedSelfieUrl;
 
   // Static dropdown data for loan amount and monthly income
   final List<String> loanAmountOptions = [
@@ -53,33 +54,62 @@ class LeadGenerationViewModel {
     }
   });
 
+  Future<String?> uploadImage(File image) async {
+    try {
+      String? token = await SessionService.getToken();
 
+      final formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(image.path),
+      });
 
+      // Log request details
+      print("Uploading image with FormData: ${formData.fields}");
+      print("Headers: $token");
 
-  Future<void> leadFormSubmit(LeadGenerationModel leadData,BuildContext context) async {
+      final response = await _dio.post(
+        Api.uploadImageCollection, // API endpoint
+        data: formData,
+        options: Options(headers: {"token": token}),
+      );
+
+      print('Lead Generated Response ${response.data}');
+
+      // Access the correct key
+      if (response.statusCode == 200 && response.data['items'] != null) {
+        return response.data['items']['image']; // Access 'image' from 'items'
+      } else {
+        throw Exception('Image upload failed');
+      }
+    } catch (e) {
+      log('Error uploading image: $e');
+      return null;
+    }
+  }
+
+  Future<void> leadFormSubmit(LeadGenerationModel leadData, BuildContext context) async {
     try {
       String? token = await SessionService.getToken();
       print('lead input ${leadData.toJson()}');
-      final response = await _dio.post(Api.leadFormSubmit, // Replace with your API endpoint
+      final response = await _dio.post(
+        Api.leadFormSubmit,
         data: leadData.toJson(),
-          options: Options(headers: {"token": token})
+        options: Options(headers: {"token": token}),
       );
 
       if (response.statusCode == 200) {
         log('Lead Generated Successfully');
         print('Lead Generated Response ${response.data}');
         showCustomSnackBar(context, 'Lead Generated Successfully', Colors.green);
-        //Navigator.of(context).pop();
-        Navigator.pop(context,true);
-        // Handle success response
+        Navigator.pop(context, true);
       } else {
         throw Exception('Failed to load data');
       }
     } catch (e) {
-      // Handle error
       print("Error submitting form: $e");
+      showCustomSnackBar(context, 'Error submitting form: $e', Colors.red);
     }
   }
+
 }
 
 final fetchAllBranchProvider = FutureProvider.autoDispose<List<Branch>>((ref) async {

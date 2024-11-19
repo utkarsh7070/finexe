@@ -87,12 +87,12 @@ final guarantorRememberProvider = StateProvider<bool>(
 );
 
 final guarantorFocusProvider =
-    StateNotifierProvider<GuarantorFocusProvider, Map<String, bool>>((ref) {
+    StateNotifierProvider.autoDispose<GuarantorFocusProvider, Map<String, bool>>((ref) {
   return GuarantorFocusProvider();
 });
 
 final guarantorViewModelProvider =
-    StateNotifierProvider<GuarantorViewModel, GuarantorKycFormState>((ref) {
+    StateNotifierProvider.autoDispose<GuarantorViewModel, GuarantorKycFormState>((ref) {
   final dio = ref.read(dioProvider);
   return GuarantorViewModel(dio);
 });

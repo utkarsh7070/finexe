@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/pan_response_model.dart';
-import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/submit_co_applicant_response_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +14,6 @@ import '../model/request_model/aadhaar_number_request_model.dart';
 import '../model/request_model/aadhaar_otp_request_model.dart';
 import '../model/request_model/pan_request_model.dart';
 import '../model/request_model/submit_co_applicant_form_data.dart';
-import '../model/request_model/submite_applicant_form_data_model.dart';
 import '../model/responce_model/aadhaar_otp_responce_model.dart';
 import '../model/responce_model/aadhar_number_response_model.dart';
 import '../view/Sales_on_boarding_form/co-applicant_form/co_applicant_form1.dart';
@@ -249,7 +247,9 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
       for (final todo in state)
         if (todo.id == index) todo.copyWith(isLoading: true) else todo
     ];
-    await fetchPanVerify(index);
+    if(dropDownController.dropDownValue?.value == 'panCard'){
+      await fetchPanVerify(index);
+    }
     print(state[index].aadhaar);
     final aadhaarNumberRequestModel = AadhaarNumberRequestModel(
         aadharNo: state[index].aadhaar.trim().toString(),

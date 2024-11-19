@@ -35,130 +35,146 @@ class GuarantorBottomSheet extends ConsumerWidget {
     return Visibility(
       visible: !personalFormState.isOtpVerify,
       replacement: Container(
-        padding: EdgeInsets.only(top: displayHeight(context)*0.10,left: 16,right: 16),
-        child: Column(
-          children: [
-            Text(
-              'Aadhaar Details',
-              style: AppStyles.headingTextStyleXL2
-                  .copyWith(color: AppColors.black),
-            ),
-            SizedBox(
-              height: displayHeight(context) * 0.04,
-            ),
-
-            Text(
-              'Guarantor Aadhaar Details',
-              style: AppStyles.headingTextStyleXL2.copyWith(
-                  color: AppColors.black,
-                  fontSize: FontSize.fontSize16),
-            ),
-            SizedBox(
-              height: displayHeight(context) * 0.01,
-            ),
-            commonText(
-                context: context,
-                heading: 'Name',
-                value: personalFormState.fullName),
-            commonText(
-                context: context,
-                heading: 'Care Of',
-                value: personalFormState.fatherName),
-            commonText(
-                context: context,
-                heading: 'Date Of Birth',
-                value: personalFormState.dob),
-            commonText(
-                context: context,
-                heading: 'Gender',
-                value: personalFormState.gender),
-            commonText(
-                context: context,
-                heading: 'Age',
-                value: personalFormState.age),
-            commonText(
-                context: context,
-                heading: 'Address',
-                value:
-                '${personalFormState.communicationAddress1} ${personalFormState.communicationAddress2} ${personalFormState.communicationCity} ${personalFormState.communicationDistrict} ${personalFormState.communicationPinCode}'),
-            SizedBox(
-              height: displayHeight(context) * 0.01,
-            ),
-            Text(
-              'Guarantor Pan Details',
-              style: AppStyles.headingTextStyleXL2.copyWith(
-                  color: AppColors.black,
-                  fontSize: FontSize.fontSize16),
-            ),
-            SizedBox(
-              height: displayHeight(context) * 0.01,
-            ),
-            commonText(
-                context: context,
-                heading: 'Name',
-                value: personalFormState.panName),
-            commonText(
-                context: context,
-                heading: 'Date Of Birth',
-                value: personalFormState.panDob),
-            commonText(
-                context: context,
-                heading: 'Gender',
-                value: personalFormState.panGender),
-            SizedBox(height: displayHeight(context)*0.04,),
-            Visibility(
-              replacement: AppButton(
-                width: displayHeight(context),
-                label: 'Payment',
-                textStyle: AppStyles.buttonLightTextStyle,
-                onTap: () {
-                  personalFormViewModel.paymentInitiate().then(
-                        (value) {
-                      Navigator.pop(context);
-                      if (kDebugMode) {
-                        print(getMobileNo.phoneNumber);
-                      }
-                      if (value.items.customerDetail.loginFees != 0) {
-                        paymentViewModel.payWithRazorPay(
-                            amount: value.items.customerDetail.loginFees,
-                            mobile: getMobileNo.phoneNumber,
-                            orderId: value.items.customerDetail.orderId);
-                        // FormSubmitDialog().formSubmitDialog(context: context);
-                      } else {
-                        FormSubmitDialog().formSubmitDialog(context: context);
-                      }
-                    },
-                  );
-                  // Navigator.pushNamed(
-                  //     context, AppRoutes.saleCoApplicationForm1);
-                },
+        width: displayWidth(context),
+        height: displayHeight(context),
+        color: AppColors.primary,
+        padding: const EdgeInsets.only(top: 80),
+        // padding: EdgeInsets.only(top: displayHeight(context)*0.10,left: 16,right: 16),
+        child: Container(
+          height: displayHeight(context),
+          padding: const EdgeInsets.all(20),
+          decoration: const BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+          child: Column(
+            children: [
+              Text(
+                'Aadhaar Details',
+                style: AppStyles.headingTextStyleXL2
+                    .copyWith(color: AppColors.black),
               ),
-              visible: !personalFormState.isApplicantFormSubmitted,
-              child: Visibility(
-                visible: !personalFormState.isLoading,
-                replacement: const Center(child: CircularProgressIndicator()),
-                child: AppButton(
-                  width: displayWidth(context),
+              SizedBox(
+                height: displayHeight(context) * 0.04,
+              ),
+
+              Text(
+                'Guarantor Aadhaar Details',
+                style: AppStyles.headingTextStyleXL2.copyWith(
+                    color: AppColors.black,
+                    fontSize: FontSize.fontSize16),
+              ),
+              SizedBox(
+                height: displayHeight(context) * 0.01,
+              ),
+              commonText(
+                  context: context,
+                  heading: 'Name',
+                  value: personalFormState.fullName),
+              commonText(
+                  context: context,
+                  heading: 'Care Of',
+                  value: personalFormState.fatherName),
+              commonText(
+                  context: context,
+                  heading: 'Date Of Birth',
+                  value: personalFormState.dob),
+              commonText(
+                  context: context,
+                  heading: 'Gender',
+                  value: personalFormState.gender),
+              commonText(
+                  context: context,
+                  heading: 'Age',
+                  value: personalFormState.age),
+              commonText(
+                  context: context,
+                  heading: 'Address',
+                  value:
+                  '${personalFormState.communicationAddress1} ${personalFormState.communicationAddress2} ${personalFormState.communicationCity} ${personalFormState.communicationDistrict} ${personalFormState.communicationPinCode}'),
+              SizedBox(
+                height: displayHeight(context) * 0.01,
+              ),
+              Text(
+                'Guarantor Pan Details',
+                style: AppStyles.headingTextStyleXL2.copyWith(
+                    color: AppColors.black,
+                    fontSize: FontSize.fontSize16),
+              ),
+              SizedBox(
+                height: displayHeight(context) * 0.01,
+              ),
+              commonText(
+                  context: context,
+                  heading: 'Name',
+                  value: personalFormState.panName),
+              commonText(
+                  context: context,
+                  heading: 'Father Name',
+                  value: personalFormState.panFather),
+              commonText(
+                  context: context,
+                  heading: 'Date Of Birth',
+                  value: personalFormState.panDob),
+              commonText(
+                  context: context,
+                  heading: 'Gender',
+                  value: personalFormState.panGender),
+              SizedBox(height: displayHeight(context)*0.04,),
+              Visibility(
+                replacement: AppButton(
+                  width: displayHeight(context),
+                  label: 'Payment',
                   textStyle: AppStyles.buttonLightTextStyle,
-                  label: 'Submit',
                   onTap: () {
-                    personalFormViewModel.submitGuarantorForm().then(
+                    personalFormViewModel.paymentInitiate().then(
                           (value) {
-                        if (value) {
-                          showCustomSnackBar(context,
-                              'Applicant form is Submitted', Colors.green);
-                          personalFormViewModel
-                              .updateApplicantFormSubmitted(value);
-                          // Navigator.pushNamed(
-                          //     context, AppRoutes.saleCoApplicationForm1);
+                        Navigator.pop(context);
+                        if (kDebugMode) {
+                          print(getMobileNo.phoneNumber);
+                        }
+                        if (value.items.customerDetail.loginFees != 0) {
+                          paymentViewModel.payWithRazorPay(
+                              amount: value.items.customerDetail.loginFees,
+                              mobile: getMobileNo.phoneNumber,
+                              orderId: value.items.customerDetail.orderId);
+                          // FormSubmitDialog().formSubmitDialog(context: context);
+                        } else {
+                          FormSubmitDialog().formSubmitDialog(context: context);
                         }
                       },
                     );
+                    // Navigator.pushNamed(
+                    //     context, AppRoutes.saleCoApplicationForm1);
                   },
                 ),
-              ),
-            )
-          ],
+                visible: !personalFormState.isApplicantFormSubmitted,
+                child: Visibility(
+                  visible: !personalFormState.isLoading,
+                  replacement: const Center(child: CircularProgressIndicator()),
+                  child: AppButton(
+                    width: displayWidth(context),
+                    textStyle: AppStyles.buttonLightTextStyle,
+                    label: 'Submit',
+                    onTap: () {
+                      personalFormViewModel.submitGuarantorForm().then(
+                            (value) {
+                          if (value) {
+                            showCustomSnackBar(context,
+                                'Applicant form is Submitted', Colors.green);
+                            personalFormViewModel
+                                .updateApplicantFormSubmitted(value);
+                            // Navigator.pushNamed(
+                            //     context, AppRoutes.saleCoApplicationForm1);
+                          }
+                        },
+                      );
+                    },
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
       child: Container(
@@ -197,24 +213,28 @@ class GuarantorBottomSheet extends ConsumerWidget {
             SizedBox(
               height: displayHeight(context) * 0.04,
             ),
-            AppButton(
-              textStyle: const TextStyle(color: AppColors.white),
-              onTap: () {
-                personalFormViewModel.fetchOtp().then(
-                  (value) {
-                    if (value) {
-                      personalFormViewModel.verifyOtp(value);
-                      //--------------------payment -----------------------
+            Visibility(
+              visible: !personalFormState.isLoading,
+              replacement: const Center(child: CircularProgressIndicator()),
+              child: AppButton(
+                textStyle: const TextStyle(color: AppColors.white),
+                onTap: () {
+                  personalFormViewModel.fetchOtp().then(
+                    (value) {
+                      if (value) {
+                        personalFormViewModel.verifyOtp(value);
+                        //--------------------payment -----------------------
 
-                      // --------------------------------------------------------------
-                      // Navigator.pushNamedAndRemoveUntil(context, AppRoutes.dashBoard,(route) => false,);
-                      // personalFormViewModel.setAutoValueByAadhaar(formListController);
-                    }
-                  },
-                );
-              },
-              label: 'Continue',
-              width: displayWidth(context),
+                        // --------------------------------------------------------------
+                        // Navigator.pushNamedAndRemoveUntil(context, AppRoutes.dashBoard,(route) => false,);
+                        // personalFormViewModel.setAutoValueByAadhaar(formListController);
+                      }
+                    },
+                  );
+                },
+                label: 'Continue',
+                width: displayWidth(context),
+              ),
             ),
             SizedBox(
               height: displayHeight(context) * 0.01,

@@ -19,9 +19,11 @@ class AppTextField extends StatelessWidget {
   final VoidCallback? prefixOnTap;
   final double? height;
   final ValueChanged<String>? onFiledSubmitted;
+  final int? maximumLines;
 
   const AppTextField(
       {super.key,
+        this.maximumLines,
         this.hint,
         this.obscureText = false,
         this.errorText,
@@ -48,6 +50,7 @@ class AppTextField extends StatelessWidget {
       alignment: Alignment.center,
       child: Center(
         child: TextFormField(
+          maxLines: maximumLines,
           validator: onValidate,
           autofocus: true,
           obscureText: obscureText,

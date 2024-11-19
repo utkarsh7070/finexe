@@ -100,7 +100,8 @@ class ApplicationDetails extends ConsumerWidget {
                           child: Image.file(
                               File(personalFormState.applicantPhotoFilePath)),
                         ),
-                        child: UploadBox(
+                        child:
+                        UploadBox(
                           isImage: true,
                           height: displayHeight(context) * 0.16,
                           width: displayWidth(context),
@@ -459,10 +460,10 @@ class ApplicationDetails extends ConsumerWidget {
                         //       color: AppColors.boxBagGray,
                         //       width: displayWidth(context) * 0.12,
                         //       child: IconButton(
-                        //         icon: const Icon(Icons.check),
-                        //         onPressed: () {},
-                        //       ),
-                        //     )
+                    //         icon: const Icon(Icons.check),
+                    //         onPressed: () {},
+                    //       ),
+                    //     )
                         //   ],
                         // ),
                       ],

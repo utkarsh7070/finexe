@@ -34,8 +34,7 @@ class _SalesCasesScreen extends ConsumerState<SalesCasesScreen> {
   Widget build(BuildContext context) {
     final data = ref.watch(getCasesData);
     final dataViewModel = ref.read(getCasesData.notifier);
-    return
-      Container(
+    return Container(
         width: displayWidth(context),
         height: displayHeight(context),
         color: AppColors.primary,
@@ -112,7 +111,8 @@ class _SalesCasesScreen extends ConsumerState<SalesCasesScreen> {
                           itemBuilder: (context, index) {
                             return GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(context, AppRoutes.casesDetails   );
+                                Navigator.pushNamed(
+                                    context, AppRoutes.casesDetails);
                               },
                               child: SizedBox(
                                 height: displayHeight(context) * 0.08,
@@ -126,7 +126,8 @@ class _SalesCasesScreen extends ConsumerState<SalesCasesScreen> {
                                         child: Stack(
                                           children: [
                                             SizedBox(
-                                              width: displayWidth(context) * 0.85,
+                                              width:
+                                                  displayWidth(context) * 0.85,
                                               child: Card(
                                                   shape: RoundedRectangleBorder(
                                                     side: const BorderSide(
@@ -158,10 +159,9 @@ class _SalesCasesScreen extends ConsumerState<SalesCasesScreen> {
                                                             children: [
                                                               Text(
                                                                 CaplitalizeSentence()
-                                                                    .capitalizeEachWord(data
-                                                                        .listData[
-                                                                            index]
-                                                                        .customerName??''),
+                                                                    .capitalizeEachWord(
+                                                                        data.listData[index].customerName ??
+                                                                            ''),
                                                                 overflow:
                                                                     TextOverflow
                                                                         .ellipsis,
@@ -218,7 +218,8 @@ class _SalesCasesScreen extends ConsumerState<SalesCasesScreen> {
                                                           ],
                                                         ),
                                                         const Icon(
-                                                          CupertinoIcons.forward,
+                                                          CupertinoIcons
+                                                              .forward,
                                                           size: 22,
                                                           color: AppColors.gray,
                                                         ),
@@ -285,21 +286,14 @@ class _SalesCasesScreen extends ConsumerState<SalesCasesScreen> {
                                               child: Align(
                                                 alignment: Alignment.centerLeft,
                                                 child: SizedBox(
-                                                    width: displayWidth(context) *
-                                                        0.03,
+                                                    width:
+                                                        displayWidth(context) *
+                                                            0.03,
                                                     height:
                                                         displayHeight(context) *
                                                             0.05,
                                                     child: Card(
-                                                      color: data.listData[index]
-                                                                  .currentStatus ==
-                                                              'rejected'
-                                                          ? Colors.red
-                                                          : data.listData[index]
-                                                                      .currentStatus ==
-                                                                  'complete'
-                                                              ? Colors.green
-                                                              : Colors.orange,
+                                                      color:statusColor(data.listData[index].currentStatus??'')
                                                     )),
                                               ),
                                             )
@@ -313,19 +307,21 @@ class _SalesCasesScreen extends ConsumerState<SalesCasesScreen> {
                                           quarterTurns: 3,
                                           child: Text(
                                             data.listData[index].currentStatus
-                                                .toString(),
+                                                .toString().capitalize(),
                                             style: TextStyle(
                                                 fontSize: 10,
                                                 fontWeight: FontWeight.w400,
-                                                color: data.listData[index]
-                                                            .currentStatus ==
-                                                        'rejected'
-                                                    ? Colors.red
-                                                    : data.listData[index]
-                                                                .currentStatus ==
-                                                            'complete'
-                                                        ? Colors.green
-                                                        : Colors.orange),
+                                                color: statusColor(data.listData[index].currentStatus??'')
+                                                // data.listData[index]
+                                                //             .currentStatus ==
+                                                //         'rejected'
+                                                //     ? Colors.red
+                                                //     : data.listData[index]
+                                                //                 .currentStatus ==
+                                                //             'complete'
+                                                //         ? Colors.green
+                                                //         : Colors.orange
+                                            ),
                                           )),
                                     )
                                   ],
@@ -339,5 +335,22 @@ class _SalesCasesScreen extends ConsumerState<SalesCasesScreen> {
             ],
           ),
         ));
+  }
+
+  Color statusColor(String status) {
+    switch (status) {
+      case 'complete':
+        return Colors.green;
+      case 'rejected':
+        return Colors.red;
+      case 'incomplete':
+        return Colors.yellow.shade700;
+      case 'approved':
+        return Colors.green;
+      case 'pending':
+        return Colors.orange;
+      default:
+        return Colors.orange;
+    }
   }
 }

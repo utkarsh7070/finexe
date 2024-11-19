@@ -39,9 +39,9 @@ class Items {
   @JsonKey(name: "punchOut")
   bool punchOut;
   @JsonKey(name: "punchInTime")
-  DateTime punchInTime;
+  String punchInTime;
   @JsonKey(name: "punchOutTime")
-  DateTime punchOutTime;
+  String punchOutTime;
 
   Items({
     required this.allowed,

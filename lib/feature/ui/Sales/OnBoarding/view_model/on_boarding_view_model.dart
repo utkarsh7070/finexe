@@ -53,23 +53,26 @@ class GridItem {
 }
 
 // Provider for storing grid items
-final sharedPreferencesProvider = FutureProvider.autoDispose<SharedPreferences>((ref) async {
+final sharedPreferencesProvider =
+    FutureProvider.autoDispose<SharedPreferences>((ref) async {
   final prefs = await SharedPreferences.getInstance();
   return prefs;
 });
 
-final  customerName = Provider.autoDispose<String?>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider).asData?.value;
-    String? name =  prefs?.getString('name');
-  return name;
-},);
+final customerName = Provider.autoDispose<String?>(
+  (ref) {
+    final prefs = ref.watch(sharedPreferencesProvider).asData?.value;
+    String? name = prefs?.getString('name');
+    return name;
+  },
+);
 
-final roleName = Provider.autoDispose<List<String>?>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider).asData?.value;
-  return  prefs?.getStringList('roleName');
-},);
-
-
+final roleName = Provider.autoDispose<List<String>?>(
+  (ref) {
+    final prefs = ref.watch(sharedPreferencesProvider).asData?.value;
+    return prefs?.getStringList('roleName');
+  },
+);
 
 final gridItemProvider = StateProvider.autoDispose<List<GridItem>>((ref) {
   return [
@@ -95,7 +98,8 @@ final gridItemProvider = StateProvider.autoDispose<List<GridItem>>((ref) {
 //  api call
 
 // Provider for the dashboard view model
-final dashboardShowViewModelProvider = ChangeNotifierProvider.autoDispose((ref) {
+final dashboardShowViewModelProvider =
+    ChangeNotifierProvider.autoDispose((ref) {
   final dio = ref.watch(dioProvider);
   return DashboardShowViewModel(dio);
 });
@@ -145,13 +149,13 @@ class DashboardShowViewModel extends ChangeNotifier {
       print("Error getting lead data: $e");
     }
   }
-
 }
 
-final openDrawerProvider = StateProvider.autoDispose<bool>((ref) {
- return false;
-},);
-
+final openDrawerProvider = StateProvider.autoDispose<bool>(
+  (ref) {
+    return false;
+  },
+);
 
 final getCasesData = StateNotifierProvider.autoDispose<AllCases, CaseModel>(
   (ref) {
@@ -165,8 +169,6 @@ class AllCases extends StateNotifier<CaseModel> {
 
   // List<Item> list =[];
   AllCases(this.dio) : super(CaseModel());
-
-
 
   // List<Item> listData = [];
 
@@ -192,10 +194,14 @@ class AllCases extends StateNotifier<CaseModel> {
     state = state.copyWith(isLoading: true);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
-    // String? token = await SessionService.getToken();
+    List<String>? role = sharedPreferences.getStringList('roleName');
+    final Map<String, String> params = {
+      'employeeRole': role!.first,
+      'status': 'all'
+    };
     try {
       final response = await dio.get(Api.allCases,
-          options: Options(headers: {'token': token}));
+          queryParameters: params, options: Options(headers: {'token': token}));
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
       print(responseModel);
@@ -214,10 +220,15 @@ class AllCases extends StateNotifier<CaseModel> {
     state = state.copyWith(isLoading: true);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
+    List<String>? role = sharedPreferences.getStringList('roleName');
+    final Map<String, String> params = {
+      'employeeRole': role!.first,
+      'status': 'cibilReject'
+    };
     // String? token = await SessionService.getToken();
     try {
-      final response = await dio.get(Api.cibilReject,
-          options: Options(headers: {'token': token}));
+      final response = await dio.get(Api.allCases,
+          queryParameters: params, options: Options(headers: {'token': token}));
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
       print(responseModel);
@@ -236,13 +247,20 @@ class AllCases extends StateNotifier<CaseModel> {
     state = state.copyWith(isLoading: true);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
+    List<String>? role = sharedPreferences.getStringList('roleName');
+
+    final Map<String, String> params = {
+      'employeeRole': role!.first,
+      'status': 'cibilOk'
+    };
+
     // String? token = await SessionService.getToken();
     try {
-      final response = await dio.get(Api.cibilOk,
-          options: Options(headers: {'token': token}));
+      final response = await dio.get(Api.allCases,
+          queryParameters: params, options: Options(headers: {'token': token}));
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
-      print(responseModel.items?.first.customerName);
+      print(responseModel.items.first.customerName);
       // state = responseModel.items;
       state = state.copyWith(listData: responseModel.items);
       print(response.statusCode);
@@ -258,10 +276,16 @@ class AllCases extends StateNotifier<CaseModel> {
     state = state.copyWith(isLoading: true);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
+    List<String>? role = sharedPreferences.getStringList('roleName');
+    final Map<String, String> params = {
+      'employeeRole': role!.first,
+      'status': 'cibilPending'
+    };
+
     // String? token = await SessionService.getToken();
     try {
-      final response = await dio.get(Api.cibilPending,
-          options: Options(headers: {'token': token}));
+      final response = await dio.get(Api.allCases,
+          queryParameters: params, options: Options(headers: {'token': token}));
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
       print(responseModel);
@@ -376,8 +400,9 @@ class PaginationNotifier<T> extends StateNotifier<PaginatedDataState<T>> {
   }
 }
 
-final paginatedProvider = StateNotifierProvider<PaginationNotifier<String>, PaginatedDataState<String>>(
-      (ref) => PaginationNotifier<String>((page) async {
+final paginatedProvider = StateNotifierProvider<PaginationNotifier<String>,
+    PaginatedDataState<String>>(
+  (ref) => PaginationNotifier<String>((page) async {
     // Simulating an API call
     await Future.delayed(Duration(seconds: 1));
     if (page > 5) return []; // No more data after page 5

@@ -32,7 +32,6 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
   final TextEditingController loanTypeController = TextEditingController();
   final TextEditingController squareFeetController = TextEditingController();
   final TextEditingController bighaController = TextEditingController();
-  File? selfieImageUrl; // URL of selfie image
   final _formKey = GlobalKey<FormState>();
 
   bool pakkaHouse = false;
@@ -41,14 +40,29 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
   bool showOtherIncomeField = false;
   bool feedbackField=false;
 
-  final ImagePicker _picker = ImagePicker();
+  File? selfieImageUrl; // URL of selfie image
+  String? uploadedSelfieUrl;
 
-  Future<void> _captureSelfie() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-    if (image != null) {
+  void _captureSelfie() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedImage = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedImage != null) {
       setState(() {
-        selfieImageUrl = File(image.path); // Convert XFile to File
+        selfieImageUrl = File(pickedImage.path); // Display the image locally
       });
+
+      // Upload the image
+      final uploadedUrl = await ref
+          .read(leadGenerationViewModelProvider)
+          .uploadImage(File(pickedImage.path));
+
+      if (uploadedUrl != null) {
+        ref.read(leadGenerationViewModelProvider).uploadedSelfieUrl = uploadedUrl;
+        showCustomSnackBar(context, 'Selfie uploaded successfully', Colors.green);
+      } else {
+        showCustomSnackBar(context, 'Error uploading selfie', Colors.red);
+      }
     }
   }
 
@@ -159,37 +173,6 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                   ],
                 ),
 
-                /*  Row(
-                  children: [
-                    // Optional spacing between the fields
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: branchController.text.isEmpty ? null : branchController.text,
-                        onChanged: (value) {
-                          branchController.text = value!;
-                        },
-                        items: itemList.map((item) {
-                          return DropdownMenuItem<String>(
-                            value: item.id, // Or whatever field you need
-                            child: Text(item.productName),
-                          );
-                        }).toList(),
-                        decoration: dropdownDecoration('Select Branch *'),
-                        *//* decoration: InputDecoration(
-                        labelText: 'Monthly Income *',
-                        border: OutlineInputBorder(),
-                      ),*//*
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select Branch';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-
-                  ],
-                ),*/
 
                 Row(
                   children: [
@@ -399,39 +382,6 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                     },
                   ),
 
-
-                /* Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: loanTypeController.text.isEmpty ? null : loanTypeController.text,
-                        onChanged: (value) {
-                          loanTypeController.text = value!;
-                        },
-                        items: itemList.map((item) {
-                          return DropdownMenuItem<String>(
-                            value: item.id, // Or whatever field you need
-                            child: Text(item.productName),
-                          );
-                        }).toList(),
-                        decoration: dropdownDecoration('Loan Type *'),
-                        *//* decoration: InputDecoration(
-                            labelText: 'Monthly Income *',
-                            border: OutlineInputBorder(),
-                          ),*//*
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Select Loan Type';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-
-
-                  ],
-                ),*/
-
                 // Loan Type Dropdown (Using getAllBranch response)
                 Row(
                   children: [
@@ -510,8 +460,14 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                     SizedBox(
                       width: 100, // Adjust width as needed
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
+                            final viewModel = ref.read(leadGenerationViewModelProvider);
+
+                            if (viewModel.uploadedSelfieUrl == null || viewModel.uploadedSelfieUrl!.isEmpty) {
+                              showCustomSnackBar(context, 'Please capture and upload the selfie', Colors.red);
+                              return;
+                            }
                             final leadData = LeadGenerationModel(
                               customerName: customerNameController.text,
                               customerMobileNo: customerMobileNoController.text,
@@ -526,9 +482,10 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                               otherSourceOfIncome: otherIncomeController.text,
                               customerFeedback: feedbackController.text,
                               loanType: loanTypeController.text,
-                              selfieImageUrl: selfieImageUrl?.path ?? '',
+                              selfieImageUrl: viewModel.uploadedSelfieUrl!, // Assign directly
                             );
-                            viewModel.leadFormSubmit(leadData, context);
+                            // viewModel.leadFormSubmit(leadData, context);
+                            await viewModel.leadFormSubmit(leadData, context);
                           } else {
                             showCustomSnackBar(context, 'Please fill all the fields', Colors.red);
                           }
@@ -609,4 +566,3 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
 
 
 }
-

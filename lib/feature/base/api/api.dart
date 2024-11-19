@@ -1,6 +1,6 @@
 class Api {
   static const String baseUrlProduction = 'https://prod.fincooper.in/';
-  static const String baseUrl = 'https://stageapi.fincooper.in/';
+  static const String baseUrl = 'https://prod.fincooper.in/';
   static const String baseUrlStageCollection = 'https://stageapi.fincooper.in/';
   static const String baseUrlStageProduction ='https://prod.fincooper.in/';
 
@@ -16,7 +16,6 @@ class Api {
       '${baseUrl}v1/aadharDetail/aadhaarSubmitOtp';
   static const String panVerify = '${baseUrl}v1/panDetail/PanComprehensive';
   static const String aadhaarPhoto = '${baseUrl}v1/aadharDetail/aadhaarOCR';
-
   static const String punchOut =
       '${baseUrl}v1/adminMaster/employe/punch?action=out';
   static const String punchIn =
@@ -70,33 +69,33 @@ class Api {
   static const String getVisitNotice =
       '${baseUrl}v1/googleSheet/getLegalNoticeBy';
   static const String getVisitCalling = '${baseUrl}v1/googleSheet/callDoneBy';
-
-
   static const String updateProfile = '${baseUrl}v1/adminMaster/employe/update';
   static const String updatePassword = '${baseUrl}v1/login/updatePassword';
   static const String paymentAmount = '${baseUrl}v1/salesMan/paymentInitiate';
-  static const String allCases = '${baseUrl}v1/calculator/getCustomer?status=all';
-  static const String salesNew = '${baseUrl}v1/calculator/getCustomer?status=salesNew';
-  static const String salesToCibil = '${baseUrl}v1/calculator/getCustomer?status=salesToCibil';
-  static const String cibilPending = '${baseUrl}v1/calculator/getCustomer?status=cibilPending';
-  static const String cibilOk = '${baseUrl}v1/calculator/getCustomer?status=cibilOk';
-  static const String cibilReject = '${baseUrl}v1/calculator/getCustomer?status=cibilReject';
+  static const String allCases = '${baseUrl}v1/calculator/getCustomer';
+  // static const String salesNew = '${baseUrl}v1/calculator/getCustomer?employeeRole=sales&status=salesNew';
+  // static const String salesToCibil = '${baseUrl}v1/calculator/getCustomer?status=salesToCibil';
+  // static const String cibilPending = '${baseUrl}v1/calculator/getCustomer?employeeRole=sales&status=cibilPending';
+  // static const String cibilOk = '${baseUrl}v1/calculator/getCustomer?employeeRole=sales&status=cibilOk';
+  // static const String cibilReject = '${baseUrl}v1/calculator/getCustomer';
   static const String salesDashboardData = '${baseUrl}v1/salesMan/listAllProductLogin';
   static const String leadFormSubmit = '${baseUrl}v1/salesMan/leadGenerate';
   static const String leadShowPendingList = '${baseUrl}v1/salesMan/leadGenerateList';
   static const String getEmployeeDetails = '${baseUrl}v1/adminMaster/employe/getEmployeeByToken';
   static const String getAllBranch = '${baseUrl}v1/branch/getAll';
   static const String panFatherName = '${baseUrl}v1/panDetail/PanFatherName';
-  // http://localhost:5500/v1/panDetail/PanFatherName
-  // https://stageapi.fincooper.in/v1/login/updatePassword
-  // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
-  // https://stageapi.fincooper.in/v1/googleSheet/visitFormAdd
+
   //-------------------------------------HRMS------------------------------
   static const String submitLeaveRequest = '${baseUrl}v1/hrms/leave/addEmployeeLeave';
 
   static const String getLeaveDetails = '${baseUrl}v1/hrms/leave/getLeaveForEmployee';
   static const String getAttendanceDetails = '${baseUrl}v1/adminMaster/employe/monthlyAttendance';
-
+  // http://localhost:5500/v1/calculator/getCustomer?employeeRole=sales&status=all__
+//----------------------------------EOD/BOD--------------------------------------------------
+  static const String addTask = '${baseUrl}v1/bodEod/add';
+  static const String getAllTask = '${baseUrl}v1/bodEod/getBy';
+  static const String updateStatusTask = '${baseUrl}v1/bodEod/update';
+  static const String checkBodStatus = '${baseUrl}v1/bodEod/verify';
   //-------------------------------------------------------------------------------------------
   static Duration connectionTimeout = const Duration(milliseconds: 15000);
   static Duration receiveTimeout = const Duration(milliseconds: 15000);

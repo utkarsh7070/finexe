@@ -27,6 +27,11 @@ extension AppColors on Never {
   static const Color bgGreenLight = Color(0xffE6F3E6);
 
   static const Color primaryOrange = Color(0xFFFFF8EB);
+  static const Color red = Color(0xFFFF0000);
+  static const Color green = Color(0xff05BA65);
+  static const Color black3 = Color(0xff101828); //#FFA500
+  static const Color yellow = Color(0xffFFA500); //0xffFFEBEB
+  static const Color greypink = Color(0xffFFEBEB);
   static const Color orange = Color(0xFFFFA500);
   static const Color gray10 = Color(0xff72727D);
   static const Color grayCardContentColor = Color(0xFF101828);
@@ -35,6 +40,7 @@ extension AppColors on Never {
   static const Color grayLine = Color(0xFFDBDBDB);
   static const Color gray5 = Color(0xFFB1C2D4);
   static const Color gray7 = Color(0xFF475467);
+  static const Color black2 = Color(0xff101828);
 
   static const Color blueShadeColor = Color(0xFF9DB2CE);
   static const Color linearBarColor = Color(0xFFE4E7EC);

@@ -65,7 +65,6 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Display the employee's photo
-                          if (userProfile.employeePhoto.isNotEmpty)
                             Center(
                               child: CircleAvatar(
                                 radius: 50,
