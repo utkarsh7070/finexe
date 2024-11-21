@@ -102,6 +102,7 @@ class ApplicationDetails extends ConsumerWidget {
                         ),
                         child:
                         UploadBox(
+                          isError: !personalFormState.isApplicantPhoto,
                           isImage: true,
                           height: displayHeight(context) * 0.16,
                           width: displayWidth(context),

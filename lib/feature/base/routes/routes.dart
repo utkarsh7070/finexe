@@ -75,7 +75,7 @@ class AppRoutes {
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case collectionHome:
-        return MaterialPageRoute(builder: (_) => DashboardScreen());
+        return MaterialPageRoute(builder: (_) => const CollectionDashboardScreen());
       case forgot:
         return MaterialPageRoute(builder: (_) => ForgotPasswordScreen());
       case attendance:
@@ -268,7 +268,7 @@ class AppRoutes {
       case bodscreen:
         return MaterialPageRoute(builder: (_) => BODScreen());
       case getalltask:
-        return MaterialPageRoute(builder: (_) => GetAllTask());
+        return MaterialPageRoute(builder: (_) => const GetAllTask());
       case pdpending:
         return MaterialPageRoute(builder: (_) => const PDPendingScreen());
       case pdscreen:

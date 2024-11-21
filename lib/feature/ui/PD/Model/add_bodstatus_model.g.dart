@@ -8,11 +8,11 @@ part of 'add_bodstatus_model.dart';
 
 BodStatusResponse _$BodStatusResponseFromJson(Map<String, dynamic> json) =>
     BodStatusResponse(
-      status: json['status'] ?? false,
-      subCode: json['subCode'] ?? 0,
-      message: json['message'] ?? '',
-      error: json['error'] ?? '',
-      data: json['items']['data'] ?? false,
+      status: json['status'] as bool,
+      subCode: (json['subCode'] as num).toInt(),
+      message: json['message'] as String,
+      error: json['error'] as String,
+      data: json['data'] as bool?,
     );
 
 Map<String, dynamic> _$BodStatusResponseToJson(BodStatusResponse instance) =>

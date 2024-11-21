@@ -41,7 +41,7 @@ class Items {
   @JsonKey(name: "punchInTime")
   String punchInTime;
   @JsonKey(name: "punchOutTime")
-  String punchOutTime;
+  String? punchOutTime;
 
   Items({
     required this.allowed,

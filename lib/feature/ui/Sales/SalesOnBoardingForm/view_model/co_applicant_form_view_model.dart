@@ -475,7 +475,8 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     final panRequestModel ={
       "trans_id":"12345",
       "docType":"522",
-      "docNumber":state[index].pan
+      "docNumber":state[index].pan,
+      "formName": "coApplicant"
     };
     try {
       final response =
@@ -509,7 +510,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
       print(state[index].otp);
     }
     final panRequestModel = PanRequestModel(
-        docType: 523, panNumber: state[index].pan, transId: "111XXXXX");
+        docType: 523, panNumber: state[index].pan, transId: "111XXXXX",formName: "coApplicant");
     try {
       final response =
           await dio.post(Api.panVerify, data: panRequestModel.toJson());

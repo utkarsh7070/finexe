@@ -262,7 +262,8 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     final panRequestModel ={
       "trans_id":"12345",
       "docType":"522",
-      "docNumber":state.pan
+      "docNumber":state.pan,
+      "formName": "guarantor"
     };
     try {
       final response =
@@ -285,7 +286,7 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     await fetchPanFatherName();
     print(state.otp);
     final panRequestModel = PanRequestModel(
-        docType: 523, panNumber: state.pan, transId: "111XXXXX");
+        docType: 523, panNumber: state.pan, transId: "111XXXXX",formName: "guarantor");
     try {
       final response =
           await dio.post(Api.panVerify, data: panRequestModel.toJson());

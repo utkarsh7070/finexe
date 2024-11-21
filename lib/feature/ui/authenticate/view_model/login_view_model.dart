@@ -115,7 +115,6 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
             print('check punch ${state.value?.checkPunch}');
             print('check punchCheck punch ${state.value?.role}');
           }
-
           if (state.value!.checkPunch) {
             switch (state.value?.role) {
               case 'admin':
@@ -152,6 +151,15 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                   context,
                   AppRoutes.dashBoard, // Collection dashboard route
                   (route) => false, // Remove all previous routes
+                );
+                break;
+
+              case 'cibil':
+                log("Navigating to collection dashboard");
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.dashBoard, // Collection dashboard route
+                      (route) => false, // Remove all previous routes
                 );
                 break;
 

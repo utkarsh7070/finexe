@@ -9,11 +9,14 @@ class PanRequestModel {
   int docType;
   @JsonKey(name: "PanNumber")
   String panNumber;
+  @JsonKey(name: "formName")
+  String formName;
 
   PanRequestModel({
     required this.transId,
     required this.docType,
     required this.panNumber,
+    required this.formName
   });
 
   factory PanRequestModel.fromJson(Map<String, dynamic> json) => _$PanRequestModelFromJson(json);

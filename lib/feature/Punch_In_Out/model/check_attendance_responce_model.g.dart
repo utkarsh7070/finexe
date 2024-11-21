@@ -32,7 +32,7 @@ Items _$ItemsFromJson(Map<String, dynamic> json) => Items(
       punchIn: json['punchIn'] as bool,
       punchOut: json['punchOut'] as bool,
       punchInTime: json['punchInTime'] as String,
-      punchOutTime: json['punchOutTime'] as String,
+      punchOutTime: json['punchOutTime'] as String?,
     );
 
 Map<String, dynamic> _$ItemsToJson(Items instance) => <String, dynamic>{

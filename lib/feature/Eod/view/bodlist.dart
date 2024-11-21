@@ -7,7 +7,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../base/dialog/AddBOD_dialogue/AddBOD_dialogue/view/add_bod._dialogue.dart';
+
+import '../AddBOD_dialogue/AddBOD_dialogue/view/add_bod._dialogue.dart';
+
 
 class BODScreen extends ConsumerWidget {
   @override
@@ -43,7 +45,7 @@ class BODScreen extends ConsumerWidget {
                             label: 'Add BOD Task',
                             textStyle: const TextStyle(color: Colors.white),
                             onTap: () {
-                              AddBodDialog().addAlbumDialog(context, ref);
+                              AddBodDialog().addAlbumDialog(context);
 
                               // controller.onTapAddButton(context);
                             },

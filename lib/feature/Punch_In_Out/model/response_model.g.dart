@@ -26,8 +26,8 @@ Map<String, dynamic> _$PunchInModelToJson(PunchInModel instance) =>
 Items _$ItemsFromJson(Map<String, dynamic> json) => Items(
       employeeId: json['employeeId'] as String,
       date: DateTime.parse(json['date'] as String),
-      punchInTime: DateTime.parse(json['punchInTime'] as String),
-      punchOutTime: json['punchOutTime'],
+      punchInTime: json['punchInTime'] as String,
+      punchOutTime: json['punchOutTime'] as String?,
       id: json['_id'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
@@ -37,7 +37,7 @@ Items _$ItemsFromJson(Map<String, dynamic> json) => Items(
 Map<String, dynamic> _$ItemsToJson(Items instance) => <String, dynamic>{
       'employeeId': instance.employeeId,
       'date': instance.date.toIso8601String(),
-      'punchInTime': instance.punchInTime.toIso8601String(),
+      'punchInTime': instance.punchInTime,
       'punchOutTime': instance.punchOutTime,
       '_id': instance.id,
       'createdAt': instance.createdAt.toIso8601String(),

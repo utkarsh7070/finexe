@@ -268,7 +268,6 @@ class AllCases extends StateNotifier<CaseModel> {
     } catch (e) {
       state = state.copyWith(isLoading: false);
       throw Exception(e);
-      print(e);
     }
   }
 

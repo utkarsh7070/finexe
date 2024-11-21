@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/Punch_In_Out/model/check_attendance_responce_model.dart';
 import 'package:finexe/feature/Punch_In_Out/repository/puch_In_repository_imp.dart';
+import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
@@ -11,6 +12,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/model/add_task_request_model.dart';
+import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/model/add_task_response_model.dart';
+import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/view/add_bod._dialogue.dart';
+import '../../base/api/api.dart';
+import '../../base/utils/namespase/app_colors.dart';
+import '../../base/utils/widget/custom_snackbar.dart';
 import '../model/response_model.dart';
 
 class AttendanceState {
@@ -19,18 +26,29 @@ class AttendanceState {
   final bool punchStatus;
   final Position? currentPosition;
   final String? distanceMessage;
+  final String taskTitle;
+  final String taskDescription;
   final CheckAttendanceResponseModel? checkAttendanceResponse;
+  final String employeeId;
+  final String token;
 
-  AttendanceState({
-    this.employeeName = '',
-    this.isLoading = false,
-    this.punchStatus = false,
-    this.currentPosition,
-    this.distanceMessage,
-    this.checkAttendanceResponse,
-  });
+  AttendanceState(
+      {this.taskTitle = '',
+      this.taskDescription = '',
+      this.employeeName = '',
+      this.isLoading = false,
+      this.punchStatus = false,
+      this.currentPosition,
+      this.distanceMessage,
+      this.checkAttendanceResponse,
+      this.employeeId = '',
+      this.token = ''});
 
   AttendanceState copyWith({
+    String? taskTitle,
+    String? taskDescription,
+    String? employeeId,
+    String? token,
     String? employeeName,
     bool? isLoading,
     bool? punchStatus,
@@ -39,6 +57,10 @@ class AttendanceState {
     CheckAttendanceResponseModel? checkAttendanceResponse,
   }) {
     return AttendanceState(
+      taskDescription: taskDescription ?? this.taskDescription,
+      taskTitle: taskTitle ?? this.taskTitle,
+      employeeId: employeeId ?? this.employeeId,
+      token: token ?? this.token,
       employeeName: employeeName ?? this.employeeName,
       isLoading: isLoading ?? this.isLoading,
       punchStatus: punchStatus ?? this.punchStatus,
@@ -53,14 +75,96 @@ class AttendanceState {
 // Define the AttendanceNotifier
 class AttendanceNotifier extends StateNotifier<AttendanceState> {
   final PunchInRepositoryImp _punchInRepository;
+  final Dio dio;
 
-  AttendanceNotifier(this._punchInRepository) : super(AttendanceState()) {
+  AttendanceNotifier(this._punchInRepository, this.dio)
+      : super(AttendanceState()) {
     getCurrentLocation();
   }
+
+  final TextEditingController taskTitleController = TextEditingController();
+  final TextEditingController taskDescriptionController =
+      TextEditingController();
 
   final double targetLatitude = 22.724366;
   final double targetLongitude = 75.882175;
   String? storedToken;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  void updateTaskTitle(String value) {
+    state = state.copyWith(taskTitle: value);
+  }
+
+  void updateTaskDescription(String value) {
+    state = state.copyWith(taskTitle: value);
+  }
+
+  Future<void> onAddTask(BuildContext context) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString('token');
+    state = state.copyWith(isLoading: true);
+    // state = const AsyncValue.loading();
+    final headers = {"token": token};
+    if (kDebugMode) {
+      print(headers.values);
+    }
+    AddTaskRequestModel addTaskRequestModel = AddTaskRequestModel(
+        assignBy: state.employeeId,
+        employeeId: [state.employeeId],
+        task: state.taskTitle,
+        description: state.taskDescription);
+    // if (kDebugMode) {
+    //   print("Authorization Token: $token");
+    //   print("API Endpoint: ${Api.addTask}");
+    //   print("Request Data: ${addTaskRequestModel.toJson()}");
+    // }
+
+    try {
+      final response = await dio.post(
+        Api.addTask,
+        data: addTaskRequestModel.toJson(),
+        options: Options(
+          headers: headers,
+          // validateStatus: (status) => status != null && status < 500,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final addTaskResponseModel =
+            AddTaskResponseModel.fromJson(response.data);
+        if (kDebugMode) {
+          print("Add Task Response: ${response.data}");
+        }
+        showCustomSnackBar(context, 'BOD Added', AppColors.green);
+        Navigator.pop(context);
+      } else if (response.statusCode == 401) {
+        if (kDebugMode) {
+          print("401 response: ${response.data}");
+          print("Unauthorized: Check token validity.");
+        }
+        // state = AsyncValue.error(
+        //     "Unauthorized: Token might be invalid or expired.",
+        //     StackTrace.current);
+      } else {
+        print("Unexpected Error: ${response.statusCode}");
+        // state = AsyncValue.error(
+        //     "Error ${response.statusCode}: ${response.data}",
+        //     StackTrace.current);
+      }
+    } catch (error, stackTrace) {
+      DioExceptions.fromDioError(error as DioException, context);
+      // state = AsyncValue.error(error, stackTrace);
+      print("Exception occurred: ${error.toString()}");
+    } finally {
+      //print('object');
+      state = state.copyWith(isLoading: false);
+    }
+  }
 
   Future<void> getCurrentLocation() async {
     state = state.copyWith(isLoading: true);
@@ -141,12 +245,14 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
             CheckAttendanceResponseModel.fromJson(response.data);
         state =
             state.copyWith(checkAttendanceResponse: checkAttendanceResponse);
-        state = state.copyWith(
-            punchStatus: checkAttendanceResponse.items.punchIn);
+        state =
+            state.copyWith(punchStatus: checkAttendanceResponse.items.punchIn);
         log('punchIn Status: ${checkAttendanceResponse.items.punchIn}');
         return checkAttendanceResponse.items.viewButton;
       } on DioException catch (error) {
-        print(error);
+        if (kDebugMode) {
+          print(error);
+        }
         throw Exception(error);
         state = state.copyWith(isLoading: false);
         // DioExceptions.fromDioError(error,context);
@@ -158,13 +264,21 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   Future<void> clickPunch(BuildContext context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     List<String>? role = preferences.getStringList('roleName');
+    final String? employeeID = preferences.getString('employeId');
+    final String? token = preferences.getString('token');
     if (kDebugMode) {
       print(role?.first);
     }
+    state = state.copyWith(employeeId: employeeID, token: token);
     state = state.copyWith(isLoading: true);
     // if (state.punchStatus) {
     await onPunchIn(context).then(
       (value) async {
+      //   if (value!) {
+      //     await AddBodDialog().addAlbumDialog(
+      //       context,
+      //     );
+      //   }
         if (kDebugMode) {
           print(value);
         }
@@ -212,6 +326,15 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               );
               break;
 
+            case 'cibil':
+              log("Navigating to collection dashboard");
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.dashBoard, // Collection dashboard route
+                    (route) => false, // Remove all previous routes
+              );
+              break;
+
             case 'salesPdAndCollection':
               log("Navigating to collection dashboard");
               Navigator.pushNamedAndRemoveUntil(
@@ -246,11 +369,9 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     try {
       log('onPunchIn');
       state = state.copyWith(isLoading: true);
-      Response response = await _punchInRepository.punchIn(token);
+      var response = await _punchInRepository.punchIn(token);
       log('onPunchIn after');
       PunchInModel punchInModel = PunchInModel.fromJson(response.data);
-      // SharedPreferences preferences = await SessionService.getSession();
-      // preferences.setBool('punchIn', punchInModel.items.);
       log(">>>punchin: ${response.data}");
       Fluttertoast.showToast(
         msg: punchInModel.message.toString(),
@@ -317,14 +438,16 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   }
 }
 
-final punchInRepositoryProvider = Provider.autoDispose<PunchInRepositoryImp>((ref) {
+final punchInRepositoryProvider =
+    Provider.autoDispose<PunchInRepositoryImp>((ref) {
   return PunchInRepositoryImp(); // Provides instance of PunchInRepository
 });
 
 // Create the AttendanceNotifierProvider
 final attendanceProvider =
     StateNotifierProvider<AttendanceNotifier, AttendanceState>((ref) {
-  return AttendanceNotifier(ref.watch(punchInRepositoryProvider));
+  final dio = ref.watch(dioProvider);
+  return AttendanceNotifier(ref.watch(punchInRepositoryProvider), dio);
 });
 
 //

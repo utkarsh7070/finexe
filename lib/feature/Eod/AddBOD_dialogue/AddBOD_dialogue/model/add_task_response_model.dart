@@ -12,7 +12,7 @@ class AddTaskResponseModel {
   @JsonKey(name: "error")
   String error;
   @JsonKey(name: "items")
-  Items items;
+  List<Item> items;
 
   AddTaskResponseModel({
     required this.status,
@@ -28,13 +28,17 @@ class AddTaskResponseModel {
 }
 
 @JsonSerializable()
-class Items {
+class Item {
   @JsonKey(name: "employeeId")
   String employeeId;
+  @JsonKey(name: "assignBy")
+  String assignBy;
   @JsonKey(name: "task")
   String task;
   @JsonKey(name: "description")
   String description;
+  @JsonKey(name: "remark")
+  String remark;
   @JsonKey(name: "startDate")
   String startDate;
   @JsonKey(name: "endDate")
@@ -47,29 +51,32 @@ class Items {
   String status;
   @JsonKey(name: "_id")
   String id;
+  @JsonKey(name: "__v")
+  int v;
   @JsonKey(name: "createdAt")
   DateTime createdAt;
   @JsonKey(name: "updatedAt")
   DateTime updatedAt;
-  @JsonKey(name: "__v")
-  int v;
 
-  Items({
+  Item({
     required this.employeeId,
+    required this.assignBy,
     required this.task,
     required this.description,
+    required this.remark,
     required this.startDate,
     required this.endDate,
     required this.managerBodStatus,
     required this.managerEodStatus,
     required this.status,
     required this.id,
+    required this.v,
     required this.createdAt,
     required this.updatedAt,
-    required this.v,
   });
 
-  factory Items.fromJson(Map<String, dynamic> json) => _$ItemsFromJson(json);
+  factory Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ItemsToJson(this);
+  Map<String, dynamic> toJson() => _$ItemToJson(this);
 }
+

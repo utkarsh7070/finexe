@@ -18,14 +18,14 @@ import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../Widget/punct_in_out_action_dialog_content.dart';
 import 'dashboard_side_bar.dart';
 
-class DashboardScreen extends ConsumerStatefulWidget {
-  const DashboardScreen({super.key});
+class CollectionDashboardScreen extends ConsumerStatefulWidget {
+  const CollectionDashboardScreen({super.key});
 
   @override
-  _DashboardScreenState createState() => _DashboardScreenState();
+  _CollectionDashboardScreenState createState() => _CollectionDashboardScreenState();
 }
 
-class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+class _CollectionDashboardScreenState extends ConsumerState<CollectionDashboardScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late Timer trackingTimer;
   @override

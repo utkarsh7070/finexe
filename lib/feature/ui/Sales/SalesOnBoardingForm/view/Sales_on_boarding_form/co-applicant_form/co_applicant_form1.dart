@@ -347,6 +347,7 @@ class CoApplicantForm1 extends ConsumerWidget {
                                 .applicantPhotoFilePath)),
                           ),
                           child: UploadBox(
+                            // isError: !coApplicationFormState[index].isApplicantPhoto,
                             isImage: true,
                             height: displayHeight(context) * 0.16,
                             width: displayWidth(context),

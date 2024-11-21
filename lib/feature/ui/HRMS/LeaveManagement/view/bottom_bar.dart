@@ -15,11 +15,15 @@ class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String formatTime(String time) {
+      print(time);
       try {
-        if (time.isEmpty) return 'N/A'; // Handle empty strings
-        final parsedTime = DateTime.parse(time);
-        return DateFormat("hh:mm a")
-            .format(parsedTime); // Format as 09:30 AM/PM
+        if (time.isEmpty) return 'N/A';
+        DateFormat format = DateFormat("yyyy-MM-dd'T'hh:mm:ss a");
+        DateTime dateTime = format.parse(time);// Handle empty strings
+        // final parsedTime = DateTime.parse(time);
+        print('parse time ${dateTime}');
+        return DateFormat.jm()
+            .format(dateTime); // Format as 09:30 AM/PM
       } catch (e) {
         // Log or handle invalid date format
         debugPrint("Error parsing date: $e");

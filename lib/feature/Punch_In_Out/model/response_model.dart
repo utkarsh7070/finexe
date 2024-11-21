@@ -34,9 +34,9 @@ class Items {
   @JsonKey(name: "date")
   DateTime date;
   @JsonKey(name: "punchInTime")
-  DateTime punchInTime;
+  String punchInTime;
   @JsonKey(name: "punchOutTime")
-  dynamic punchOutTime;
+  String? punchOutTime;
   @JsonKey(name: "_id")
   String id;
   @JsonKey(name: "createdAt")

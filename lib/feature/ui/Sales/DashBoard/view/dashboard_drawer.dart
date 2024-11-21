@@ -61,7 +61,7 @@ class DrawerScreen extends ConsumerWidget {
                           height: displayHeight(context) * 0.07,
                         ),
                         const Text(
-                          'Home',
+                          'Collection',
                           style: TextStyle(color: AppColors.black),
                         ),
                       ],
@@ -70,7 +70,7 @@ class DrawerScreen extends ConsumerWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const DashboardScreen(),
+                          builder: (context) => const CollectionDashboardScreen(),
                         ),
                       );
                     },

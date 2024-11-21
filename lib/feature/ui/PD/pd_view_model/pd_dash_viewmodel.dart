@@ -9,8 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../base/dialog/AddBOD_dialogue/AddBOD_dialogue/view/add_bod._dialogue.dart';
-
 class Item {
   final String imageUrl;
   final String title;
@@ -179,7 +177,7 @@ class BodStatusNotifier extends StateNotifier<AsyncValue<BodStatusResponse?>> {
           if (kDebugMode) {
             print('Add BOD');
           }
-          AddBodDialog().addAlbumDialog(context, ref);
+          // AddBodDialog().addAlbumDialog(context, ref);
         } else {
           print('Data is null or invalid');
         }
