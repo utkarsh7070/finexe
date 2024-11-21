@@ -52,30 +52,37 @@ class DrawerScreen extends ConsumerWidget {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  ListTile(
-                    title: Column(
-                      children: [
-                        Image.asset(
-                          'assets/images/home.png',
-                          width: displayWidth(context) * 0.10,
-                          height: displayHeight(context) * 0.07,
-                        ),
-                        const Text(
-                          'Collection',
-                          style: TextStyle(color: AppColors.black),
-                        ),
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CollectionDashboardScreen(),
-                        ),
-                      );
-                    },
-                  ),
+                  // ListTile(
+                  //   title: Column(
+                  //     children: [
+                  //       Image.asset(
+                  //         'assets/images/home.png',
+                  //         width: displayWidth(context) * 0.10,
+                  //         height: displayHeight(context) * 0.07,
+                  //       ),
+                  //       const Text(
+                  //         'Home',
+                  //         style: TextStyle(color: AppColors.black),
+                  //       ),
+                  //     ],
+                  //   ),
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => const Dash(),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
 
+                  // const Divider(
+                  //   color: Colors.grey,
+                  //   height: 5,
+                  //   thickness: 1,
+                  //   indent: 20,
+                  //   endIndent: 20,
+                  // ),
                   const Divider(
                     color: Colors.grey,
                     height: 5,

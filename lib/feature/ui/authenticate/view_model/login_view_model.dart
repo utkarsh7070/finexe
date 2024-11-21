@@ -158,7 +158,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                 log("Navigating to collection dashboard");
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  AppRoutes.dashBoard, // Collection dashboard route
+                  AppRoutes.collectionHome, // Collection dashboard route
                       (route) => false, // Remove all previous routes
                 );
                 break;

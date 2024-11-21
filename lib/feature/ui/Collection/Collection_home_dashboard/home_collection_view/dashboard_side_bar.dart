@@ -24,7 +24,7 @@ class DashBoardSideBar extends ConsumerWidget {
     print('role ${role}');
     return SafeArea(
       child: Container(
-        height: role!.contains('collection') || role.contains('pd')
+        height: role.role.contains('collection') || role.role.contains('pd')
             ? displayHeight(context) * 0.50
             : displayHeight(context) * 0.36,
         width: displayWidth(context) * 0.35,
@@ -82,7 +82,7 @@ class DashBoardSideBar extends ConsumerWidget {
                   // ),
 
                   Visibility(
-                    visible: role.contains('sales'),
+                    visible: role.role.contains('sales'),
                     child: ListTile(
                       title:
                       Column(

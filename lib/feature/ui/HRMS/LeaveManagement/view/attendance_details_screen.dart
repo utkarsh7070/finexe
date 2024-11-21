@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -53,11 +51,11 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
           final counters = leaveData["counters"] as AttendanceItems?;
           final leaveRequests = leaveData["attendanceRecords"] as List<AttendanceRecord>;
           if (counters == null) {
-            return Center(child: Text("No attendance data available."));
+            return const Center(child: Text("No attendance data available."));
           }
           return Column(
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               // Counters at the top
               _buildCounters(
                 totalLeave: counters.monthDays,
@@ -65,7 +63,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                 totalReject: counters.absentDays,
               ),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               // Header Row
               _buildHeader(),
 
@@ -134,8 +132,8 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       color: Colors.grey[200],
-      child: Row(
-        children: const [
+      child: const Row(
+        children: [
           Expanded(child: Text("Date", style: TextStyle(fontWeight: FontWeight.bold))),
           Expanded(child: Text("Punch In", style: TextStyle(fontWeight: FontWeight.bold))),
           Expanded(child: Text("Punch Out", style: TextStyle(fontWeight: FontWeight.bold))),
@@ -151,10 +149,15 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
       return DateFormat("dd-MM-yyyy").format(parsedDate);
     }
 
-    String formatTime(String? dateTime) {
-      if (dateTime == null) return 'N/A'; // Handle null case
-      final parsedTime = DateTime.parse(dateTime);
-      return DateFormat("hh:mm a").format(parsedTime); // Format as 09:30 AM/PM
+    String formatTime(String? dateTimes) {
+      print('time formate ${dateTimes}');
+      if (dateTimes == null) return 'N/A'; // Handle null case
+      DateFormat format = DateFormat("yyyy-MM-dd'T'hh:mm:ss a");
+      DateTime dateTime = format.parse(dateTimes);// Handle empty strings
+      // final parsedTime = DateTime.parse(time);
+      print('parse time ${dateTime}');
+      return DateFormat.jm()
+          .format(dateTime); // Format as 09:3
     }
 
     return Container(

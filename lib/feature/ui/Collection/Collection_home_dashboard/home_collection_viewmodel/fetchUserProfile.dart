@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/update_password_request_model.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/update_password_responsemodel.dart';
+import 'package:finexe/feature/ui/authenticate/view_model/login_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,9 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
   bool isPunchOutStatus = false;
 
   String greeting() {
-    var hour = DateTime.now().hour;
+    var hour = DateTime
+        .now()
+        .hour;
     if (hour < 12) {
       return 'Good Morning';
     }
@@ -55,27 +58,35 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
         if (kDebugMode) {
           print('visitRejected ${response.data['items']['visitRejected']}');
           print('visitAccepted ${response.data['items']['visitAccepted']}');
-          print('visitPendingForApproval ${response.data['items']['visitPendingForApproval']}');
+          print('visitPendingForApproval ${response
+              .data['items']['visitPendingForApproval']}');
         }
 
         state = AsyncValue.data(UserProfile(
-            name: response.data['items']['employeeDetail']['employeName']??'',
-            visitRejected: response.data['items']['visitRejected']??'',
+            name: response.data['items']['employeeDetail']['employeName'] ?? '',
+            visitRejected: response.data['items']['visitRejected'] ?? '',
             visitPendingForApproval:
-            response.data['items']['visitPendingForApproval']??'',
-            visitAccepted: response.data['items']['visitAccepted']??'',
-            collectionRejectAmount: response.data['items']['collectionRejectAmount']??'',
+            response.data['items']['visitPendingForApproval'] ?? '',
+            visitAccepted: response.data['items']['visitAccepted'] ?? '',
+            collectionRejectAmount: response
+                .data['items']['collectionRejectAmount'] ?? '',
             collectionEmiAmountPendingForApproval:
-            response.data['items']['collectionEmiAmountPendingForApproval']??'',
-            collectionAcceptAmount: response.data['items']['collectionAcceptAmount']??'',
+            response.data['items']['collectionEmiAmountPendingForApproval'] ??
+                '',
+            collectionAcceptAmount: response
+                .data['items']['collectionAcceptAmount'] ?? '',
             employeeUniqueId:
-            response.data['items']['employeeDetail']['employeUniqueId']??'',
-            joiningDate: response.data['items']['employeeDetail']['joiningDate']??'',
-            employeeId:  response.data['items']['employeeDetail']['id']??'',
-            email:  response.data['items']['employeeDetail']['email']??'',
-            imageUrl:  response.data['items']['employeeDetail']['employeePhoto'] ?? '',
-            mobileNo:  response.data['items']['employeeDetail']['mobileNo'].toString(),
-            address:  response.data['items']['employeeDetail']['currentAddress']??''));
+            response.data['items']['employeeDetail']['employeUniqueId'] ?? '',
+            joiningDate: response
+                .data['items']['employeeDetail']['joiningDate'] ?? '',
+            employeeId: response.data['items']['employeeDetail']['id'] ?? '',
+            email: response.data['items']['employeeDetail']['email'] ?? '',
+            imageUrl: response
+                .data['items']['employeeDetail']['employeePhoto'] ?? '',
+            mobileNo: response.data['items']['employeeDetail']['mobileNo']
+                .toString(),
+            address: response
+                .data['items']['employeeDetail']['currentAddress'] ?? ''));
       }
     } catch (error) {
       state = AsyncValue.error(error, StackTrace.current);
@@ -121,17 +132,36 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
 // }
 
 final apiResponseProvider =
-    StateNotifierProvider.autoDispose<ApiResponseNotifier, AsyncValue<UserProfile>>((ref) {
+StateNotifierProvider.autoDispose<ApiResponseNotifier,
+    AsyncValue<UserProfile>>((ref) {
   final dio = ref.read(dioProvider);
   return ApiResponseNotifier(dio);
 });
 
-final roleName = Provider.autoDispose<List<String>?>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider).asData?.value;
-  return  prefs?.getStringList('roleName');
+final roleName = Provider<RoleListModel>((ref) {
+  final prefs = ref
+      .watch(sharedPreferencesProvider)
+      .asData
+      ?.value;
+  List<String>? role = prefs?.getStringList('roleName');
+  RoleListModel roleListModel = RoleListModel(role: role!);
+  return roleListModel;
 },);
 
-final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) async {
+class RoleListModel {
+  final List<String> role;
+
+  RoleListModel({ this.role = const[]});
+
+  RoleListModel copyWith({List<String>? role,
+
+  }) {
+    return RoleListModel(role: role ?? this.role);
+  }
+}
+
+final sharedPreferencesProvider = FutureProvider<SharedPreferences>((
+    ref) async {
   final prefs = await SharedPreferences.getInstance();
   return prefs;
 });
@@ -139,7 +169,7 @@ final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) async 
 final dialogVisibilityProvider = StateProvider<bool>((ref) => false);
 
 final profileProvider =
-    StateNotifierProvider.autoDispose<UserProfileProvider, ProfileModel>((ref) {
+StateNotifierProvider.autoDispose<UserProfileProvider, ProfileModel>((ref) {
   final dio = ref.watch(dioProvider);
   return UserProfileProvider(dio);
 });
@@ -203,11 +233,14 @@ class UserProfileProvider extends StateNotifier<ProfileModel> {
         options: Options(headers: {"token": token}));
     print(response.statusCode);
     print(response.data);
-    UpdatePasswordResponseModel responseModel =UpdatePasswordResponseModel.fromJson(response.data);
+    UpdatePasswordResponseModel responseModel = UpdatePasswordResponseModel
+        .fromJson(response.data);
     if (response.statusCode == 200) {
       showCustomSnackBar(
           context, responseModel.message, Colors.green);
-      ref.read(dialogVisibilityProvider.notifier).state = false;
+      ref
+          .read(dialogVisibilityProvider.notifier)
+          .state = false;
     }
   }
 
@@ -238,13 +271,12 @@ class ProfileModel {
   final String password;
   final bool isPassword;
 
-  ProfileModel(
-      {this.profilePhoto = '',
-      this.isLoading = false,
-      this.password = '',
-      this.confirmPassword = '',
-      this.isConfirmPassword = true,
-      this.isPassword = false});
+  ProfileModel({this.profilePhoto = '',
+    this.isLoading = false,
+    this.password = '',
+    this.confirmPassword = '',
+    this.isConfirmPassword = true,
+    this.isPassword = false});
 
   ProfileModel copyWith({
     String? profilePhoto,
