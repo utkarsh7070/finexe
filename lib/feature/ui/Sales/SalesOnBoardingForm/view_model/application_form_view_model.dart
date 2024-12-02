@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/src/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
-import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/aadhaar_number_request_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/aadhaar_otp_request_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/submite_applicant_form_data_model.dart';
@@ -18,13 +16,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
 import '../../../../base/api/dio_exception.dart';
 import '../model/request_model/pan_request_model.dart';
 import '../model/responce_model/aadhaar_otp_responce_model.dart';
-import '../view/Sales_on_boarding_form/co_applicant_form.dart';
 import '../view/Sales_on_boarding_form/applicant_form/appliction_form.dart';
 
 final uploadDoc = StateProvider(
@@ -68,7 +64,9 @@ class ImagePickerNotifier extends StateNotifier<File?> {
           state = File(pickedImage.path);
         }
       } catch (e) {
-        print('Failed to pick image: $e');
+        if (kDebugMode) {
+          print('Failed to pick image: $e');
+        }
       }
     }
 
@@ -168,7 +166,9 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     state = state.copyWith(isLoading: true);
     await fetchPanVerify(context);
     // on DioException catch (error)
-    print(state.aadhaar);
+    if (kDebugMode) {
+      print(state.aadhaar);
+    }
     final aadhaarNumberRequestModel = AadhaarNumberRequestModel(
         aadharNo: state.aadhaar.trim().toString(),
         transId: '12345',
@@ -177,7 +177,9 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     try {
       final response = await dio.post(Api.aadhaarNumber,
           data: aadhaarNumberRequestModel.toJson());
-      print(response.data);
+      if (kDebugMode) {
+        print(response.data);
+      }
       if (response.statusCode == 200) {
         aadhaarNumberResponseModel =
             AadhaarNumberResponseModel.fromJson(response.data);
@@ -195,14 +197,19 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
 
   Future<bool> submitOtp() async {
     state = state.copyWith(isLoading: true);
-    print(state.otp);
+    if (kDebugMode) {
+      print(state.otp);
+    }
     final aadhaarOtpRequestModel = AadhaarOtpRequestModel(
         transId: aadhaarNumberResponseModel!.items.tsTransId,
         otp: int.parse(state.otp));
-    print(int.parse(state.otp));
-    print(
-      aadhaarNumberResponseModel!.items.tsTransId,
-    );
+    if (kDebugMode) {
+      print(int.parse(state.otp));
+      print(
+        aadhaarNumberResponseModel!.items.tsTransId,
+      );
+    }
+
 
     try {
       final response = await dio.post(Api.aadhaarOtpVerify,
@@ -211,7 +218,9 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
         state = state.copyWith(isLoading: false);
         aadhaarOtpResponseModel =
             AadhaarOtpResponseModel.fromJson(response.data);
-        print(calculateAge(aadhaarOtpResponseModel!.items.msg.dob).toString());
+        if (kDebugMode) {
+          print(calculateAge(aadhaarOtpResponseModel!.items.msg.dob).toString());
+        }
         final age = calculateAge(aadhaarOtpResponseModel!.items.msg.dob);
         state = state.copyWith(
           careOf: aadhaarOtpResponseModel?.items.msg.careof,
@@ -299,7 +308,9 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
 
   Future<bool> fetchPanVerify(BuildContext context) async {
     await fetchPanFatherName();
-    print(state.otp);
+    if (kDebugMode) {
+      print(state.otp);
+    }
     final panRequestModel = PanRequestModel(
         docType: 523, panNumber: state.pan, transId: "111XXXXX",formName: "applicant");
 
@@ -334,6 +345,11 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
 
   Future<bool> submittedApplicantForm() async {
     state = state.copyWith(isLoading: true);
+    final strDate = DateTime.parse(state.dob);
+    final date = DateFormat.yMMMMd().format(strDate);
+    if (kDebugMode) {
+      print(date);
+    }
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final token = sharedPreferences.getString('token');
     final employeId = sharedPreferences.getString('employeId');
@@ -351,19 +367,19 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
         maritalStatus: '',
         spouseName: '',
         motherName: '',
-        dob: state.dob,
+        dob: date,
         religion: '',
         caste: '',
         age: state.age,
         drivingLicenceNo: '',
         voterIdNo: '',
         education: '',
-        permanentAddressaddressLine1: state.permanentAddress1,
-        permanentAddressaddressLine2: state.permanentAddress2,
-        permanentAddresspinCode: state.permanentPinCode,
-        permanentAddresscity: state.permanentCity,
-        permanentAddressdistrict: state.permanentDistrict,
-        permanentAddressstate: state.permanentState,
+        permanentAddressaddressLine1: state.communicationAddress1,
+        permanentAddressaddressLine2: state.communicationAddress2,
+        permanentAddresspinCode: state.communicationPinCode,
+        permanentAddresscity: state.communicationCity,
+        permanentAddressdistrict: state.communicationDistrict,
+        permanentAddressstate: state.communicationState,
         localAddressaddressLine1: state.communicationAddress1,
         localAddressaddressLine2: state.communicationAddress2,
         localAddresspinCode: state.communicationPinCode,
@@ -374,8 +390,11 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
 
     final response = await dio.post(Api.submitApplicantForm,
         data: dioFormData, options: Options(headers: {'token': token}));
-    print(response.data);
-    print(response.statusCode);
+    if (kDebugMode) {
+      print(response.data);
+      print(response.statusCode);
+    }
+
     if (response.statusCode == 200) {
       state = state.copyWith(isLoading: false);
       SubmitApplicantResponseModel.fromJson(response.data);
@@ -400,11 +419,13 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
         isPermanentPinCodeValid: state.isCommunicationPinCodeValid,
         permanentState: state.communicationState,
         isPermanentStateValid: state.isCommunicationStateValid);
-    print(
+    if (kDebugMode) {
+      print(
         'permanent add ${state.permanentAddress1}, ${state.permanentAddress2}');
+    }
   }
 
-  Future<void> pickImages() async {
+  /*Future<void> pickImages() async {
     await Permission.photos.request();
     await Permission.videos.request();
 
@@ -427,7 +448,80 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
         print('Failed to pick image: $e');
       }
     }
+  }*/
+
+
+  Future<void> pickImages() async {
+    final ImagePicker picker = ImagePicker();
+
+    try {
+      // Check Android version
+      if (Platform.isAndroid) {
+        if (await _checkPermissions()) {
+          // Permissions are granted, proceed to capture image
+          XFile? pickedImage = await picker.pickImage(source: ImageSource.camera);
+          if (pickedImage != null) {
+            if (kDebugMode) {
+              print('Image path: ${pickedImage.path}');
+            }
+            state = state.copyWith(applicantPhotoFilePath: pickedImage.path);
+            // Handle the picked image as needed
+          } else {
+            if (kDebugMode) {
+              print('No image selected.');
+            }
+          }
+        } else {
+          if (kDebugMode) {
+            print('Permissions denied.');
+          }
+        }
+      } else {
+        if (kDebugMode) {
+          print('This functionality is only available on Android.');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Failed to pick image: $e');
+      }
+    }
   }
+
+  Future<bool> _checkPermissions() async {
+    final AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
+    debugPrint('releaseVersion : ${androidInfo.version.release}');
+    final int androidVersion = int.parse(androidInfo.version.release);
+    if (androidVersion >= 13) {
+      // Android 13 and above
+      final photosPermission = await Permission.photos.request();
+      final videosPermission = await Permission.videos.request();
+
+      if (photosPermission.isGranted && videosPermission.isGranted) {
+        return true;
+      } else {
+        if (kDebugMode) {
+          print('Photos/Videos permissions denied.');
+        }
+        return false;
+      }
+    } else {
+      // Below Android 13
+      final cameraPermission = await Permission.camera.request();
+      final storagePermission = await Permission.storage.request();
+
+      if (cameraPermission.isGranted && storagePermission.isGranted) {
+        return true;
+      } else {
+        if (kDebugMode) {
+          print('Camera/Storage permissions denied.');
+        }
+        return false;
+      }
+    }
+  }
+
+
 
   // void clearImage() {
   //   state = null;
@@ -447,14 +541,20 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
       try {
         XFile? pickedImage =
         await picker.pickImage(source: ImageSource.gallery);
-        print('image before null condition  ${pickedImage!.path.toString()}');
+        if (kDebugMode) {
+          print('image before null condition  ${pickedImage!.path.toString()}');
+        }
         if (pickedImage != null) {
-          print('image ${pickedImage.path}');
+          if (kDebugMode) {
+            print('image ${pickedImage.path}');
+          }
           state = state.copyWith(aadhaarPhotoFilePath1: pickedImage.path);
           // File(pickedImage.path) as AadhaarFormState;
         }
       } catch (e) {
-        print('Failed to pick image: $e');
+        if (kDebugMode) {
+          print('Failed to pick image: $e');
+        }
       }
     }
   }
@@ -473,14 +573,20 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
       try {
         XFile? pickedImage =
         await picker.pickImage(source: ImageSource.gallery);
-        print('image before null condition  ${pickedImage!.path.toString()}');
+        if (kDebugMode) {
+          print('image before null condition  ${pickedImage!.path.toString()}');
+        }
         if (pickedImage != null) {
-          print('image ${pickedImage.path}');
+          if (kDebugMode) {
+            print('image ${pickedImage.path}');
+          }
           state = state.copyWith(aadhaarPhotoFilePath2: pickedImage.path);
           // File(pickedImage.path) as AadhaarFormState;
         }
       } catch (e) {
-        print('Failed to pick image: $e');
+        if (kDebugMode) {
+          print('Failed to pick image: $e');
+        }
       }
     }
   }

@@ -29,7 +29,7 @@ final fetchVisitDetailsProvider = FutureProvider.autoDispose.family<List<VisitIt
   );
 
   print('Response status: ${response.statusCode}');
-  print('Response body: ${response.data}');
+  print('Response Visit data body: ${response.data}');
 
   if (response.statusCode == 200) {
     final List items = response.data['items'];

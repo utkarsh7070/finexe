@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:finexe/feature/Eod/AddBOD_dialogue/AddBOD_dialogue/view/add_bod._dialogue.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
@@ -8,6 +9,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Model/pd_request_list_model.dart';
 
 class Item {
   final String imageUrl;
@@ -177,7 +180,7 @@ class BodStatusNotifier extends StateNotifier<AsyncValue<BodStatusResponse?>> {
           if (kDebugMode) {
             print('Add BOD');
           }
-          // AddBodDialog().addAlbumDialog(context, ref);
+          AddBodDialog().addAlbumDialog(context);
         } else {
           print('Data is null or invalid');
         }
@@ -202,4 +205,35 @@ class BodStatusNotifier extends StateNotifier<AsyncValue<BodStatusResponse?>> {
       isLoading = false;
     }
   }
+
 }
+
+
+final fetchPdRequestListProvider =
+FutureProvider.autoDispose<List<PDReqItems>>((ref) async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  String? token = sharedPreferences.getString('token');
+  // final String token =
+  //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+  final Map<String, String> queryParam = {"status": "WIP", "searchQuery": ""};
+  final dio = ref.read(dioProvider);
+  print('Api.getReqRefP:: ${Api.getReqRefP}');
+  print('token:: ${token}');
+
+  final response = await dio.get(Api.getReqRefP,
+      queryParameters: queryParam, options: Options(headers: {"token": token}));
+  print(response.statusMessage);
+  print(response.statusCode);
+  if (response.statusCode == 200) {
+    print(response.data);
+    List<dynamic> responseList = response.data['items'] ?? [];
+
+    // Map the list of dynamic objects to List<PDReqItems>
+    List<PDReqItems> apiResponseList =
+    responseList.map((item) => PDReqItems.fromJson(item)).toList();
+    print('PDReqItems ${apiResponseList.length}');
+    return apiResponseList;
+  } else {
+    throw Exception('Failed to load data');
+  }
+});

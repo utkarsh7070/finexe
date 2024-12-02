@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../utils/widget/custom_snackbar.dart';
 
-class DioExceptions implements Exception {
+/*class DioExceptions implements Exception {
    ErrorModel? errorModel;
   DioExceptions.fromDioError(DioException error,BuildContext context) {
     switch (error.type) {
@@ -52,4 +52,61 @@ class DioExceptions implements Exception {
         break;
     }
   }
+}*/
+
+class DioExceptions implements Exception {
+  final String errorMessage; // Declared as final
+
+  DioExceptions.fromDioError(DioException error, BuildContext context)
+      : errorMessage = _mapErrorToMessage(error, context);
+
+  static String _mapErrorToMessage(DioException error, BuildContext context) {
+    String message = 'An error occurred'; // Default message
+
+    switch (error.type) {
+      case DioExceptionType.connectionTimeout:
+        message = 'Connection timed out. Please try again later.';
+        break;
+      case DioExceptionType.sendTimeout:
+        message = 'Request timed out while sending data.';
+        break;
+      case DioExceptionType.receiveTimeout:
+        message = 'Response timed out from the server.';
+        break;
+      case DioExceptionType.badCertificate:
+        message = 'Invalid SSL certificate detected.';
+        break;
+      case DioExceptionType.badResponse:
+        final responseData = error.response?.data;
+        if (responseData is Map<String, dynamic>) {
+          try {
+            final errorModel = ErrorModel.fromJson(responseData);
+            message = errorModel.message.isNotEmpty
+                ? errorModel.message
+                : 'Unexpected server error occurred.';
+          } catch (e) {
+            message = responseData['message'] ?? 'Server error occurred.';
+          }
+        } else if (responseData is String) {
+          message = responseData;
+        } else {
+          message = 'Unexpected server error occurred.';
+        }
+        break;
+      case DioExceptionType.cancel:
+        message = 'Request was cancelled.';
+        break;
+      case DioExceptionType.connectionError:
+        message = 'Connection error. Please check your internet connection.';
+        break;
+      case DioExceptionType.unknown:
+      default:
+        message = 'An unknown error occurred.';
+        break;
+    }
+
+    showCustomSnackBar(context, message, Colors.red);
+    return message;
+  }
 }
+

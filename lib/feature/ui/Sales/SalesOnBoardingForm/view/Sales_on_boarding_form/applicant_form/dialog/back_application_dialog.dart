@@ -19,7 +19,7 @@ class ConfirmBackDialog{
               borderRadius: BorderRadius.all(Radius.circular(10))),
           actions: const [ConfirmBackToDashBoard()],
           content: Container(
-            height: displayHeight(context) * 0.17,
+            height: displayHeight(context) * 0.19,
             child: Column(
               children: [
                 Image.asset(

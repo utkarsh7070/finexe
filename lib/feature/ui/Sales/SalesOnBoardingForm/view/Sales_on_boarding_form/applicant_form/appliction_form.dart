@@ -128,6 +128,7 @@ class ApplicationDetails extends ConsumerWidget {
 
                         Column(
                           children: [
+
                             AppFloatTextField(
                               focusNode:
                                   personalFocusViewModel.aadhaarFocusNode,

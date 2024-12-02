@@ -157,7 +157,7 @@ final openDrawerProvider = StateProvider.autoDispose<bool>(
   },
 );
 
-final getCasesData = StateNotifierProvider.autoDispose<AllCases, CaseModel>(
+final getCasesData = StateNotifierProvider<AllCases, CaseModel>(
   (ref) {
     final dio = ref.watch(dioProvider);
     return AllCases(dio);
@@ -175,14 +175,18 @@ class AllCases extends StateNotifier<CaseModel> {
   Future<void> switchTab(int value) async {
     switch (value) {
       case 1:
+        state = state.copyWith(listData: []); // Reset listData
         await fetchAllCases();
         break;
       case 2:
+        state = state.copyWith(listData: []); // Reset listData
         await fetchCibilOk();
         break;
       case 3:
+        state = state.copyWith(listData: []); // Reset listData
         await fetchCibilPending();
       case 4:
+        state = state.copyWith(listData: []); // Reset listData
         await fetchCibilReject();
         break;
       default:
@@ -194,22 +198,40 @@ class AllCases extends StateNotifier<CaseModel> {
     state = state.copyWith(isLoading: true);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
-    List<String>? role = sharedPreferences.getStringList('roleName');
+   /* List<String>? role = sharedPreferences.getStringList('roleName');
     final Map<String, String> params = {
       'employeeRole': role!.first,
       'status': 'all'
+    };*/
+
+    List<String>? role = sharedPreferences.getStringList('roleName');
+
+    String employeeRole = role != null && role.contains('sales') ? 'sales' : role?.first ?? '';
+
+    final Map<String, String> params = {
+      'employeeRole': employeeRole,
+      'status': 'all'
     };
+    print('Params: $params');
+
     try {
       final response = await dio.get(Api.allCases,
           queryParameters: params, options: Options(headers: {'token': token}));
+
+      print('All cases response ${response}');
+
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
       print(responseModel);
-      // state = responseModel.items;
-      // list = responseModel.items;
-      state = state.copyWith(listData: responseModel.items);
+
+      if (responseModel.items.isEmpty) {
+        state = state.copyWith(noDataMessage: "No data available", isLoading: false);
+      } else {
+        state = state.copyWith(listData: responseModel.items, isLoading: false);
+      }
+    /*  state = state.copyWith(listData: responseModel.items);
       print(response.statusCode);
-      state = state.copyWith(isLoading: false);
+      state = state.copyWith(isLoading: false);*/
     } catch (e) {
       state = state.copyWith(isLoading: false);
       throw Exception(e);
@@ -220,22 +242,42 @@ class AllCases extends StateNotifier<CaseModel> {
     state = state.copyWith(isLoading: true);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
-    List<String>? role = sharedPreferences.getStringList('roleName');
+    /*List<String>? role = sharedPreferences.getStringList('roleName');
     final Map<String, String> params = {
       'employeeRole': role!.first,
       'status': 'cibilReject'
+    };*/
+    List<String>? role = sharedPreferences.getStringList('roleName');
+
+    String employeeRole = role != null && role.contains('sales') ? 'sales' : role?.first ?? '';
+
+    final Map<String, String> params = {
+      'employeeRole': employeeRole,
+      'status': 'cibilReject'
     };
+    print('Params: $params');
     // String? token = await SessionService.getToken();
     try {
       final response = await dio.get(Api.allCases,
           queryParameters: params, options: Options(headers: {'token': token}));
+
+      print('cibilReject cases response ${response}');
+
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
       print(responseModel);
-      state = state.copyWith(isLoading: false);
+
+      // Check for empty data
+      if (responseModel.items.isEmpty) {
+        state = state.copyWith(noDataMessage: "No data available", isLoading: false);
+      } else {
+        state = state.copyWith(listData: responseModel.items, isLoading: false);
+      }
+
+      /*state = state.copyWith(isLoading: false);
       // state = responseModel.items;
       state = state.copyWith(listData: responseModel.items);
-      print(response.statusCode);
+      print(response.statusCode);*/
     } catch (e) {
       state = state.copyWith(isLoading: false);
       throw Exception(e);
@@ -247,24 +289,45 @@ class AllCases extends StateNotifier<CaseModel> {
     state = state.copyWith(isLoading: true);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
-    List<String>? role = sharedPreferences.getStringList('roleName');
+   /* List<String>? role = sharedPreferences.getStringList('roleName');
 
     final Map<String, String> params = {
       'employeeRole': role!.first,
       'status': 'cibilOk'
+    };*/
+
+    List<String>? role = sharedPreferences.getStringList('roleName');
+
+    String employeeRole = role != null && role.contains('sales') ? 'sales' : role?.first ?? '';
+
+    final Map<String, String> params = {
+      'employeeRole': employeeRole,
+      'status': 'cibilOk'
     };
+    print('Params: $params');
 
     // String? token = await SessionService.getToken();
     try {
       final response = await dio.get(Api.allCases,
           queryParameters: params, options: Options(headers: {'token': token}));
+
+      print('cibilOk cases response ${response}');
+
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
       print(responseModel.items.first.customerName);
-      // state = responseModel.items;
-      state = state.copyWith(listData: responseModel.items);
-      print(response.statusCode);
-      state = state.copyWith(isLoading: false);
+
+
+      // Check for empty data
+      if (responseModel.items.isEmpty) {
+        state = state.copyWith(noDataMessage: "No data available", isLoading: false);
+      } else {
+        state = state.copyWith(listData: responseModel.items, isLoading: false);
+      }
+
+     /* state = state.copyWith(listData: responseModel.items);
+      print(response.statusCode);*/
+     // state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false);
       throw Exception(e);
@@ -275,42 +338,66 @@ class AllCases extends StateNotifier<CaseModel> {
     state = state.copyWith(isLoading: true);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
-    List<String>? role = sharedPreferences.getStringList('roleName');
+    /*List<String>? role = sharedPreferences.getStringList('roleName');
     final Map<String, String> params = {
       'employeeRole': role!.first,
       'status': 'cibilPending'
+    };*/
+
+    List<String>? role = sharedPreferences.getStringList('roleName');
+
+    String employeeRole = role != null && role.contains('sales') ? 'sales' : role?.first ?? '';
+
+    final Map<String, String> params = {
+      'employeeRole': employeeRole,
+      'status': 'cibilPending'
     };
+    print('Params: $params');
 
     // String? token = await SessionService.getToken();
     try {
       final response = await dio.get(Api.allCases,
           queryParameters: params, options: Options(headers: {'token': token}));
+
+      print('cibilPending cases response ${response}');
+
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
       print(responseModel);
 
-      // state = responseModel.items;
-      state = state.copyWith(listData: responseModel.items);
-      print(response.statusCode);
-      state = state.copyWith(isLoading: false);
+
+     /* state = state.copyWith(listData: responseModel.items);
+      print(response.statusCode);*/
+      // Check for empty data
+      if (responseModel.items.isEmpty) {
+        state = state.copyWith(noDataMessage: "No data available", isLoading: false);
+      } else {
+        state = state.copyWith(listData: responseModel.items, isLoading: false);
+      }
+
+     // state = state.copyWith(isLoading: false);
     } catch (e) {
       print(e);
       state = state.copyWith(isLoading: false);
       throw Exception(e);
     }
   }
+
 }
 
 class CaseModel {
   final List<Item> listData;
   final bool isLoading;
+  final String noDataMessage;
 
-  CaseModel({this.listData = const [], this.isLoading = false});
+  CaseModel({this.listData = const [], this.isLoading = false,this.noDataMessage = "",});
 
-  CaseModel copyWith({List<Item>? listData, bool? isLoading}) {
+  CaseModel copyWith({List<Item>? listData, bool? isLoading,String? noDataMessage,}) {
     return CaseModel(
         listData: listData ?? this.listData,
-        isLoading: isLoading ?? this.isLoading);
+        isLoading: isLoading ?? this.isLoading,
+      noDataMessage: noDataMessage ?? this.noDataMessage,
+    );
   }
 }
 

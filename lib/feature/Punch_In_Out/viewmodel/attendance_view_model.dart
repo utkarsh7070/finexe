@@ -330,7 +330,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               log("Navigating to collection dashboard");
               Navigator.pushNamedAndRemoveUntil(
                 context,
-                AppRoutes.collectionHome, // Collection dashboard route
+                AppRoutes.dashBoard, // Collection dashboard route
                     (route) => false, // Remove all previous routes
               );
               break;
@@ -407,26 +407,15 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       print('punch out response  ${response.data}');
       // log("onPunchOut response: " + response.);
       log('puch');
+      var responseData = response.data; // Assuming response.data is a Map
+      var message = responseData['message'];
       // Punch punchInModel = PunchInModel.fromJson(response.data);
-      if (response.subCode == 200) {
+      if (response.statusCode == 200) {
+
+        showCustomSnackBar(context, message, AppColors.green);
         // PunchInModel punchInModel = PunchInModel.fromJson(response.data);
-        Fluttertoast.showToast(
-          msg: response.message.toString(),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.TOP,
-          backgroundColor: Colors.white,
-          textColor: Colors.blue,
-          fontSize: 16.0,
-        );
       } else {
-        Fluttertoast.showToast(
-          msg: response.message.toString(),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.TOP,
-          backgroundColor: Colors.white,
-          textColor: Colors.blue,
-          fontSize: 16.0,
-        );
+        showCustomSnackBar(context, message, AppColors.green);
       }
 
       await checkPunch();

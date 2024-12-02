@@ -375,6 +375,40 @@ class CoApplicantForm1 extends ConsumerWidget {
                             children: [
                               AppFloatTextField(
                                 controller:
+                                formListController[index].coApplicantMobileController,
+                                focusNode: coApplicationFocusViewModel
+                                    .coAppliContactFocusNode,
+                                currentState: coApplicationFocusStates[
+                                'coAppliContactFocusNode'],
+                                onChange: (value) {
+                                  coApplicationFormViewModel.updateCoApplintContact(
+                                      value, index);
+                                },
+                                height: !coApplicationFormState[index]
+                                    .isCoApplicantContact
+                                    ? displayHeight(context) * 0.09
+                                    : null,
+                                inerHint: 'Co Applicant Contact',
+                                errorText: "CoApplicant Contact is a required field",
+                                isError: !coApplicationFormState[index]
+                                    .isCoApplicantContact,
+                                textInputAction: TextInputAction.done,
+                              ),
+
+                              // Align(
+                              //   alignment: Alignment.centerRight,
+                              //   child: TextButton(
+                              //       onPressed: () {
+                              //
+                              //       },
+                              //       child: const Text('Get OTP',style: TextStyle(color: AppColors.white),)),
+                              // )
+
+                          SizedBox(
+                            height: displayHeight(context) * 0.02,
+                          ),
+                              AppFloatTextField(
+                                controller:
                                     formListController[index].aadhaarController,
                                 focusNode: coApplicationFocusViewModel
                                     .aadhaarFocusNode,
@@ -587,7 +621,7 @@ class CoApplicantForm1 extends ConsumerWidget {
                                         .validateCoApplicant(index);
                                     if (isValid) {
                                       coApplicationFormViewModel
-                                          .fetchAadhaarNumber(index)
+                                          .fetchAadhaarNumber(index,)
                                           .then(
                                         (value) {
                                           showBottomSheetIfYes(

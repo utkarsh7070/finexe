@@ -1,7 +1,6 @@
 import 'package:finexe/feature/Punch_In_Out/view/attendance.dart';
 import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/home_collection_view/DashboardScreen.dart';
 import 'package:finexe/feature/ui/Sales/NewLone/view/new_loan_screen.dart';
-import 'package:finexe/feature/ui/Sales/OnBoarding/view/cases_details.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_screen.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/referance/referance_details.dart';
 import 'package:finexe/feature/ui/Splash/view/splash.dart';
@@ -11,10 +10,10 @@ import '../../Eod/view/all_task.dart';
 import '../../Eod/view/bodlist.dart';
 import '../../ui/Collection/Collection cases/view/cases_screen.dart';
 import '../../ui/Collection/Collection cases/view/visitPending/more_info_screen.dart';
+import '../../ui/PD/view/PD Form/pd_existing_data/view/pd_existing_data_form.dart';
+import '../../ui/PD/view/PD Form/pd_form_screen.dart';
 import '../../ui/PD/view/pd_approved.dart';
 import '../../ui/PD/view/pd_dashboard_screen.dart';
-import '../../ui/PD/view/pd_filled_form.dart';
-import '../../ui/PD/view/pd_form_screen.dart';
 import '../../ui/PD/view/pd_pending.dart';
 import '../../ui/PD/view/pd_reject.dart';
 import '../../ui/PD/view/pd_request.dart';
@@ -67,6 +66,7 @@ class AppRoutes {
   static const String eodscreen = '/eodscreen';
   static const String getalltask = '/getalltask'; //CustomerDetail
   static const String pdfilledform = '/pdfilledform';
+
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -188,7 +188,7 @@ class AppRoutes {
               );
             },
             transitionDuration: const Duration(milliseconds: 600));
-        case casesDetails:
+      /*  case casesDetails:
         return PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
             const CasesDetails(),
@@ -199,7 +199,7 @@ class AppRoutes {
                 child: child,
               );
             },
-            transitionDuration: const Duration(milliseconds: 600));
+            transitionDuration: const Duration(milliseconds: 600));*/
       case saleGuarantorForm2:
         return MaterialPageRoute(builder: (_) => const GuarantorForm2());
       case saleGuarantorForm3:
@@ -260,7 +260,7 @@ class AppRoutes {
           },
         );
       case pdfilledform:
-        return MaterialPageRoute(builder: (_) => CustomerDetail());
+        return MaterialPageRoute(builder: (_) => PdFilledForm());
       case pdformscreen:
         return MaterialPageRoute(builder: (_) => const PdFormScreen());
       case eodscreen:

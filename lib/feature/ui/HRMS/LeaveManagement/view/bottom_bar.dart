@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../Sales/SalesProfile/model/login_user_profile.dart';
 
 class BottomBar extends StatelessWidget {
@@ -35,7 +36,7 @@ class BottomBar extends StatelessWidget {
     final punchOut = formatTime(punchOutTime);
 
     return Container(
-      color: Colors.green,
+      color: AppColors.primary,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

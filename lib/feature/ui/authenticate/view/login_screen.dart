@@ -61,21 +61,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     log('isLoggedIn: ' + isLoggedIn.toString());
-    // final checkPunchProvider = ref.watch(attendanceProvider);
     final isChecked = ref.watch(isRememberMeCheckedProvider);
     final checkUsernameValidation = ref.read(userValidationProvider.notifier);
     final checkPassValidation = ref.read(passwordValidationProvider.notifier);
-
-    final focusStates = ref.watch(dualFocusProvider);
-    final focusViewModel = ref.read(dualFocusProvider.notifier);
     final loginState = ref.watch(loginViewModelProvider);
     final loginStateViewModel = ref.read(loginViewModelProvider.notifier);
-    //final selectedValue = ref.watch(radioProvider);
     final obscureValue = ref.watch(obscureTextProvider);
     final passwordValidations = ref.watch(passwordValidationProvider);
     final userValidations = ref.watch(userValidationProvider);
+    final vendorState = ref.watch(selectVendorProvider);
+    final vendorStateViewModel = ref.read(selectVendorProvider.notifier);
+
     log('loginState.isLoading:: ' + loginState.isLoading.toString());
-    bool isRememberMeChecked = false;
+
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -251,6 +249,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                       ],
                     ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: vendorState,
+                          onChanged: (value) {
+                            print(vendorState);
+                            // Update the state using the provider
+                            if(value!=null)
+                            vendorStateViewModel.state = value;
+                            // selectedValue = vendorState? '' : 'vendor';
+                            // print('selectedValue:: $selectedValue');
+                          },
+                          side: const BorderSide(
+                            color: Colors.blue, // Blue border
+                            width: 2.0,
+                          ),
+                        ),
+                        const Text(
+                          "Vendor",
+                          style: TextStyle(fontSize: 16.0, color: Colors.blue),
+                        ),
+                      ],
+                    ),
                     SizedBox(height: displayHeight(context) * 0.04),
                     SizedBox(
                       height: displayHeight(context) * 0.06,
@@ -276,11 +297,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 .read(passwordValidationProvider.notifier)
                                 .checkPassword(_passwordController.text);
                           } else {
+                            final String role = vendorState? 'vendor' : '';
+                            if (kDebugMode) {
+                              print(role);
+                            }
                             loginStateViewModel.clickPunchInButton(
                                 context: context,
                                 email: _emailController.text.trim(),
                                 password: _passwordController.text.trim(),
-                                ref: ref);
+                                ref: ref,role: role);
                           }
                         },
                         child: loginState.isLoading

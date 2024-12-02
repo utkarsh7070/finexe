@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
+import '../../../../base/utils/namespase/app_colors.dart';
 import '../model/attendance_listing_model.dart';
 import '../view_model/attendance_listing_view_model.dart';
 
@@ -38,8 +39,8 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Leave Details",style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.green,
+        title: const Text("Attendance Details",style: TextStyle(color: Colors.white)),
+        backgroundColor: AppColors.primary,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back,color: Colors.white,),
@@ -151,7 +152,8 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
 
     String formatTime(String? dateTimes) {
       print('time formate ${dateTimes}');
-      if (dateTimes == null) return 'N/A'; // Handle null case
+     // if (dateTimes == null) return 'N/A'; // Handle null case
+      if (dateTimes == null || dateTimes.isEmpty) return 'N/A'; // Handle null or empty case
       DateFormat format = DateFormat("yyyy-MM-dd'T'hh:mm:ss a");
       DateTime dateTime = format.parse(dateTimes);// Handle empty strings
       // final parsedTime = DateTime.parse(time);

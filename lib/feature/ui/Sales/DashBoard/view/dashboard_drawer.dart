@@ -92,7 +92,7 @@ class DrawerScreen extends ConsumerWidget {
                   ),
 
                   Visibility(
-                    visible: role.contains('collection'),
+                    visible: role.contains('collection') || role.contains('admin'),
                     child: ListTile(
                       // leading: const Icon(Icons.money, color: AppColors.black),
                       title: Column(
@@ -116,7 +116,7 @@ class DrawerScreen extends ConsumerWidget {
                   ),
 
                   Visibility(
-                    visible: role.contains('collection'),
+                    visible: role.contains('collection') || role.contains('admin'),
                     child:  const Divider(
                       color: Colors.grey,
                       height: 5,

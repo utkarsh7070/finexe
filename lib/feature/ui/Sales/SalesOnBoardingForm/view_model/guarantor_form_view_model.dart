@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/request_model/Submite_guarantor_form_data.dart';
@@ -386,7 +389,34 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     }
   }
 
-  Future<void> pickImages() async {
+  Future<PaymentInitiateResponseModel> paymentInitiate2(String customerId) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final token = sharedPreferences.getString('token');
+   // final customerId = sharedPreferences.getString('customerId');
+    final requestData = {'customerId': customerId.toString()};
+    if (kDebugMode) {
+      print(customerId);
+      print(token);
+    }
+
+    print('Input requestData ${requestData.toString()}');
+
+    final response = await dio.post(Api.paymentAmount,
+        data: requestData, options: Options(headers: {'token': token}));
+    PaymentInitiateResponseModel responseModel =
+    PaymentInitiateResponseModel.fromJson(response.data);
+    if (kDebugMode) {
+      print(response.data);
+      print(response.statusCode);
+    }
+    if (response.statusCode == 200) {
+      return responseModel;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  /*Future<void> pickImages() async {
     // var video = await Permission.storage.status;
     if (await Permission.photos.status.isDenied &&
         await Permission.videos.status.isDenied) {
@@ -407,6 +437,62 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
         }
       } catch (e) {
         print('Failed to pick image: $e');
+      }
+    }
+  }*/
+
+  Future<void> pickImages() async {
+    final ImagePicker picker = ImagePicker();
+
+    try {
+      // Check Android version
+      if (Platform.isAndroid) {
+        if (await _checkPermissions()) {
+          // Permissions are granted, proceed to capture image
+          XFile? pickedImage = await picker.pickImage(source: ImageSource.camera);
+          if (pickedImage != null) {
+            print('Image path: ${pickedImage.path}');
+            state = state.copyWith(applicantPhotoFilePath: pickedImage.path);
+            // Handle the picked image as needed
+          } else {
+            print('No image selected.');
+          }
+        } else {
+          print('Permissions denied.');
+        }
+      } else {
+        print('This functionality is only available on Android.');
+      }
+    } catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
+  Future<bool> _checkPermissions() async {
+    final AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
+    debugPrint('releaseVersion : ${androidInfo.version.release}');
+    final int androidVersion = int.parse(androidInfo.version.release);
+    if (androidVersion >= 13) {
+      // Android 13 and above
+      final photosPermission = await Permission.photos.request();
+      final videosPermission = await Permission.videos.request();
+
+      if (photosPermission.isGranted && videosPermission.isGranted) {
+        return true;
+      } else {
+        print('Photos/Videos permissions denied.');
+        return false;
+      }
+    } else {
+      // Below Android 13
+      final cameraPermission = await Permission.camera.request();
+      final storagePermission = await Permission.storage.request();
+
+      if (cameraPermission.isGranted && storagePermission.isGranted) {
+        return true;
+      } else {
+        print('Camera/Storage permissions denied.');
+        return false;
       }
     }
   }

@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../base/utils/namespase/app_colors.dart';
+
 class ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -22,7 +24,7 @@ class ActionButton extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 30,
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.primary,
             child: Icon(icon, size: 30, color: Colors.white),
           ),
           const SizedBox(height: 8),

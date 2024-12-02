@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../base/utils/namespase/app_colors.dart';
 import '../model/leave_listing_model.dart';
 import '../view_model/leave_list_show_view_model.dart';
 
@@ -41,7 +42,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Leave Details",style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.green,
+        backgroundColor: AppColors.primary,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back,color: Colors.white,),
@@ -83,7 +84,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
         error: (err, stack) => Center(child: Text("Error: $err")),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
+        backgroundColor: AppColors.primary,
         onPressed: () {
           // Add leave request functionality
           Navigator.push(

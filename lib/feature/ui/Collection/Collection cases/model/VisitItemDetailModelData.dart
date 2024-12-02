@@ -21,7 +21,10 @@ class VisitItemDetail {
     return VisitItemDetail(
       visitDate: json['visitDate'] ?? '',
       customerResponse: json['customerResponse'] ?? '',
-      paymentAmount: json['paymentAmount'].toDouble(),
+     /* paymentAmount: json['paymentAmount'].toDouble() ?? '',*/
+      paymentAmount: (json['paymentAmount'] != null)
+          ? json['paymentAmount'].toDouble()
+          : 0.0, // Default value as 0.0
       reasonForNotPay: json['reasonForNotPay'] ?? '',
       solution: json['solution'] ?? '',
       reasonForCustomerNotContactable: json['reasonForCustomerNotContactable'] ?? '',

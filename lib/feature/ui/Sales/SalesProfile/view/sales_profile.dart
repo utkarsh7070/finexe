@@ -8,7 +8,8 @@ import 'package:intl/intl.dart';
 
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../../../../base/api/api.dart';
-import '../../../../base/dialog/logout_dialog.dart'; // Make sure to import the intl package for date formatting
+import '../../../../base/dialog/logout_dialog.dart';
+import '../../../../base/utils/namespase/app_colors.dart'; // Make sure to import the intl package for date formatting
 
 class SalesProfile extends ConsumerStatefulWidget {
   @override
@@ -65,27 +66,28 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Display the employee's photo
-                            Center(
-                              child: CircleAvatar(
-                                radius: 50,
-                                /*backgroundImage: NetworkImage(userProfile.employeePhoto),*/
-                                backgroundImage: userProfile.employeePhoto.isNotEmpty
-                                    ? NetworkImage('${Api.imageUrl}${userProfile.employeePhoto}')
-                                    : const AssetImage('assets/images/prof.jpeg'),
-                                // Placeholder image
-                                onBackgroundImageError: (error, stackTrace) {
-                                  // Set a default image if the API image fails to load
-                                },
+                          Center(
+                            child: CircleAvatar(
+                              backgroundColor: AppColors.primary,
+                              radius: 50,
+                              // backgroundImage: NetworkImage(userProfile.employeePhoto),
+                              backgroundImage: userProfile.employeePhoto.isNotEmpty && userProfile.employeePhoto.contains('upload')
+                                  ? NetworkImage('${Api.imageUrl}${userProfile.employeePhoto}')
+                                  : const AssetImage('assets/images/prof.jpeg') as ImageProvider,
+                              // Placeholder image
+                              onBackgroundImageError: (error, stackTrace) {
+                                // Set a default image if the API image fails to load
+                              },
 
-                              ),
                             ),
+                          ),
                           const SizedBox(height: 16),
 
                           // Display the employee name with father's name
                           Center(
                             child: Text(
                               userProfile.fullName,
-                              style: Theme.of(context).textTheme.titleLarge,
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center, // Center the name
                             ),
                           ),

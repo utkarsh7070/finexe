@@ -87,14 +87,14 @@ class _DashBoardFormList extends ConsumerState<DashBoardFormList>
                             'Hi,',
                             style: TextStyle(
                                 color: AppColors.white,
-                                fontSize: 32,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w700),
                           ),
                           Text(
                             customer ?? '',
                             style: const TextStyle(
                                 color: AppColors.white,
-                                fontSize: 32,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w700),
                           ),
                           SizedBox(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../base/api/api.dart';
+import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../Sales/SalesProfile/view_model/login_user_view_model.dart';
 import 'action_button.dart';
 import 'attendance_details_screen.dart';
@@ -25,7 +26,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
           bottomNavigationBar: BottomBar(punchInTime: userProfile.punchInTime,punchOutTime: userProfile.punchOutTime,),
           appBar: AppBar(
             title: const Text("Dashboard",style: TextStyle(color: Colors.white)),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.primary,
             centerTitle: true,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back,color: Colors.white,),
@@ -41,7 +42,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
               children: [
                 Card(
                   elevation: 4, // Adds shadow to the card
-                  color: Colors.green.shade100, // Set your desired background color
+                  color: AppColors.lightBlue, // Set your desired background color
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12), // Rounded corners
                   ),
@@ -50,15 +51,16 @@ class HRMSDashboardScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+
                         // Display the employee's photo
                           Center(
                             child: CircleAvatar(
-                              backgroundColor: Colors.green.shade200,
+                              backgroundColor: AppColors.primary,
                               radius: 50,
-                              /*backgroundImage: NetworkImage(userProfile.employeePhoto),*/
-                              backgroundImage: userProfile.employeePhoto.isNotEmpty
+                             // backgroundImage: NetworkImage(userProfile.employeePhoto),
+                              backgroundImage: userProfile.employeePhoto.isNotEmpty && userProfile.employeePhoto.contains('upload')
                                   ? NetworkImage('${Api.imageUrl}${userProfile.employeePhoto}')
-                                  : const AssetImage('assets/images/prof.jpeg'),
+                                  : const AssetImage('assets/images/prof.jpeg') as ImageProvider,
                               // Placeholder image
                               onBackgroundImageError: (error, stackTrace) {
                                 // Set a default image if the API image fails to load
@@ -72,7 +74,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                         Center(
                           child: Text(
                             userProfile.fullName,
-                            style: Theme.of(context).textTheme.titleLarge,
+                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center, // Center the name
                           ),
                         ),

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/widget/custom_text_form.dart';
 import '../model/leave_request_model.dart';
 import '../view_model/leave_request_view_model.dart';
@@ -71,7 +72,7 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Leave Request Form",style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.green,
+        backgroundColor: AppColors.primary,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back,color: Colors.white,),
@@ -93,7 +94,7 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                 decoration: customInputDecoration(
                   "Start Date",
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_month,color: Colors.green,),
+                    icon: const Icon(Icons.calendar_month,color: AppColors.primary,),
                     onPressed: () => _pickDate(context, true),
                   ),
                 ),
@@ -112,7 +113,7 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                 decoration: customInputDecoration(
                   "End Date",
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_month,color: Colors.green,),
+                    icon: const Icon(Icons.calendar_month,color: AppColors.primary,),
                     onPressed: () => _pickDate(context, false),
                   ),
                 ),
@@ -138,7 +139,7 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
               ElevatedButton(
                 onPressed: _submitForm,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green, // Set your desired background color here
+                  backgroundColor: AppColors.primary, // Set your desired background color here
                   foregroundColor: Colors.white, // This sets the text and icon color
                 ),
                 child: const Text("Submit",),

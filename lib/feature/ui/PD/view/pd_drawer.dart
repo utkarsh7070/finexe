@@ -54,33 +54,7 @@ class PdDrawer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, AppRoutes.pdpending);
-                  },
-                  child: Text('Pending'),
-                ),
-                SizedBox(
-                  height: displayHeight(context) * 0.02,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, AppRoutes.pdapprove);
-                  },
-                  child: Text('Approved'),
-                ),
-                SizedBox(
-                  height: displayHeight(context) * 0.02,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, AppRoutes.pdreject);
-                  },
-                  child: Text('Rejected'),
-                ),
-                SizedBox(
-                  height: displayHeight(context) * 0.02,
-                ),
+
                 GestureDetector(
                   onTap: () {},
                   child: Text('Refused'),
@@ -88,15 +62,7 @@ class PdDrawer extends StatelessWidget {
                 SizedBox(
                   height: displayHeight(context) * 0.02,
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, AppRoutes.pdformscreen);
-                  },
-                  child: Text('PD Forms'),
-                ),
-                SizedBox(
-                  height: displayHeight(context) * 0.02,
-                ),
+
                 GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, AppRoutes.bodscreen);
@@ -134,13 +100,7 @@ class PdDrawer extends StatelessWidget {
                 SizedBox(
                   height: displayHeight(context) * 0.02,
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, AppRoutes.pdfilledform);
-                    // LogOutDialog.logOutDialog(context: context);
-                  },
-                  child: Text('PD filled form'),
-                ),
+
               ],
             ),
           ),

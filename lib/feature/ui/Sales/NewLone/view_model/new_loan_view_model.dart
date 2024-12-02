@@ -81,6 +81,8 @@ class NewLoanViewModel extends StateNotifier<PhoneNumberState> {
       print(response.statusCode);
     }
 
+    print('New loan response ${response.data}');
+
     if (response.statusCode == 200) {
       SubmitNewLoanResponseModel submitNewLoanResponseModel =
           SubmitNewLoanResponseModel.fromJson(response.data);

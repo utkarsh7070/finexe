@@ -42,7 +42,7 @@ class AttendanceScreen extends ConsumerWidget {
               ),
               Card(
                 child: Container(
-                  height: MediaQuery.of(context).size.height * 0.10,
+                  height: MediaQuery.of(context).size.height * 0.11,
                   decoration: const BoxDecoration(
                       gradient: const LinearGradient(
                           begin: Alignment.topLeft,

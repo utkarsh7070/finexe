@@ -1,14 +1,12 @@
-import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
+import 'package:finexe/feature/ui/PD/dialog/pd_request_dialog_content.dart';
 import 'package:flutter/material.dart';
 
 class PdRequestDialogue {
-  // final indexCtrl = Get.find<EODController>();
-  static Future<void> requestAcceptDialogue({
-    required BuildContext context,
-  }) async {
+  static Future<void> requestAcceptDialogue(
+      {required BuildContext context, required String id}) async {
     return showDialog<void>(
       useSafeArea: true,
       context: context,
@@ -50,51 +48,8 @@ class PdRequestDialogue {
                 SizedBox(
                   height: displayHeight(context) * 0.02,
                 ),
-                SizedBox(
-                  width: displayWidth(context) * 0.8,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.white,
-                      padding: EdgeInsets.zero,
-                      // backgroundColor: colors,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        AppRoutes.pdscreen, // Name of your login route
-                            (route) =>
-                        false, // Remove all routes until the login route
-                      );
-                    },
-                    child: const Text('Accept',
-                        style: TextStyle(color: AppColors.primary)),
-                  ),
-                ),
-                SizedBox(
-                  height: displayHeight(context) * 0.01,
-                ),
-                SizedBox(
-                  width: displayWidth(context) * 0.8,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      padding: EdgeInsets.zero,
-                      // backgroundColor: colors,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Reject',
-                        style: TextStyle(color: AppColors.gray)),
-                  ),
-                ),
+
+                PdRequestDialogContent(id:id)
               ],
             ),
           ),

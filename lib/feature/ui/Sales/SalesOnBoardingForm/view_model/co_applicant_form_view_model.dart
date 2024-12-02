@@ -1,6 +1,10 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/api/api.dart';
+import 'package:finexe/feature/ui/Sales/NewLone/view_model/new_loan_view_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/pan_response_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/dio.dart';
+import '../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/request_model/aadhaar_number_request_model.dart';
 import '../model/request_model/aadhaar_otp_request_model.dart';
 import '../model/request_model/pan_request_model.dart';
@@ -34,6 +39,51 @@ final isCoTickColorChange = StateProvider(
     return false;
   },
 );
+
+class ImagePickerNotifier extends StateNotifier<File?> {
+  ImagePickerNotifier() : super(null);
+  final ImagePicker picker = ImagePicker();
+
+  // XFile image = await _picker.pickImage(...)
+
+  Future<void> pickImage() async {
+    await Permission.photos.request();
+    await Permission.videos.request();
+
+    // var video = await Permission.storage.status;
+    if (await Permission.photos.status.isDenied &&
+        await Permission.videos.status.isDenied) {
+      // We haven't asked for permission yet or the permission has been denied before, but not permanently.
+    }
+    if (await Permission.photos.status.isGranted &&
+        await Permission.videos.status.isGranted) {
+      try {
+        XFile? pickedImage =
+        await picker.pickImage(source: ImageSource.gallery);
+        if (pickedImage != null) {
+          state = File(pickedImage.path);
+        }
+      } catch (e) {
+        print('Failed to pick image: $e');
+      }
+    }
+
+// You can also directly ask permission about its status.
+//     if (await Permission.location.isRestricted) {
+//       // The OS restricts access, for example, because of parental controls.
+//     }
+  }
+
+  void clearImage() {
+    state = null;
+  }
+}
+
+final imagePickerProvider =
+StateNotifierProvider<ImagePickerNotifier, File?>((ref) {
+  return ImagePickerNotifier();
+});
+
 
 // final checkBoxTermsConditionCoApplicant = StateProvider(
 //   (ref) {
@@ -118,6 +168,7 @@ class FormDataControllerNotifier
       : super([
           FormDataController(
             aadhaarController: TextEditingController(),
+            coApplicantMobileController: TextEditingController(),
             kycDocumentController: TextEditingController(),
             contactController: TextEditingController(),
             ageController: TextEditingController(),
@@ -148,6 +199,7 @@ class FormDataControllerNotifier
       ...state,
       FormDataController(
         aadhaarController: TextEditingController(),
+    coApplicantMobileController: TextEditingController(),
         kycDocumentController: TextEditingController(),
         contactController: TextEditingController(),
         ageController: TextEditingController(),
@@ -386,7 +438,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         fullName: state[index].fullName,
         email: state[index].email,
         aadharNo: state[index].aadhaar,
-        mobileNo: state[index].contact,
+        mobileNo: state[index].coApplicantContact,
         docNo: state[index].pan,
         gender: state[index].gender,
         fatherName: state[index].fatherName,
@@ -409,13 +461,14 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         localAddresspinCode: state[index].communicationPinCode,
         localAddresscity: state[index].communicationCity,
         localAddressdistrict: state[index].communicationDistrict,
-        localAddressstate: state[index].communicationState);
+        localAddressstate: state[index].communicationState, coApplicantContact: state[index].coApplicantContact,);
     FormData dioFormData = formData.toFormData();
 
     final response = await dio.post(Api.submitCoApplicantForm,
         data: dioFormData, options: Options(headers: {'token': token}));
-    print(response.statusMessage);
-    print(response.statusCode);
+    print('Co applicant submit response - ${response}');
+   // print(response.statusMessage);
+  //  print(response.statusCode);
     if (response.statusCode == 200) {
       // SubmitCoApplicantResponseModel.fromJson(response.data);
 
@@ -482,13 +535,20 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
       final response =
       await dio.post(Api.panFatherName, data: panRequestModel);
       if (kDebugMode) {
-        print(response.data);
+        print('fetchPanFatherName Api Response ${response.data}');
+       // print('Set father name Response ${response.data['items']['msg']['data']['father_name']}');
       }
+      var responseData = response.data;
+      print('fetch pan father response: ${responseData}');
+      var message = responseData['message'];
+      print('message - ${message}');
+
       if(response.statusCode ==200){
         state = [
           for (final todo in state)
             if (todo.id == index)
               todo.copyWith(panFather: response.data['items']['msg']['data']['father_name'])
+
             else
               todo
         ];
@@ -511,14 +571,31 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     }
     final panRequestModel = PanRequestModel(
         docType: 523, panNumber: state[index].pan, transId: "111XXXXX",formName: "coApplicant");
+    print('pan panRequestModel ${panRequestModel}');
     try {
       final response =
           await dio.post(Api.panVerify, data: panRequestModel.toJson());
+
+      print('pan verify respons ${response}');
+
       if (response.statusCode == 200) {
         PanResponseModel panResponseModel =
             PanResponseModel.fromJson(response.data);
+
         final String dob =
             DateFormat("dd-MM-yyyy").format(panResponseModel.items.data.dob);
+
+        // Attempt to format the DOB, fallback to "NA" if an error occurs
+       /* String dob;
+        try {
+          dob = DateFormat("dd-MM-yyyy").format(panResponseModel.items.data.dob);
+        } catch (e) {
+          dob = "NA"; // Default value if formatting fails
+          if (kDebugMode) {
+            print("Error formatting DOB: $e");
+          }
+        }*/
+
         state = [
           for (final todo in state)
             if (todo.id == index)
@@ -549,7 +626,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     }
   }
 
-  Future<void> pickImages(int index) async {
+ /* Future<void> pickImages(int index) async {
     await Permission.photos.request();
     await Permission.videos.request();
 
@@ -581,6 +658,69 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         if (kDebugMode) {
           print('Failed to pick image: $e');
         }
+      }
+    }
+  }*/
+
+  Future<void> pickImages(int index) async {
+    final ImagePicker picker = ImagePicker();
+
+    try {
+      // Check Android version
+      if (Platform.isAndroid) {
+        if (await _checkPermissions()) {
+          // Permissions are granted, proceed to capture image
+          XFile? pickedImage = await picker.pickImage(source: ImageSource.camera);
+          if (pickedImage != null) {
+            print('Image path: ${pickedImage.path}');
+            state = [
+              for (final todo in state)
+                if (todo.id == index)
+                  todo.copyWith(applicantPhotoFilePath: pickedImage?.path)
+                else
+                  todo
+            ];
+          //  state = state.copyWith(applicantPhotoFilePath: pickedImage.path);
+            // Handle the picked image as needed
+          } else {
+            print('No image selected.');
+          }
+        } else {
+          print('Permissions denied.');
+        }
+      } else {
+        print('This functionality is only available on Android.');
+      }
+    } catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
+  Future<bool> _checkPermissions() async {
+    final AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
+    debugPrint('releaseVersion : ${androidInfo.version.release}');
+    final int androidVersion = int.parse(androidInfo.version.release);
+    if (androidVersion >= 13) {
+      // Android 13 and above
+      final photosPermission = await Permission.photos.request();
+      final videosPermission = await Permission.videos.request();
+
+      if (photosPermission.isGranted && videosPermission.isGranted) {
+        return true;
+      } else {
+        print('Photos/Videos permissions denied.');
+        return false;
+      }
+    } else {
+      // Below Android 13
+      final cameraPermission = await Permission.camera.request();
+      final storagePermission = await Permission.storage.request();
+
+      if (cameraPermission.isGranted && storagePermission.isGranted) {
+        return true;
+      } else {
+        print('Camera/Storage permissions denied.');
+        return false;
       }
     }
   }
@@ -737,6 +877,20 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     ];
     // copyWith(kycDocument: value, isKycValid: isValid);
   }
+
+
+  void updateCoApplintContact(String value, int index) {
+    final isValid = _validateCoApplicantContact(value);
+    state = [
+      for (final todo in state)
+        if (todo.id == index)
+          todo.copyWith(coApplicantContact: value, isCoApplicantValid: isValid)
+        else
+          todo
+    ];
+    // copyWith(kycDocument: value, isKycValid: isValid);
+  }
+
 
   void updateOtp(String value, int index) {
     final isValid = _validateOtp(value);
@@ -1238,6 +1392,10 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     return aadhaar.length >= 12 && aadhaar.isNotEmpty;
   }
 
+  bool _validateCoApplicantContact(String coApplicantContact) {
+    return coApplicantContact.length != 10 && coApplicantContact.isNotEmpty;
+  }
+
 // License validation logic
   bool _validatePan(String pan) {
     return pan.length >= 10;
@@ -1304,6 +1462,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
 
 class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
   final FocusNode aadhaarFocusNode;
+  final FocusNode coAppliContactFocusNode;
   final FocusNode kycDocFocusNode;
   final FocusNode panFocusNode;
   final FocusNode motherFocusNode;
@@ -1337,6 +1496,7 @@ class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
 
   ApplicantFocusProvider()
       : aadhaarFocusNode = FocusNode(),
+        coAppliContactFocusNode= FocusNode(),
         kycDocFocusNode = FocusNode(),
         panFocusNode = FocusNode(),
         motherFocusNode = FocusNode(),
@@ -1366,6 +1526,7 @@ class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
         permanentStateFocusNode = FocusNode(),
         super({
           'aadhaarFocusNode': false,
+          'coAppliContactFocusNode': false,
           'kycDocFocusNode': false,
           'panFocusNode': false,
           'motherFocusNode': false,
@@ -1397,6 +1558,12 @@ class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
     aadhaarFocusNode.addListener(
       () => _focusListener('aadhaarFocusNode', aadhaarFocusNode),
     );
+
+    coAppliContactFocusNode.addListener(
+          () => _focusListener('coAppliContactFocusNode', coAppliContactFocusNode),
+    );
+
+
     kycDocFocusNode
         .addListener(() => _focusListener('kycDocFocusNode', kycDocFocusNode));
     panFocusNode
@@ -1554,6 +1721,7 @@ class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
 
 class FormDataController {
   final TextEditingController aadhaarController;
+  final TextEditingController coApplicantMobileController;
   final TextEditingController kycDocumentController;
   final TextEditingController panController;
   final TextEditingController contactController;
@@ -1585,6 +1753,7 @@ class FormDataController {
 
   FormDataController({
     required this.kycDocumentController,
+    required this.coApplicantMobileController,
     required this.contactController,
     required this.emailController,
     required this.fatherNameController,
@@ -1611,6 +1780,7 @@ class FormDataController {
 
   void dispose() {
     aadhaarController.dispose();
+    coApplicantMobileController.dispose();
     ageController.dispose();
     communicationAddress1Controller.dispose();
     communicationAddress2Controller.dispose();
@@ -1638,6 +1808,7 @@ class KycFormState {
   final bool isSubmitCoApplicant;
 
   final String aadhaar;
+  final String coApplicantContact;
   final String kycDocument;
   final String pan;
   final String mother;
@@ -1704,6 +1875,8 @@ class KycFormState {
   final bool isPermanentDistrictValid;
   final bool isPermanentPinCodeValid;
 
+  final bool isCoApplicantContact;
+
   KycFormState({
     this.panFather = '',
     this.isSubmitCoApplicant = false,
@@ -1722,6 +1895,7 @@ class KycFormState {
     this.aadhaarPhotoFilePath1 = '',
     this.aadhaarPhotoFilePath2 = '',
     this.aadhaar = '',
+    this.coApplicantContact='',
     this.permanentAddress1 = '',
     this.permanentAddress2 = '',
     this.permanentCity = '',
@@ -1729,6 +1903,7 @@ class KycFormState {
     this.permanentPinCode = '',
     this.permanentState = '',
     this.isAadhaarValid = true,
+    this.isCoApplicantContact=true,
     this.isPermanentAddress1Valid = true,
     this.isPermanentAddress2Valid = true,
     this.isPermanentCityValid = true,
@@ -1796,6 +1971,7 @@ class KycFormState {
       String? aadhaarPhotoFilePath1,
       String? aadhaarPhotoFilePath2,
       String? aadhaar,
+        String? coApplicantContact,
       String? permanentAddress1,
       String? permanentAddress2,
       String? permanentCity,
@@ -1839,6 +2015,7 @@ class KycFormState {
       bool? isCommunicationPinCodeValid,
       bool? isKycValid,
       bool? isAadhaarValid,
+        bool? isCoApplicantValid,
       bool? isPanValid,
       bool? isMotherValid,
       bool? isContactValid,
@@ -1877,6 +2054,11 @@ class KycFormState {
         isOtpValid: isOtpValid ?? this.isOtpValid,
         isAadhaarValid: isAadhaarValid ?? this.isAadhaarValid,
         aadhaar: aadhaar ?? this.aadhaar,
+
+        isCoApplicantContact: isCoApplicantContact ?? this.isCoApplicantContact,
+        coApplicantContact: coApplicantContact ?? this.coApplicantContact,
+
+
         kycDocument: kycDocument ?? this.kycDocument,
         pan: pan ?? this.pan,
         mother: mother ?? this.mother,

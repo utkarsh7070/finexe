@@ -8,8 +8,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Punch_In_Out/model/check_attendance_responce_model.dart';
 import '../../../Punch_In_Out/repository/puch_In_repository_imp.dart';
 import '../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
+import '../../../base/api/api.dart';
 import '../../../base/api/dio_exception.dart';
 import '../../../base/service/session_service.dart';
+import '../../../base/utils/namespase/app_constants.dart';
 
 final sessionProvider = FutureProvider.autoDispose((ref) async {
   final _punchInRepository = ref.watch(punchInRepositoryProvider);
@@ -68,3 +70,40 @@ Future<Position> getCurrentLocation() async {
   );
   return Geolocator.getCurrentPosition(locationSettings: locationSettings);
 }
+
+
+// .................Version Api.............
+
+final versionViewModelProvider = StateNotifierProvider<VersionViewModel, AsyncValue<VersionCheckState>>((ref) {
+  return VersionViewModel();
+});
+
+class VersionCheckState {
+  final String? apkUrl;
+  final bool isUpdateRequired;
+ // static const String staticAppVersion = "1"; // Current app version
+
+  VersionCheckState({this.apkUrl, required this.isUpdateRequired});
+}
+
+class VersionViewModel extends StateNotifier<AsyncValue<VersionCheckState>> {
+  VersionViewModel() : super(const AsyncValue.loading());
+
+  Future<void> checkVersion() async {
+    try {
+      final response = await Dio().get(Api.getVersion);
+      final data = response.data['items'];
+      final serverVersion = data['version'];
+      final apkUrl = data['apkUrl'];
+
+      print('app server version- ${serverVersion} and App version-${AppConstants.staticAppVersion}');
+      final isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
+
+      state = AsyncValue.data(VersionCheckState(apkUrl: apkUrl, isUpdateRequired: isUpdateRequired));
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+    }
+  }
+}
+
+

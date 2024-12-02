@@ -4,6 +4,7 @@ class CoApplicantFormData {
   final String employeId;
   final String customerId;
   final String aadharNo;
+  final String coApplicantContact;
   final String mobileNo;
   final String docType;
   final String docNo;
@@ -41,6 +42,7 @@ class CoApplicantFormData {
     required this.fullName,
     required this.email,
     required this.aadharNo,
+    required this.coApplicantContact,
     required this.mobileNo,
     required this.docType,
     required this.gender,
@@ -78,7 +80,8 @@ class CoApplicantFormData {
       'fullName': fullName,
       'email': email,
       'aadharNo': aadharNo,
-      'mobileNo': mobileNo,
+      'mobileNo':coApplicantContact,
+      /*'mobileNo': mobileNo,*/
       'docType': docType,
       'gender': gender,
       'fatherName': fatherName,

@@ -1,6 +1,7 @@
 class Api {
-  static const String baseUrlProduction = 'https://prod.fincooper.in/';
-  static const String baseUrl = 'https://stageapi.fincooper.in/';
+  static const String baseUrlProduction = 'https://stageapi.fincooper.in';
+  //static const String baseUrl = 'https://stageapi.fincooper.in/';  // Staging URL
+  static const String baseUrl = 'https://stageapi.fincooper.in/';  // Production URL
   static const String baseUrlStageCollection = 'https://stageapi.fincooper.in/';
   static const String baseUrlStageProduction ='https://prod.fincooper.in/';
 
@@ -32,6 +33,8 @@ class Api {
       '${baseUrl}v1/salesMan/guarantorAddDetail';
   static const String getApplicantForm =
       '${baseUrl}v1/salesMan/applicantDetail/:customerId';
+
+  static const String getCaseStatus = '${baseUrl}v1/salesMan/findStatus/';
 
 
   static const String collectionVisitPending =
@@ -96,6 +99,30 @@ class Api {
   static const String getAllTask = '${baseUrl}v1/bodEod/getBy';
   static const String updateStatusTask = '${baseUrl}v1/bodEod/update';
   static const String checkBodStatus = '${baseUrl}v1/bodEod/verify';
+
+
+  static const String getVersion = '${baseUrl}v1/mobile/versionGet';
+
+  //----------------------------------------------PD-Update-Form-------------------------------------------
+  static const String updatePdReport = '${baseUrl}v1/pd/addPdReport';
+  //v1/pd/creditPdGet/66f53ffbd7011eb65160f292
+
+
+  static const String getpdformdata = '${baseUrl}v1/pd/creditPdGet/';
+
+
+  //---------------------------------- PD EXisting Form--------------------------------------------------
+  static const String getApplicantFormDetails =
+      '${baseUrl}v1/salesMan/applicantDetail';
+  static const String getCoApplicantFormDetails =
+      '${baseUrl}v1/salesMan/coApplicantDetail';
+  static const String getGuarantorFormDetails =
+      '${baseUrl}v1/salesMan/guarantorDetail';
+  static const String getLoanDetails =
+      '${baseUrl}v1/salesMan/customerLoginDetail';
+  static const String getCibilDetails = '${baseUrl}v1/cibil/getCibilDetail';
+  static const String getReqRefP = '${baseUrl}v1/pd/allPDAssignFiles';
+  static const String revertByVendor = '${baseUrl}v1/externalvendor/revertByVendor';
   //-------------------------------------------------------------------------------------------
   static Duration connectionTimeout = const Duration(milliseconds: 15000);
   static Duration receiveTimeout = const Duration(milliseconds: 15000);

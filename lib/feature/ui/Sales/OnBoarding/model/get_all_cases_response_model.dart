@@ -14,12 +14,16 @@ class GetAllCasesResponseModel {
   @JsonKey(name: "items")
   List<Item> items;
 
+  @JsonKey(name: "noDataMessage", defaultValue: "No data available") // Default value if the key is missing in the JSON.
+  String noDataMessage;
+
   GetAllCasesResponseModel({
     required this.status,
     required this.subCode,
     required this.message,
     required this.error,
     required this.items,
+    this.noDataMessage = "No data available", // Default constructor value.
   });
 
   GetAllCasesResponseModel copyWith({
@@ -28,6 +32,7 @@ class GetAllCasesResponseModel {
     String? message,
     String? error,
     List<Item>? items,
+    String? noDataMessage,
   }) =>
       GetAllCasesResponseModel(
         status: status ?? this.status,
@@ -35,6 +40,7 @@ class GetAllCasesResponseModel {
         message: message ?? this.message,
         error: error ?? this.error,
         items: items ?? this.items,
+        noDataMessage: noDataMessage ?? this.noDataMessage,
       );
 
   factory GetAllCasesResponseModel.fromJson(Map<String, dynamic> json) => _$GetAllCasesResponseModelFromJson(json);
@@ -45,17 +51,17 @@ class GetAllCasesResponseModel {
 @JsonSerializable()
 class Item {
   @JsonKey(name: "_id")
-  String id;
+  String? id;
   @JsonKey(name: "employeId")
   String? employeId;
   @JsonKey(name: "cibilId")
-  dynamic cibilId;
-  @JsonKey(name: "tlPdId")
-  dynamic tlPdId;
-  @JsonKey(name: "creditPdId")
+  String? cibilId;
+  @JsonKey(name: "tlPdId", defaultValue: 'N/A')
+  String? tlPdId;
+  @JsonKey(name: "creditPdId", defaultValue: 'N/A')
   String? creditPdId;
   @JsonKey(name: "customerId")
-  String customerId;
+  String? customerId;
   @JsonKey(name: "customerFormStart")
   bool customerFormStart;
   @JsonKey(name: "customerFormComplete")
@@ -89,39 +95,39 @@ class Item {
   @JsonKey(name: "cibilFormComplete")
   bool cibilFormComplete;
   @JsonKey(name: "remarkByCibil")
-  String remarkByCibil;
+  String? remarkByCibil;
   @JsonKey(name: "statusByCibil")
-  String statusByCibil;
-  @JsonKey(name: "statusByFinalApproval")
+  String? statusByCibil;
+  @JsonKey(name: "statusByFinalApproval", defaultValue: "unknown")
   String? statusByFinalApproval;
-  @JsonKey(name: "statusByExternalManager")
-  String statusByExternalManager;
-  @JsonKey(name: "remarkByExternalManager")
+  @JsonKey(name: "statusByExternalManager", defaultValue: "unknown")
+  String? statusByExternalManager;
+  @JsonKey(name: "remarkByExternalManager", defaultValue: "unknown")
   String? remarkByExternalManager;
   @JsonKey(name: "remarkByCreditPd")
-  String remarkByCreditPd;
+  String? remarkByCreditPd;
   @JsonKey(name: "statusByCreditPd")
-  String statusByCreditPd;
+  String? statusByCreditPd;
   @JsonKey(name: "createdAt")
   DateTime createdAt;
   @JsonKey(name: "updatedAt")
   DateTime updatedAt;
   @JsonKey(name: "customerName")
-  String customerName;
+  String? customerName;
   @JsonKey(name: "customerFinId")
-  String customerFinId;
+  String? customerFinId;
   @JsonKey(name: "mobileNo")
   dynamic mobileNo;
   @JsonKey(name: "productName")
-  String productName;
+  String? productName;
   @JsonKey(name: "loanAmount")
   dynamic loanAmount;
   @JsonKey(name: "applicantImage")
   String? applicantImage;
   @JsonKey(name: "applicantEmail")
-  String applicantEmail;
-  @JsonKey(name: "externalvendorDetail")
-  ExternalvendorDetail externalvendorDetail;
+  String? applicantEmail;
+ /* @JsonKey(name: "externalvendorDetail")
+  ExternalvendorDetail externalvendorDetail;*/
   @JsonKey(name: "remarkByPd")
   String? remarkByPd;
   @JsonKey(name: "statusByPd")
@@ -170,7 +176,7 @@ class Item {
     required this.loanAmount,
     required this.applicantImage,
     required this.applicantEmail,
-    required this.externalvendorDetail,
+   // required this.externalvendorDetail,
     this.remarkByPd,
     this.statusByPd,
     this.remarkMessage,
@@ -180,8 +186,8 @@ class Item {
   Item copyWith({
     String? id,
     String? employeId,
-    dynamic cibilId,
-    dynamic tlPdId,
+    String? cibilId,
+    String? tlPdId,
     String? creditPdId,
     String? customerId,
     bool? customerFormStart,
@@ -216,7 +222,7 @@ class Item {
     dynamic loanAmount,
     String? applicantImage,
     String? applicantEmail,
-    ExternalvendorDetail? externalvendorDetail,
+   // ExternalvendorDetail? externalvendorDetail,
     String? remarkByPd,
     String? statusByPd,
     String? remarkMessage,
@@ -261,7 +267,7 @@ class Item {
         loanAmount: loanAmount ?? this.loanAmount,
         applicantImage: applicantImage ?? this.applicantImage,
         applicantEmail: applicantEmail ?? this.applicantEmail,
-        externalvendorDetail: externalvendorDetail ?? this.externalvendorDetail,
+       // externalvendorDetail: externalvendorDetail ?? this.externalvendorDetail,
         remarkByPd: remarkByPd ?? this.remarkByPd,
         statusByPd: statusByPd ?? this.statusByPd,
         remarkMessage: remarkMessage ?? this.remarkMessage,
@@ -273,7 +279,10 @@ class Item {
   Map<String, dynamic> toJson() => _$ItemToJson(this);
 }
 
-@JsonSerializable()
+
+
+
+/*@JsonSerializable()
 class CibilIdClass {
   @JsonKey(name: "\$oid")
   dynamic oid;
@@ -464,5 +473,5 @@ class Vendor {
   factory Vendor.fromJson(Map<String, dynamic> json) => _$VendorFromJson(json);
 
   Map<String, dynamic> toJson() => _$VendorToJson(this);
-}
+}*/
 

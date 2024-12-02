@@ -42,8 +42,12 @@ extension AppColors on Never {
   static const Color gray7 = Color(0xFF475467);
   static const Color black2 = Color(0xff101828);
 
+  static const Color lightGreen = Color(0xffc3f8df);
+
   static const Color blueShadeColor = Color(0xFF9DB2CE);
   static const Color linearBarColor = Color(0xFFE4E7EC);
+
+  static const Color lightBlue = Color(0xffdbf0fc);
 
 // static const Color gray = Colors.grey;
 

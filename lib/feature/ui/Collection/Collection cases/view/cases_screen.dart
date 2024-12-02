@@ -20,7 +20,7 @@ class CollectionCasesScreen extends ConsumerWidget {
                   text: 'Visit Pending',
                 ),
                 Tab(
-                  text: 'Collection Due',
+                  text: '',
                   // icon: Icon(Icons),
                 ),
               ],

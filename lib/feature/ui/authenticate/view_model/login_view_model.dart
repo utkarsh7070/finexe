@@ -33,6 +33,7 @@ final passwordValidationProvider =
     return PasswordValidationNotifier();
   },
 );
+final selectVendorProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 final dualFocusProvider =
     StateNotifierProvider.autoDispose<FocusViewModel, Map<String, bool>>((ref) {
@@ -107,8 +108,9 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
       {required BuildContext context,
       required String email,
       required String password,
+        required String role,
       required WidgetRef ref}) async {
-    await login(email, password, ref, context).then(
+    await login(email: email, password: password, ref: ref,role: role,context: context).then(
       (value) {
         if (value) {
           if (kDebugMode) {
@@ -158,7 +160,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                 log("Navigating to collection dashboard");
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  AppRoutes.collectionHome, // Collection dashboard route
+                  AppRoutes.dashBoard, // Collection dashboard route
                       (route) => false, // Remove all previous routes
                 );
                 break;
@@ -189,16 +191,27 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
     );
   }
 
-  Future<bool> login(String email, String password, WidgetRef ref,
-      BuildContext context) async {
+  Future<bool> login(
+      {required String email,
+        required String password,
+        required String role,
+        required WidgetRef ref,
+        required BuildContext context}) async {
     isLoading = true;
     LoginRequestModel loginRequestModel =
-        LoginRequestModel(userName: email, password: password);
+        LoginRequestModel(userName: email, password: password,employeeRole: role);
     // Set state to loading
     state = const AsyncValue.loading();
+
+    print("login Input: ${loginRequestModel.toJson()}");
     try {
       final response =
           await dio.post(Api.login, data: loginRequestModel.toJson());
+
+      var responseData = response.data;
+      print('Login response: ${responseData}');
+      var message = responseData['message'];
+
       if (response.statusCode == 200) {
         isLoading = false;
         LoginResponseModel loginResponseModel =
@@ -233,7 +246,13 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
         showCustomSnackBar(context, loginResponseModel.message, Colors.green);
         return true;
         // Return true here to indicate success
-      } else {
+      }
+      else if(response.statusCode==400){
+        isLoading = false;
+        showCustomSnackBar(context, message, Colors.red);
+        return true;
+      }
+      else {
         showCustomSnackBar(context, response.data.message, Colors.red);
         // If status code is not 200, set state to error
         isLoading = false;

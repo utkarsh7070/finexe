@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view_model/guarantor_form_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -350,21 +351,26 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                       SizedBox(
                         height: displayHeight(context) * 0.01,
                       ),
-                      AppFloatTextField(
-                        focusNode: paymentFocusViewModel.transactionIdFocusNode,
-                        currentState:
-                            paymentFocusStates['transactionIdFocusNode'],
-                        // controller: licenseController,
-                        onChange: (value) {
-                          paymentViewModel.updateTransactionId(value);
-                        },
-                        height: !paymentState.isTransactionId
-                            ? displayHeight(context) * 0.09
-                            : null,
-                        inerHint: 'Transaction Id',
-                        errorText: "Transaction Id is a required field",
-                        isError: !paymentState.isTransactionId,
-                        textInputAction: TextInputAction.done,
+
+
+                      Visibility(
+                        visible: paymentState.isTransactionId,
+                        child: AppFloatTextField(
+                          focusNode: paymentFocusViewModel.transactionIdFocusNode,
+                          currentState:
+                              paymentFocusStates['transactionIdFocusNode'],
+                          // controller: licenseController,
+                          onChange: (value) {
+                            paymentViewModel.updateTransactionId(value);
+                          },
+                          height: !paymentState.isTransactionId
+                              ? displayHeight(context) * 0.09
+                              : null,
+                          inerHint: 'Transaction Id',
+                          errorText: "Transaction Id is a required field",
+                          isError: !paymentState.isTransactionId,
+                          textInputAction: TextInputAction.done,
+                        ),
                       ),
                       SizedBox(
                         height: displayHeight(context) * 0.01,
@@ -390,44 +396,47 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         height: displayHeight(context) * 0.01,
                       ),
 
-                      GestureDetector(
-                        onTap: () {
-                          paymentViewModel.clickPhoto().then(
-                            (value) {
-                              if (value != null) {
-                                // imagePath = value.path;
-                                // print('imagepath ${imagePath}');
-                                paymentViewModel.uploadImage(value.path);
-                              } else {
-                                // ref.watch(updateEmiViewModelProvider.notifier);
-                                // paymentState.isLoading = false;
-                                print('elsepart');
-                              }
-                            },
-                          );
-                        },
-                        child: !paymentState.isLoading
-                            ? Visibility(
-                                visible: paymentState.photoFile.isNotEmpty,
-                                replacement: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.file_upload_outlined,
-                                      color: AppColors.primary,
-                                    ),
-                                    Text('Upload Transaction Image')
-                                  ],
-                                ),
-                                child: SizedBox(
-                                    height: displayHeight(context) * 0.07,
-                                    width: displayWidth(context),
-                                    child: Image.file(
-                                        File(paymentState.photoFile))))
-                            : SizedBox(
-                                height: displayHeight(context) * 0.04,
-                                width: displayWidth(context) * 0.07,
-                                child: const CircularProgressIndicator()),
+                      Visibility(
+                        visible: paymentState.isTransactionImage,
+                        child: GestureDetector(
+                          onTap: () {
+                            paymentViewModel.clickPhoto().then(
+                              (value) {
+                                if (value != null) {
+                                  // imagePath = value.path;
+                                  // print('imagepath ${imagePath}');
+                                  paymentViewModel.uploadImage(value.path);
+                                } else {
+                                  // ref.watch(updateEmiViewModelProvider.notifier);
+                                  // paymentState.isLoading = false;
+                                  print('elsepart');
+                                }
+                              },
+                            );
+                          },
+                          child: !paymentState.isLoading
+                              ? Visibility(
+                                  visible: paymentState.photoFile.isNotEmpty,
+                                  replacement: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.file_upload_outlined,
+                                        color: AppColors.primary,
+                                      ),
+                                      Text('Upload Transaction Image')
+                                    ],
+                                  ),
+                                  child: SizedBox(
+                                      height: displayHeight(context) * 0.07,
+                                      width: displayWidth(context),
+                                      child: Image.file(
+                                          File(paymentState.photoFile))))
+                              : SizedBox(
+                                  height: displayHeight(context) * 0.04,
+                                  width: displayWidth(context) * 0.07,
+                                  child: const CircularProgressIndicator()),
+                        ),
                       ),
                       // AppButton(
                       //   textStyle: AppStyles.buttonLightTextStyle,
@@ -543,4 +552,5 @@ class UpdateEmiDialogContent extends ConsumerWidget {
       ),
     );
   }
+
 }

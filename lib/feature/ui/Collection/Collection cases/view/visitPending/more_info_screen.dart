@@ -49,6 +49,37 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
     }
   }
 
+/*  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 5, vsync: this, initialIndex: widget.index.clamp(0, 0));
+
+    // Fetch initial LD number from the provider
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final data = ref.read(fetchVisitPendingDataProvider);
+      data.whenData((data) {
+        List<ItemsDetails> listOfLists = data.map((map) {
+          return ItemsDetails.fromJson(map);
+        }).toList();
+
+        final safeIndex = widget.index != null && widget.index < listOfLists.length ? widget.index : 0;
+        final item = listOfLists[safeIndex];
+
+        // Extract the LD number from the item
+        final String? ldNumber = item.ld;
+
+        // Refresh the provider once with the LD number
+        if (ldNumber != null) {
+          ref.refresh(fetchVisitDetailsProvider(ldNumber!));
+          ref.refresh(fetchVisitCollectionProvider(ldNumber!));
+          ref.refresh(fetchVisitCallingProvider(ldNumber!));
+          ref.refresh(fetchVisitNoticeProvider(ldNumber!));
+          ref.refresh(fetchVisitClosureProvider(ldNumber!));
+        }
+      });
+    });
+  }*/
+
   @override
   Widget build(BuildContext context) {
     final data = ref.watch(fetchVisitPendingDataProvider);
@@ -67,6 +98,7 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
         final String? ldNumber = item.ld;  // Assuming 'ldNumber' is the correct field in ItemsDetails
 
         // Fetch visit details data
+
         final visitData = ref.watch(fetchVisitDetailsProvider(ldNumber!)); // Watch the visit details provider
 
 

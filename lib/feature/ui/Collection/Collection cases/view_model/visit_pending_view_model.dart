@@ -447,6 +447,8 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         remarkByCollection: state.remark,
         partner: detail.partner!);
 
+    print('Update EMI Input -${requestModel.toJson()}');
+
     String? token = await SessionService.getToken();
     final response = await dio.post(Api.updateEmiSubmit,
         data: requestModel.toJson(),
@@ -455,20 +457,23 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       print(response.statusMessage);
       print(response.statusCode);
     }
+
+    var responseData = response.data;
+    print('Emi Paid response: ${responseData}');
+    var message = responseData['message'];
+
     if (response.statusCode == 200) {
       showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
       updatePhotoValue(context);
       ref.invalidate(updateEmiViewModelProvider);
 
-      // return true;
-      // if (kDebugMode) {
-      //   print('image ${response.data}');
-      // }
       if (kDebugMode) {
-        print('VisitClosureResponse ${response.data}');
+        print('EmiUpdateResponse ${response.data}');
       }
-    } if(response.statusCode==400){
-      print(response.statusMessage);
+    } else if(response.statusCode==400){
+     // isLoading = false;
+      showCustomSnackBar(context, message, Colors.red);
+      print('Emi paid message ${response.statusMessage}');
     }else {
       throw Exception('Failed to load data');
       // return false;
@@ -500,11 +505,13 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final response = await dio.post(Api.uploadImageCollection,
         data: formData, options: Options(headers: {"token": token}));
     if (response.statusCode == 200) {
+      print('image url response ${response}');
       VisitUpdateUploadImageResponseModel imageResponseModel =
           VisitUpdateUploadImageResponseModel.fromJson(response.data);
       state = state.copyWith(isLoading: false);
       if (kDebugMode) {
-        print('image ${imageResponseModel.items.image}');
+        print('image url ${imageResponseModel.items.image}');
+        print('image url1 ${response.data}');
         state = state.copyWith(transactionImage: imageResponseModel.items.image);
         imageApi = imageResponseModel.items.image;
         print(imageApi);
