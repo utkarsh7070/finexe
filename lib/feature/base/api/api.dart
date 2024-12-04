@@ -2,6 +2,7 @@ class Api {
   static const String baseUrlProduction = 'https://stageapi.fincooper.in';
   //static const String baseUrl = 'https://stageapi.fincooper.in/';  // Staging URL
   static const String baseUrl = 'https://stageapi.fincooper.in/';  // Production URL
+  static const String imageBaseUrl = 'https://stageapi.fincooper.in';  // Production URL
   static const String baseUrlStageCollection = 'https://stageapi.fincooper.in/';
   static const String baseUrlStageProduction ='https://prod.fincooper.in/';
 
@@ -123,6 +124,8 @@ class Api {
   static const String getCibilDetails = '${baseUrl}v1/cibil/getCibilDetail';
   static const String getReqRefP = '${baseUrl}v1/pd/allPDAssignFiles';
   static const String revertByVendor = '${baseUrl}v1/externalvendor/revertByVendor';
+  static const String pdAssign = '${baseUrl}v1/pd/allPDAssignFiles';
+  // https://stageapi.fincooper.in/v1/pd/allPDAssignFiles?
   //-------------------------------------------------------------------------------------------
   static Duration connectionTimeout = const Duration(milliseconds: 15000);
   static Duration receiveTimeout = const Duration(milliseconds: 15000);

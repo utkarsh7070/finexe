@@ -1,5 +1,6 @@
 import 'package:finexe/feature/Punch_In_Out/view/attendance.dart';
 import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/home_collection_view/DashboardScreen.dart';
+import 'package:finexe/feature/ui/PD/view/pd_completed.dart';
 import 'package:finexe/feature/ui/Sales/NewLone/view/new_loan_screen.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_screen.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/referance/referance_details.dart';
@@ -61,6 +62,7 @@ class AppRoutes {
   static const String pdrequest = '/pdrequest';
   static const String pdformscreen = '/pdformscreen';
   static const String pdreject = '/pdreject';
+  static const String pdComplete = '/pdComplete';
   static const String pdapprove = '/pdapprove'; //BODScreen
   static const String bodscreen = '/bodscreen';
   static const String eodscreen = '/eodscreen';
@@ -277,6 +279,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const PdRequestScreen());
       case pdreject:
         return MaterialPageRoute(builder: (_) => const PdRejectScreen());
+        case pdComplete:
+        return MaterialPageRoute(builder: (_) => const PdCompletedScreen());
       case pdapprove:
         return MaterialPageRoute(builder: (_) => const PdApprovedScreen());
 

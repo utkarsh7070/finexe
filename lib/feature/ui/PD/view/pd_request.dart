@@ -25,7 +25,7 @@ class PdRequestScreen extends ConsumerWidget {
             color: Colors.white,
           ),
           backgroundColor: AppColors.white,
-          title: Text('PD Request'),
+          title: const Text('PD Request'),
           centerTitle: true,
         ),
         body: pditems.when(
@@ -38,7 +38,7 @@ class PdRequestScreen extends ConsumerWidget {
                       //     ? Center(child: CircularProgressIndicator())
                       //     :
                       pditems.value!.isEmpty // Check for empty state
-                          ? Center(
+                          ? const Center(
                               child: Text(
                                 'No PD Requests found',
                                 style:
@@ -46,11 +46,12 @@ class PdRequestScreen extends ConsumerWidget {
                               ),
                             )
                           : ListView.builder(
-                              physics: AlwaysScrollableScrollPhysics(),
+                              physics: const AlwaysScrollableScrollPhysics(),
                               itemCount: pdDataItems.length,
                               itemBuilder: (context, index) {
                                 final applicant = pdDataItems[index];
-                                return itemCard(context, applicant,pdRequestViewModel,ref);
+                                return itemCard(context, applicant,
+                                    pdRequestViewModel, ref);
                               },
                             ),
                 ),
@@ -68,8 +69,8 @@ class PdRequestScreen extends ConsumerWidget {
         ));
   }
 
-  itemCard(BuildContext context, PDReqItems pdreitem, RequestApiService pdRequestViewModel,ref) {
-
+  itemCard(BuildContext context, PDReqItems pdreitem,
+      RequestApiService pdRequestViewModel, ref) {
     return Column(
       children: [
         Container(
@@ -90,7 +91,7 @@ class PdRequestScreen extends ConsumerWidget {
                   padding: EdgeInsets.only(
                       left: displayWidth(context) * 0.05,
                       top: displayHeight(context) * 0.01),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       color: AppColors.primary,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(12),
@@ -171,23 +172,26 @@ class PdRequestScreen extends ConsumerWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      pdRequestViewModel.pdRequestDefuse(pdreitem.sId!).then((value) {
-                        if(value!) {
-                          ref.refresh(fetchpdRefuseandAcceptListProvider);
-                          ref.refresh(fetchPdRequestListProvider);
-                          showCustomSnackBar(context, 'Request Rejected', AppColors.green);
-                        }
-                      },);
+                      pdRequestViewModel.pdRequestDefuse(pdreitem.sId!).then(
+                        (value) {
+                          if (value!) {
+                            ref.refresh(fetchpdRefuseandAcceptListProvider);
+                            ref.refresh(fetchPdRequestListProvider);
+                            showCustomSnackBar(
+                                context, 'Request Rejected', AppColors.green);
+                          }
+                        },
+                      );
                       // PdRequestDialogue.requestAcceptDialogue(context: context);
                     },
                     child: Container(
-                      padding: EdgeInsets.only(top: 10),
+                      padding: const EdgeInsets.only(top: 10),
                       height: 44,
                       width: displayWidth(context) * 0.3,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
                           border: Border.all(color: AppColors.red, width: 1.5)),
-                      child: Text(
+                      child: const Text(
                         'Refuse',
                         textAlign: TextAlign.center,
                         style: TextStyle(color: AppColors.red),
@@ -196,17 +200,18 @@ class PdRequestScreen extends ConsumerWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      PdRequestDialogue.requestAcceptDialogue(context: context,id: pdreitem.sId??'');
+                      PdRequestDialogue.requestAcceptDialogue(
+                          context: context, id: pdreitem.sId ?? '');
                     },
                     child: Container(
-                      padding: EdgeInsets.only(top: 10),
+                      padding: const EdgeInsets.only(top: 10),
                       height: 44,
                       width: displayWidth(context) * 0.3,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
                           border:
                               Border.all(color: AppColors.primary, width: 1.5)),
-                      child: Text(
+                      child: const Text(
                         'Accept',
                         textAlign: TextAlign.center,
                         style: TextStyle(color: AppColors.primary),

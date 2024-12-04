@@ -1,61 +1,120 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
-import 'package:finexe/feature/ui/PD/pd_view_model/pa_reject_viewmodel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../Model/pd_approved_response_model.dart';
+import '../pd_view_model/pd_approved_viewmodel.dart';
 
-class PdApprovedScreen extends ConsumerWidget {
+class PdApprovedScreen extends ConsumerStatefulWidget {
   const PdApprovedScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final pdrejectitems = ref.watch(pdrejectViewModel);
+  _PdApprovedScreen createState() => _PdApprovedScreen();
+}
+
+class _PdApprovedScreen extends ConsumerState<PdApprovedScreen> {
+  final ScrollController _scrollController = ScrollController();
+  List<ApproveItem> _data = [];
+  int _currentPage = 1;
+  bool _isLoadingMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchInitialData();
+      _scrollController.addListener(_scrollListener);
+    });
+  }
+
+  Future<void> _fetchInitialData() async {
+    final response = await ref.read(
+        paginatedApprovedDataProvider(_currentPage).future);
+    setState(() {
+      _data = response ?? [];
+    });
+  }
+
+  Future<void> _loadMore() async {
+    if (_isLoadingMore) return;
+    setState(() {
+      _isLoadingMore = true;
+    });
+    final newPage = _currentPage + 1;
+    final response = await ref.read(
+        paginatedApprovedDataProvider(newPage).future);
+    setState(() {
+      _data.addAll(response ?? []);
+      _currentPage = newPage;
+      _isLoadingMore = false;
+    });
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent && !_isLoadingMore) {
+      _loadMore();
+    }
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    // final asyncData = ref.watch(paginatedApprovedDataProvider);
+    // final pdrejectitems = ref.watch(pdrejectViewModel);
     return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: Container(
-          color: Colors.white,
-        ),
-        backgroundColor: AppColors.white,
-        title: Text('Approved PD'),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: AlwaysScrollableScrollPhysics(),
-              scrollDirection: Axis.vertical,
-              itemCount: pdrejectitems.length,
-              itemBuilder: (context, index) {
-                final items = pdrejectitems[index];
-                //   return _buildApplicantDetails(context, applicant);
-                return itemCard(context, items);
-              },
-            ),
+        appBar: AppBar(
+          flexibleSpace: Container(
+            color: Colors.white,
           ),
-        ],
-      ),
+          backgroundColor: AppColors.white,
+          title: const Text('Approved PD'),
+          centerTitle: true,
+        ),
+        body: FutureBuilder<List<ApproveItem>>(
+            future: ref.read(
+                paginatedApprovedDataProvider(_currentPage).future),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting &&
+                  _data.isEmpty) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                return RefreshIndicator(
+                  onRefresh: _fetchInitialData,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          itemCount: _data.length,
+                          itemBuilder: (context, index) {
+                            final items = _data[index];
+                            //   return _buildApplicantDetails(context, applicant);
+                            return itemCard(context, items);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            })
+
+
     );
   }
 
-  itemCard(BuildContext context, PdReject pdreitem) {
+  itemCard(BuildContext context, ApproveItem pdreitem) {
     return Column(
       children: [
-        pdreitem.date == null || pdreitem.date!.isEmpty
-            ? SizedBox.shrink()
-            : Container(
-                alignment: Alignment.centerLeft,
-                margin: EdgeInsets.only(top: displayHeight(context) * 0.03),
-                padding: EdgeInsets.only(left: displayWidth(context) * 0.05),
-                child: Text(
-                  pdreitem.date!,
-                  textAlign: TextAlign.left,
-                  style: AppStyles.gray7Text,
-                ),
-              ),
         Container(
           //  / padding: EdgeInsets.all(12),
           height: displayHeight(context) * 0.22,
@@ -74,13 +133,13 @@ class PdApprovedScreen extends ConsumerWidget {
                   padding: EdgeInsets.only(
                       left: displayWidth(context) * 0.05,
                       top: displayHeight(context) * 0.01),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       color: AppColors.green,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(12),
                           topRight: Radius.circular(12))),
                   child: Text(
-                    pdreitem.id,
+                    pdreitem.customerFinId ?? '',
                     textAlign: TextAlign.left,
                     style: AppStyles.whiteText16,
                   )),
@@ -94,10 +153,10 @@ class PdApprovedScreen extends ConsumerWidget {
                   ),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      pdreitem.imageUrl,
-                      height: 62,
-                      width: 62,
+                    child: CachedNetworkImage(
+                      imageUrl: '${Api.imageUrl}${pdreitem.customerPhoto??''}',
+                      height: displayHeight(context) * 0.08,
+                      width: displayWidth(context) * 0.20,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -109,7 +168,7 @@ class PdApprovedScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          pdreitem.name,
+                          pdreitem.customerName ?? '',
                           style: AppStyles.blackText16,
                         ),
                         SizedBox(
@@ -120,7 +179,7 @@ class PdApprovedScreen extends ConsumerWidget {
                           style: AppStyles.gray7Text,
                         ),
                         Text(
-                          pdreitem.address,
+                          pdreitem.customerAddress ?? '',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: AppStyles.blacktext14,

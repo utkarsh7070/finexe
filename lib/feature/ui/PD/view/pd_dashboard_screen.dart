@@ -76,7 +76,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
           child: Column(
 
             children: [
-              constantSizedbox(context),
+              constantSizedBox(context),
               AdvancedSearch(
                   // data: ,
                   maxElementsToDisplay: 10,
@@ -123,7 +123,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                     print("LENGTH: " + listOfResults.length.toString());
                   },
                   searchItems: []),
-              constantSizedbox(context),
+              constantSizedBox(context),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -138,9 +138,10 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                       child: Text('See All', style: AppStyles.subHeading))
                 ],
               ),
-              constantSizedbox(context),
+              constantSizedBox(context),
               pdRequestList.when(
-                  data: (data) => Container(
+                  data: (data) =>
+                      Container(
                         height: displayHeight(context) * 0.1,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
@@ -229,29 +230,30 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                     throw Exception(error);
                   },
                   loading: () {
-                    return Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 5, // Adjust the count based on your needs
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Container(
-                              height: 20,
-                              width: 200,
-                              color: Colors.white,
-                            ),
-                          );
-                        },
-                      ),
-                    );
+                    return Center(child: CircularProgressIndicator());
+                    //   Shimmer.fromColors(
+                    //   baseColor: Colors.grey[300]!,
+                    //   highlightColor: Colors.grey[100]!,
+                    //   child: ListView.builder(
+                    //     scrollDirection: Axis.horizontal,
+                    //     itemCount: 5, // Adjust the count based on your needs
+                    //     itemBuilder: (context, index) {
+                    //       return ListTile(
+                    //         title: Container(
+                    //           height: 10,
+                    //           width: 50,
+                    //           color: Colors.white,
+                    //         ),
+                    //       );
+                    //     },
+                    //   ),
+                    // );
                   }),
 
               // SizedBox(
               //   height: displayHeight(context) * 0.03,
               // ),
-              constantSizedbox(context),
+              constantSizedBox(context),
 
               SizedBox(
                 height: displayHeight(context) * 0.47,
@@ -267,7 +269,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                   itemCount: gridItems.length,
                   itemBuilder: (context, index) {
                     final item = gridItems[index];
-                    return SquareBox(
+                    return squareBox(
                       backImage: item.backImage,
                       iconImage: item.iconImage,
                       title: item.title,
@@ -371,13 +373,13 @@ class _PdScreenState extends ConsumerState<PdScreen> {
     );
   }
 
-  constantSizedbox(BuildContext context) {
+  constantSizedBox(BuildContext context) {
     return SizedBox(
       height: displayHeight(context) * 0.015,
     );
   }
 
-  Widget SquareBox({
+  Widget squareBox({
     required String backImage,
     required String iconImage,
     required String title,
@@ -396,7 +398,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
           Navigator.pushNamed(context, AppRoutes.pdreject);
         } else if (title == 'Completed PD') {
           print('Completed PD');
-          // Navigator.pushNamed(context, AppRoutes.p);
+          Navigator.pushNamed(context, AppRoutes.pdComplete);
         }
       },
       child: Stack(
@@ -422,7 +424,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                   height: displayHeight(context) * 0.09,
                   width: displayWidth(context) * 0.18,
                 ),
-                constantSizedbox(context),
+                constantSizedBox(context),
                 Text(
                   title,
                   style: TextStyle(

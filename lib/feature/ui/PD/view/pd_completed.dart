@@ -1,25 +1,23 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:finexe/feature/base/api/api.dart';
-import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
-import 'package:finexe/feature/base/utils/namespase/app_style.dart';
-import 'package:finexe/feature/base/utils/namespase/display_size.dart';
-import 'package:finexe/feature/ui/PD/Model/pd_reject_response_model.dart';
-import 'package:finexe/feature/ui/PD/pd_view_model/pa_reject_viewmodel.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:finexe/feature/ui/PD/Model/pd_complete_response_model.dart';
+import 'package:flutter/Material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../base/utils/namespase/app_colors.dart';
+import '../../../base/utils/namespase/app_style.dart';
+import '../../../base/utils/namespase/display_size.dart';
+import '../pd_view_model/pd_completed_viewmodel.dart';
 
-
-class PdRejectScreen extends ConsumerStatefulWidget {
-  const PdRejectScreen({super.key});
+class PdCompletedScreen extends ConsumerStatefulWidget {
+  const PdCompletedScreen({super.key});
 
   @override
-  _PdRejectScreen createState() => _PdRejectScreen();
+  _PdCompletedScreen createState() => _PdCompletedScreen();
 }
 
-class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
+class _PdCompletedScreen extends ConsumerState<PdCompletedScreen> {
   final ScrollController _scrollController = ScrollController();
-  List<RejectItem> _data = [];
+  List<CompleteItem> _data = [];
   int _currentPage = 1;
   bool _isLoadingMore = false;
 
@@ -33,7 +31,8 @@ class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
   }
 
   Future<void> _fetchInitialData() async {
-    final response = await ref.read(paginatedRejectDataProvider(_currentPage).future);
+    final response =
+        await ref.read(paginatedCompletedDataProvider(_currentPage).future);
     setState(() {
       _data = response ?? [];
     });
@@ -45,7 +44,8 @@ class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
       _isLoadingMore = true;
     });
     final newPage = _currentPage + 1;
-    final response = await ref.read(paginatedRejectDataProvider(newPage).future);
+    final response =
+        await ref.read(paginatedCompletedDataProvider(newPage).future);
     setState(() {
       _data.addAll(response ?? []);
       _currentPage = newPage;
@@ -55,7 +55,7 @@ class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
 
   void _scrollListener() {
     if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent &&
+            _scrollController.position.maxScrollExtent &&
         !_isLoadingMore) {
       _loadMore();
     }
@@ -70,25 +70,24 @@ class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
           color: Colors.white,
         ),
         backgroundColor: AppColors.white,
-        title: const Text('PD Reject'),
+        title: const Text('PD Complete'),
         centerTitle: true,
       ),
       body: FutureBuilder(
-        future: ref.read(paginatedRejectDataProvider(_currentPage).future),
+        future: ref.read(paginatedCompletedDataProvider(_currentPage).future),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting &&
               _data.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          else{
+          } else {
             return Column(
               children: [
                 Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
-                    physics: const AlwaysScrollableScrollPhysics(),
+                    physics: AlwaysScrollableScrollPhysics(),
                     scrollDirection: Axis.vertical,
                     itemCount: _data.length,
                     itemBuilder: (context, index) {
@@ -101,13 +100,12 @@ class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
               ],
             );
           }
-
         },
       ),
     );
   }
 
-  itemCard(BuildContext context, RejectItem pdreitem) {
+  itemCard(BuildContext context, CompleteItem pdreitem) {
     return Column(
       children: [
         Container(
@@ -128,13 +126,13 @@ class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
                   padding: EdgeInsets.only(
                       left: displayWidth(context) * 0.05,
                       top: displayHeight(context) * 0.01),
-                  decoration: const BoxDecoration(
-                      color: AppColors.red,
+                  decoration: BoxDecoration(
+                      color: AppColors.primary,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(12),
                           topRight: Radius.circular(12))),
                   child: Text(
-                    pdreitem.customerFinId??'',
+                    pdreitem.customerFinId ?? '',
                     textAlign: TextAlign.left,
                     style: AppStyles.whiteText16,
                   )),
@@ -149,9 +147,10 @@ class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: CachedNetworkImage(
+                      imageUrl: '${Api.imageUrl}${pdreitem.customerPhoto}',
                       height: 62,
                       width: 62,
-                      fit: BoxFit.cover, imageUrl: '${Api.imageUrl}${pdreitem.customerPhoto}',
+                      fit: BoxFit.cover,
                     ),
                   ),
                   SizedBox(
@@ -162,7 +161,7 @@ class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          pdreitem.customerName??'',
+                          pdreitem.customerName ?? '',
                           style: AppStyles.blackText16,
                         ),
                         SizedBox(
@@ -173,7 +172,7 @@ class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
                           style: AppStyles.gray7Text,
                         ),
                         Text(
-                          pdreitem.customerAddress??'',
+                          pdreitem.customerAddress ?? '',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: AppStyles.blacktext14,

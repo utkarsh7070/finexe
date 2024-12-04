@@ -1,8 +1,11 @@
-
-
-
-
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../base/api/api.dart';
+import '../../../base/api/dio.dart';
+import '../Model/pd_approved_response_model.dart';
 
 class PdApproved {
   final String id;
@@ -65,3 +68,70 @@ final pdrejectViewModel = Provider<List<PdApproved>>((ref) {
     // Add more items as needed
   ];
 });
+
+final currentPageApprovedProvider = StateProvider<int>((ref) => 1);
+
+final paginatedApprovedDataProvider = FutureProvider.autoDispose
+    .family<List<ApproveItem>, int>((ref, page) async {
+  final apiService = ref.read(apiPdPApprovedProvider);
+  // final page = ref.watch(currentPageApprovedProvider);
+  const int limit = 10;
+  const String status = 'approve';
+  final response = await apiService.fetchData(
+    status: status,
+    page: page,
+    limit: limit,
+    searchQuery: '',
+  );
+  return response ?? [];
+});
+
+final apiPdPApprovedProvider = Provider<ApiApprovedService>((ref) {
+  final dio = ref.watch(dioProvider);
+  return ApiApprovedService(dio);
+});
+
+class ApiApprovedService {
+  final Dio _dio;
+
+  ApiApprovedService(this._dio);
+
+  Future<List<ApproveItem>> fetchData({
+    required String status,
+    required int page,
+    required int limit,
+    String searchQuery = '',
+  }) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString('token');
+    if (kDebugMode) {
+      print(token);
+      print('$status  $page   $limit  $searchQuery');
+    }
+
+    try {
+      final response = await _dio.get(
+        Api.pdAssign,
+        options: Options(headers: {'token': token}),
+        queryParameters: {
+          'status': status,
+          'page': page,
+          'limit': limit,
+          'searchQuery': searchQuery,
+        },
+      );
+      PdApprovedResponseModel responseModel =
+          PdApprovedResponseModel.fromJson(response.data);
+      print(response.data);
+
+      if (response.statusCode == 200) {
+        return responseModel.items;
+      } else {
+        throw Exception(
+            'Failed to load data with status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+}
