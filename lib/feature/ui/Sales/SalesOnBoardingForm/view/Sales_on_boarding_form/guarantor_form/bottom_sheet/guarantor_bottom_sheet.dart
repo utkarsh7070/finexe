@@ -20,18 +20,10 @@ class GuarantorBottomSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final getMobileNo = ref.watch(personalDetailViewModelProvider);
-    // final formListController = ref.watch(guarantorController);
-    // final upload = ref.watch(uploadGuarantorDoc);
-    // final checkBoxTerms = ref.watch(checkBoxTermsConditionGuarantor);
-    // final selectedValue = ref.watch(guarantorRoleProvider);
     final paymentViewModel = ref.read(paymentProvider(context).notifier);
     final personalFormState = ref.watch(guarantorViewModelProvider);
     final personalFormViewModel = ref.read(guarantorViewModelProvider.notifier);
-    // final personalFocusStates = ref.watch(guarantorFocusProvider);
-    // final isRemember = ref.watch(guarantorRememberProvider);
-    // final personalFocusViewModel = ref.read(guarantorFocusProvider.notifier);
-    // final getOtpClicked = ref.watch(getOptGuarantor);
-    // final selectedValue = ref.watch(applicantRoleProvider);
+
     return Visibility(
       visible: !personalFormState.isOtpVerify,
       replacement: Container(

@@ -1,4 +1,3 @@
-
 import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
@@ -12,6 +11,7 @@ import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
 import '../model/get_All_Product_model.dart';
 import '../model/submit_new_loan_form_data.dart';
+
 // final getAllProductsList = StateProvider<List<Item>?>((ref) {
 //   return null;
 // });
@@ -97,8 +97,8 @@ class NewLoanViewModel extends StateNotifier<PhoneNumberState> {
   double CalculateEmi() {
     double monthlyRate = state.roi / (12 * 100);
     double emi = (state.loanAmount *
-        monthlyRate *
-        (pow((1 + monthlyRate), state.tenure.toInt()))) /
+            monthlyRate *
+            (pow((1 + monthlyRate), state.tenure.toInt()))) /
         (pow((1 + monthlyRate), state.tenure.toInt()) - 1);
     String formattedNumber = emi.toStringAsFixed(1);
     final emiState = double.parse(formattedNumber);
@@ -108,7 +108,7 @@ class NewLoanViewModel extends StateNotifier<PhoneNumberState> {
     return emiState;
   }
 
-  bool validation(){
+  bool validation() {
     final isPhone = _validatePhoneNumber(state.phoneNumber);
     state = state.copyWith(isPhoneNumberValid: isPhone);
     return isPhone.toString().isNotEmpty;
@@ -154,19 +154,20 @@ class NewLoanViewModel extends StateNotifier<PhoneNumberState> {
           productFinId: 'productFinId'),
     );
     // final isValid = _validatePhoneNumber(value);
-print(items.id);
+    print(items.id);
     state = state.copyWith(
         product: items.id,
-        tenure: items.tenure.min.toDouble(),
-        loanAmount: items.loanAmount.min.toDouble(),roi: items.roi.min.toDouble());
-state= state.copyWith(emi:  CalculateEmi());
+        tenure: items.tenure.min?.toDouble()??0,
+        loanAmount: items.loanAmount.min?.toDouble()??0,
+        roi: items.roi.min?.toDouble()??0);
+    state = state.copyWith(emi: CalculateEmi());
 
 // copyWith(kycDocument: value, isKycValid: isValid);
   }
 }
 
 bool _validatePhoneNumber(String phone) {
-  return phone.isNotEmpty && phone.length >= 10 && phone.length<=10;
+  return phone.isNotEmpty && phone.length >= 10 && phone.length <= 10;
 }
 
 class NewLoanFocusProvider extends StateNotifier<Map<String, bool>> {
@@ -253,12 +254,15 @@ class PhoneNumberState {
 final fetchDataProvider = FutureProvider<List<Item>>((ref) async {
   String? token = await SessionService.getToken();
   final dio = ref.read(dioProvider);
-  final response = await dio.get(Api.getAllProduct,options: Options(headers: {"token": token}),);
+  final response = await dio.get(
+    Api.getAllProduct,
+    options: Options(headers: {"token": token}),
+  );
   print(response.statusMessage);
   print(response.statusCode);
   if (response.statusCode == 200) {
     GetAllProductModel apiResponseList =
-    GetAllProductModel.fromJson(response.data);
+        GetAllProductModel.fromJson(response.data);
     // ref.read(personalDetailViewModelProvider.notifier).list =
     //     apiResponseList.items;
     return apiResponseList.items;
@@ -292,7 +296,6 @@ final fetchDataProvider = FutureProvider<List<Item>>((ref) async {
 //   final dio = ref.watch(dioProvider);  // Get Dio instance
 //   return DataNotifier(dio);
 // });
-
 
 // final paymentProvider = StateNotifierProvider<PaymentWithRazorPay, PaymentState>((ref) {
 //   return PaymentWithRazorPay();

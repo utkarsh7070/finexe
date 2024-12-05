@@ -103,9 +103,9 @@ class Items {
   @JsonKey(name: "modeDetail")
   ModeDetail modeDetail;
   @JsonKey(name: "dropdownDetail")
-  DropdownDetail dropdownDetail;
+  DropdownDetail? dropdownDetail;
   @JsonKey(name: "detail")
-  List<Detail> detail;
+  List<Detail>? detail;
 
   Items({
     required this.modeDetail,
@@ -197,15 +197,15 @@ class DropdownDetail {
 @JsonSerializable()
 class ModeDetail {
   @JsonKey(name: "_id")
-  String id;
+  String? id;
   @JsonKey(name: "title")
-  String title;
+  String? title;
   @JsonKey(name: "extraForm")
   bool extraForm;
   @JsonKey(name: "email")
   bool email;
   @JsonKey(name: "dropdownId")
-  String dropdownId;
+  String? dropdownId;
   @JsonKey(name: "status")
   String status;
   @JsonKey(name: "createdAt")
@@ -213,7 +213,11 @@ class ModeDetail {
   @JsonKey(name: "updatedAt")
   String updatedAt;
   @JsonKey(name: "__v")
-  int v;
+  int? v;
+  @JsonKey(name: "transactionId")
+  bool transactionId;
+  @JsonKey(name: "transactionImage")
+  bool transactionImage;
 
   ModeDetail({
     required this.id,
@@ -225,6 +229,8 @@ class ModeDetail {
     required this.createdAt,
     required this.updatedAt,
     required this.v,
+    required this.transactionId,
+    required this.transactionImage,
   });
 
   factory ModeDetail.fromJson(Map<String, dynamic> json) => _$ModeDetailFromJson(json);

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/namespase/display_size.dart';
@@ -14,7 +15,6 @@ import '../../SalesOnBoardingForm/view_model/guarantor_form_view_model.dart';
 import '../model/show_cashes_status_model.dart';
 import '../view_model/showing_cash_status_view_model.dart';
 
-
 /*class CasesDetails extends ConsumerWidget{
   const CasesDetails({super.key});*/
 
@@ -23,31 +23,47 @@ class CasesDetails extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<CasesDetails> createState() => _CasesDetailsState();
-
   final String customerId;
   final String customerName;
-
-  CasesDetails({required this.customerId, required this.customerName });
-
+  CasesDetails({required this.customerId, required this.customerName});
 }
 
 class _CasesDetailsState extends ConsumerState<CasesDetails> {
 // Define a provider for managing the expanded state of each section
-  final sectionExpansionProvider = StateProvider.family<bool, String>((ref, sectionName) => false);
+  final sectionExpansionProvider =
+      StateProvider.family<bool, String>((ref, sectionName) => false);
 
   @override
   void initState() {
     super.initState();
-    print('customer Id ${widget.customerId}');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print('customer Id ${widget.customerId}');
+      _initializeData();
+    });
+    // Call an async method
+  }
+
+  Future<void> _initializeData() async {
+    await saveCustomerId(widget.customerId);
+    print('Customer ID saved successfully: ${widget.customerId}');
+
     // Fetch data when the screen initializes
-    ref.read(processStatusProvider.notifier).fetchProcessStatus(widget.customerId);
+    ref
+        .read(processStatusProvider.notifier)
+        .fetchProcessStatus(widget.customerId);
+  }
+
+  Future<void> saveCustomerId(String customerId) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.setString('customerId', customerId);
+    print('Customer ID saved successfully: $customerId');
   }
 
   @override
   Widget build(BuildContext context) {
     final processStatus = ref.watch(processStatusProvider);
-
-    final goPayment = ref.read(paymentProvider((context)).notifier);
+    final processStatusViewModel = ref.read(processStatusProvider.notifier);
+    final goPayment = ref.read(paymentCaseProvider((context)).notifier);
 
     return Scaffold(
       appBar: AppBar(
@@ -85,7 +101,7 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                 'Sales': data.sales,
                 'Cibil': data.cibil,
                 'Branch Pendancy': data.branchPendancy,
-               /* 'Vendor Details': data.vendorDetails,*/
+                /* 'Vendor Details': data.vendorDetails,*/
                 'PD': data.pd,
               };
 
@@ -96,10 +112,11 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                   final sectionData = entry.value;
 
                   return _buildSection(
+                    processStatusViewModel: processStatusViewModel,
                     sectionName: sectionName,
                     sectionData: sectionData,
                     ref: ref,
-                      goPayment:goPayment,
+                    goPayment: goPayment,
                   );
                 }).toList(),
               );
@@ -113,12 +130,12 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
   }
 
 // Collapsible Section Builder
-  Widget _buildSection({
-    required String sectionName,
-    required dynamic sectionData,
-    required WidgetRef ref,
-    required dynamic goPayment,
-  }) {
+  Widget _buildSection(
+      {required String sectionName,
+      required dynamic sectionData,
+      required WidgetRef ref,
+      required dynamic goPayment,
+      required dynamic processStatusViewModel}) {
     final isExpanded = ref.watch(sectionExpansionProvider(sectionName));
 
     return Column(
@@ -127,7 +144,7 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
         GestureDetector(
           onTap: () {
             ref.read(sectionExpansionProvider(sectionName).notifier).state =
-            !isExpanded;
+                !isExpanded;
           },
           child: Container(
             color: Colors.grey[200],
@@ -137,7 +154,8 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
               children: [
                 Text(
                   sectionName,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Icon(isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down),
               ],
@@ -147,13 +165,15 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
         if (isExpanded)
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            child: _buildSectionContent(sectionData,goPayment),
+            child: _buildSectionContent(
+                sectionData, goPayment, processStatusViewModel),
           ),
       ],
     );
   }
 
-  Widget _buildSectionContent(dynamic sectionData, dynamic goPayment,) {
+  Widget _buildSectionContent(
+      dynamic sectionData, dynamic goPayment, dynamic processStatusViewModel) {
     if (sectionData == null) {
       return const Text('No data available');
     }
@@ -162,7 +182,6 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
     final fields = sectionData.toJson().entries.toList();
 
     if (sectionData is Sales) {
-
       print('Section data ${sectionData.toString()}');
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,18 +208,17 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                   MaterialPageRoute(builder: (context) => GuarantorDetails()),
                 );
               } else if (sectionData.isPaymentPending()) {
-
-               /* final goPayment = ref.read(paymentProvider((context)).notifier);
+                /* final goPayment = ref.read(paymentProvider((context)).notifier);
 
                 goPayment.payWithRazorPay( amount: sectionData.paymentAmount,
                     mobile: sectionData.cutomerNumber.toString(),
                     orderId: '');*/
 
-                final personalFormViewModel = ref.read(guarantorViewModelProvider.notifier);
-                final goPayment = ref.read(paymentProvider((context)).notifier);
+                // final personalFormViewModel = ref.read(guarantorViewModelProvider.notifier);
+                // final goPayment = ref.read(paymentProvider((context)).notifier);
 
-                personalFormViewModel.paymentInitiate2(widget.customerId).then(
-                      (value) {
+                processStatusViewModel.paymentInitiate2(widget.customerId).then(
+                  (value) {
                     Navigator.pop(context);
                     /*if (kDebugMode) {
                       print(getMobileNo.phoneNumber);
@@ -217,11 +235,6 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                     }
                   },
                 );
-
-
-
-
-
               }
             },
             child: Column(
@@ -231,7 +244,8 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                 final value = field.value;
 
                 // Check the value for status conditions
-                bool isPending = value != null && value.toString().toLowerCase() == 'pending';
+                bool isPending = value != null &&
+                    value.toString().toLowerCase() == 'pending';
                 bool isCompletedOrApproved = value != null &&
                     (value.toString().toLowerCase() == 'completed' ||
                         value.toString().toLowerCase() == 'approved');
@@ -242,7 +256,8 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Field Key
-                      Text(key, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(key,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -256,20 +271,20 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                                   color: Colors.green,
                                   size: 20,
                                 ),
-
                               ),
                             // Show an orange pending icon for 'pending' values
                             if (isPending)
-                               SizedBox(
+                              SizedBox(
                                 width: 24,
                                 height: 24,
-                               /* child: Icon(
+                                /* child: Icon(
                                   Icons.pending,
                                   color: Colors.orange,
                                   size: 20,
                                 ),*/
                                 child: Image.asset(
-                                  'assets/images/wall_clock.png', // Replace with your custom icon path
+                                  'assets/images/wall_clock.png',
+                                  // Replace with your custom icon path
                                   fit: BoxFit.contain,
                                 ),
                               ),
@@ -304,9 +319,10 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
           final value = field.value;
 
           // Check the value for status conditions
-         // bool isPending = value != null && value.toString().toLowerCase() == 'pending';
-          bool isPending = value != null && (value.toString().toLowerCase() == 'pending'||
-              value.toString().toLowerCase() == 'notAssign');
+          // bool isPending = value != null && value.toString().toLowerCase() == 'pending';
+          bool isPending = value != null &&
+              (value.toString().toLowerCase() == 'pending' ||
+                  value.toString().toLowerCase() == 'notAssign');
           bool isCompletedOrApproved = value != null &&
               (value.toString().toLowerCase() == 'completed' ||
                   value.toString().toLowerCase() == 'approved');
@@ -331,7 +347,6 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                             color: Colors.green,
                             size: 20,
                           ),
-
                         ),
                       // Show an orange pending icon for 'pending' values
                       if (isPending)
@@ -344,7 +359,8 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                                   size: 20,
                                 ),*/
                           child: Image.asset(
-                            'assets/images/wall_clock.png', // Replace with your custom icon path
+                            'assets/images/wall_clock.png',
+                            // Replace with your custom icon path
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -376,8 +392,9 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
           final value = field.value;
 
           // Check the value for status conditions
-          bool isPending = value != null && (value.toString().toLowerCase() == 'notAssign'||
-              value.toString().toLowerCase() == 'pending');
+          bool isPending = value != null &&
+              (value.toString().toLowerCase() == 'notAssign' ||
+                  value.toString().toLowerCase() == 'pending');
           bool isCompletedOrApproved = value != null &&
               (value.toString().toLowerCase() == 'completed' ||
                   value.toString().toLowerCase() == 'approved');
@@ -402,7 +419,6 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                             color: Colors.green,
                             size: 20,
                           ),
-
                         ),
                       // Show an orange pending icon for 'pending' values
                       if (isPending)
@@ -415,7 +431,8 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                                   size: 20,
                                 ),*/
                           child: Image.asset(
-                            'assets/images/wall_clock.png', // Replace with your custom icon path
+                            'assets/images/wall_clock.png',
+                            // Replace with your custom icon path
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -447,8 +464,9 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
           final value = field.value;
 
           // Check the value for status conditions
-          bool isPending = value != null && (value.toString().toLowerCase() == 'notAssing'||
-              value.toString().toLowerCase() == 'pending');
+          bool isPending = value != null &&
+              (value.toString().toLowerCase() == 'notAssing' ||
+                  value.toString().toLowerCase() == 'pending');
           bool isCompletedOrApproved = value != null &&
               (value.toString().toLowerCase() == 'completed' ||
                   value.toString().toLowerCase() == 'approved');
@@ -473,7 +491,6 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                             color: Colors.green,
                             size: 20,
                           ),
-
                         ),
                       // Show an orange pending icon for 'pending' values
                       if (isPending)
@@ -486,7 +503,8 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                                   size: 20,
                                 ),*/
                           child: Image.asset(
-                            'assets/images/wall_clock.png', // Replace with your custom icon path
+                            'assets/images/wall_clock.png',
+                            // Replace with your custom icon path
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -509,8 +527,6 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
       );
     }
 
-
     return const Text('No valid section data available');
   }
-
 }

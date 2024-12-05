@@ -9,6 +9,7 @@ part of 'update_emi_submit_request_model.dart';
 UpdateEmiSubmitRequestModel _$UpdateEmiSubmitRequestModelFromJson(
         Map<String, dynamic> json) =>
     UpdateEmiSubmitRequestModel(
+      fatherName: json['fatherName'] as String,
       ld: json['LD'] as String,
       collectedBy: json['collectedBy'] as String,
       customerName: json['customerName'] as String,
@@ -17,7 +18,7 @@ UpdateEmiSubmitRequestModel _$UpdateEmiSubmitRequestModelFromJson(
       transactionId: json['transactionId'] as String,
       transactionImage: json['transactionImage'] as String,
       modeOfCollectionId: json['modeOfCollectionId'] as String,
-      commonId: json['commonId'] as String,
+      commonId: json['commonId'] as ObjectId?,
       bankName: json['bankName'] as String,
       customerEmail: json['customerEmail'] as String,
       emiReceivedDate: json['emiReceivedDate'] as String,
@@ -35,6 +36,7 @@ Map<String, dynamic> _$UpdateEmiSubmitRequestModelToJson(
       'receivedAmount': instance.receivedAmount,
       'transactionId': instance.transactionId,
       'transactionImage': instance.transactionImage,
+      'fatherName': instance.fatherName,
       'modeOfCollectionId': instance.modeOfCollectionId,
       'commonId': instance.commonId,
       'bankName': instance.bankName,

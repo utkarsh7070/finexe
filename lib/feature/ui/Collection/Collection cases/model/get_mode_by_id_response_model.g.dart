@@ -29,10 +29,12 @@ Map<String, dynamic> _$GetModeByIdResponseModelToJson(
 Items _$ItemsFromJson(Map<String, dynamic> json) => Items(
       modeDetail:
           ModeDetail.fromJson(json['modeDetail'] as Map<String, dynamic>),
-      dropdownDetail: DropdownDetail.fromJson(
-          json['dropdownDetail'] as Map<String, dynamic>),
-      detail: (json['detail'] as List<dynamic>)
-          .map((e) => Detail.fromJson(e as Map<String, dynamic>))
+      dropdownDetail: json['dropdownDetail'] == null
+          ? null
+          : DropdownDetail.fromJson(
+              json['dropdownDetail'] as Map<String, dynamic>),
+      detail: (json['detail'] as List<dynamic>?)
+          ?.map((e) => Detail.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -93,15 +95,17 @@ Map<String, dynamic> _$DropdownDetailToJson(DropdownDetail instance) =>
     };
 
 ModeDetail _$ModeDetailFromJson(Map<String, dynamic> json) => ModeDetail(
-      id: json['_id'] as String,
-      title: json['title'] as String,
+      id: json['_id'] as String?,
+      title: json['title'] as String?,
       extraForm: json['extraForm'] as bool,
       email: json['email'] as bool,
-      dropdownId: json['dropdownId'] as String,
+      dropdownId: json['dropdownId'] as String?,
       status: json['status'] as String,
       createdAt: json['createdAt'] as String,
       updatedAt: json['updatedAt'] as String,
-      v: (json['__v'] as num).toInt(),
+      v: (json['__v'] as num?)?.toInt(),
+      transactionId: json['transactionId'] as bool,
+      transactionImage: json['transactionImage'] as bool,
     );
 
 Map<String, dynamic> _$ModeDetailToJson(ModeDetail instance) =>
@@ -115,4 +119,6 @@ Map<String, dynamic> _$ModeDetailToJson(ModeDetail instance) =>
       'createdAt': instance.createdAt,
       'updatedAt': instance.updatedAt,
       '__v': instance.v,
+      'transactionId': instance.transactionId,
+      'transactionImage': instance.transactionImage,
     };

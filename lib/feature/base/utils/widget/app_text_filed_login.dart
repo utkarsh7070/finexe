@@ -18,6 +18,7 @@ class AppFloatTextField extends StatelessWidget {
   final bool? isError;
   final VoidCallback? suffixOnTap;
   final VoidCallback? onTap;
+  final VoidCallback? onEditingComplete;
   final ValueChanged<String>? onFiledSubmitted;
   final bool? isSuffix;
   final FocusNode? focusNode;
@@ -45,6 +46,7 @@ class AppFloatTextField extends StatelessWidget {
       this.isError = false,
       this.suffixOnTap,
       this.onTap,
+      this.onEditingComplete,
       this.isSuffix = false,
         this.isReadOnly = false,
       this.textInputAction = TextInputAction.done,
@@ -69,6 +71,7 @@ class AppFloatTextField extends StatelessWidget {
 
       alignment: Alignment.center,
       child: TextFormField(
+        onEditingComplete: onEditingComplete,
         textCapitalization: textCapitalize,
         readOnly: isReadOnly,
         // initialValue: initialValue,

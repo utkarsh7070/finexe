@@ -10,7 +10,7 @@ class GetAllProductModel {
   @JsonKey(name: "message")
   String message;
   @JsonKey(name: "error")
-  String error;
+  String? error;
   @JsonKey(name: "items")
   List<Item> items;
 
@@ -77,9 +77,9 @@ class Item {
 @JsonSerializable()
 class LoanAmount {
   @JsonKey(name: "min")
-  int min;
+  int? min;
   @JsonKey(name: "max")
-  int max;
+  int? max;
 
   LoanAmount({
     required this.min,

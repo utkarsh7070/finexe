@@ -6,6 +6,7 @@ import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/ui/authenticate/view_model/login_view_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -23,6 +24,7 @@ import '../model/response_model.dart';
 class AttendanceState {
   final String employeeName;
   final bool isLoading;
+  final bool punchAllowed;
   final bool punchStatus;
   final Position? currentPosition;
   final String? distanceMessage;
@@ -34,15 +36,16 @@ class AttendanceState {
 
   AttendanceState(
       {this.taskTitle = '',
-      this.taskDescription = '',
-      this.employeeName = '',
-      this.isLoading = false,
-      this.punchStatus = false,
-      this.currentPosition,
-      this.distanceMessage,
-      this.checkAttendanceResponse,
-      this.employeeId = '',
-      this.token = ''});
+        this.taskDescription = '',
+        this.punchAllowed = false,
+        this.employeeName = '',
+        this.isLoading = false,
+        this.punchStatus = false,
+        this.currentPosition,
+        this.distanceMessage,
+        this.checkAttendanceResponse,
+        this.employeeId = '',
+        this.token = ''});
 
   AttendanceState copyWith({
     String? taskTitle,
@@ -51,12 +54,14 @@ class AttendanceState {
     String? token,
     String? employeeName,
     bool? isLoading,
+    bool? punchAllowed,
     bool? punchStatus,
     Position? currentPosition,
     String? distanceMessage,
     CheckAttendanceResponseModel? checkAttendanceResponse,
   }) {
     return AttendanceState(
+      punchAllowed: punchAllowed??this.punchAllowed,
       taskDescription: taskDescription ?? this.taskDescription,
       taskTitle: taskTitle ?? this.taskTitle,
       employeeId: employeeId ?? this.employeeId,
@@ -67,7 +72,7 @@ class AttendanceState {
       currentPosition: currentPosition ?? this.currentPosition,
       distanceMessage: distanceMessage ?? this.distanceMessage,
       checkAttendanceResponse:
-          checkAttendanceResponse ?? this.checkAttendanceResponse,
+      checkAttendanceResponse ?? this.checkAttendanceResponse,
     );
   }
 }
@@ -84,7 +89,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 
   final TextEditingController taskTitleController = TextEditingController();
   final TextEditingController taskDescriptionController =
-      TextEditingController();
+  TextEditingController();
 
   final double targetLatitude = 22.724366;
   final double targetLongitude = 75.882175;
@@ -136,7 +141,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 
       if (response.statusCode == 200) {
         final addTaskResponseModel =
-            AddTaskResponseModel.fromJson(response.data);
+        AddTaskResponseModel.fromJson(response.data);
         if (kDebugMode) {
           print("Add Task Response: ${response.data}");
         }
@@ -205,7 +210,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     state = state.copyWith(currentPosition: position);
     await getToken();
     await checkPunch().then(
-      (value) {
+          (value) {
         state = state.copyWith(isLoading: false);
         if (kDebugMode) {
           print('puch>>>>>>>> ');
@@ -229,7 +234,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     log("storedToken: $storedToken");
   }
 
-  Future<bool?> checkPunch() async {
+  Future<PunchAttendanceModel?> checkPunch() async {
     if (state.currentPosition != null && storedToken != null) {
       Map<String, String> token = {"token": storedToken!};
       Map<String, double> location = {
@@ -239,16 +244,16 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 
       try {
         Response response =
-            await _punchInRepository.checkPunch(location, token);
+        await _punchInRepository.checkPunch(location, token);
         print(response.data);
         CheckAttendanceResponseModel checkAttendanceResponse =
-            CheckAttendanceResponseModel.fromJson(response.data);
+        CheckAttendanceResponseModel.fromJson(response.data);
         state =
             state.copyWith(checkAttendanceResponse: checkAttendanceResponse);
         state =
-            state.copyWith(punchStatus: checkAttendanceResponse.items.punchIn);
+            state.copyWith(punchStatus: checkAttendanceResponse.items.punchIn,punchAllowed: checkAttendanceResponse.items.allowed);
         log('punchIn Status: ${checkAttendanceResponse.items.punchIn}');
-        return checkAttendanceResponse.items.viewButton;
+        return PunchAttendanceModel(allowed: checkAttendanceResponse.items.allowed, punchIn: checkAttendanceResponse.items.punchIn);
       } on DioException catch (error) {
         if (kDebugMode) {
           print(error);
@@ -273,19 +278,19 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     state = state.copyWith(isLoading: true);
     // if (state.punchStatus) {
     await onPunchIn(context).then(
-      (value) async {
-      //   if (value!) {
-      //     await AddBodDialog().addAlbumDialog(
-      //       context,
-      //     );
-      //   }
+          (value) async {
+        //   if (value!) {
+        //     await AddBodDialog().addAlbumDialog(
+        //       context,
+        //     );
+        //   }
         if (kDebugMode) {
           print(value);
         }
         if (value!) {
           await checkPunch().then(
-            (value) {
-              state = state.copyWith(punchStatus: value);
+                (value) {
+              state = state.copyWith(punchStatus: value?.punchIn);
             },
           );
         }
@@ -296,7 +301,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.dashBoard, // Admin dashboard route
-                (route) => false, // Remove all previous routes
+                    (route) => false, // Remove all previous routes
               );
 
               break;
@@ -305,7 +310,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.dashBoard, // Sales dashboard route
-                (route) => false, // Remove all previous routes
+                    (route) => false, // Remove all previous routes
               );
               break;
             case 'collection':
@@ -313,7 +318,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.collectionHome,
-                (route) => false,
+                    (route) => false,
               );
               break;
 
@@ -322,7 +327,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.dashBoard, // Collection dashboard route
-                (route) => false, // Remove all previous routes
+                    (route) => false, // Remove all previous routes
               );
               break;
 
@@ -340,11 +345,11 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.dashBoard, // Collection dashboard route
-                (route) => false, // Remove all previous routes
+                    (route) => false, // Remove all previous routes
               );
               break;
             default:
-              // Handle unknown roles or navigate to a default screen
+            // Handle unknown roles or navigate to a default screen
               log('No matching role found');
               break;
           }
@@ -428,13 +433,13 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 }
 
 final punchInRepositoryProvider =
-    Provider.autoDispose<PunchInRepositoryImp>((ref) {
+Provider.autoDispose<PunchInRepositoryImp>((ref) {
   return PunchInRepositoryImp(); // Provides instance of PunchInRepository
 });
 
 // Create the AttendanceNotifierProvider
 final attendanceProvider =
-    StateNotifierProvider<AttendanceNotifier, AttendanceState>((ref) {
+StateNotifierProvider<AttendanceNotifier, AttendanceState>((ref) {
   final dio = ref.watch(dioProvider);
   return AttendanceNotifier(ref.watch(punchInRepositoryProvider), dio);
 });
@@ -479,3 +484,11 @@ final attendanceProvider =
 //   );
 //   return Geolocator.getCurrentPosition(locationSettings: locationSettings);
 // }
+class PunchAttendanceModel{
+  final bool allowed;
+  final bool punchIn;
+
+  PunchAttendanceModel({required this.allowed, required this.punchIn});
+
+
+}

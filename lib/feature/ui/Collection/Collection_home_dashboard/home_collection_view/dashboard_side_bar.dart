@@ -24,7 +24,7 @@ class DashBoardSideBar extends ConsumerWidget {
     print('role ${role}');
     return SafeArea(
       child: Container(
-        height: role.role.contains('collection') || role.role.contains('pd')
+        height: role.role.contains('collection') || role.role.contains('pd') || role.role.contains('admin')
             ? displayHeight(context) * 0.50
             : displayHeight(context) * 0.36,
         width: displayWidth(context) * 0.35,
@@ -82,7 +82,7 @@ class DashBoardSideBar extends ConsumerWidget {
                   // ),
 
                   Visibility(
-                    visible: role.role.contains('sales'),
+                    visible: role.role.contains('sales') || role.role.contains('admin'),
                     child: ListTile(
                       title:
                       Column(
@@ -108,7 +108,7 @@ class DashBoardSideBar extends ConsumerWidget {
                   ),
 
                   const Divider(
-                    color: Colors.white,
+                    color: Colors.grey,
                     height: 5,
                     thickness: 1,
                     indent: 20,
@@ -120,11 +120,11 @@ class DashBoardSideBar extends ConsumerWidget {
                     title:
                     Column(
                       children: [
-                        Image.asset('assets/images/package.png',
+                        Image.asset('assets/images/visit_pending_drawer_image.png',
                           width: displayWidth(context) * 0.10,
                           height: displayHeight(context) * 0.07,),
                         const Text(
-                          'Collection',
+                          'Visit',
                           style: TextStyle(color: AppColors.black),
                         ),
                       ],
@@ -139,7 +139,7 @@ class DashBoardSideBar extends ConsumerWidget {
                   ),
 
                   const Divider(
-                    color: Colors.white,
+                    color: Colors.grey,
                     height: 5,
                     thickness: 1,
                     indent: 20,

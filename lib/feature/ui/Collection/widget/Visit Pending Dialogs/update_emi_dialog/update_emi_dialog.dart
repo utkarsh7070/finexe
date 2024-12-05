@@ -13,6 +13,7 @@ class UpdateEmiDialog {
     required int index,
   }) async {
     return showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) {
         return  Dialog(

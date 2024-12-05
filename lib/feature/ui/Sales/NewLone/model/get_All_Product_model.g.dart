@@ -11,7 +11,7 @@ GetAllProductModel _$GetAllProductModelFromJson(Map<String, dynamic> json) =>
       status: json['status'] as bool,
       subCode: (json['subCode'] as num).toInt(),
       message: json['message'] as String,
-      error: json['error'] as String,
+      error: json['error'] as String?,
       items: (json['items'] as List<dynamic>)
           .map((e) => Item.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -58,8 +58,8 @@ Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
     };
 
 LoanAmount _$LoanAmountFromJson(Map<String, dynamic> json) => LoanAmount(
-      min: (json['min'] as num).toInt(),
-      max: (json['max'] as num).toInt(),
+      min: (json['min'] as num?)?.toInt(),
+      max: (json['max'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$LoanAmountToJson(LoanAmount instance) =>

@@ -16,20 +16,18 @@ import '../../../Collection cases/view_model/visit_pending_view_model.dart';
 class UpdateEmiDialogContent extends ConsumerWidget {
   final ItemsDetails? item;
   final int? index;
-  const UpdateEmiDialogContent({super.key,   required this.index,
-    required this.item});
+
+  const UpdateEmiDialogContent(
+      {super.key, required this.index, required this.item});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final dropDownControllers = ref.watch(dropDownControllerProvider);
-    // final dropDownData = ref.read(modeOfCollectionDropDown);
-    // final bankDownData = ref.read(bankDropDown);
-    // final creditDropData = ref.read(creditDropDown);
     final paymentState = ref.watch(updateEmiViewModelProvider);
     final paymentViewModel = ref.read(updateEmiViewModelProvider.notifier);
     final paymentFocusStates = ref.watch(updateEmiFocusProvider);
     final paymentFocusViewModel = ref.read(updateEmiFocusProvider.notifier);
     final getCollectionMode = ref.watch(fetchGetAllModeOfCollectionProvider);
+
     return getCollectionMode.when(
       data: (data) {
         List<DropDownValueModel> dropdown = [];
@@ -39,8 +37,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                 DropDownValueModel(name: element.title, value: element.id));
           }
         }
-        return
-          SingleChildScrollView(
+        return SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: SizedBox(
             width: displayWidth(context),
@@ -70,7 +67,6 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                               onPressed: () {
                                 paymentViewModel.updatePhotoValue(context);
                                 ref.invalidate(updateEmiViewModelProvider);
-
                               },
                               icon: const Icon(Icons.cancel_sharp))
                         ],
@@ -78,14 +74,18 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                       SizedBox(
                         height: displayHeight(context) * 0.02,
                       ),
-                      topWidget(context, text1: item!.ld!, text2: item!.partner!),
+                      topWidget(context,
+                          text1: item!.ld!, text2: item!.partner!),
                       SizedBox(
                         height: displayHeight(context) * 0.01,
                       ),
                       nameField(
                           text1: 'Customer Name',
-                          text2: '${item!.customerName} S/O ${item!.fatherName!}'),
-                      nameField(text1: 'Collection Type', text2: item!.collectionType!),
+                          text2:
+                              '${item!.customerName} S/O ${item!.fatherName!}'),
+                      nameField(
+                          text1: 'Collection Type',
+                          text2: item!.collectionType!),
                       SizedBox(
                         height: displayHeight(context) * 0.02,
                       ),
@@ -151,6 +151,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         errorText: "EMI Amount is a required field",
                         isError: !paymentState.isEmiAmount,
                         textInputAction: TextInputAction.done,
+                        textInputType: TextInputType.phone,
                       ),
                       SizedBox(
                         height: displayHeight(context) * 0.01,
@@ -182,10 +183,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                                   : AppStyles.subHeading,
                           label: const Text(
                             'Mode Of Collection',
-                            // style: const TextStyle(color: AppColors.textGray),
                           ),
-
-                          // errorText: isError! ? errorText : null,
                           enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: AppColors.buttonBorderGray, width: 1),
@@ -212,10 +210,6 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                       Visibility(
                         visible: paymentState.modeTitle == 'okCreditAssign' &&
                             paymentState.isExtraFormOpen,
-                        // paymentViewModel.modeOfCollectionController
-                        //         .dropDownValue?.name ==
-                        //     'okcredit' ,
-                        // && paymentState.isExtraFormOpen,
                         child: DropDownTextField(
                           clearOption: false,
                           controller: paymentViewModel.creditPersonController,
@@ -269,9 +263,6 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                       Visibility(
                         visible: paymentState.modeTitle == 'bankName' &&
                             paymentState.isExtraFormOpen,
-                        // paymentViewModel.modeOfCollectionController
-                        //         .dropDownValue?.name ==
-                        //     'online'&& paymentState.isExtraFormOpen ,
                         child: DropDownTextField(
                           clearOption: false,
                           controller: paymentViewModel.bankNameController,
@@ -325,12 +316,6 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                       ),
                       Visibility(
                         visible: paymentState.isEmail,
-                        // paymentViewModel.modeOfCollectionController
-                        //             .dropDownValue?.name ==
-                        //         'online' ||
-                        //     paymentViewModel.modeOfCollectionController
-                        //             .dropDownValue?.name ==
-                        //         'okCredit',
                         child: AppFloatTextField(
                           focusNode: paymentFocusViewModel.receiptFocusNode,
                           currentState: paymentFocusStates['receiptFocusNode'],
@@ -352,11 +337,11 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         height: displayHeight(context) * 0.01,
                       ),
 
-
                       Visibility(
                         visible: paymentState.isTransactionId,
                         child: AppFloatTextField(
-                          focusNode: paymentFocusViewModel.transactionIdFocusNode,
+                          focusNode:
+                              paymentFocusViewModel.transactionIdFocusNode,
                           currentState:
                               paymentFocusStates['transactionIdFocusNode'],
                           // controller: licenseController,
@@ -370,6 +355,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                           errorText: "Transaction Id is a required field",
                           isError: !paymentState.isTransactionId,
                           textInputAction: TextInputAction.done,
+                          textInputType: TextInputType.text,
                         ),
                       ),
                       SizedBox(
@@ -391,6 +377,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         errorText: "Remark* is a required field",
                         isError: !paymentState.isRemark,
                         textInputAction: TextInputAction.done,
+                        textInputType: TextInputType.text,
                       ),
                       SizedBox(
                         height: displayHeight(context) * 0.01,
@@ -444,16 +431,18 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                       //   onTap: () {},
                       //   label: 'Take Photo Visit',
                       // ),
-                      SizedBox(height: displayHeight(context)*0.01,),
+                      SizedBox(
+                        height: displayHeight(context) * 0.01,
+                      ),
                       AppButton(
                         textStyle: AppStyles.buttonLightTextStyle,
                         width: displayWidth(context),
                         onTap: () {
                           final bool value = paymentViewModel.validation();
-                          if(value){
-                            paymentViewModel.updateEmiSubmitButton(detail: item!,context: context,ref: ref);
+                          if (value) {
+                            paymentViewModel.updateEmiSubmitButton(
+                                detail: item!, context: context, ref: ref);
                           }
-
                         },
                         label: 'Submit',
                       )
@@ -467,7 +456,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
       },
       error: (error, stackTrace) {
         print(error.toString());
-        return  Text(error.toString());
+        return Text(error.toString());
       },
       loading: () {
         return SizedBox(
@@ -552,5 +541,4 @@ class UpdateEmiDialogContent extends ConsumerWidget {
       ),
     );
   }
-
 }

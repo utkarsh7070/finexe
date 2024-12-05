@@ -1,3 +1,4 @@
+import 'package:bson/bson.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'update_emi_submit_request_model.g.dart';
 
@@ -17,10 +18,12 @@ class UpdateEmiSubmitRequestModel {
   String transactionId;
   @JsonKey(name: "transactionImage")
   String transactionImage;
+  @JsonKey(name: "fatherName")
+  String fatherName;
   @JsonKey(name: "modeOfCollectionId")
   String modeOfCollectionId;
   @JsonKey(name: "commonId")
-  String commonId;
+  ObjectId? commonId;
   @JsonKey(name: "bankName")
   String bankName;
   @JsonKey(name: "customerEmail")
@@ -32,7 +35,9 @@ class UpdateEmiSubmitRequestModel {
   @JsonKey(name: "partner")
   String partner;
 
+
   UpdateEmiSubmitRequestModel({
+    required this.fatherName,
     required this.ld,
     required this.collectedBy,
     required this.customerName,

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
@@ -20,6 +19,7 @@ import '../model/request_model/aadhaar_otp_request_model.dart';
 import '../model/request_model/pan_request_model.dart';
 import '../model/responce_model/aadhaar_otp_responce_model.dart';
 import '../model/responce_model/aadhar_number_response_model.dart';
+import '../model/responce_model/pan_father_name_response_model.dart';
 import '../model/responce_model/pan_response_model.dart';
 import '../view/Sales_on_boarding_form/guarantor_form/dialog/form_completed_dialog.dart';
 
@@ -274,9 +274,11 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
       if (kDebugMode) {
         print(response.data);
       }
+      PanFatherNameResponseModel responseModel =
+      PanFatherNameResponseModel.fromJson(response.data);
       if (response.statusCode == 200) {
         state = state.copyWith(
-            panFather: response.data['items']['msg']['data']['father_name']);
+            panFather: responseModel.items.msg?.data?.fatherName);
       }
     } on DioException catch (error) {
       state = state.copyWith(isLoading: false);
@@ -318,6 +320,10 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final token = sharedPreferences.getString('token');
     final customerId = sharedPreferences.getString('customerId');
+
+    final strDate = DateFormat('dd-MM-yyyy').parse(state.dob);
+    final dob = DateFormat('yyyy-MM-dd').format(strDate);
+
     final formData = GuarantorFormData(
         relationWithApplicant: '',
         docType: 'panCard',
@@ -328,11 +334,11 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
         mobileNo: state.contact,
         docNo: state.pan,
         gender: state.gender,
-        fatherName: state.fatherName,
+        fatherName: state.panFather,
         maritalStatus: '',
         spouseName: '',
         motherName: '',
-        dob: state.dob,
+        dob: dob,
         religion: '',
         caste: '',
         age: state.age,
@@ -389,32 +395,7 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     }
   }
 
-  Future<PaymentInitiateResponseModel> paymentInitiate2(String customerId) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    final token = sharedPreferences.getString('token');
-   // final customerId = sharedPreferences.getString('customerId');
-    final requestData = {'customerId': customerId.toString()};
-    if (kDebugMode) {
-      print(customerId);
-      print(token);
-    }
 
-    print('Input requestData ${requestData.toString()}');
-
-    final response = await dio.post(Api.paymentAmount,
-        data: requestData, options: Options(headers: {'token': token}));
-    PaymentInitiateResponseModel responseModel =
-    PaymentInitiateResponseModel.fromJson(response.data);
-    if (kDebugMode) {
-      print(response.data);
-      print(response.statusCode);
-    }
-    if (response.statusCode == 200) {
-      return responseModel;
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
 
   /*Future<void> pickImages() async {
     // var video = await Permission.storage.status;

@@ -27,7 +27,6 @@ class VisitPendingScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final data = ref.watch(fetchVisitPendingDataProvider);
-
     return data.when(
       data: (data) {
         List<ItemsDetails> listOfLists = data.map((map) {

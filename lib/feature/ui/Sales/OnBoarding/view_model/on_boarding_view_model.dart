@@ -495,3 +495,6 @@ final paginatedProvider = StateNotifierProvider<PaginationNotifier<String>,
     return List.generate(10, (index) => 'Item ${index + 1 + (page - 1) * 10}');
   }),
 );
+
+
+

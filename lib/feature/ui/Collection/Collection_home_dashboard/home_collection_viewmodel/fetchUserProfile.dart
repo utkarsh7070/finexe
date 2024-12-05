@@ -144,7 +144,7 @@ final roleName = Provider<RoleListModel>((ref) {
       .asData
       ?.value;
   List<String>? role = prefs?.getStringList('roleName');
-  RoleListModel roleListModel = RoleListModel(role: role!);
+  RoleListModel roleListModel = RoleListModel(role: role??[]);
   return roleListModel;
 },);
 

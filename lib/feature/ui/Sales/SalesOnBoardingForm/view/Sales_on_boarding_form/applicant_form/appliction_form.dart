@@ -1,11 +1,6 @@
 import 'dart:io';
-
-import 'package:dropdown_textfield/dropdown_textfield.dart';
-import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
-
 import '../../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../../base/utils/namespase/display_size.dart';
@@ -17,7 +12,6 @@ import '../../../view_model/application_form_view_model.dart';
 import 'bottom_sheet/applicant_if_no_bottom_sheet.dart';
 import 'bottom_sheet/applicant_otp_screen.dart';
 import 'dialog/back_application_dialog.dart';
-import 'dialog/back_to_dashboard.dart';
 
 class ApplicationDetails extends ConsumerWidget {
   const ApplicationDetails({super.key});
@@ -25,13 +19,13 @@ class ApplicationDetails extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     //----------------------------controllers-------------------------
-    final formListController = ref.watch(applicantController);
-    final formNotifierController = ref.read(applicantController.notifier);
+    // final formListController = ref.watch(applicantController);
+    // final formNotifierController = ref.read(applicantController.notifier);
     //-----------------------------------------------------
-    final selectedValue = ref.watch(applicantRoleProvider);
-    // final checkBoxTerms = ref.watch(checkBoxTermsConditionApplicant);
-    final isPanIconChange = ref.watch(isPanLoading);
-    final colorChangeState = ref.watch(isTickColorChange);
+    // final selectedValue = ref.watch(applicantRoleProvider);
+    // // final checkBoxTerms = ref.watch(checkBoxTermsConditionApplicant);
+    // final isPanIconChange = ref.watch(isPanLoading);
+    // final colorChangeState = ref.watch(isTickColorChange);
     final personalFormState = ref.watch(applicantViewModelProvider);
     final personalFormViewModel = ref.read(applicantViewModelProvider.notifier);
     final personalFocusStates = ref.watch(applicantFocusProvider);

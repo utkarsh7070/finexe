@@ -274,9 +274,11 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
                     ),
                     AppButton(
                       onTap: () {
+                        Navigator.pop(context);
                         _showSecondBottomSheet(context);
-                        // Navigator.of(context).pop();
+
                       },
+                      textStyle: AppStyles.buttonLightTextStyle,
                       label: 'Yes, Applicant has it',
                       height: MediaQuery.of(context).size.height * 0.06,
                       width: MediaQuery.of(context).size.width * 0.8,
@@ -284,9 +286,10 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
                     SizedBox(height: displayHeight(context) * 0.02),
                     AppButton(
                       onTap: () {},
+                      textStyle: AppStyles.buttonLightTextStyle,
                       label: 'No',
                       isFill: true,
-                      textStyle: AppStyles.grayStyle,
+                      // textStyle: AppStyles.grayStyle,
                       bgColor: const Color(0xffF4F4F4),
                       height: MediaQuery.of(context).size.height * 0.06,
                       width: MediaQuery.of(context).size.width * 0.8,
@@ -353,8 +356,8 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Do Write your Particular reason for reject this case Do Write your Particular reason for reject this case',
-                      style: AppStyles.TextStyle16,
+                      'Do Write your Particular reason for reject this case.',
+                      style: AppStyles.TextStyle16,textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
                     const Text('Remark'),
@@ -398,6 +401,7 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
                     AppButton(
                       onTap: () {},
                       label: 'Submit',
+                      textStyle: AppStyles.buttonLightTextStyle,
                       height: MediaQuery.of(context).size.height * 0.06,
                       width: MediaQuery.of(context).size.width,
                     ),
@@ -408,7 +412,7 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
                       },
                       label: 'Cancel',
                       isFill: true,
-                      textStyle: AppStyles.grayStyle,
+                      textStyle: AppStyles.buttonLightTextStyle,
                       bgColor: const Color(0xffF4F4F4),
                       height: displayHeight(context) * 0.06,
                       width: displayWidth(context),

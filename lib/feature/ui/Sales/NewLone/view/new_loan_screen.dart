@@ -97,7 +97,9 @@ class NewLoanScreen extends ConsumerWidget {
                               permissionFormId: 'permissionFormId',
                               productFinId: 'productFinId'),
                         );
-                        final int division = (item.loanAmount.max.toDouble()/50000).toInt();
+
+                        final int division = (item.loanAmount.max?.toDouble()??0/5).toInt();
+                        print('division ${division}');
 
                         return Wrap(
                           crossAxisAlignment: WrapCrossAlignment.center,
@@ -187,7 +189,7 @@ class NewLoanScreen extends ConsumerWidget {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: displayHeight(context) * 0.04,
+                                  height: displayHeight(context) * 0.02,
                                 ),
                                 amountShow(
                                     context,
@@ -196,8 +198,34 @@ class NewLoanScreen extends ConsumerWidget {
                                     phoneState.tenure,
                                     phoneState.emi),
                                 SizedBox(
-                                  height: displayHeight(context) * 0.04,
+                                  height: displayHeight(context) * 0.02,
                                 ),
+                                // SizedBox(
+                                //   height: displayHeight(context) * 0.01,
+                                // ),
+                                AppFloatTextField(
+                                  // focusNode:
+                                  // phoneFocusViewModel.phoneNumberFocusNode,
+                                  // currentState: personalFocusStates[
+                                  // 'phoneNumberFocusNode'],
+                                  // controller: licenseController,
+                                  onChange: (value) {
+                                    final double val = double.parse(value);
+                                    if(val >= item.loanAmount.min! && val <= item.loanAmount.max!) {
+                                      phoneViewModel.updateLoanAmount(val);
+                                      phoneViewModel.updateEmi();
+                                    }
+                                  },
+                                  // height: !phoneState.isPhoneNumberValid
+                                  //     ? displayHeight(context) * 0.09
+                                  //     : null,
+                                  inerHint: 'Enter Lone Amount',
+                                  // errorText: "Mobile no is a required field",
+                                  // isError: !(phoneState.loanAmount >= item.loanAmount.min! && phoneState.loanAmount <= item.loanAmount.max!),
+                                  textInputType: TextInputType.phone,
+                                  textInputAction: TextInputAction.done,
+                                ),
+                                SizedBox(height: displayHeight(context)*0.01,),
                                 amountTextShow(
                                     data: 'Loan Amount (Lack)',
                                     price: '${phoneState.loanAmount.toInt()}'),
@@ -249,9 +277,9 @@ class NewLoanScreen extends ConsumerWidget {
                                   activeColor: AppColors.primary,
                                   inactiveColor: AppColors.linearBarColor,
                                   value: phoneState.loanAmount,
-                                  min: item.loanAmount.min.toDouble(),
-                                  max: item.loanAmount.max.toDouble(),
-                                  divisions: 4??division,
+                                  min: item.loanAmount.min?.toDouble()??0,
+                                  max: item.loanAmount.max?.toDouble()??0,
+                                  divisions: 4,
                                   // label: phoneState.loanAmount.round().toString(),
                                   onChanged: (double value) {
                                     phoneViewModel.updateLoanAmount(value);
@@ -269,8 +297,8 @@ class NewLoanScreen extends ConsumerWidget {
                                   activeColor: AppColors.primary,
                                   inactiveColor: AppColors.linearBarColor,
                                   value: phoneState.roi,
-                                  min: item.roi.min.toDouble(),
-                                  max: item.roi.max.toDouble(),
+                                  min: item.roi.min?.toDouble()??0,
+                                  max: item.roi.max?.toDouble()??0,
                                   // divisions: 4??division,
                                   // label: phoneState.loanAmount.round().toString(),
                                   onChanged: (double value) {
@@ -329,8 +357,8 @@ class NewLoanScreen extends ConsumerWidget {
                                   activeColor: AppColors.primary,
                                   inactiveColor: AppColors.linearBarColor,
                                   value: phoneState.tenure,
-                                  min: item.tenure.min.toDouble(),
-                                  max: item.tenure.max.toDouble(),
+                                  min: item.tenure.min?.toDouble()??0,
+                                  max: item.tenure.max?.toDouble()??0,
                                   // divisions: 4??division,
                                   // label: phoneState.loanAmount.round().toString(),
                                   onChanged: (double value) {
@@ -388,7 +416,7 @@ class NewLoanScreen extends ConsumerWidget {
                                 //   height: displayHeight(context) * 0.01,
                                 // ),
                                 SizedBox(
-                                  height: displayHeight(context) * 0.04,
+                                  height: displayHeight(context) * 0.02,
                                 ),
                                 AppButton(
                                   width: displayWidth(context),
@@ -474,7 +502,7 @@ class NewLoanScreen extends ConsumerWidget {
       double tenure, emi) {
     return Container(
       padding: const EdgeInsets.all(16),
-      height: displayHeight(context) * 0.20,
+      height: displayHeight(context) * 0.18,
       decoration: BoxDecoration(
           gradient: const LinearGradient(
               begin: Alignment.topLeft,

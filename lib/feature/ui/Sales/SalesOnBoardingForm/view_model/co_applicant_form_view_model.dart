@@ -21,6 +21,7 @@ import '../model/request_model/pan_request_model.dart';
 import '../model/request_model/submit_co_applicant_form_data.dart';
 import '../model/responce_model/aadhaar_otp_responce_model.dart';
 import '../model/responce_model/aadhar_number_response_model.dart';
+import '../model/responce_model/pan_father_name_response_model.dart';
 import '../view/Sales_on_boarding_form/co-applicant_form/co_applicant_form1.dart';
 
 final uploadCoDoc = StateProvider(
@@ -429,6 +430,11 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
       print(employeId);
       print(customerId);
     }
+    final strDate = DateFormat('dd-MM-yyyy').parse(state[index].dob);
+    final dob = DateFormat('yyyy-MM-dd').format(strDate);
+    if (kDebugMode) {
+      print(dob);
+    }
 
     final formData = CoApplicantFormData(
         relationWithApplicant: '',
@@ -441,11 +447,11 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         mobileNo: state[index].coApplicantContact,
         docNo: state[index].pan,
         gender: state[index].gender,
-        fatherName: state[index].fatherName,
+        fatherName: state[index].panFather,
         maritalStatus: '',
         spouseName: '',
         motherName: '',
-        dob: state[index].dob,
+        dob: dob,
         religion: '',
         caste: '',
         age: state[index].age,
@@ -538,6 +544,8 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         print('fetchPanFatherName Api Response ${response.data}');
        // print('Set father name Response ${response.data['items']['msg']['data']['father_name']}');
       }
+      PanFatherNameResponseModel responseModel =
+      PanFatherNameResponseModel.fromJson(response.data);
       var responseData = response.data;
       print('fetch pan father response: ${responseData}');
       var message = responseData['message'];
@@ -547,7 +555,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         state = [
           for (final todo in state)
             if (todo.id == index)
-              todo.copyWith(panFather: response.data['items']['msg']['data']['father_name'])
+              todo.copyWith(panFather: responseModel.items.msg?.data?.fatherName)
 
             else
               todo
