@@ -76,9 +76,9 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
       /*appBar: AppBar(title: const Text('Lead Generation')),*/
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: Text("Lead Generation",style: TextStyle(color: Colors.white)),
+        title: const Text("Lead Generation",style: TextStyle(color: Colors.white)),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back,color: Colors.white,),
+          icon: const Icon(Icons.arrow_back,color: Colors.white,),
           onPressed: () => Navigator.of(context).pop(),
         ),
 
@@ -134,7 +134,7 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                         },
                       ),
                     ),
-                    SizedBox(width: 10), // Optional spacing between the fields
+                    const SizedBox(width: 10), // Optional spacing between the fields
                     Expanded(
                       child: buildForm(
                         controller: districtController,
@@ -202,7 +202,7 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                         loading: () {
                           return const Center(child: CircularProgressIndicator());
                         },
-                        error: (error, _) => Text('Failed to load branch'),
+                        error: (error, _) => const Text('Failed to load branch'),
                       ),
                     ),
                   ],
@@ -210,7 +210,7 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
 
                 const SizedBox(height: 10),
 
-                Row(
+                const Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
 
                   children: [
@@ -225,9 +225,6 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                     ),
                   ],
                 ),
-
-
-
                 Row(
                   children: [
                     Checkbox(
@@ -276,7 +273,7 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                           },
                         ),
                       ),
-                    SizedBox(width: 10), // Optional spacing between the fields
+                    const SizedBox(width: 10), // Optional spacing between the fields
                     if (agriland) // Show Bigha field if Agriland is checked
                       Expanded(
                         child: buildForm(
@@ -295,7 +292,7 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                   ],
                 ),
 
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
 
                 Row(
                   children: [
@@ -321,7 +318,7 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                         },
                       ),
                     ),
-                    SizedBox(width: 10), // Optional spacing between the fields
+                    const SizedBox(width: 10), // Optional spacing between the fields
                     Expanded(
                       child: DropdownButtonFormField<String>(
                         value: monthlyIncomeController.text.isEmpty ? null : monthlyIncomeController.text,
@@ -351,7 +348,7 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
 
                 ),
 
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
 
                 if (showOtherIncomeField)
                   buildForm(
@@ -412,7 +409,7 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                           return const Center(child: CircularProgressIndicator());
                         },
                         /* loading: () => CircularProgressIndicator(),*/
-                        error: (error, _) => Text('Failed to load branches'),
+                        error: (error, _) => const Text('Failed to load branches'),
                       ),
                     ),
                   ],
@@ -441,7 +438,7 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                           width: 200, // Adjust width as needed
                           child: ElevatedButton(
                             onPressed: _captureSelfie,
-                            child: Text(
+                            child: const Text(
                               'Selfie with customer',
                               textAlign: TextAlign.center, // Ensure text is centered
                               style: TextStyle(
@@ -490,7 +487,7 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                             showCustomSnackBar(context, 'Please fill all the fields', Colors.red);
                           }
                         },
-                        child: Text(
+                        child: const Text(
                           'Submit',
                           style: TextStyle(
                             color: Colors.white,
@@ -501,7 +498,6 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                     ),
                   ],
                 ),
-
               ],
             ),
           ),
@@ -538,23 +534,23 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
         validator: validator,
         decoration: InputDecoration(
           labelText: label,
-          contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0), // Adjust vertical padding
-          labelStyle: TextStyle(color: Colors.grey),
+          contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0), // Adjust vertical padding
+          labelStyle: const TextStyle(color: Colors.grey),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: Colors.grey),
+            borderSide: const BorderSide(color: Colors.grey),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: AppColors.primary),
+            borderSide: const BorderSide(color: AppColors.primary),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: Colors.red),
+            borderSide: const BorderSide(color: Colors.red),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: Colors.red),
+            borderSide: const BorderSide(color: Colors.red),
           ),
           filled: true,
           fillColor: Colors.white,
