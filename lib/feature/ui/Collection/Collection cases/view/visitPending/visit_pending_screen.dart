@@ -35,7 +35,7 @@ class VisitPendingScreen extends ConsumerWidget {
 
         // print(sea?rchList);
         return Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.only(left: 16,right: 16),
           height: displayHeight(context),
           width: displayWidth(context),
           child: Column(
@@ -88,9 +88,9 @@ class VisitPendingScreen extends ConsumerWidget {
               //
               //   searchItems:[]
               // ),
-              SizedBox(
-                height: displayHeight(context) * 0.03,
-              ),
+              // SizedBox(
+              //   height: displayHeight(context) * 0.03,
+              // ),
               Expanded(
                 child: SizedBox(
                   height: displayHeight(context),
@@ -384,7 +384,7 @@ class VisitPendingScreen extends ConsumerWidget {
         return Text('data');
       },
       loading: () {
-        return CircularProgressIndicator();
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }

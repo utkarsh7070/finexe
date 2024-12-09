@@ -271,7 +271,7 @@ class _GuarantorDetails extends ConsumerState<GuarantorDetails> {
                                             .validateForm();
                                         if (isValid) {
                                           personalFormViewModel
-                                              .fetchAadhaarNumber()
+                                              .fetchAadhaarNumber(context)
                                               .then(
                                             (value) {
                                               showBottomSheetIfYes(

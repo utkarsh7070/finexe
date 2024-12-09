@@ -34,6 +34,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
   ) {
     final items = ref.watch(itemProvider);
     final pdRequestList = ref.watch(fetchPdRequestListProvider);
+    final pdRefuseList = ref.watch(fetchPdRefuseCasetProvider);
     final gridItems = ref.watch(griditemProvider);
     var _scaffoldKey = GlobalKey<ScaffoldState>();
     final pdITems = ref.watch(pdItemsProvider);
@@ -230,7 +231,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                     throw Exception(error);
                   },
                   loading: () {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                     //   Shimmer.fromColors(
                     //   baseColor: Colors.grey[300]!,
                     //   highlightColor: Colors.grey[100]!,
@@ -292,80 +293,87 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                 ],
               ),
               //  constantSizedbox(context),
-              ListView.builder(
-                shrinkWrap:
-                    true, // Allows ListView to take up only the required height
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: pdITems.length,
-                itemBuilder: (context, index) {
-                  final items = pdITems[index];
-                  return Container(
-                    height: displayHeight(context) * 0.06,
-                    // width: displayWidth(context) * 0.9,
-                    decoration: const BoxDecoration(color: Colors.white),
-                    margin: EdgeInsets.only(top: displayHeight(context) * 0.02),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            // ClipRRect(
-                            //     borderRadius: BorderRadius.circular(10),
-                            //     child: Image.network(
-                            //       items.imageUrl,
-                            //       height: displayHeight(context) * 0.09,
-                            //       width: displayWidth(context) * 0.12,
-                            //       fit: BoxFit.cover,
-                            //     )),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: CachedNetworkImage(
-                                imageUrl: items.imageUrl,
-                                height: displayHeight(context) * 0.09,
-                                width: displayWidth(context) * 0.12,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => const Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                                errorWidget: (context, url, error) => Image.asset(
-                                  'assets/images/no_internet.jpg',
-                                  height: 56,
-                                  width: 56,
+              pdRefuseList.when(data: (data) {
+                return ListView.builder(
+                  shrinkWrap:
+                  true, // Allows ListView to take up only the required height
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 4,
+                  itemBuilder: (context, index) {
+                    final items = pdITems[index];
+                    return Container(
+                      height: displayHeight(context) * 0.06,
+                      // width: displayWidth(context) * 0.9,
+                      decoration: const BoxDecoration(color: Colors.white),
+                      margin: EdgeInsets.only(top: displayHeight(context) * 0.02),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              // ClipRRect(
+                              //     borderRadius: BorderRadius.circular(10),
+                              //     child: Image.network(
+                              //       items.imageUrl,
+                              //       height: displayHeight(context) * 0.09,
+                              //       width: displayWidth(context) * 0.12,
+                              //       fit: BoxFit.cover,
+                              //     )),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: CachedNetworkImage(
+                                  imageUrl: data[index].customerPhoto??'',
+                                  height: displayHeight(context) * 0.09,
+                                  width: displayWidth(context) * 0.12,
                                   fit: BoxFit.cover,
+                                  placeholder: (context, url) => const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                  errorWidget: (context, url, error) => Image.asset(
+                                    'assets/images/no_internet.jpg',
+                                    height: 56,
+                                    width: 56,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(width: displayWidth(context) * 0.03),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  items.title,
-                                  style: AppStyles.blacktext14,
-                                ),
-                                Text(
-                                  items.subtitle,
-                                  style: AppStyles.subHeading,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        //SizedBox(width: displayWidth(context) * 0.4),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, AppRoutes.pdformscreen);
-                          },
-                          child: Text(
-                            items.initialPd,
-                            style: AppStyles.blueText,
+                              SizedBox(width: displayWidth(context) * 0.03),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    data[index].customerName??'',
+                                    style: AppStyles.blacktext14,
+                                  ),
+                                  Text(
+                                    data[index].customerFinId??'',
+                                    style: AppStyles.subHeading,
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        )
-                      ],
-                    ),
-                  );
-                },
-              )
+                          //SizedBox(width: displayWidth(context) * 0.4),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, AppRoutes.pdformscreen,arguments: {
+                                'customerId': data[index].customerId
+                              });
+                            },
+                            child: Text(
+                              items.initialPd,
+                              style: AppStyles.blueText,
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                );
+              }, error: (error, stackTrace) => throw Exception(), loading: () {
+                return const Center(child: CircularProgressIndicator());
+              },)
+
             ],
           ),
         ),

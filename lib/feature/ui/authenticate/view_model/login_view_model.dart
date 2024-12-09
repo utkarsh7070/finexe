@@ -8,10 +8,8 @@ import 'package:finexe/feature/ui/authenticate/model/login_request_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Punch_In_Out/model/check_attendance_responce_model.dart';
 import '../../../Punch_In_Out/repository/puch_In_repository_imp.dart';
 import '../../../base/api/dio_exception.dart';
@@ -53,7 +51,7 @@ final loginViewModelProvider =
   final punchInRepository = ref.watch(punchInRepositoryProvider);
   final dio = ref.read(dioProvider);
   return LoginViewModel(
-      AsyncValue.data(DataModel(loginStatus: '', checkPunch: false, role: '')),
+      AsyncValue.data(DataModel(loginStatus: '', checkPunch: false, role: '',allowed: false)),
       dio,
       punchInRepository);
 });
@@ -175,6 +173,11 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                 break;
 
               default:
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.hrms, // Collection dashboard route
+                      (route) => false, // Remove all previous routes
+                );
                 // Handle unknown roles or navigate to a default screen
                 log('No matching role found');
                 break;
@@ -233,14 +236,15 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
            );
         ref.refresh(attendanceProvider);
 
-        bool punchStatus = await punchStatusFunction(
+        PunchModel punchStatus = await punchStatusFunction(
             _punchInRepository,
             loginResponseModel.items.token,
             // loginResponseModel.items.roleName.first.toString(),
             context);
         // Update state to indicate success
         state = AsyncValue.data(DataModel(
-            checkPunch: punchStatus,
+          allowed: punchStatus.allowed,
+            checkPunch: punchStatus.punchIn,
             loginStatus: 'Sucsses',
             role: loginResponseModel.items.roleName.first.toString()));
         showCustomSnackBar(context, loginResponseModel.message, Colors.green);
@@ -276,11 +280,13 @@ class DataModel {
   final String loginStatus;
   final String role;
   final bool checkPunch;
+  final bool allowed;
 
   DataModel(
       {required this.loginStatus,
       required this.checkPunch,
-      required this.role});
+      required this.role,
+      required this.allowed});
 }
 
 class RadioNotifier extends StateNotifier<Role> {
@@ -364,7 +370,7 @@ Future<Position> _getCurrentLocation() async {
   // await _calculateDistance();
 }
 
-Future<bool> punchStatusFunction(
+Future<PunchModel> punchStatusFunction(
     _punchInRepository, String token, BuildContext context) async {
   log('stored token:: $token');
   Position position = await _getCurrentLocation();
@@ -378,15 +384,24 @@ Future<bool> punchStatusFunction(
       Response response = await _punchInRepository.checkPunch(location, tokens);
       var checkAttendanceResponse =
           CheckAttendanceResponseModel.fromJson(response.data);
-      return checkAttendanceResponse.items.punchIn;
+      return PunchModel(punchIn: checkAttendanceResponse.items.punchIn,allowed: checkAttendanceResponse.items.allowed);
     } on DioException catch (error) {
       DioExceptions.fromDioError(error, context);
     }
   }
-  return false;
+  return PunchModel(allowed: false,punchIn: false);
   // SesstionModel(
   //   token: tokens != null, role: role, puntchStatus: punchStatus);
   // Return true if token exists (logged in), false otherwise (not logged in)
+}
+
+class PunchModel{
+  final bool allowed;
+  final bool punchIn;
+
+  PunchModel({required this.allowed, required this.punchIn});
+
+
 }
 
 enum Role { Employee, Vendor, Lender }

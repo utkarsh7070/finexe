@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:finexe/feature/base/extentions/capital_letter.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
@@ -12,7 +11,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:roam_flutter/roam_flutter.dart';
 import '../../../../base/api/api.dart';
 import '../../../../base/utils/widget/custom_snackbar.dart';
-import '../Widget/profile_update.dart';
 import '../home_collection_viewmodel/fetchUserProfile.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../Widget/punct_in_out_action_dialog_content.dart';
@@ -26,7 +24,7 @@ class CollectionDashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _CollectionDashboardScreenState extends ConsumerState<CollectionDashboardScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late Timer trackingTimer;
   @override
   void initState() {

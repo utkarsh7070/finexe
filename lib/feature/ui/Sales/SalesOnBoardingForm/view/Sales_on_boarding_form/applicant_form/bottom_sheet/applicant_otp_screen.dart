@@ -17,14 +17,9 @@ class ApplicationVerify extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final formListController = ref.watch(applicantController);
-    // final getOtpClicked = ref.watch(getOpt);
     final personalFormState = ref.watch(applicantViewModelProvider);
     final personalFormViewModel = ref.read(applicantViewModelProvider.notifier);
-    // final checkBoxTerms = ref.watch(checkBoxTermsConditionApplicant);
-    // final personalFocusStates = ref.watch(applicantFocusProvider);
-    // final personalFocusViewModel = ref.read(applicantFocusProvider.notifier);
-    // final selectedValue = ref.watch(applicantRoleProvider);
+
     return Scaffold(
       body: Container(
         width: displayWidth(context),

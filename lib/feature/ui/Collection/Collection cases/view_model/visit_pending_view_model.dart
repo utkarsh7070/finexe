@@ -20,6 +20,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
+import '../../../../base/api/dio_exception.dart';
 import '../../../../base/service/session_service.dart';
 import '../model/visit_closure_submit_request_model.dart';
 import '../model/get_visit_pending_response_data.dart';
@@ -117,7 +118,16 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
       SingleValueDropDownController();
   final ImagePicker picker = ImagePicker();
 
+
   PaymentStatusViewModel(this.dio, this.position) : super(PaymentStatusModel());
+
+  @override
+  void dispose() {
+    dropDownControllerProvider.dispose();
+    dateController.dispose();
+    super.dispose();
+  }
+
 
   Future<XFile?> clickPhoto() async {
     state = state.copyWith(isLoading: true);
@@ -201,62 +211,67 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
 
   Future<void> visitFormSubmit(
       {required ItemsDetails datas, required BuildContext context}) async {
-    position.when(
-      data: (data) async {
-        final requestModel = VisitUpdateSubmitRequestModel(
-            ld: datas.ld!,
-            customerName: datas.customerName!,
-            visitDate: DateFormat('dd/MM/yyyy').format(DateTime.now()),
-            revisitDate: state.date,
-            newContactNumber: int.parse(datas.mobile!),
-            customerResponse: state.reason,
-            paymentAmount: int.parse(state.paymentAmount),
-            reasonForNotPay: state.reason,
-            solution: state.solution,
-            reasonForCustomerNotContactable: state.reason,
-            visitSelfie: imageApi,
-            address: datas.address!,
-            latitude: data.latitude,
-            longitude: data.longitude);
-
-        /*const String token =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
-        */
-        String? token = await SessionService.getToken();
-        final response = await dio.post(Api.visitFormSubmit,
-            data: requestModel.toJson(),
-            options: Options(headers: {"token": token}));
-        if (kDebugMode) {
-          print(response.statusMessage);
-          print(response.statusCode);
-        }
-
-        if (response.statusCode == 200) {
-          log('updated vist test');
-          // showCustomSnackBar(
-          //     context, 'Visit Updated Successfully', Colors.green);
-
-          // return true;
-          // if (kDebugMode) {
-          //   print('image ${response.data}');
-          // }
-        } else {
-          throw Exception('Failed to load data');
-        }
-      },
-      error: (error, stackTrace) {
-        return false;
-      },
-      loading: () {},
+    print('image of uploaded $imageApi');
+    // final strDate = DateFormat('dd-MM-yyyy').parse(state.date);
+    // final date = DateFormat('yyyy-MM-dd').format(strDate);
+    final requestModel = VisitUpdateSubmitRequestModel(
+      ld: datas.ld??'',
+      customerName: datas.customerName??'',
+      visitDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      revisitDate: state.date,
+      newContactNumber: datas.mobile??'',
+      customerResponse: dropDownControllerProvider.dropDownValue?.name??'',
+      paymentAmount: state.paymentAmount,
+      reasonForNotPay: state.reason,
+      solution: state.solution,
+      reasonForCustomerNotContactable: state.reason,
+      visitSelfie: imageApi,
+      address: datas.address??'',
+      // latitude: data.latitude,
+      // longitude: data.longitude
     );
+    print(requestModel);
+    String? token = await SessionService.getToken();
+
+    try{
+      final response = await dio.post(Api.visitFormSubmit,
+          data: requestModel.toJson(),
+          options: Options(headers: {"token": token}));
+      if (kDebugMode) {
+        print(response.statusMessage);
+        print(response.statusCode);
+        print(response.data);
+      }
+      if (response.statusCode == 200) {
+        log('updated vist test');
+        showCustomSnackBar(
+            context, response.data['message'], Colors.green);
+      } else {
+        showCustomSnackBar(
+            context, response.data['message'], Colors.green);
+        throw Exception('Failed to load data');
+      }
+    }catch(e){
+      DioExceptions.fromDioError(e as DioException, context);
+    }
+    // position.when(
+    //   data: (data) async {
+    //     print(data);
+    //
+    //
+    //   },
+    //   error: (error, stackTrace) {
+    //     if (kDebugMode) {
+    //       print(error);
+    //     }
+    //     DioExceptions.fromDioError(error as DioException, context);
+    //     return false;
+    //   },
+    //   loading: () {},
+    // );
   }
 
-  @override
-  void dispose() {
-    dropDownControllerProvider.dispose();
-    dateController.dispose();
-    super.dispose();
-  }
+
 
   void updatePhotoValue(context) {
     // state = state.copyWith(photoFile: value);
@@ -322,13 +337,13 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
   }
 
   bool validateCustomerNotPay() {
-    final isPaymentStatusValid = _validatePaymentStatus(state.paymentStatus);
+    // final isPaymentStatusValid = _validatePaymentStatus(dropDownControllerProvider.dropDownValue!.name);
     final isReasonValid = _validateReason(state.reason);
     final isSolutionValid = _validateSolution(state.solution);
     final isDateValid = _validateDate(state.date);
     final isPhoto = _validateTransactionImage(state.photoFile);
     state = state.copyWith(
-        isPaymentStatusValid: isPaymentStatusValid,
+        // isPaymentStatusValid: isPaymentStatusValid,
         isReasonValid: isReasonValid,
         isSolutionValid: isSolutionValid,
         isDateValid: isDateValid,
@@ -336,7 +351,7 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     return isDateValid &&
         isSolutionValid &&
         isReasonValid &&
-        isPaymentStatusValid &&
+        // isPaymentStatusValid &&
         isPhoto;
   }
 
@@ -665,6 +680,7 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
       lastDate: DateTime(2100),
     );
     if (pickedDate != null) {
+      print(pickedDate);
       updateDate(pickedDate); // Update the date in the state
       ref
           .read(dateProvider.notifier)
@@ -1171,12 +1187,15 @@ final currentLocationProvider = FutureProvider<Position>((ref) async {
   // Return the current position
   Position position =
       await Geolocator.getCurrentPosition(locationSettings: locationSettings);
+
   return position;
 });
 
 // Provider to manage the Google Map controller
 final mapControllerProvider =
-    StateProvider<GoogleMapController?>((ref) => null);
+    StateProvider.autoDispose<GoogleMapController?>((ref) {
+      return null;
+    } );
 
 // Provider to manage the polyline for directions
 final polylineProvider = StateProvider<List<Polyline>>((ref) => []);

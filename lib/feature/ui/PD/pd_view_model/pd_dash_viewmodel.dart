@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Model/pd_request_list_model.dart';
+import '../Model/refuse_case_response_model.dart';
 
 class Item {
   final String imageUrl;
@@ -231,6 +232,38 @@ FutureProvider.autoDispose<List<PDReqItems>>((ref) async {
     // Map the list of dynamic objects to List<PDReqItems>
     List<PDReqItems> apiResponseList =
     responseList.map((item) => PDReqItems.fromJson(item)).toList();
+    print('PDReqItems ${apiResponseList.length}');
+    return apiResponseList;
+  } else {
+    throw Exception('Failed to load data');
+  }
+});
+
+final fetchPdRefuseCasetProvider =
+FutureProvider.autoDispose<List<RefuseItem>>((ref) async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  String? token = sharedPreferences.getString('token');
+  final Map<String, dynamic> queryParam = {
+    'status': 'accept',
+    'page': 1,
+    'limit': 10,
+    'searchQuery': '',
+  };
+  final dio = ref.read(dioProvider);
+  print('Api.getReqRefP:: ${Api.pdAssign}');
+  print('token:: ${token}');
+
+  final response = await dio.get(Api.pdAssign,
+      queryParameters: queryParam, options: Options(headers: {"token": token}));
+  print(response.statusMessage);
+  print(response.statusCode);
+  if (response.statusCode == 200) {
+    print(response.data);
+    List<dynamic> responseList = response.data['items'] ?? [];
+
+    // Map the list of dynamic objects to List<PDReqItems>
+    List<RefuseItem> apiResponseList =
+    responseList.map((item) => RefuseItem.fromJson(item)).toList();
     print('PDReqItems ${apiResponseList.length}');
     return apiResponseList;
   } else {

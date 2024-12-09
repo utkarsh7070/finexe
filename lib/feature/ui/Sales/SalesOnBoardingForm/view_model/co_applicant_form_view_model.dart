@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/dio.dart';
+import '../../../../base/api/dio_exception.dart';
 import '../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/request_model/aadhaar_number_request_model.dart';
 import '../model/request_model/aadhaar_otp_request_model.dart';
@@ -295,13 +296,13 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
   //   ];
   // }
 
-  Future<bool> fetchAadhaarNumber(int index) async {
+  Future<bool> fetchAadhaarNumber(int index,BuildContext context) async {
     state = [
       for (final todo in state)
         if (todo.id == index) todo.copyWith(isLoading: true) else todo
     ];
     if(dropDownController.dropDownValue?.value == 'panCard'){
-      await fetchPanVerify(index);
+      await fetchPanVerify(index, context);
     }
     print(state[index].aadhaar);
     final aadhaarNumberRequestModel = AadhaarNumberRequestModel(
@@ -336,7 +337,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     }
   }
 
-  Future<bool> fetchOtp(int index) async {
+  Future<bool> fetchOtp(int index,context) async {
     state = [
       for (final todo in state)
         if (todo.id == index) todo.copyWith(isLoading: true) else todo
@@ -359,6 +360,16 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     try {
       final response = await dio.post(Api.aadhaarOtpVerify,
           data: aadhaarOtpResquestModel.toJson());
+
+      var responseData = response.data;
+      print('fetch pan father response: ${responseData}');
+      var message = responseData['message'];
+      print('message - ${message}');
+
+      if(response.statusCode == 400){
+        DioExceptions.fromDioError(responseData as DioException, context);
+      }
+
       if (response.statusCode == 200) {
         state = [
           for (final todo in state)
@@ -421,7 +432,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     return age;
   }
 
-  Future<bool> submitCoApplicantForm(int index) async {
+  Future<bool> submitCoApplicantForm(int index,context) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final token = sharedPreferences.getString('token');
     final String? employeId = sharedPreferences.getString('employeId');
@@ -475,6 +486,16 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     print('Co applicant submit response - ${response}');
    // print(response.statusMessage);
   //  print(response.statusCode);
+
+    var responseData = response.data;
+    print('fetch pan father response: ${responseData}');
+    var message = responseData['message'];
+    print('message - ${message}');
+
+    if(response.statusCode == 400){
+      DioExceptions.fromDioError(responseData as DioException, context);
+    }
+
     if (response.statusCode == 200) {
       // SubmitCoApplicantResponseModel.fromJson(response.data);
 
@@ -530,7 +551,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     }
   }
 
-  Future<void> fetchPanFatherName(int index) async {
+  Future<void> fetchPanFatherName(int index,BuildContext context) async {
     final panRequestModel ={
       "trans_id":"12345",
       "docType":"522",
@@ -544,18 +565,26 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         print('fetchPanFatherName Api Response ${response.data}');
        // print('Set father name Response ${response.data['items']['msg']['data']['father_name']}');
       }
-      PanFatherNameResponseModel responseModel =
-      PanFatherNameResponseModel.fromJson(response.data);
+      PanFatherNameResponseModel? responseModel;
+      if(response.data['items']['msg'] is List){
+    responseModel =
+        PanFatherNameResponseModel.fromJson(response.data);
+      }
+
       var responseData = response.data;
       print('fetch pan father response: ${responseData}');
       var message = responseData['message'];
       print('message - ${message}');
 
+      if(response.statusCode == 400){
+        DioExceptions.fromDioError(responseData as DioException, context);
+      }
+
       if(response.statusCode ==200){
         state = [
           for (final todo in state)
             if (todo.id == index)
-              todo.copyWith(panFather: responseModel.items.msg?.data?.fatherName)
+              todo.copyWith(panFather: responseModel?.items.msg?.data?.fatherName)
 
             else
               todo
@@ -567,13 +596,14 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         for (final todo in state)
           if (todo.id == index) todo.copyWith(isLoading: false) else todo
       ];
+      DioExceptions.fromDioError(error as DioException, context);
       throw Exception(error);
       // throw Exception(error);
     }
   }
 
-  Future<bool> fetchPanVerify(int index) async {
-    await fetchPanFatherName(index);
+  Future<bool> fetchPanVerify(int index , BuildContext context) async {
+    await fetchPanFatherName(index,context);
     if (kDebugMode) {
       print(state[index].otp);
     }
@@ -586,23 +616,21 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
 
       print('pan verify respons ${response}');
 
+      var responseData = response.data;
+      print('fetch pan father response: ${responseData}');
+      var message = responseData['message'];
+      print('message - ${message}');
+
+      if(response.statusCode == 400){
+        DioExceptions.fromDioError(responseData as DioException, context);
+      }
+
       if (response.statusCode == 200) {
         PanResponseModel panResponseModel =
             PanResponseModel.fromJson(response.data);
 
         final String dob =
             DateFormat("dd-MM-yyyy").format(panResponseModel.items.data.dob);
-
-        // Attempt to format the DOB, fallback to "NA" if an error occurs
-       /* String dob;
-        try {
-          dob = DateFormat("dd-MM-yyyy").format(panResponseModel.items.data.dob);
-        } catch (e) {
-          dob = "NA"; // Default value if formatting fails
-          if (kDebugMode) {
-            print("Error formatting DOB: $e");
-          }
-        }*/
 
         state = [
           for (final todo in state)
@@ -630,6 +658,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         for (final todo in state)
           if (todo.id == index) todo.copyWith(isLoading: false) else todo
       ];
+      DioExceptions.fromDioError(e as DioException, context);
       throw Exception(e);
     }
   }

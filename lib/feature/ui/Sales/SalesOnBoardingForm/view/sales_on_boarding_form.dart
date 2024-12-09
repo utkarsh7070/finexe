@@ -11,9 +11,9 @@ class SalesOnBoardingForm extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
+    return const Scaffold(
       body: SafeArea(
-        child:ApplicationDetails()
+        child:ApplicationDetails({})
       ),
     );
   }

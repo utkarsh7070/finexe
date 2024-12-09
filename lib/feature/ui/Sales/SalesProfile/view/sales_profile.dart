@@ -1,6 +1,7 @@
 // user_profile_screen.dart
 import 'dart:developer';
 
+import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/ui/Sales/SalesProfile/view_model/login_user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -85,26 +86,35 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
 
                           // Display the employee name with father's name
                           Center(
-                            child: Text(
-                              userProfile.fullName,
-                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center, // Center the name
+                            child: Column(
+                              children: [
+                                Text(
+                                  userProfile.fullName,
+                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.center, // Center the name
+                                ),
+                                Text(
+                                  userProfile.email,
+                                  style: AppStyles.subTextStyle,
+                                  textAlign: TextAlign.center, // Center the name
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(height: 20),
 
                           // Display the email with label on the left and data on the right
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text('Email:', style: TextStyle(fontWeight: FontWeight.bold)),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(userProfile.email, textAlign: TextAlign.right),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.start,
+                          //   children: [
+                          //     Text('Email:', style: TextStyle(fontWeight: FontWeight.bold)),
+                          //     const SizedBox(width: 8),
+                          //     Expanded(
+                          //       child: Text(userProfile.email, textAlign: TextAlign.right),
+                          //     ),
+                          //   ],
+                          // ),
+                          // const SizedBox(height: 8),
 
                           // Display the mobile number
                           Row(

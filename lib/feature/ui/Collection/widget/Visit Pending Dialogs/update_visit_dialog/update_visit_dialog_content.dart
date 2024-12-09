@@ -295,9 +295,9 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                       textInputAction: TextInputAction.done,
                     ),
                   ),
-                  // SizedBox(
-                  //   height: displayHeight(context) * 0.01,
-                  // ),
+                  SizedBox(
+                    height: displayHeight(context) * 0.01,
+                  ),
                   GestureDetector(
                     onTap: () {
                       paymentViewModel.clickPhoto().then(
@@ -345,7 +345,6 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     textStyle: AppStyles.buttonLightTextStyle,
                     width: displayWidth(context),
                     onTap: () {
-
                       if (paymentViewModel.dropDownControllerProvider
                               .dropDownValue?.value !=
                           null) {
@@ -357,8 +356,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                         if (isValid) {
                           paymentViewModel.visitFormSubmit(datas: item!,context: context).then(
                             (value) {
-                              showCustomSnackBar(
-                                  context, 'Visit Updated Successfully', Colors.green);
+
                               paymentViewModel.updatePhotoValue(context);
                               ref.invalidate(paymentStatusViewModelProvider);
                             },

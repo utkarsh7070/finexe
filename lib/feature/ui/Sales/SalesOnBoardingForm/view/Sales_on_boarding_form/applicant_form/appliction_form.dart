@@ -14,10 +14,12 @@ import 'bottom_sheet/applicant_otp_screen.dart';
 import 'dialog/back_application_dialog.dart';
 
 class ApplicationDetails extends ConsumerWidget {
-  const ApplicationDetails({super.key});
+  final Map<String, dynamic> arguments;
+  const ApplicationDetails(this.arguments, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
     //----------------------------controllers-------------------------
     // final formListController = ref.watch(applicantController);
     // final formNotifierController = ref.read(applicantController.notifier);
@@ -30,7 +32,10 @@ class ApplicationDetails extends ConsumerWidget {
     final personalFormViewModel = ref.read(applicantViewModelProvider.notifier);
     final personalFocusStates = ref.watch(applicantFocusProvider);
     final personalFocusViewModel = ref.read(applicantFocusProvider.notifier);
-
+    final phoneNumber = arguments['phoneNumber'];
+    print('Phone Number: $phoneNumber');
+    //
+    // Access specific argument
     return Scaffold(
         body:
         Container(
@@ -252,7 +257,7 @@ class ApplicationDetails extends ConsumerWidget {
                                     textStyle:
                                         const TextStyle(color: AppColors.white),
                                     onTap: () async {
-
+                                      personalFormViewModel.updateContact(phoneNumber);
                                       final validate =
                                           personalFormViewModel.validateForm(context);
                                       if (validate) {

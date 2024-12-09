@@ -3,12 +3,29 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../base/api/api.dart';
 import '../../../../base/service/session_service.dart';
+import '../../../Collection/Collection_home_dashboard/home_collection_viewmodel/fetchUserProfile.dart';
 import '../model/attendance_listing_model.dart';
 
 
+final roleName = Provider<RoleListModel>((ref) {
+  final prefs = ref
+      .watch(sharedPreferencesHrmsProvider)
+      .asData
+      ?.value;
+  List<String>? role = prefs?.getStringList('roleName');
+  RoleListModel roleListModel = RoleListModel(role: role??[]);
+  return roleListModel;
+},);
+
+final sharedPreferencesHrmsProvider = FutureProvider<SharedPreferences>((
+    ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs;
+});
 
 
 final attendanceListingProvider = FutureProvider.autoDispose.family<Map<String, dynamic>, String>((ref, employeeId) async {

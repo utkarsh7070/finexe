@@ -74,7 +74,7 @@ class CoApplicationBottomSheet extends ConsumerWidget {
               : AppButton(
                   textStyle: const TextStyle(color: AppColors.white),
                   onTap: () {
-                    coApplicationFormViewModel.fetchOtp(index).then(
+                    coApplicationFormViewModel.fetchOtp(index,context).then(
                       (value) {
                         if (value) {
                           // coApplicationFormViewModel.updateIsOtpVerified(

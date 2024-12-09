@@ -13,17 +13,17 @@ VisitUpdateSubmitRequestModel _$VisitUpdateSubmitRequestModelFromJson(
       customerName: json['customerName'] as String,
       visitDate: json['visitDate'] as String,
       revisitDate: json['revisitDate'] as String,
-      newContactNumber: (json['newContactNumber'] as num).toInt(),
+      newContactNumber: json['newContactNumber'] as String,
       customerResponse: json['customerResponse'] as String,
-      paymentAmount: (json['paymentAmount'] as num).toInt(),
+      paymentAmount: json['paymentAmount'] as String,
       reasonForNotPay: json['reasonForNotPay'] as String,
       solution: json['solution'] as String,
       reasonForCustomerNotContactable:
           json['reasonForCustomerNotContactable'] as String,
       visitSelfie: json['visitSelfie'] as String,
       address: json['address'] as String,
-      latitude: (json['latitude'] as num).toDouble(),
-      longitude: (json['longitude'] as num).toDouble(),
+      // latitude: (json['latitude'] as num).toDouble(),
+      // longitude: (json['longitude'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$VisitUpdateSubmitRequestModelToJson(
@@ -42,6 +42,6 @@ Map<String, dynamic> _$VisitUpdateSubmitRequestModelToJson(
           instance.reasonForCustomerNotContactable,
       'visitSelfie': instance.visitSelfie,
       'address': instance.address,
-      'latitude': instance.latitude,
-      'longitude': instance.longitude,
+      // 'latitude': instance.latitude,
+      // 'longitude': instance.longitude,
     };

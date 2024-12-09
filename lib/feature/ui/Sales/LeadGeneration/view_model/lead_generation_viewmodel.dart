@@ -87,27 +87,41 @@ class LeadGenerationViewModel {
   }
 
   Future<void> leadFormSubmit(LeadGenerationModel leadData, BuildContext context) async {
-    try {
       String? token = await SessionService.getToken();
       print('lead input ${leadData.toJson()}');
+
       final response = await _dio.post(
         Api.leadFormSubmit,
         data: leadData.toJson(),
-        options: Options(headers: {"token": token}),
+        options: Options(headers: {"token": token}
+          , validateStatus: (status) => true,),
       );
 
-      if (response.statusCode == 200) {
-        log('Lead Generated Successfully');
-        print('Lead Generated Response ${response.data}');
-        showCustomSnackBar(context, 'Lead Generated Successfully', Colors.green);
-        Navigator.pop(context, true);
-      } else {
-        throw Exception('Failed to load data');
+      var responseData = response.data;
+      print('Lead Generation response: ${responseData}');
+      var message = responseData['message'];
+      // print('message: ${message}');
+
+      try {
+            if (response.statusCode == 200 && responseData['status'] == true) {
+
+            log('Lead Generated Successfully');
+            print('Lead Generated Response ${response.data}');
+            showCustomSnackBar(context, message, Colors.green);
+            Navigator.pop(context, true);
+          } else {
+              showCustomSnackBar(context, message, Colors.red);
+            throw Exception('Failed to load data');
+          }
+      }on DioException catch (error) {
+        print('Error message: $message');
+        throw Exception(error);
       }
-    } catch (e) {
-      print("Error submitting form: $e");
-      showCustomSnackBar(context, 'Error submitting form: $e', Colors.red);
-    }
+      catch (e) {
+        // Handle unexpected errors
+        print('Unexpected error: $e');
+        throw Exception(e);
+      }
   }
 
 }
@@ -115,17 +129,36 @@ class LeadGenerationViewModel {
 final fetchAllBranchProvider = FutureProvider.autoDispose<List<Branch>>((ref) async {
   String? token = await SessionService.getToken();
   final dio = ref.read(dioProvider);
-  final response = await dio.get(Api.getAllBranch,options: Options(headers: {"token": token}),);
-  print(response.statusMessage);
-  print(response.statusCode);
-  if (response.statusCode == 200) {
+  final response = await dio.get(Api.getAllBranch,
+    options: Options(headers: {"token": token}
+        , validateStatus: (status) => true,),);
 
-    GetAllBranchModel apiResponseList =
-    GetAllBranchModel.fromJson(response.data);
-    // ref.read(personalDetailViewModelProvider.notifier).list =
-    //     apiResponseList.items;
-    return apiResponseList.items;
-  } else {
-    throw Exception('Failed to load data');
+  /*print(response.statusMessage);
+  print(response.statusCode);*/
+
+  var responseData = response.data;
+  print('fetch pan father response: ${responseData}');
+  var message = responseData['message'];
+  // print('message: ${message}');
+
+  try {
+    if (response.statusCode == 200 && responseData['status'] == true) {
+      GetAllBranchModel apiResponseList =
+      GetAllBranchModel.fromJson(response.data);
+      // ref.read(personalDetailViewModelProvider.notifier).list =
+      //     apiResponseList.items;
+      return apiResponseList.items;
+    } else {
+      print('Error message: $message');
+      throw Exception('Failed to load data');
+    }
+  }on DioException catch (error) {
+    throw Exception(error);
+    // throw Exception(error);
+  }catch (e) {
+    // Handle unexpected errors
+    print('Unexpected error: $e');
+    throw Exception(e);
   }
+
 });

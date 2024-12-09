@@ -429,6 +429,7 @@ class NewLoanScreen extends ConsumerWidget {
                                           .then(
                                         (value) {
                                           if (value) {
+                                            print(phoneState.phoneNumber);
                                             showCustomSnackBar(
                                                 context,
                                                 'New Loan is Created Successfully',
@@ -437,6 +438,9 @@ class NewLoanScreen extends ConsumerWidget {
                                               context,
                                               AppRoutes.saleApplicationForm,
                                               (route) => false,
+                                              arguments: {
+                                                'phoneNumber': phoneState.phoneNumber,
+                                              },
                                             );
                                             // goPayment.payWithRazorPay(phoneState.loanAmount.toDouble());
                                           }
@@ -538,7 +542,7 @@ class NewLoanScreen extends ConsumerWidget {
             thickness: 1,
           ),
           SizedBox(
-            height: displayHeight(context) * 0.01,
+            height: displayHeight(context) * 0.003,
           ),
           IntrinsicHeight(
             child: Row(

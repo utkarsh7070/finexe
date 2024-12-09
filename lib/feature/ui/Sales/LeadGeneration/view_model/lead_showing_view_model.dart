@@ -47,7 +47,7 @@ final leadAssignedProvider = FutureProvider.autoDispose<List<dynamic>>((ref) asy
 
   final response = await dio.get(
     Api.leadShowPendingList,
-    queryParameters: {"status": "approved", "role": "generate"},
+    queryParameters: {"status": "approve", "role": "generate"},
     options: Options(headers: {"token": token}),
   );
 
@@ -86,11 +86,6 @@ final leadRejectedProvider = FutureProvider.autoDispose<List<dynamic>>((ref) asy
     throw Exception('Failed to load Lead details');
   }
 } );
-
-
-
-
-
 
 
 /*final leadShowViewModelProvider = ChangeNotifierProvider.autoDispose((ref) => LeadShowViewModel());

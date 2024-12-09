@@ -39,15 +39,15 @@ class LeadGenerationModel {
       'city': cityVillageName,
       'distrctName': districtName,
       'pincode': pincode,
-      'branch': branch,
+      'branchId': branch,
       'pakkaHouse': pakkaHouse,
       'agriland': agriland,
       'loanAmount': requiredLoanAmount,
       'monthlyIncome': monthlyIncome,
       'otherSourceOfIncome': otherSourceOfIncome,
       'customerFeedback': customerFeedback,
-      'loanType': loanType,
-      'selfieImageUrl': selfieImageUrl,
+      'loanTypeId': loanType,
+      'selfieWithCustomer': selfieImageUrl,
     };
   }
 }

@@ -1,5 +1,5 @@
-import 'package:bson/bson.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:bson/bson.dart';
 part 'update_emi_submit_request_model.g.dart';
 
 @JsonSerializable()

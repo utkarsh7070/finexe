@@ -12,11 +12,11 @@ class VisitUpdateSubmitRequestModel {
   @JsonKey(name: "revisitDate")
   String revisitDate;
   @JsonKey(name: "newContactNumber")
-  int newContactNumber;
+  String newContactNumber;
   @JsonKey(name: "customerResponse")
   String customerResponse;
   @JsonKey(name: "paymentAmount")
-  int paymentAmount;
+  String paymentAmount;
   @JsonKey(name: "reasonForNotPay")
   String reasonForNotPay;
   @JsonKey(name: "solution")
@@ -27,10 +27,10 @@ class VisitUpdateSubmitRequestModel {
   String visitSelfie;
   @JsonKey(name: "address")
   String address;
-  @JsonKey(name: "latitude")
-  double latitude;
-  @JsonKey(name: "longitude")
-  double longitude;
+  // @JsonKey(name: "latitude")
+  // double latitude;
+  // @JsonKey(name: "longitude")
+  // double longitude;
 
   VisitUpdateSubmitRequestModel({
     required this.ld,
@@ -45,8 +45,8 @@ class VisitUpdateSubmitRequestModel {
     required this.reasonForCustomerNotContactable,
     required this.visitSelfie,
     required this.address,
-    required this.latitude,
-    required this.longitude,
+    // required this.latitude,
+    // required this.longitude,
   });
 
   factory VisitUpdateSubmitRequestModel.fromJson(Map<String, dynamic> json) => _$VisitUpdateSubmitRequestModelFromJson(json);

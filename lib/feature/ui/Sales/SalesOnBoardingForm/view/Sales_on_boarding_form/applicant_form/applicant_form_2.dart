@@ -18,7 +18,7 @@ class ApplicantForm2 extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     //-------------------controllers--------------------------------------
     final formListController = ref.watch(applicantController);
-    final formNotifierController = ref.read(applicantController.notifier);
+    // final formNotifierController = ref.read(applicantController.notifier);
     //--------------------------------------------------------------------------
     final personalFormState = ref.watch(applicantViewModelProvider);
     final personalFormViewModel = ref.read(applicantViewModelProvider.notifier);

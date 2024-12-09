@@ -10,7 +10,6 @@ import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/pan_father_name_response_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/pan_response_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/submit_applicant_response_model.dart';
-import 'package:finexe/feature/ui/authenticate/model/error_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -377,6 +376,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
     final token = sharedPreferences.getString('token');
     final employeId = sharedPreferences.getString('employeId');
     final customerId = sharedPreferences.getString('customerId');
+    print(state.contact);
     final formData = ApplicantFormData(
         employeId: employeId!,
         customerId: customerId!,
@@ -672,6 +672,9 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
   void updateContact(String value) {
     final isValid = _validateContact(value);
     state = state.copyWith(contact: value, isContactValid: isValid);
+    if (kDebugMode) {
+      print('updateContact ${state.contact}');
+    }
   }
 
   void updateEmail(String value) {

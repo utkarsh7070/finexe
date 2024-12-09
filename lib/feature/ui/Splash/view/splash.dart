@@ -17,8 +17,6 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
-
-
   @override
   void initState() {
     // TODO: implement initState
@@ -59,6 +57,28 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       print("Error checking version: $e");
     }
   }
+  //
+  // void downloadApk(String apkUrl) async {
+  //   try {
+  //     final dir = await getExternalStorageDirectory();
+  //     final filePath = '${dir!.path}/app_update.apk';
+  //     Dio dio = Dio();
+  //     await dio.download(
+  //       apkUrl,
+  //       filePath,
+  //       onReceiveProgress: (received, total) {
+  //         if (total != -1) {
+  //           print(
+  //               "Downloading: ${(received / total * 100).toStringAsFixed(0)}%");
+  //         }
+  //       },
+  //     );
+  //     openApk(filePath);
+  //   } catch (e) {
+  //     print("Download failed: $e");
+  //   }
+  // }
+  // void openApk(String filePath) { OpenFile.open(filePath); }
 
   @override
   Widget build(BuildContext context) {
@@ -73,47 +93,45 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             // Show update dialog if needed
             if (state.isUpdateRequired) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (_) => AlertDialog(
-                    title: const Text("Update Required"),
-                    content: const Text("A new version of the app is available. Please update to continue."),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          if (state.apkUrl != null) {
-                            launchUrl(Uri.parse(state.apkUrl!));
-                          }
-                        },
-                        child: const Text("Download"),
-                      ),
-                    ],
-                  ),
-                );
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) => AlertDialog(
+                  title: const Text("Update Required"),
+                  content: const Text(
+                      "A new version of the app is available. Please update to continue."),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        if (state.apkUrl != null) {
+                          launchUrl(Uri.parse(state.apkUrl!));
+                        }
+                      },
+                      child: const Text("Download"),
+                    ),
+                  ],
+                ),
+              );
               });
-            }
-
-            else {
+            } else {
               // Navigation logic for logged-in users
-              Future.microtask(() {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (isLoggedIn.value!.token!) {
                   // ---------------------- isLoggedIn.value?.puntchStatus == false --------------------------------
                   if (isLoggedIn.value?.puntchStatus == false) {
                     Navigator.pushNamedAndRemoveUntil(
                       context,
                       AppRoutes.attendance,
-                          (route) => false,
+                      (route) => false,
                     );
-                  }
-                  else {
+                  } else {
                     switch (isLoggedIn.value?.role) {
                       case 'admin':
                         log("Navigating to admin dashboard");
                         Navigator.pushNamedAndRemoveUntil(
                           context,
                           AppRoutes.dashBoard, // Admin dashboard route
-                              (route) => false, // Remove all previous routes
+                          (route) => false, // Remove all previous routes
                         );
                         break;
                       case 'sales':
@@ -121,7 +139,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                         Navigator.pushNamedAndRemoveUntil(
                           context,
                           AppRoutes.dashBoard, // Sales dashboard route
-                              (route) => false, // Remove all previous routes
+                          (route) => false, // Remove all previous routes
                         );
                         break;
                       case 'collection':
@@ -130,7 +148,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                           context,
                           AppRoutes.collectionHome,
                           // Collection dashboard route
-                              (route) => false, // Remove all previous routes
+                          (route) => false, // Remove all previous routes
                         );
                         break;
                       case 'salesAndCollection':
@@ -138,7 +156,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                         Navigator.pushNamedAndRemoveUntil(
                           context,
                           AppRoutes.dashBoard, // Collection dashboard route
-                              (route) => false, // Remove all previous routes
+                          (route) => false, // Remove all previous routes
                         );
                         break;
                       case 'salesPdAndCollection':
@@ -146,7 +164,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                         Navigator.pushNamedAndRemoveUntil(
                           context,
                           AppRoutes.dashBoard, // Collection dashboard route
-                              (route) => false, // Remove all previous routes
+                          (route) => false, // Remove all previous routes
                         );
                         break;
                       case 'cibil':
@@ -154,20 +172,25 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                         Navigator.pushNamedAndRemoveUntil(
                           context,
                           AppRoutes.dashBoard, // Collection dashboard route
-                              (route) => false, // Remove all previous routes
+                          (route) => false, // Remove all previous routes
                         );
                         break;
-                        case 'creditPd':
+                      case 'creditPd':
                         log("Navigating to collection dashboard");
                         Navigator.pushNamedAndRemoveUntil(
                           context,
                           AppRoutes.pdscreen, // Collection dashboard route
-                              (route) => false, // Remove all previous routes
+                          (route) => false, // Remove all previous routes
                         );
                         break;
 
                       default:
-                      // Handle unknown roles or navigate to a default screen
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          AppRoutes.hrms, // Collection dashboard route
+                              (route) => false, // Remove all previous routes
+                        );
+                        // Handle unknown roles or navigate to a default screen
                         log('No matching role found');
                         break;
                     }
@@ -176,7 +199,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     AppRoutes.login, // Collection dashboard route
-                        (route) => false, // Remove all previous routes
+                    (route) => false, // Remove all previous routes
                   );
                 }
               });
@@ -193,7 +216,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     );
   }
 
-
   Widget buildSplashScreen(BuildContext context) {
     return Container(
       color: Colors.white,
@@ -205,7 +227,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       ),
     );
   }
-
 
 /*@override
   Widget build(BuildContext context) {
@@ -322,5 +343,4 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               ),
             ));
   }*/
-
 }

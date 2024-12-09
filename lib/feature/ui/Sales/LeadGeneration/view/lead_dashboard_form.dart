@@ -200,20 +200,20 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
               const SizedBox(height: 10),
 
               Container(
-                height: 150,
+                height: 250,
                 width: double.infinity,
                 child: item.selfieWithCustomer != null && item.selfieWithCustomer!.isNotEmpty
                     ? Image.network(
                   '${Api.imageUrl}${item.selfieWithCustomer}',
-                  height: 150,
+                  height: 250,
                   width: double.infinity,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 )
                     : const Image(
                   image: AssetImage('assets/images/prof.jpeg'),
-                  height: 150,
+                  height: 250,
                   width: double.infinity,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
               ),
             ],
@@ -258,15 +258,15 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
                 child: item.selfieWithCustomer != null && item.selfieWithCustomer!.isNotEmpty
                     ? Image.network(
                   '${Api.imageUrl}${item.selfieWithCustomer}',
-                  height: 150,
+                  height: 250,
                   width: double.infinity,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 )
                     : const Image(
                   image: AssetImage('assets/images/prof.jpeg'),
-                  height: 150,
+                  height: 250,
                   width: double.infinity,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
               ),
             ],
@@ -306,20 +306,20 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
               const SizedBox(height: 10),
               // Placeholder for image; replace with actual image loading logic if available.
               Container(
-                height: 150,
+                height: 250,
                 width: double.infinity,
                 child: item.selfieWithCustomer != null && item.selfieWithCustomer!.isNotEmpty
                     ? Image.network(
                   '${Api.imageUrl}${item.selfieWithCustomer}',
-                  height: 150,
+                  height: 250,
                   width: double.infinity,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 )
                     : const Image(
                   image: AssetImage('assets/images/prof.jpeg'),
-                  height: 150,
+                  height: 250,
                   width: double.infinity,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
               ),
             ],

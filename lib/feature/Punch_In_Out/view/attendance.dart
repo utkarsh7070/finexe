@@ -266,90 +266,16 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
+
                           ElevatedButton(
                             onPressed: () async {
                               print('reasonForPunch Clicked');
-                              // Handle leave submission
                               String reasonForPunch = _punchReasonController.text.trim();
-                              print('reasonForPunch $reasonForPunch');
+
                               if (reasonForPunch.isNotEmpty) {
                                 try {
-                                  // Await the response from the ViewModel
-                                  bool isSuccess = await punchInOutSideViewModel.punchInOutSideRequest(reasonForPunch, context);
-
-                                  if (isSuccess) {
-                                    SharedPreferences preferences = await SharedPreferences.getInstance();
-                                    List<String>? role = preferences.getStringList('roleName');
-
-                                    switch (role?.first.toString()) {
-                                      case 'admin':
-                                        log("Navigating to admin dashboard");
-                                        Navigator.pushNamedAndRemoveUntil(
-                                          context,
-                                          AppRoutes.dashBoard, // Admin dashboard route
-                                              (route) => false, // Remove all previous routes
-                                        );
-
-                                        break;
-                                      case 'sales':
-                                        log("Navigating to sales dashboard");
-                                        Navigator.pushNamedAndRemoveUntil(
-                                          context,
-                                          AppRoutes.dashBoard, // Sales dashboard route
-                                              (route) => false, // Remove all previous routes
-                                        );
-                                        break;
-                                      case 'collection':
-                                        log("Navigating to collection dashboard");
-                                        Navigator.pushNamedAndRemoveUntil(
-                                          context,
-                                          AppRoutes.collectionHome,
-                                              (route) => false,
-                                        );
-                                        break;
-
-                                      case 'salesAndCollection':
-                                        log("Navigating to collection dashboard");
-                                        Navigator.pushNamedAndRemoveUntil(
-                                          context,
-                                          AppRoutes.dashBoard, // Collection dashboard route
-                                              (route) => false, // Remove all previous routes
-                                        );
-                                        break;
-
-                                      case 'cibil':
-                                        log("Navigating to collection dashboard");
-                                        Navigator.pushNamedAndRemoveUntil(
-                                          context,
-                                          AppRoutes.dashBoard, // Collection dashboard route
-                                              (route) => false, // Remove all previous routes
-                                        );
-                                        break;
-
-                                      case 'salesPdAndCollection':
-                                        log("Navigating to collection dashboard");
-                                        Navigator.pushNamedAndRemoveUntil(
-                                          context,
-                                          AppRoutes.dashBoard, // Collection dashboard route
-                                              (route) => false, // Remove all previous routes
-                                        );
-                                        break;
-                                      default:
-                                      // Handle unknown roles or navigate to a default screen
-                                        log('No matching role found');
-                                        break;
-                                    }
-
-                                    // Navigate to another screen on success
-                                    /* Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => HRMSDashboardScreen()),
-                                    );*/
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text("API call failed. Please try again.")),
-                                    );
-                                  }
+                                  // Call ViewModel to handle API and navigation logic
+                                  punchInOutSideViewModel.punchInOutSideRequestWithRole(reasonForPunch, context);
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(content: Text(e.toString())),
@@ -367,6 +293,8 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                             ),
                             child: const Text("Submit"),
                           ),
+
+
                           const SizedBox(height: 16),
                         ],
                       ],

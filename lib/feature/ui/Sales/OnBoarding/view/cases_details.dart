@@ -193,7 +193,7 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                 // Navigate to Screen 1 if applicationStatus is pending
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ApplicationDetails()),
+                  MaterialPageRoute(builder: (context) => ApplicationDetails({})),
                 );
               } else if (sectionData.isCoApplicationPending()) {
                 // Navigate to Screen 2 if coApplicationStatus is pending

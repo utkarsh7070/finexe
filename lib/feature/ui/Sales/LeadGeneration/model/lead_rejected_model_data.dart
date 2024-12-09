@@ -36,7 +36,7 @@ class LeadRejectedModelData {
       loanAmount: handleBlank(json['loanAmount'], defaultValue: 'N/A'),
       city: handleBlank(json['city'], defaultValue: 'N/A'),
       pincode: handleBlank(json['pincode'], defaultValue: 'N/A'),
-      employeeAssignName: handleBlank(json['employeeAssignId']?['employeName'], defaultValue: 'N/A'),
+      employeeAssignName: handleBlank(json['employeeGenerateId']?['employeName'], defaultValue: 'N/A'),
       createdAt: handleBlank(json['createdAt'], defaultValue: 'N/A'),
       selfieWithCustomer: handleBlank(json['selfieWithCustomer']), // No default here, returns null if blank
     );

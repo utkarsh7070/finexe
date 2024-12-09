@@ -13,6 +13,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/dio.dart';
+import '../../../../base/api/dio_exception.dart';
 import '../model/payment_initiate_response_model.dart';
 import '../model/request_model/aadhaar_number_request_model.dart';
 import '../model/request_model/aadhaar_otp_request_model.dart';
@@ -154,9 +155,9 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     }
   }
 
-  Future<void> fetchAadhaarNumber() async {
+  Future<void> fetchAadhaarNumber(BuildContext context) async {
     state = state.copyWith(isLoading: true);
-    await fetchPanVerify().then(
+    await fetchPanVerify(context).then(
       (value) async {
         if (value) {
           print(state.aadhaar);
@@ -168,6 +169,14 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
           try {
             final response = await dio.post(Api.aadhaarNumber,
                 data: aadhaarNumberRequestModel.toJson());
+            var responseData = response.data;
+            print('fetch pan father response: ${responseData}');
+            var message = responseData['message'];
+            print('message - ${message}');
+
+            if(response.statusCode == 400){
+              DioExceptions.fromDioError(responseData as DioException, context);
+            }
             if (response.statusCode == 200) {
               aadhaarNumberResponseModel =
                   AadhaarNumberResponseModel.fromJson(response.data);
@@ -261,7 +270,7 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     }
   }
 
-  Future<void> fetchPanFatherName() async {
+  Future<void> fetchPanFatherName(context) async {
     final panRequestModel ={
       "trans_id":"12345",
       "docType":"522",
@@ -276,6 +285,14 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
       }
       PanFatherNameResponseModel responseModel =
       PanFatherNameResponseModel.fromJson(response.data);
+      var responseData = response.data;
+      print('fetch pan father response: ${responseData}');
+      var message = responseData['message'];
+      print('message - ${message}');
+
+      if(response.statusCode == 400){
+        DioExceptions.fromDioError(responseData as DioException, context);
+      }
       if (response.statusCode == 200) {
         state = state.copyWith(
             panFather: responseModel.items.msg?.data?.fatherName);
@@ -287,14 +304,22 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
     }
   }
 
-  Future<bool> fetchPanVerify() async {
-    await fetchPanFatherName();
+  Future<bool> fetchPanVerify(BuildContext context) async {
+    await fetchPanFatherName(context);
     print(state.otp);
     final panRequestModel = PanRequestModel(
         docType: 523, panNumber: state.pan, transId: "111XXXXX",formName: "guarantor");
     try {
       final response =
           await dio.post(Api.panVerify, data: panRequestModel.toJson());
+      var responseData = response.data;
+      print('fetch pan father response: ${responseData}');
+      var message = responseData['message'];
+      print('message - ${message}');
+
+      if(response.statusCode == 400){
+        DioExceptions.fromDioError(responseData as DioException, context);
+      }
       if (response.statusCode == 200) {
         PanResponseModel panResponseModel =
             PanResponseModel.fromJson(response.data);

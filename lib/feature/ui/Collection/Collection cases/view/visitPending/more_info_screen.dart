@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:finexe/feature/base/extentions/capital_letter.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/VisitItemClosureModelData.dart';
@@ -119,126 +120,132 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
           appBar: AppBar(
             title: const Text('More Info'),
           ),
-          body: Column(
-            children: [
-              // First Section: Applicant Details, Co-Applicant Details, Guarantor, Payment Summary
-              _buildApplicantDetails(item),
-              _buildCoApplicantDetails(item),
-              _buildGuarantorDetails(item),
-              _buildPaymentSummary(item),
+          body: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: SizedBox(
+              height: displayHeight(context),
+              child: Column(
+                children: [
+                  // First Section: Applicant Details, Co-Applicant Details, Guarantor, Payment Summary
+                  _buildApplicantDetails(item),
+                  _buildCoApplicantDetails(item),
+                  _buildGuarantorDetails(item),
+                  _buildPaymentSummary(item),
 
-              // Spacer or separator (optional)
-              SizedBox(height: displayHeight(context) * 0.03),
+                  // Spacer or separator (optional)
+                  SizedBox(height: displayHeight(context) * 0.03),
 
-              // Tabs Section: Visit, Collection, Calling, Notice, Closure
-              Container(
-                color: AppColors.primaryLight1, // Optional: style background color of tab section
-                child: TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  tabs: const [
-                    Tab(text: 'Visit'),
-                    Tab(text: 'Collection'),
-                    Tab(text: 'Calling'),
-                    Tab(text: 'Notice'),
-                    Tab(text: 'Closure'),
-                  ],
-                ),
+                  // Tabs Section: Visit, Collection, Calling, Notice, Closure
+                  Container(
+                    color: AppColors.primaryLight1, // Optional: style background color of tab section
+                    child: TabBar(
+                      controller: _tabController,
+                      isScrollable: true,
+                      tabs: const [
+                        Tab(text: 'Visit'),
+                        Tab(text: 'Collection'),
+                        Tab(text: 'Calling'),
+                        Tab(text: 'Notice'),
+                        Tab(text: 'Closure'),
+                      ],
+                    ),
+                  ),
+                  /* Container(
+                    color: AppColors.primaryLight1, // Background color of the tab section
+                    child: TabBar(
+                      controller: _tabController,
+                      isScrollable: true,
+                      indicatorColor: Colors.blue, // Color of the selected tab indicator
+                      labelColor: Colors.white, // Color of the selected tab text
+                      unselectedLabelColor: Colors.grey, // Color of the unselected tab text
+                      tabs: const [
+                        Tab(text: 'Visit'),
+                        Tab(text: 'Collection'),
+                        Tab(text: 'Calling'),
+                        Tab(text: 'Notice'),
+                        Tab(text: 'Closure'),
+                      ],
+                    ),
+                  ),*/
+
+
+
+                  // TabBarView with disabled swipe
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      physics: const NeverScrollableScrollPhysics(), // Disable swipe gestures
+                      children: [
+                        visitData.when(
+                          data: (visitDetails) {
+                            return _buildVisitTab(visitDetails); // Pass the visit data here
+                          },
+                          error: (error, stackTrace) {
+                            return const Text('Error loading visit details');
+                          },
+                          loading: () {
+                            return const Center(child: CircularProgressIndicator());
+                          },
+                        ),
+
+                        collectionData.when(
+                          data: (collectionDetails) {
+                            debugPrint('Collection data loaded successfully');
+                            return _buildCollectionTab(collectionDetails);
+                          },
+                          error: (error, stackTrace) {
+                            debugPrint('Error loading collection details: $error');
+                            return const Text('Error loading collection details');
+                          },
+                          loading: () {
+                            debugPrint('Collection data loading...');
+                            return const Center(child: CircularProgressIndicator());
+                          },
+                        ),
+
+
+                        callingData.when(
+                          data: (visitCalling) {
+                            return _buildCallingTab(visitCalling); // Pass the visit data here
+                          },
+                          error: (error, stackTrace) {
+                            return const Text('Error loading visit Calling');
+                          },
+                          loading: () {
+                            return const Center(child: CircularProgressIndicator());
+                          },
+                        ),
+
+                        noticeData.when(
+                          data: (visitNotice) {
+                            return _buildNoticeTab(visitNotice); // Pass the visit data here
+                          },
+                          error: (error, stackTrace) {
+                            return const Center(child: Text('No data available'));
+                          },
+                          loading: () {
+                            return const Center(child: CircularProgressIndicator());
+                          },
+                        ),
+
+                        closureData.when(
+                          data: (closureDetails) {
+                            return _buildClosureTab(closureDetails); // Pass the visit data here
+                          },
+                          error: (error, stackTrace) {
+                            return const Text('Error loading visit Closure');
+                          },
+                          loading: () {
+                            return const Center(child: CircularProgressIndicator());
+                          },
+                        ),
+
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              /* Container(
-                color: AppColors.primaryLight1, // Background color of the tab section
-                child: TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  indicatorColor: Colors.blue, // Color of the selected tab indicator
-                  labelColor: Colors.white, // Color of the selected tab text
-                  unselectedLabelColor: Colors.grey, // Color of the unselected tab text
-                  tabs: const [
-                    Tab(text: 'Visit'),
-                    Tab(text: 'Collection'),
-                    Tab(text: 'Calling'),
-                    Tab(text: 'Notice'),
-                    Tab(text: 'Closure'),
-                  ],
-                ),
-              ),*/
-
-
-
-              // TabBarView with disabled swipe
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  physics: const NeverScrollableScrollPhysics(), // Disable swipe gestures
-                  children: [
-                    visitData.when(
-                      data: (visitDetails) {
-                        return _buildVisitTab(visitDetails); // Pass the visit data here
-                      },
-                      error: (error, stackTrace) {
-                        return const Text('Error loading visit details');
-                      },
-                      loading: () {
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-
-                    collectionData.when(
-                      data: (collectionDetails) {
-                        debugPrint('Collection data loaded successfully');
-                        return _buildCollectionTab(collectionDetails);
-                      },
-                      error: (error, stackTrace) {
-                        debugPrint('Error loading collection details: $error');
-                        return const Text('Error loading collection details');
-                      },
-                      loading: () {
-                        debugPrint('Collection data loading...');
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-
-
-                    callingData.when(
-                      data: (visitCalling) {
-                        return _buildCallingTab(visitCalling); // Pass the visit data here
-                      },
-                      error: (error, stackTrace) {
-                        return const Text('Error loading visit Calling');
-                      },
-                      loading: () {
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-
-                    noticeData.when(
-                      data: (visitNotice) {
-                        return _buildNoticeTab(visitNotice); // Pass the visit data here
-                      },
-                      error: (error, stackTrace) {
-                        return const Center(child: Text('No data available'));
-                      },
-                      loading: () {
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-
-                    closureData.when(
-                      data: (closureDetails) {
-                        return _buildClosureTab(closureDetails); // Pass the visit data here
-                      },
-                      error: (error, stackTrace) {
-                        return const Text('Error loading visit Closure');
-                      },
-                      loading: () {
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
         );
       },
@@ -356,8 +363,8 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                     /*border: TableBorder.all(color: Colors.grey),
 
                     defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width*/
-                    children: [
-                      const TableRow(
+                    children: const [
+                      TableRow(
                         decoration: BoxDecoration(
                           color: Colors.white,
                         ),
@@ -513,7 +520,7 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
       children: [
         SizedBox(width: displayWidth(context) * 0.30, child: Text(text1)),
         SizedBox(width: displayWidth(context) * 0.10, child: const Text('-')),
-        SizedBox(width: displayWidth(context) * 0.50, child: Text(text2)),
+        SizedBox(width: displayWidth(context) * 0.50, child: Text(CaplitalizeSentence().capitalizeEachWord(text2))),
       ],
     );
   }
@@ -554,8 +561,8 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                     /*border: TableBorder.all(color: Colors.grey),
 
                     defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width*/
-                    children: [
-                      const TableRow(
+                    children: const [
+                      TableRow(
                         decoration: BoxDecoration(
                           color: Colors.white,
                         ),
@@ -808,8 +815,8 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                     /*border: TableBorder.all(color: Colors.grey),
 
                     defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width*/
-                    children: [
-                      const TableRow(
+                    children: const [
+                      TableRow(
                         decoration: BoxDecoration(
                           color: Colors.white,
                         ),
@@ -1063,8 +1070,8 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
                     /*border: TableBorder.all(color: Colors.grey),
 
                     defaultColumnWidth: const FixedColumnWidth(150.0), // Set a fixed column width*/
-                    children: [
-                      const TableRow(
+                    children: const [
+                      TableRow(
                         decoration: BoxDecoration(
                           color: Colors.white,
                         ),

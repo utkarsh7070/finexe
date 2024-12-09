@@ -29,15 +29,15 @@ class GetAllBranchModel {
 
 @JsonSerializable()
 class Branch {
-  @JsonKey(name: "location")
-  Location location;
+ /* @JsonKey(name: "location")
+  Location location;*/
   @JsonKey(name: "_id")
   String id;
-  @JsonKey(name: "companyId")
-  CompanyId companyId;
+ /* @JsonKey(name: "companyId")
+  CompanyId companyId;*/
   @JsonKey(name: "name")
   String name;
-  @JsonKey(name: "address")
+ /* @JsonKey(name: "address")
   String address;
   @JsonKey(name: "city")
   String city;
@@ -64,14 +64,14 @@ class Branch {
   @JsonKey(name: "createdBy")
   CreatedBy createdBy;
   @JsonKey(name: "updatedBy")
-  dynamic updatedBy;
+  dynamic updatedBy;*/
 
   Branch({
-    required this.location,
+   // required this.location,
     required this.id,
-    required this.companyId,
+   // required this.companyId,
     required this.name,
-    required this.address,
+    /*required this.address,
     required this.city,
     required this.state,
     required this.pincode,
@@ -84,7 +84,7 @@ class Branch {
     required this.v,
     required this.isActive,
     required this.createdBy,
-    required this.updatedBy,
+    required this.updatedBy,*/
   });
 
   factory Branch.fromJson(Map<String, dynamic> json) => _$BranchFromJson(json);
@@ -92,11 +92,12 @@ class Branch {
   Map<String, dynamic> toJson() => _$BranchToJson(this);
 }
 
-enum CompanyId {
+/*enum CompanyId {
   @JsonValue("66850b3d374425e937114129")
   THE_66850_B3_D374425_E937114129
-}
+}*/
 
+/*
 @JsonSerializable()
 class CreatedBy {
   @JsonKey(name: "_id")
@@ -233,3 +234,4 @@ enum RegionalBranchIdType {
   @JsonValue("Regional Office")
   REGIONAL_OFFICE
 }
+*/

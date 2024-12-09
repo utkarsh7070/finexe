@@ -349,6 +349,11 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               );
               break;
             default:
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.hrms, // Collection dashboard route
+                    (route) => false, // Remove all previous routes
+              );
             // Handle unknown roles or navigate to a default screen
               log('No matching role found');
               break;

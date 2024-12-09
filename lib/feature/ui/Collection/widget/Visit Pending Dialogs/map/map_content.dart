@@ -32,23 +32,15 @@ class MapContent extends ConsumerWidget{
         rotateGesturesEnabled: true,
         myLocationButtonEnabled: true,
         myLocationEnabled: true,
-        // mapType: MapType.satellite,
         initialCameraPosition: initialCameraPosition,
         markers: {
          Marker(
-          // markerId: MarkerId('Sydney'),
-          // position: LatLng(-33.86, 151.20),
           markerId: const MarkerId(''),
           position: LatLng(latitude, longitude),
-
         )
       },
-
-        // myLocationEnabled: true,
-        // myLocationButtonEnabled: true,
-
-        // Set<Polyline>.of(polylines),
         onMapCreated: (controller) {
+          // ref.read(googleMapControllerProvider.notifier).setMapController(controller);
           ref.read(mapControllerProvider.notifier).state = controller;
           // _getDirections(ref: ref,origin:LatLng(position.latitude, position.longitude) ,destination: LatLng(latitude, longitude));
         },

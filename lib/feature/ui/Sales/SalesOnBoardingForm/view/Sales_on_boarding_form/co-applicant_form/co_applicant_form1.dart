@@ -256,7 +256,7 @@ class CoApplicantForm1 extends ConsumerWidget {
                             borderColor: AppColors.primary,
                             onTap: () {
                               coApplicationFormViewModel
-                                  .submitCoApplicantForm(index)
+                                  .submitCoApplicantForm(index,context)
                                   .then(
                                 (value) {
                                   if (value) {
@@ -621,7 +621,7 @@ class CoApplicantForm1 extends ConsumerWidget {
                                         .validateCoApplicant(index);
                                     if (isValid) {
                                       coApplicationFormViewModel
-                                          .fetchAadhaarNumber(index,)
+                                          .fetchAadhaarNumber(index,context)
                                           .then(
                                         (value) {
                                           showBottomSheetIfYes(
