@@ -52,7 +52,7 @@ class AppTextField extends StatelessWidget {
         child: TextFormField(
           maxLines: maximumLines,
           validator: onValidate,
-          autofocus: true,
+          // autofocus: true,
           obscureText: obscureText,
           onTap: onTap,
           onChanged: onChange,

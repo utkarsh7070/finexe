@@ -303,11 +303,14 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
       if (kDebugMode) {
         print(response.data);
       }
-      PanFatherNameResponseModel responseModel =
-          PanFatherNameResponseModel.fromJson(response.data);
+      PanFatherNameResponseModel? responseModel;
+      if(response.data['items']['msg'] is List){
+        responseModel =
+            PanFatherNameResponseModel.fromJson(response.data);
+      }
       if (response.statusCode == 200) {
         state = state.copyWith(
-            panFather: responseModel.items.msg?.data?.fatherName);
+            panFather: responseModel?.items.msg?.data?.fatherName);
       }
     } on DioException catch (error) {
       DioExceptions.fromDioError(error as DioException, context);

@@ -283,19 +283,26 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
       if (kDebugMode) {
         print(response.data);
       }
-      PanFatherNameResponseModel responseModel =
-      PanFatherNameResponseModel.fromJson(response.data);
+      PanFatherNameResponseModel? responseModel;
+      if(response.data['items']['msg'] is List){
+        responseModel =
+            PanFatherNameResponseModel.fromJson(response.data);
+      }
       var responseData = response.data;
-      print('fetch pan father response: ${responseData}');
       var message = responseData['message'];
-      print('message - ${message}');
+      if (kDebugMode) {
+        print('fetch pan father response: $responseData');
+        print('message - $message');
+      }
+
+
 
       if(response.statusCode == 400){
         DioExceptions.fromDioError(responseData as DioException, context);
       }
       if (response.statusCode == 200) {
         state = state.copyWith(
-            panFather: responseModel.items.msg?.data?.fatherName);
+            panFather: responseModel?.items.msg?.data?.fatherName);
       }
     } on DioException catch (error) {
       state = state.copyWith(isLoading: false);
@@ -306,16 +313,22 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
 
   Future<bool> fetchPanVerify(BuildContext context) async {
     await fetchPanFatherName(context);
-    print(state.otp);
+    if (kDebugMode) {
+      print(state.otp);
+    }
     final panRequestModel = PanRequestModel(
         docType: 523, panNumber: state.pan, transId: "111XXXXX",formName: "guarantor");
     try {
       final response =
           await dio.post(Api.panVerify, data: panRequestModel.toJson());
       var responseData = response.data;
-      print('fetch pan father response: ${responseData}');
       var message = responseData['message'];
-      print('message - ${message}');
+      if (kDebugMode) {
+        print('fetch pan father response: $responseData');
+        print('message - $message');
+      }
+
+
 
       if(response.statusCode == 400){
         DioExceptions.fromDioError(responseData as DioException, context);
@@ -464,13 +477,19 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
             print('No image selected.');
           }
         } else {
-          print('Permissions denied.');
+          if (kDebugMode) {
+            print('Permissions denied.');
+          }
         }
       } else {
-        print('This functionality is only available on Android.');
+        if (kDebugMode) {
+          print('This functionality is only available on Android.');
+        }
       }
     } catch (e) {
-      print('Failed to pick image: $e');
+      if (kDebugMode) {
+        print('Failed to pick image: $e');
+      }
     }
   }
 

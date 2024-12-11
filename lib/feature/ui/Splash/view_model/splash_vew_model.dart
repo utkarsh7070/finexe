@@ -7,7 +7,7 @@ import '../../../Punch_In_Out/repository/puch_In_repository_imp.dart';
 import '../../../base/api/api.dart';
 import '../../../base/utils/namespase/app_constants.dart';
 
-final sessionProvider = FutureProvider.autoDispose((ref) async {
+final sessionProvider = FutureProvider((ref) async {
   final _punchInRepository = ref.watch(punchInRepositoryProvider);
   final position = await getCurrentLocation();
   // Fetch the token from SharedPreferences
@@ -67,7 +67,7 @@ Future<Position> getCurrentLocation() async {
 
 // .................Version Api.............
 
-final versionViewModelProvider = StateNotifierProvider<VersionViewModel, AsyncValue<VersionCheckState>>((ref) {
+final versionViewModelProvider = StateNotifierProvider.autoDispose<VersionViewModel, AsyncValue<VersionCheckState>>((ref) {
   return VersionViewModel();
 });
 
@@ -88,6 +88,7 @@ class VersionViewModel extends StateNotifier<AsyncValue<VersionCheckState>> {
       final data = response.data['items'];
       final serverVersion = data['version'];
       final apkUrl = data['apkUrl'];
+      print(response.data);
 
       print('app server version- ${serverVersion} and App version-${AppConstants.staticAppVersion}');
       final isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
@@ -98,5 +99,13 @@ class VersionViewModel extends StateNotifier<AsyncValue<VersionCheckState>> {
     }
   }
 }
+
+final downloadProvider =  StateProvider<String>((ref) {
+  return '';
+},);
+
+// final isDialogVisible = StateProvider<bool>((ref) {
+//   return false;
+// },);
 
 

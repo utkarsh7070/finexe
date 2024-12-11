@@ -15,6 +15,8 @@ import 'bottom_bar.dart';
 import 'leave_details_form.dart';
 
 class HRMSDashboardScreen extends ConsumerWidget {
+  const HRMSDashboardScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     //final employee = ref.watch(employeeProvider);

@@ -30,9 +30,7 @@ class HRMSDashBoardViewModel extends StateNotifier<bool> {
   Future<bool?> onPunchOut(BuildContext context) async {
     SharedPreferences sharedPreferences = await  SharedPreferences.getInstance();
     final String? storedToken = sharedPreferences.getString('token');
-// print(storedToken);
     Map<String, String> token = {"token": storedToken!};
-// Map<String, String> tokens = {"token": token!};
     print(token.values);
     try {
       log('onPunchOut');

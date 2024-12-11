@@ -148,156 +148,159 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                     ),
                   ),
                 ),
-                Container(
-                  color: AppColors.lightBlue,
-                  child: Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child:Column(
-                      // mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedOption = "Leave";
-                                  });
-                                },
-                                child: const Column(
-                                  children: [
-                                    Icon(Icons.calendar_today, size: 40, color: Colors.blue),
-                                    Text("Leave"),
-                                  ],
+                Visibility(
+                  visible: !checkPunchProvider.punchAllowed,
+                  child: Container(
+                    color: AppColors.lightBlue,
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child:Column(
+                        // mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedOption = "Leave";
+                                    });
+                                  },
+                                  child: const Column(
+                                    children: [
+                                      Icon(Icons.calendar_today, size: 40, color: Colors.blue),
+                                      Text("Leave"),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedOption = "Punch";
-                                  });
-                                },
-                                child: const Column(
-                                  children: [
-                                    Icon(Icons.fingerprint, size: 40, color: Colors.green),
-                                    Text("Punch In OutSide"),
-                                  ],
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedOption = "Punch";
+                                    });
+                                  },
+                                  child: const Column(
+                                    children: [
+                                      Icon(Icons.fingerprint, size: 40, color: Colors.green),
+                                      Text("Punch In OutSide"),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        if (selectedOption == "Leave") ...[
-                          const Text(
-                            "Leave Request",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ],
+                            ),
                           ),
                           const SizedBox(height: 20),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: TextFormField(
-                              controller: _leaveReasonController,
-                              decoration: customInputDecoration("Enter your remark"),
-                              maxLines: 3,
-                              validator: (value) =>
-                              value == null || value.isEmpty ? "Please enter a reason" : null,
+                          if (selectedOption == "Leave") ...[
+                            const Text(
+                              "Leave Request",
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () async{
-                              print('reasonForLeave Clicked');
-                              // Handle leave submission
-                              String reasonForLeave=_leaveReasonController.text.trim().toString();
-                              print('reasonForLeave ${reasonForLeave}');
-                              if (reasonForLeave.isNotEmpty) {
+                            const SizedBox(height: 20),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: TextFormField(
+                                controller: _leaveReasonController,
+                                decoration: customInputDecoration("Enter your remark"),
+                                maxLines: 3,
+                                validator: (value) =>
+                                value == null || value.isEmpty ? "Please enter a reason" : null,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () async{
+                                print('reasonForLeave Clicked');
+                                // Handle leave submission
+                                String reasonForLeave=_leaveReasonController.text.trim().toString();
+                                print('reasonForLeave ${reasonForLeave}');
+                                if (reasonForLeave.isNotEmpty) {
 
-                                final DateTime currentDate = DateTime.now();
-                                final String formattedStartDate = DateFormat('yyyy-MM-dd').format(currentDate);
-                                final String formattedEndDate = DateFormat('yyyy-MM-dd').format(currentDate);
+                                  final DateTime currentDate = DateTime.now();
+                                  final String formattedStartDate = DateFormat('yyyy-MM-dd').format(currentDate);
+                                  final String formattedEndDate = DateFormat('yyyy-MM-dd').format(currentDate);
 
-                                print('formattedStartDate-${formattedStartDate} & formattedEndDate- ${formattedEndDate}');
+                                  print('formattedStartDate-${formattedStartDate} & formattedEndDate- ${formattedEndDate}');
 
-                                final leadData = LeaveRequestItem(
-                                  startDate: formattedStartDate,
-                                  endDate: formattedEndDate,
-                                  reasonForLeave: reasonForLeave,
-                                );
+                                  final leadData = LeaveRequestItem(
+                                    startDate: formattedStartDate,
+                                    endDate: formattedEndDate,
+                                    reasonForLeave: reasonForLeave,
+                                  );
 
-                                try {
-                                  viewModel.submitLeaveHomeRequest(leadData, context);
+                                  try {
+                                    viewModel.submitLeaveHomeRequest(leadData, context);
 
-                                } catch (e) {
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(e.toString())),
+                                    );
+                                  }
+                                } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(e.toString())),
+                                    const SnackBar(content: Text("Please fill Leave Reason")),
                                   );
                                 }
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("Please fill Leave Reason")),
-                                );
-                              }
-                            },
+                              },
 
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: Colors.white,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text("Submit"),
                             ),
-                            child: const Text("Submit"),
-                          ),
-                          const SizedBox(height: 16),
-                        ] else if (selectedOption == "Punch") ...[
-                          const Text(
-                            "Punch In OutSide",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 20),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: TextFormField(keyboardType: TextInputType.text,
-                              controller: _punchReasonController,
-                              decoration: customInputDecoration("Enter your remark"),
-                              maxLines: 3,
-                              validator: (value) =>
-                              value == null || value.isEmpty ? "Please enter a reason" : null,
+                            const SizedBox(height: 16),
+                          ] else if (selectedOption == "Punch") ...[
+                            const Text(
+                              "Punch In OutSide",
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
-                          ),
-                          const SizedBox(height: 16),
+                            const SizedBox(height: 20),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: TextFormField(keyboardType: TextInputType.text,
+                                controller: _punchReasonController,
+                                decoration: customInputDecoration("Enter your remark"),
+                                maxLines: 3,
+                                validator: (value) =>
+                                value == null || value.isEmpty ? "Please enter a reason" : null,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
 
-                          ElevatedButton(
-                            onPressed: () async {
-                              print('reasonForPunch Clicked');
-                              String reasonForPunch = _punchReasonController.text.trim();
+                            ElevatedButton(
+                              onPressed: () async {
+                                print('reasonForPunch Clicked');
+                                String reasonForPunch = _punchReasonController.text.trim();
 
-                              if (reasonForPunch.isNotEmpty) {
-                                try {
-                                  // Call ViewModel to handle API and navigation logic
-                                  punchInOutSideViewModel.punchInOutSideRequestWithRole(reasonForPunch, context);
-                                } catch (e) {
+                                if (reasonForPunch.isNotEmpty) {
+                                  try {
+                                    // Call ViewModel to handle API and navigation logic
+                                    punchInOutSideViewModel.punchInOutSideRequestWithRole(reasonForPunch, context);
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(e.toString())),
+                                    );
+                                  }
+                                } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(e.toString())),
+                                    const SnackBar(content: Text("Please fill Remark")),
                                   );
                                 }
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("Please fill Remark")),
-                                );
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: Colors.white,
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text("Submit"),
                             ),
-                            child: const Text("Submit"),
-                          ),
 
 
-                          const SizedBox(height: 16),
+                            const SizedBox(height: 16),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),
