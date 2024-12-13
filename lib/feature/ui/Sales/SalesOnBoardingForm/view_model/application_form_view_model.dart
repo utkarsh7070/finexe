@@ -24,6 +24,7 @@ import '../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/request_model/pan_request_model.dart';
 import '../model/responce_model/aadhaar_otp_responce_model.dart';
 import '../view/Sales_on_boarding_form/applicant_form/appliction_form.dart';
+import '../view/Sales_on_boarding_form/applicant_form/bottom_sheet/applicant_otp_screen.dart';
 
 final uploadDoc = StateProvider(
   (ref) {
@@ -205,6 +206,31 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
       throw Exception(e);
     }
   }
+
+  void onClickGetOtpButton({required BuildContext context,required String phoneNumber}){
+    updateContact(phoneNumber);
+    final validate = validateForm(context);
+    if (validate) {
+      fetchAadhaarNumber(context)
+          .then(
+            (value) {
+          Navigator.pushReplacement(context,
+              PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                  const ApplicationVerify(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: child,
+                    );
+                  },
+                  transitionDuration: const Duration(milliseconds: 600)));
+        },
+      );
+    }
+
+}
 
   Future<bool> submitOtp() async {
     state = state.copyWith(isLoading: true);

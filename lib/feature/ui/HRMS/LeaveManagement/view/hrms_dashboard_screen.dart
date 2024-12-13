@@ -19,7 +19,6 @@ class HRMSDashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //final employee = ref.watch(employeeProvider);
     final userProfileAsync = ref.watch(loginUserProfileProvider);
     final hrmsViewModel = ref.read(hrmsDashBordProvider.notifier);
     final role = ref.watch(roleName);

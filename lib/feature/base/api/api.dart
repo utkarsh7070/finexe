@@ -3,6 +3,7 @@ class Api {
 // static const String baseUrl = 'https://stageapi.fincooper.in/';  // Staging URL
   static const String baseUrl = 'https://prod.fincooper.in/';// Production URL
   static const String imageBaseUrl = 'https://stageapi.fincooper.in';  // Production URL
+  static const String imageBaseProUrl = 'https://prod.fincooper.in';  // Production URL
   static const String baseUrlStageCollection = 'https://stageapi.fincooper.in/';
   static const String baseUrlStageProduction ='https://prod.fincooper.in/';
   static const String login = '${baseUrl}v1/login/newEmployeeLogin';

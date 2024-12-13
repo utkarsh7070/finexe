@@ -100,15 +100,15 @@ final updateEmiViewModelProvider =
   return UpdateEmiViewModel(dio);
 });
 
-final paymentStatusViewModelProvider =
-    StateNotifierProvider<PaymentStatusViewModel, PaymentStatusModel>((ref) {
+final updateVisitViewModelProvider =
+    StateNotifierProvider<UpdateVisitViewModel, UpdateVisitModel>((ref) {
   final dio = ref.read(dioProvider);
 
   final position = ref.watch(currentLocationProvider);
-  return PaymentStatusViewModel(dio, position);
+  return UpdateVisitViewModel(dio, position);
 });
 
-class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
+class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
   final Dio dio;
   final AsyncValue<Position> position;
   String imageApi = '';
@@ -118,8 +118,7 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
       SingleValueDropDownController();
   final ImagePicker picker = ImagePicker();
 
-
-  PaymentStatusViewModel(this.dio, this.position) : super(PaymentStatusModel());
+  UpdateVisitViewModel(this.dio, this.position) : super(UpdateVisitModel());
 
   @override
   void dispose() {
@@ -127,7 +126,6 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     dateController.dispose();
     super.dispose();
   }
-
 
   Future<XFile?> clickPhoto() async {
     state = state.copyWith(isLoading: true);
@@ -158,6 +156,7 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
       state = state.copyWith(isLoading: false);
       if (kDebugMode) {
         print('image ${imageResponseModel.items.image}');
+        state = state.copyWith(transitionImage: imageResponseModel.items.image);
         imageApi = imageResponseModel.items.image;
         print(imageApi);
       }
@@ -215,25 +214,25 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     // final strDate = DateFormat('dd-MM-yyyy').parse(state.date);
     // final date = DateFormat('yyyy-MM-dd').format(strDate);
     final requestModel = VisitUpdateSubmitRequestModel(
-      ld: datas.ld??'',
-      customerName: datas.customerName??'',
+      ld: datas.ld ?? '',
+      customerName: datas.customerName ?? '',
       visitDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
       revisitDate: state.date,
-      newContactNumber: datas.mobile??'',
-      customerResponse: dropDownControllerProvider.dropDownValue?.name??'',
+      newContactNumber: datas.mobile ?? '',
+      customerResponse: dropDownControllerProvider.dropDownValue?.name ?? '',
       paymentAmount: state.paymentAmount,
       reasonForNotPay: state.reason,
       solution: state.solution,
       reasonForCustomerNotContactable: state.reason,
-      visitSelfie: imageApi,
-      address: datas.address??'',
+      visitSelfie: '${Api.imageBaseProUrl}${state.transitionImage}',
+      address: datas.address ?? '',
       // latitude: data.latitude,
       // longitude: data.longitude
     );
     print(requestModel);
     String? token = await SessionService.getToken();
 
-    try{
+    try {
       final response = await dio.post(Api.visitFormSubmit,
           data: requestModel.toJson(),
           options: Options(headers: {"token": token}));
@@ -244,14 +243,12 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
       }
       if (response.statusCode == 200) {
         log('updated vist test');
-        showCustomSnackBar(
-            context, response.data['message'], Colors.green);
+        showCustomSnackBar(context, response.data['message'], Colors.green);
       } else {
-        showCustomSnackBar(
-            context, response.data['message'], Colors.green);
+        showCustomSnackBar(context, response.data['message'], Colors.green);
         throw Exception('Failed to load data');
       }
-    }catch(e){
+    } catch (e) {
       DioExceptions.fromDioError(e as DioException, context);
     }
     // position.when(
@@ -270,8 +267,6 @@ class PaymentStatusViewModel extends StateNotifier<PaymentStatusModel> {
     //   loading: () {},
     // );
   }
-
-
 
   void updatePhotoValue(context) {
     // state = state.copyWith(photoFile: value);
@@ -437,28 +432,102 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     state = state.copyWith(commonId: id);
   }
 
-  bool validation() {
-    if (state.isTransactionImage) {
-      final isPhoto = _validateTransactionImage(state.photoFile);
-      state = state.copyWith(isTransactionImage: isPhoto);
-      return isPhoto;
-    } else {
-      return true;
+  bool validPartner(context) {
+    final isPhoto = _validateTransactionImage(state.photoFile);
+    final isAmount = _validateEmiAmount(state.emiAmount);
+    final isTransactionId = _validateTransactionId(state.transactionId);
+    final isRemark = _validateRemark(state.remark);
+    state = state.copyWith(
+        isTransactionImage: isPhoto,
+        isTransactionId: isTransactionId,
+        isEmiAmount: isAmount,
+        isRemark: isRemark);
+    return isPhoto && isAmount && isTransactionId && isRemark;
+  }
+
+  bool validAccountDeposit(context) {
+    final isBank = bankNameController.dropDownValue?.value != null;
+    final isPhoto = _validateTransactionImage(state.photoFile);
+    final isAmount = _validateEmiAmount(state.emiAmount);
+    final isTransactionId = _validateTransactionId(state.transactionId);
+    final isMentionMail = _validateReceipt(state.receipt);
+    final isRemark = _validateRemark(state.remark);
+    if(!isBank){
+      showCustomSnackBar(context, 'Please select bank name', Colors.red.shade200);
     }
+    state = state.copyWith(
+        isReceipt: isMentionMail,
+        isTransactionImage: isPhoto,
+        isTransactionId: isTransactionId,
+        isEmiAmount: isAmount,
+        isRemark: isRemark);
+    return isPhoto &&
+        isAmount &&
+        isTransactionId &&
+        isRemark &&
+        isMentionMail &&
+        isBank;
+  }
+
+  bool validCashCollection(context) {
+    final isCreditPerson = creditPersonController.dropDownValue?.value != null;
+    final isAmount = _validateEmiAmount(state.emiAmount);
+    final isMentionMail = _validateReceipt(state.receipt);
+    final isRemark = _validateRemark(state.remark);
+    if(!isCreditPerson){
+      showCustomSnackBar(context, 'Please select credit person', Colors.red.shade200);
+    }
+    state = state.copyWith(
+        isReceipt: isMentionMail,
+        isEmiAmount: isAmount,
+        isRemark: isRemark);
+    return isAmount && isRemark && isMentionMail && isCreditPerson;
+  }
+
+  bool validation(String value, context) {
+    print(value);
+    switch (value) {
+      case 'direct partner deposit':
+        return validPartner(context);
+      case 'fincooper account deposit':
+        return validAccountDeposit(context);
+      case 'cashCollection':
+        return validCashCollection(context);
+      case '':
+        return false;
+      default:
+        return false;
+    }
+    // print(modeOfCollectionController.dropDownValue?.value);
+    // print(creditPersonController.dropDownValue?.value);
+    // print(bankNameController.dropDownValue?.value);
+    // // if(state.modeTitle == 'bankName' && state.isTransactionImage){
+    // //
+    // // }else{
+    // //
+    // // }
+    // if (state.isTransactionImage && modeOfCollectionController.dropDownValue?.value!=null) {
+    //   final isPhoto = _validateTransactionImage(state.photoFile);
+    //   final isAmount = _validateEmiAmount(state.emiAmount);
+    //   // final isModeCollection = modeOfCollectionController.dropDownValue?.value!=null;
+    //   // final isCreditPerson = creditPersonController.dropDownValue?.value!=null;
+    //   // final isBank = bankNameController.dropDownValue?.value!=null;
+    //   // print('isModeCollection $isModeCollection  isCreditPerson $isCreditPerson, isBank  $isBank');
+    //   state = state.copyWith(isTransactionImage: isPhoto);
+    //   return isPhoto;
+    // } else {
+    //   return true;
+    // }
   }
 
   Future<void> updateEmiSubmitButton(
       {required ItemsDetails detail,
       required BuildContext context,
       required WidgetRef ref}) async {
-    print('${detail.ld} ${detail.customerName} ${detail.mobile} ${state.commonId}');
-    // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    // String? token = sharedPreferences.getString('token');
-    // ObjectId commonIdObject;
-    // if(state.commonId!=''){
-    //   commonIdObject  = ObjectId.parse(state.commonId);
-    // }else
-
+    if (kDebugMode) {
+      print(
+          'Ld o:-${detail.ld}, customerName:- ${detail.customerName}, mobile:- ${detail.mobile},  commonId:- ${state.commonId}, image:- ${state.transactionImage}');
+    }
     ObjectId? result1 = parseObjectId(state.commonId);
 
     UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
@@ -493,7 +562,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     }
 
     var responseData = response.data;
-    print('Emi Paid response: ${responseData}');
+    print('Emi Paid response: $responseData');
     var message = responseData['message'];
 
     if (response.statusCode == 200 || responseData['status'] == true) {
@@ -517,7 +586,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
 
   Future<XFile?> clickPhoto() async {
     state = state.copyWith(isLoading: true);
-    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       state = state.copyWith(photoFile: pickedFile.path);
       return pickedFile;
@@ -591,9 +660,9 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       state = state.copyWith(
           modeTitle: apiResponseList.items.dropdownDetail?.modelName,
           isExtraFormOpen: apiResponseList.items.modeDetail.extraForm,
-          isEmail: apiResponseList.items.modeDetail.email,
-          isTransactionImage: apiResponseList.items.modeDetail.transactionImage,
-          isTransactionId: apiResponseList.items.modeDetail.transactionId);
+          isEmailVisible: apiResponseList.items.modeDetail.email,
+          isTransactionImageVisible: apiResponseList.items.modeDetail.transactionImage,
+          isTransactionIdVisible: apiResponseList.items.modeDetail.transactionId);
 
       if (apiResponseList.items.detail != null) {
         for (final drop in apiResponseList.items.detail ?? []) {
@@ -855,10 +924,11 @@ class ClosuerFocusProvider extends StateNotifier<Map<String, bool>> {
   }
 }
 
-class PaymentStatusModel {
+class UpdateVisitModel {
   final bool isLoading;
   final int selectedValue;
   final String photoFile;
+  final String transitionImage;
   final bool isPhotoFile;
   final String paymentStatus;
   final bool isPaymentStatusValid;
@@ -871,7 +941,8 @@ class PaymentStatusModel {
   final String solution;
   final bool isSolutionValid;
 
-  PaymentStatusModel({
+  UpdateVisitModel({
+    this.transitionImage = '',
     this.isPhotoFile = true,
     this.isLoading = false,
     this.photoFile = '',
@@ -888,7 +959,8 @@ class PaymentStatusModel {
     this.isSolutionValid = true,
   });
 
-  PaymentStatusModel copyWith({
+  UpdateVisitModel copyWith({
+    String? transitionImage,
     bool? isPhotoFile,
     String? photoFile,
     bool? isLoading,
@@ -904,7 +976,8 @@ class PaymentStatusModel {
     String? solution,
     bool? isSolutionValid,
   }) {
-    return PaymentStatusModel(
+    return UpdateVisitModel(
+      transitionImage: transitionImage ?? this.transitionImage,
       isPhotoFile: isPhotoFile ?? this.isPhotoFile,
       isLoading: isLoading ?? this.isLoading,
       photoFile: photoFile ?? this.photoFile,
@@ -964,7 +1037,9 @@ class UpdateEmiModel {
   final List<DropDownValueModel> subDropdown;
   final bool isLoading;
   final bool isTransactionId;
+  final bool isTransactionIdVisible;
   final bool isTransactionImage;
+  final bool isTransactionImageVisible;
   final String dropdownDetail;
   final String emiAmount;
   final String transactionId;
@@ -976,12 +1051,18 @@ class UpdateEmiModel {
   final bool isRemark;
   final bool isBankName;
   final bool isReceipt;
+  final bool isReceiptVisible;
   final bool isExtraFormOpen;
   final bool isEmail;
+  final bool isEmailVisible;
   final String modeTitle;
 
   UpdateEmiModel(
-      {this.modeOfCollectionId = '',
+      {this.isTransactionImageVisible = false,
+      this.isReceiptVisible = false,
+      this.isEmailVisible = false,
+      this.isTransactionIdVisible = false,
+      this.modeOfCollectionId = '',
       this.commonId = '',
       this.photoFile = '',
       this.subDropdown = const [],
@@ -996,7 +1077,7 @@ class UpdateEmiModel {
       this.bankName = '',
       this.receipt = '',
       this.isEmiAmount = true,
-      this.isTransactionId = false,
+      this.isTransactionId = true,
       this.isTransactionImage = false,
       this.isRemark = true,
       this.isBankName = true,
@@ -1004,6 +1085,10 @@ class UpdateEmiModel {
       this.isLoading = false});
 
   UpdateEmiModel copyWith({
+    bool? isTransactionImageVisible,
+    bool? isReceiptVisible,
+    bool? isEmailVisible,
+    bool? isTransactionIdVisible,
     String? modeOfCollectionId,
     String? commonId,
     String? photoFile,
@@ -1027,6 +1112,10 @@ class UpdateEmiModel {
     bool? isReceipt,
   }) {
     return UpdateEmiModel(
+      isEmailVisible: isEmailVisible?? this.isEmailVisible,
+        isReceiptVisible: isReceiptVisible?? this.isReceiptVisible,
+        isTransactionIdVisible: isTransactionIdVisible?? this.isTransactionIdVisible,
+        isTransactionImageVisible: isTransactionImageVisible?? this.isTransactionImageVisible,
         modeOfCollectionId: modeOfCollectionId ?? this.modeOfCollectionId,
         commonId: commonId ?? this.commonId,
         photoFile: photoFile ?? this.photoFile,
@@ -1194,8 +1283,8 @@ final currentLocationProvider = FutureProvider<Position>((ref) async {
 // Provider to manage the Google Map controller
 final mapControllerProvider =
     StateProvider.autoDispose<GoogleMapController?>((ref) {
-      return null;
-    } );
+  return null;
+});
 
 // Provider to manage the polyline for directions
 final polylineProvider = StateProvider<List<Polyline>>((ref) => []);

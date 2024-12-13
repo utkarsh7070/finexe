@@ -1,14 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:flutter/Material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:roam_flutter/roam_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../base/api/api.dart';
 import '../../base/routes/routes.dart';

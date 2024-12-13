@@ -33,7 +33,7 @@ class HRMSUserProfile {
       punchOutTime: json['punchOutTime'] ?? '',
       employeeId: json['_id'] ?? '',
       employeName: json['employeName'] ?? '',
-      email: json['email'] ?? '',
+      email: json['workEmail'] ?? '',
       mobileNo: json['mobileNo'] ?? 0,
       joiningDate: json['joiningDate'] ?? '',
       dateOfBirth: json['dateOfBirth'] ?? '',

@@ -37,8 +37,6 @@ class _CollectionDashboardScreenState extends ConsumerState<CollectionDashboardS
           initialiseRoamSdk(data.value!.name);
         }
       },);
-
-
     });
   }
 
@@ -66,11 +64,7 @@ class _CollectionDashboardScreenState extends ConsumerState<CollectionDashboardS
       };
       Roam.startTracking(trackingMode: "custom", customMethods: fitnessTracking);
       print("Custom tracking started with 10-second interval.");
-
-
-
       listenToLocationUpdates();
-
       trackingTimer = Timer(Duration(minutes: 15), () {
         Roam.stopTracking();
         print("Tracking stopped after 15 minutes.");

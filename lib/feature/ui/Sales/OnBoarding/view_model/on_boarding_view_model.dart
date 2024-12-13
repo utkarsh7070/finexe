@@ -195,6 +195,7 @@ class AllCases extends StateNotifier<CaseModel> {
   }
 
   Future<void> fetchAllCases() async {
+
     state = state.copyWith(isLoading: true);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
@@ -208,15 +209,19 @@ class AllCases extends StateNotifier<CaseModel> {
 
     String employeeRole = role != null && role.contains('sales') ? 'sales' : role?.first ?? '';
 
-    final Map<String, String> params = {
+    final Map<String, dynamic> params = {
       'employeeRole': employeeRole,
-      'status': 'all'
+      'status': 'all',
+      'page': 1,
+      'limit': 10
     };
     print('Params: $params');
 
     try {
       final response = await dio.get(Api.allCases,
           queryParameters: params, options: Options(headers: {'token': token}));
+
+      // https://stageapi.fincooper.in/v1/calculator/getCustomer?status=salesToCibil&employeeRole=sales&page=1&limit=10&search=
 
       print('All cases response ${response}');
 

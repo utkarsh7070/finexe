@@ -35,7 +35,7 @@ class VisitPendingScreen extends ConsumerWidget {
 
         // print(sea?rchList);
         return Container(
-          padding: const EdgeInsets.only(left: 16,right: 16),
+          padding: const EdgeInsets.only(left: 16, right: 16),
           height: displayHeight(context),
           width: displayWidth(context),
           child: Column(
@@ -161,7 +161,7 @@ class VisitPendingScreen extends ConsumerWidget {
                                                 fontSize: FontSize.fontSizeS),
                                       )),
                                       Container(
-                                          padding: EdgeInsets.all(6),
+                                          padding: const EdgeInsets.all(6),
                                           decoration: const BoxDecoration(
                                               borderRadius: BorderRadius.only(
                                                   topLeft: Radius.circular(10),
@@ -220,8 +220,8 @@ class VisitPendingScreen extends ConsumerWidget {
                                               log: item.longValue!);
                                         },
                                         child: Container(
-                                          padding: EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: const BoxDecoration(
                                               shape: BoxShape.circle,
                                               // borderRadius: BorderRadius.all(
                                               //     Radius.circular(10)),
@@ -294,7 +294,7 @@ class VisitPendingScreen extends ConsumerWidget {
                                         width: displayWidth(context) * 0.37,
                                         child: ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                              side: BorderSide(
+                                              side: const BorderSide(
                                                   color: AppColors.primary),
                                               backgroundColor: AppColors.white,
                                               shape: RoundedRectangleBorder(
@@ -309,9 +309,9 @@ class VisitPendingScreen extends ConsumerWidget {
                                                       context: context,
                                                       index: index);
                                             },
-                                            child: Text(
+                                            child: const Text(
                                               'Update Visit',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                   color: AppColors.primary),
                                             )),
                                       ),
@@ -319,7 +319,7 @@ class VisitPendingScreen extends ConsumerWidget {
                                         width: displayWidth(context) * 0.37,
                                         child: ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                              side: BorderSide(
+                                              side: const BorderSide(
                                                   color: AppColors.primary),
                                               backgroundColor: AppColors.white,
                                               shape: RoundedRectangleBorder(
@@ -333,9 +333,9 @@ class VisitPendingScreen extends ConsumerWidget {
                                                   context: context,
                                                   index: index);
                                             },
-                                            child: Text(
+                                            child: const Text(
                                               'Closure',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                   color: AppColors.primary),
                                             )),
                                       ),
@@ -348,7 +348,7 @@ class VisitPendingScreen extends ConsumerWidget {
                                     width: displayWidth(context),
                                     child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          side: BorderSide(
+                                          side: const BorderSide(
                                               color: AppColors.primary),
                                           backgroundColor: AppColors.white,
                                           shape: RoundedRectangleBorder(
@@ -362,9 +362,9 @@ class VisitPendingScreen extends ConsumerWidget {
                                               index: index,
                                               item: item);
                                         },
-                                        child: Text(
+                                        child: const Text(
                                           'Update EMI',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                               color: AppColors.primary),
                                         )),
                                   ),
@@ -381,7 +381,7 @@ class VisitPendingScreen extends ConsumerWidget {
         );
       },
       error: (error, stackTrace) {
-        return Text('data');
+        return const Text('data');
       },
       loading: () {
         return const Center(child: CircularProgressIndicator());

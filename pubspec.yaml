@@ -78,6 +78,7 @@ dependencies:
   open_file:
   bson:
   mongo_dart: ^0.10.3
+  install_plugin: ^2.1.0
 
 
 #  AIzaSyCiUeNk2R6jiihpsymrcQhGC586itXxAYg

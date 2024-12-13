@@ -26,8 +26,8 @@ class UpdateVisitDialogContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // final dropDownControllers = ref.watch(dropDownControllerProvider);
     final dropDownData = ref.read(updateVisitDropDown);
-    final paymentState = ref.watch(paymentStatusViewModelProvider);
-    final paymentViewModel = ref.read(paymentStatusViewModelProvider.notifier);
+    final paymentState = ref.watch(updateVisitViewModelProvider);
+    final paymentViewModel = ref.read(updateVisitViewModelProvider.notifier);
     final paymentFocusStates =
         ref.watch(paymentStatusFocusProviderFocusProvider);
     final paymentFocusViewModel =
@@ -63,7 +63,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                           onPressed: () {
 
                             paymentViewModel.updatePhotoValue( context);
-                            ref.invalidate(paymentStatusViewModelProvider);
+                            ref.invalidate(updateVisitViewModelProvider);
                           },
                           icon: const Icon(Icons.cancel_sharp))
                     ],
@@ -349,7 +349,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                               .dropDownValue?.value !=
                           null) {
                         print(
-                            ' valyue  ${paymentViewModel.validateForm(paymentViewModel.dropDownControllerProvider.dropDownValue?.value)}');
+                            ' value  ${paymentViewModel.validateForm(paymentViewModel.dropDownControllerProvider.dropDownValue?.value)}');
                         final isValid = paymentViewModel.validateForm(
                             paymentViewModel.dropDownControllerProvider
                                 .dropDownValue?.value);
@@ -358,7 +358,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                             (value) {
 
                               paymentViewModel.updatePhotoValue(context);
-                              ref.invalidate(paymentStatusViewModelProvider);
+                              ref.invalidate(updateVisitViewModelProvider);
                             },
                           );
                           // paymentViewModel.updatePhotoValue('',context);

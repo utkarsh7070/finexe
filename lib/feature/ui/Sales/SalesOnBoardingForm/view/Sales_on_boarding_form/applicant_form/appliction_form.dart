@@ -10,16 +10,15 @@ import '../../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../../../../base/utils/widget/upload_box.dart';
 import '../../../view_model/application_form_view_model.dart';
 import 'bottom_sheet/applicant_if_no_bottom_sheet.dart';
-import 'bottom_sheet/applicant_otp_screen.dart';
 import 'dialog/back_application_dialog.dart';
 
 class ApplicationDetails extends ConsumerWidget {
   final Map<String, dynamic> arguments;
+
   const ApplicationDetails(this.arguments, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     //----------------------------controllers-------------------------
     // final formListController = ref.watch(applicantController);
     // final formNotifierController = ref.read(applicantController.notifier);
@@ -37,8 +36,7 @@ class ApplicationDetails extends ConsumerWidget {
     //
     // Access specific argument
     return Scaffold(
-        body:
-        Container(
+        body: Container(
       width: displayWidth(context),
       height: displayHeight(context),
       color: AppColors.primary,
@@ -99,8 +97,7 @@ class ApplicationDetails extends ConsumerWidget {
                           child: Image.file(
                               File(personalFormState.applicantPhotoFilePath)),
                         ),
-                        child:
-                        UploadBox(
+                        child: UploadBox(
                           isError: !personalFormState.isApplicantPhoto,
                           isImage: true,
                           height: displayHeight(context) * 0.16,
@@ -124,10 +121,8 @@ class ApplicationDetails extends ConsumerWidget {
                         SizedBox(
                           height: displayHeight(context) * 0.02,
                         ),
-
                         Column(
                           children: [
-
                             AppFloatTextField(
                               focusNode:
                                   personalFocusViewModel.aadhaarFocusNode,
@@ -148,59 +143,6 @@ class ApplicationDetails extends ConsumerWidget {
                             SizedBox(
                               height: displayHeight(context) * 0.02,
                             ),
-                            // DropDownTextField(
-                            //   clearOption: false,
-                            //   controller: personalFormViewModel.selectIdController,
-                            //   listSpace: 20,
-                            //   listPadding: ListPadding(top: 20),
-                            //   enableSearch: false,
-                            //   dropDownList: const [
-                            //     DropDownValueModel(
-                            //         name: 'Voter Id Number', value: 'voterId'),
-                            //     DropDownValueModel(
-                            //         name: 'Samagra ID Number', value: 'SamagraId'),
-                            //   ],
-                            //   listTextStyle: const TextStyle(color: AppColors.primary),
-                            //   dropDownItemCount: 9,
-                            //   onChanged: (dropDown) {
-                            //     print(dropDown.name);
-                            //     personalFormViewModel.updateIsOpenIdField();
-                            //     // phoneViewModel.updateProduct(
-                            //     //     dropDown.name, data);
-                            //   },
-                            //   // textFieldFocusNode:
-                            //   // phoneFocusViewModel.productFocusNode,
-                            //   textFieldDecoration: const InputDecoration(
-                            //     hintStyle: TextStyle(color: AppColors.textGray),
-                            //     // floatingLabelStyle:
-                            //     // personalFocusStates['productFocusNode']!
-                            //     //     ? AppStyles.subHeading.copyWith(
-                            //     //     color: AppColors.primary)
-                            //     //     : AppStyles.subHeading,
-                            //     label: Text(
-                            //       'Select ID',
-                            //     ),
-                            //     enabledBorder: OutlineInputBorder(
-                            //         borderSide: BorderSide(color: AppColors.gray, width: 1),
-                            //         borderRadius: BorderRadius.all(Radius.circular(10))),
-                            //     // filled: true,
-                            //     // fillColor: AppColors.gray,
-                            //     border: OutlineInputBorder(
-                            //       borderSide: BorderSide(color: AppColors.gray, width: 2),
-                            //       borderRadius: BorderRadius.all(Radius.circular(10)),
-                            //     ),
-                            //
-                            //     // focusedBorder: OutlineInputBorder(
-                            //     //     borderSide: BorderSide(
-                            //     //         color:
-                            //     //         !phoneState.isPhoneNumberValid
-                            //     //             ? Colors.red
-                            //     //             : Colors.blue,
-                            //     //         width: 2),
-                            //     //     borderRadius: const BorderRadius.all(
-                            //     //         Radius.circular(10))),
-                            //   ),
-                            // ),
                             AppFloatTextField(
                               focusNode: personalFocusViewModel.panFocusNode,
                               currentState: personalFocusStates['panFocusNode'],
@@ -230,10 +172,6 @@ class ApplicationDetails extends ConsumerWidget {
                                     if (value != null) {
                                       personalFormViewModel
                                           .updateCheckBox(value);
-                                      // ref
-                                      //     .read(checkBoxTermsConditionApplicant
-                                      //         .notifier)
-                                      //     .state = value;
                                     }
                                   },
                                 ),
@@ -257,216 +195,15 @@ class ApplicationDetails extends ConsumerWidget {
                                     textStyle:
                                         const TextStyle(color: AppColors.white),
                                     onTap: () async {
-                                      personalFormViewModel.updateContact(phoneNumber);
-                                      final validate =
-                                          personalFormViewModel.validateForm(context);
-                                      if (validate) {
-                                        personalFormViewModel
-                                            .fetchAadhaarNumber(context)
-                                            .then(
-                                          (value) {
-                                            Navigator.pushReplacement(context,  PageRouteBuilder(
-                                                pageBuilder: (context, animation, secondaryAnimation) =>
-                                                const ApplicationVerify(),
-                                                transitionsBuilder:
-                                                    (context, animation, secondaryAnimation, child) {
-                                                  return FadeTransition(
-                                                    opacity: animation,
-                                                    child: child,
-                                                  );
-                                                },
-                                                transitionDuration: const Duration(milliseconds: 600)));
-                                          },
-                                        );
-                                      }
+                                      personalFormViewModel.onClickGetOtpButton(
+                                          context: context,
+                                          phoneNumber: phoneNumber);
                                     },
                                     label: 'Get OTP',
                                     width: displayWidth(context),
                                   ),
                           ],
                         ),
-                        // SizedBox(
-                        //   width: MediaQuery.of(context).size.width * 0.30,
-                        //   child: Row(
-                        //     children: [
-                        //       Radio<ApplicantOptionRole>(
-                        //         value: ApplicantOptionRole.Yes,
-                        //         groupValue: selectedValue,
-                        //         onChanged: (value) {
-                        //           if (value != null) {
-                        //             ref
-                        //                 .read(applicantRoleProvider.notifier)
-                        //                 .select(value);
-                        //           }
-                        //           showBottomSheetIfYes(
-                        //             context: context,
-                        //             ref: ref,
-                        //           );
-                        //         },
-                        //       ),
-                        //       const Text(
-                        //         'Yes',
-                        //       )
-                        //     ],
-                        //   ),
-                        // ),
-                        // SizedBox(
-                        //   width: MediaQuery.of(context).size.width * 0.30,
-                        //   child: Row(
-                        //     children: [
-                        //       Radio<ApplicantOptionRole>(
-                        //         value: ApplicantOptionRole.NO,
-                        //         groupValue: selectedValue,
-                        //         onChanged: (value) {
-                        //           if (value != null) {
-                        //             ref
-                        //                 .read(applicantRoleProvider.notifier)
-                        //                 .select(value);
-                        //           }
-                        //           showBottomSheetIfNo(
-                        //             context: context,
-                        //             ref: ref,
-                        //           );
-                        //         },
-                        //       ),
-                        //       const Text(
-                        //         'No',
-                        //       )
-                        //     ],
-                        //   ),
-                        // ),
-
-                        // SizedBox(
-                        //   height: displayHeight(context) * 0.03,
-                        // ),
-                        // SizedBox(
-                        //   height: displayHeight(context) * 0.10,
-                        //   width: displayWidth(context),
-                        //   child: Row(children: [
-                        //     AppFloatTextField(
-                        //       width: displayWidth(context) * 0.71,
-                        //       focusNode: personalFocusViewModel.panFocusNode,
-                        //       currentState: personalFocusStates['panFocusNode'],
-                        //       controller: formListController.panController,
-                        //       onChange: (value) {
-                        //         personalFormViewModel.updatePan(value);
-                        //       },
-                        //       height: !personalFormState.isPanValid
-                        //           ? displayHeight(context) * 0.09
-                        //           : null,
-                        //       inerHint: 'Pan',
-                        //       errorText: "Pan is a required field",
-                        //       isError: !personalFormState.isPanValid,
-                        //       textInputAction: TextInputAction.next,
-                        //     ),
-                        //     SizedBox(
-                        //       width: displayWidth(context) * 0.02,
-                        //     ),
-                        //     Container(
-                        //         decoration: const BoxDecoration(
-                        //             color: AppColors.boxBagGray,
-                        //             borderRadius:
-                        //                 BorderRadius.all(Radius.circular(10))),
-                        //         height: displayHeight(context) * 0.07,
-                        //         width: displayWidth(context) * 0.15,
-                        //         child: IconButton(
-                        //             onPressed: () {
-                        //               ref.read(isPanLoading.notifier).state =
-                        //                   true;
-                        //               personalFormViewModel
-                        //                   .fetchPanVerify().onError((error, stackTrace) {
-                        //                     return  ref
-                        //                         .read(isPanLoading.notifier)
-                        //                         .state = false;
-                        //                   },)
-                        //                   .then(
-                        //                 (value) {
-                        //                   if (value) {
-                        //                     ref
-                        //                         .read(
-                        //                             isTickColorChange.notifier)
-                        //                         .state = true;
-                        //                     ref
-                        //                         .read(isPanLoading.notifier)
-                        //                         .state = false;
-                        //                   } else {
-                        //                     ref
-                        //                         .read(
-                        //                             isTickColorChange.notifier)
-                        //                         .state = false;
-                        //                   }
-                        //                 },
-                        //               );
-                        //             },
-                        //             icon: isPanIconChange
-                        //                 ? const CircularProgressIndicator()
-                        //                 : Icon(
-                        //                     Icons.check_circle_rounded,
-                        //                     size: 25,
-                        //                     color: colorChangeState
-                        //                         ?Colors.green: AppColors.black
-                        //                         ,
-                        //                   ))
-                        //     )
-                        //   ]),
-                        // ),
-                        // SizedBox(
-                        //   height: displayHeight(context) * 0.02,
-                        // ),
-                        // AppButton(
-                        //   textStyle: const TextStyle(color: AppColors.white),
-                        //   width: displayWidth(context),
-                        //   label: 'Next',
-                        //   onTap: () {
-                        //     if(personalFormState.isOtpVerify){
-                        //
-                        //     }
-                        //     // ref.read(applicantViewModelProvider.notifier).fetchAadhaarNumber();
-                        //     // Navigator.pushNamed(
-                        //     //     context, AppRoutes.saleApplicationForm3);
-                        //   },
-                        // ),
-                        // SizedBox(
-                        //   height: displayHeight(context) * 0.01,
-                        // ),
-                        // AppButton(
-                        //   textStyle: const TextStyle(color: AppColors.white),
-                        //   width: displayWidth(context),
-                        //   label: 'Back',
-                        //   onTap: () {},
-                        // ),
-
-                        // Row(
-                        //   children: [
-                        //     AppFloatTextField(
-                        //       width: displayWidth(context) * 0.75,
-                        //       focusNode: personalFocusViewModel.panFocusNode,
-                        //       currentState: personalFocusStates['panFocusNode'],
-                        //       // controller: licenseController,
-                        //       onChange: (value) {
-                        //         personalFormViewModel.updatePan(value);
-                        //       },
-                        //       height: !personalFormState.isPanValid
-                        //           ? displayHeight(context) * 0.09
-                        //           : null,
-                        //       inerHint: 'Pan',
-                        //       errorText: "Pan is a required field",
-                        //       isError: !personalFormState.isPanValid,
-                        //       textInputAction: TextInputAction.next,
-                        //     ),
-                        //     SizedBox(
-                        //       width: displayWidth(context) * 0.01,
-                        //     ),
-                        //     Container(
-                        //       color: AppColors.boxBagGray,
-                        //       width: displayWidth(context) * 0.12,
-                        //       child: IconButton(
-                    //         icon: const Icon(Icons.check),
-                    //         onPressed: () {},
-                    //       ),
-                    //     )
-                        //   ],
-                        // ),
                       ],
                     ),
                   ],
@@ -588,7 +325,6 @@ class ApplicationDetails extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               UploadBox(
-
                 height: displayHeight(context) * 0.15,
                 width: displayWidth(context) * 0.35,
                 color: AppColors.buttonBorderGray,
@@ -661,8 +397,6 @@ class ApplicationDetails extends ConsumerWidget {
   //     },
   //   );
   // }
-
-
 
   Future<void> showBottomSheetIfNo({
     required WidgetRef ref,

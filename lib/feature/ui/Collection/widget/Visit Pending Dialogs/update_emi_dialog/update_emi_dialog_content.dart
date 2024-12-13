@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view_model/guarantor_form_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -315,7 +316,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         height: displayHeight(context) * 0.01,
                       ),
                       Visibility(
-                        visible: paymentState.isEmail,
+                        visible: paymentState.isEmailVisible,
                         child: AppFloatTextField(
                           focusNode: paymentFocusViewModel.receiptFocusNode,
                           currentState: paymentFocusStates['receiptFocusNode'],
@@ -338,7 +339,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                       ),
 
                       Visibility(
-                        visible: paymentState.isTransactionId,
+                        visible: paymentState.isTransactionIdVisible,
                         child: AppFloatTextField(
                           focusNode:
                               paymentFocusViewModel.transactionIdFocusNode,
@@ -384,7 +385,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                       ),
 
                       Visibility(
-                        visible: paymentState.isTransactionImage,
+                        visible: paymentState.isTransactionImageVisible,
                         child: GestureDetector(
                           onTap: () {
                             paymentViewModel.clickPhoto().then(
@@ -438,10 +439,23 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         textStyle: AppStyles.buttonLightTextStyle,
                         width: displayWidth(context),
                         onTap: () {
-                          final bool value = paymentViewModel.validation();
-                          if (value) {
-                            paymentViewModel.updateEmiSubmitButton(
-                                detail: item!, context: context, ref: ref);
+                          if (paymentViewModel.modeOfCollectionController
+                                  .dropDownValue?.name !=
+                              null) {
+                            final bool value = paymentViewModel.validation(
+                                paymentViewModel.modeOfCollectionController
+                                    .dropDownValue!.name,
+                                context);
+                            print(value);
+                            if (value) {
+                              paymentViewModel.updateEmiSubmitButton(
+                                  detail: item!, context: context, ref: ref);
+                            }
+                          } else {
+                            showCustomSnackBar(
+                                context,
+                                'Please Select Mode of Collection',
+                                Colors.red.shade300);
                           }
                         },
                         label: 'Submit',

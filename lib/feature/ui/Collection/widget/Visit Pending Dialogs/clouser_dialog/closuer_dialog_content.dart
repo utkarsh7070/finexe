@@ -24,8 +24,6 @@ class ClosuerDialogContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final dropDownControllers = ref.watch(dropDownControllerProvider);
-    // final dropDownData = ref.read(updateVisitDropDown);
     final paymentState = ref.watch(closuerViewModelProvider);
     final paymentViewModel = ref.read(closuerViewModelProvider.notifier);
     final paymentFocusStates = ref.watch(closuerFocusProvider);
@@ -224,7 +222,6 @@ class ClosuerDialogContent extends ConsumerWidget {
                           },
                         );
                       }
-
                     },
                     label: 'Submit',
                   )
