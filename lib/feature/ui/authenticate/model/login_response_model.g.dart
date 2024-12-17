@@ -30,6 +30,8 @@ Items _$ItemsFromJson(Map<String, dynamic> json) => Items(
       roleName:
           (json['roleName'] as List<dynamic>).map((e) => e as String).toList(),
       token: json['token'] as String,
+  roamId: json['roamId'] as String,
+  trackingMode: json['trackingMode'] as String,
     );
 
 Map<String, dynamic> _$ItemsToJson(Items instance) => <String, dynamic>{
@@ -37,4 +39,6 @@ Map<String, dynamic> _$ItemsToJson(Items instance) => <String, dynamic>{
       'userName': instance.userName,
       'roleName': instance.roleName,
       'token': instance.token,
+      'roamId': instance.roamId,
+      'trackingMode': instance.trackingMode,
     };

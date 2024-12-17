@@ -154,9 +154,9 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
       VisitUpdateUploadImageResponseModel imageResponseModel =
           VisitUpdateUploadImageResponseModel.fromJson(response.data);
       state = state.copyWith(isLoading: false);
+      state = state.copyWith(transitionImage: imageResponseModel.items.image);
       if (kDebugMode) {
         print('image ${imageResponseModel.items.image}');
-        state = state.copyWith(transitionImage: imageResponseModel.items.image);
         imageApi = imageResponseModel.items.image;
         print(imageApi);
       }
@@ -624,11 +624,12 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       VisitUpdateUploadImageResponseModel imageResponseModel =
           VisitUpdateUploadImageResponseModel.fromJson(response.data);
       state = state.copyWith(isLoading: false);
+      state =
+          state.copyWith(transactionImage: imageResponseModel.items.image);
       if (kDebugMode) {
         print('image url ${imageResponseModel.items.image}');
         print('image url1 ${response.data}');
-        state =
-            state.copyWith(transactionImage: imageResponseModel.items.image);
+
         imageApi = imageResponseModel.items.image;
         print(imageApi);
       }

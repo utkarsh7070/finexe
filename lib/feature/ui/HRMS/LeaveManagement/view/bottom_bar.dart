@@ -6,11 +6,11 @@ import '../../../Sales/SalesProfile/model/login_user_profile.dart';
 
 class BottomBar extends StatelessWidget {
   // final LoginUserProfile employee;
-  String punchInTime;
-  String punchOutTime;
+  final String punchInTime;
+  final String punchOutTime;
 
   // BottomBar({Key? key, required this.employee}) : super(key: key);
-  BottomBar({Key? key, required this.punchInTime, required this.punchOutTime})
+  const BottomBar({Key? key, required this.punchInTime, required this.punchOutTime})
       : super(key: key);
 
   @override
@@ -43,7 +43,7 @@ class BottomBar extends StatelessWidget {
         children: [
           Text(
             'PunchIn: $punchIn' ?? '',
-            /* "Today's Work: ${employee.totalWork}",*/
+
             style: const TextStyle(color: Colors.white),
           ),
           Text(

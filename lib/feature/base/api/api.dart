@@ -1,7 +1,6 @@
 class Api {
   static const String baseUrlProduction = 'https://stageapi.fincooper.in';
-// static const String baseUrl = 'https://stageapi.fincooper.in/';  // Staging URL
-  static const String baseUrl = 'https://prod.fincooper.in/';// Production URL
+  static const String baseUrl ='https://prod.fincooper.in/';// Production URL
   static const String imageBaseUrl = 'https://stageapi.fincooper.in';  // Production URL
   static const String imageBaseProUrl = 'https://prod.fincooper.in';  // Production URL
   static const String baseUrlStageCollection = 'https://stageapi.fincooper.in/';
@@ -125,6 +124,7 @@ class Api {
   static const String getReqRefP = '${baseUrl}v1/pd/allPDAssignFiles';
   static const String revertByVendor = '${baseUrl}v1/externalvendor/revertByVendor';
   static const String pdAssign = '${baseUrl}v1/pd/allPDAssignFiles';
+  static const String getotherdropdatalist = '${baseUrl}v1/salesMan/getNameAppAndCoApp/';
 
   //..............................Punch In Out Side API.................
   static const String punchOutSide = '${baseUrl}v1/adminMaster/employe/punchOutSideBranch';

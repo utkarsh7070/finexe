@@ -3,23 +3,33 @@ import 'package:flutter/material.dart';
 
 class CustomDropdownWithCross extends StatefulWidget {
   final List<String> items;
+  final List<String> initialSelectedItems;
+
   final String placeholder;
   final Function(List<String>) onSelectionChanged;
 
   const CustomDropdownWithCross({
     Key? key,
     required this.items,
+    this.initialSelectedItems = const [], // Defaul
     required this.onSelectionChanged,
     this.placeholder = 'Select Items',
   }) : super(key: key);
 
   @override
-  _CustomDropdownWithCrossState createState() => _CustomDropdownWithCrossState();
+  _CustomDropdownWithCrossState createState() =>
+      _CustomDropdownWithCrossState();
 }
 
 class _CustomDropdownWithCrossState extends State<CustomDropdownWithCross> {
   List<String> selectedItems = [];
   bool isDropdownOpen = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    selectedItems = widget.initialSelectedItems;
+  }
 
   void toggleItemSelection(String item) {
     setState(() {
@@ -46,7 +56,7 @@ class _CustomDropdownWithCrossState extends State<CustomDropdownWithCross> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             width: displayWidth(context),
-           // height: displayHeight(context)*0.06,
+            // height: displayHeight(context)*0.06,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(8),
@@ -64,13 +74,14 @@ class _CustomDropdownWithCrossState extends State<CustomDropdownWithCross> {
                 );
               }).toList()
                   : [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(widget.placeholder, style: const TextStyle(color: Colors.grey)),
-                        Icon(Icons.arrow_drop_down)
-                      ],
-                    ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(widget.placeholder,
+                        style: const TextStyle(color: Colors.grey)),
+                    Icon(Icons.arrow_drop_down)
+                  ],
+                ),
               ],
             ),
           ),

@@ -92,7 +92,7 @@ final paginatedDataProvider = FutureProvider.autoDispose.family<List<Item>, int>
   final apiService = ref.read(apiPdPendingProvider);
   // final page = ref.watch(currentPageProvider);
   const int limit = 10;
-  const String status = 'incomplete';
+  const String status = 'accept';
   final response = await apiService.fetchData(
     status: status,
     page: page,

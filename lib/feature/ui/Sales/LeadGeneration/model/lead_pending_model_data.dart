@@ -46,8 +46,6 @@ class Lead {
       selfieWithCustomer: handleBlank(json['selfieWithCustomer']), // No default here, returns null if blank
     );
   }
-
-
 }
 
 /*class Lead {

@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/Punch_In_Out/model/check_attendance_responce_model.dart';
@@ -10,6 +12,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:roam_flutter/roam_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/model/add_task_request_model.dart';
@@ -79,6 +83,7 @@ class AttendanceState {
 class AttendanceNotifier extends StateNotifier<AttendanceState> {
   final PunchInRepositoryImp _punchInRepository;
   final Dio dio;
+  late Timer trackingTimer;
 
   AttendanceNotifier(this._punchInRepository, this.dio)
       : super(AttendanceState()) {
@@ -264,11 +269,119 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     return null;
   }
 
+  Future<void> initialiseRoamSdk(String? trackingMode, String? roamId) async {
+    print("Attempting to initialize Roam SDK...");
+    try {
+
+      await requestLocationPermissions();
+
+      // Roam.createUser(description: 'First user', callBack: ({user}) {
+      //   if (user != null) {
+      //     // print("User created successfully: ${user['userId']}")
+      //
+      //     print('User created successfully: $user');
+      //
+      //     // Roam.offlineTracking(true);
+      //     // Roam.allowMockLocation(allow: true);
+      //
+      //   } else {
+      //     print("Failed to create user.");
+      //   }
+      // });
+      Roam.getUser(userId:roamId!,callBack: ({user}) {
+// do something on get user
+        Roam.startTracking(trackingMode: trackingMode);
+        print(user);
+      });
+      // try {
+      //   await Roam.enableAccuracyEngine();
+      // } on PlatformException {
+      //   print('Enable Accuracy Engine Error');
+      // }
+
+      // listenToLocationUpdates();
+
+
+
+      // if (Platform.isAndroid) {
+      //   initializeService();
+      // } else {
+      //   Roam.onLocation((location) async {
+      //     print(jsonEncode(location));
+      //     await platform.invokeMethod('send_notification', {'body': jsonEncode(location)});
+      //     setState(() {
+      //       locationResponse = location.toString();
+      //     });
+      //   });
+      // }
+
+      // Roam.setForeground(true, "Flutter Example", "Tap to open", "mipmap/ic_launcher", "ai.roam.example.MainActivity");
+      print('tracking begain');
+
+
+      print('tracking end');
+
+
+      Roam.onLocation((location) {
+        if (location != null) {
+          print("Location update: ${jsonEncode(location)}");
+        } else {
+          print("No location update received.");
+        }
+        print("Received location from Roam SDK: ${jsonEncode(location)}");
+        /*showCustomSnackBar(
+          context, "Received location from Roam SDK: ${jsonEncode(location)}", Colors.green);*/
+      });
+      // await listenToLocationUpdates();
+
+
+      trackingTimer = Timer(Duration(hours: 15), () {
+        Roam.stopTracking();
+        print("Tracking stopped after 15 minutes.");
+      });
+
+    } catch (e) {
+      print("Failed to initialize Roam SDK: $e");
+    }
+  }
+
+  Future<void> requestLocationPermissions() async {
+    final locationWhenInUse = await Permission.locationWhenInUse.request();
+    if (locationWhenInUse.isGranted) {
+      final locationAlways = await Permission.locationAlways.request();
+      if (!locationAlways.isGranted) {
+        print("Location always permission not granted.");
+      } else {
+        print("Location permissions granted.");
+        await getCurrentLocation1();
+      }
+    } else {
+      print("Location permission denied.");
+    }
+  }
+
+  Future<void> getCurrentLocation1() async {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    print("Initial location: ${position.latitude}, ${position.longitude}");
+  }
+
+  Future<void> listenToLocationUpdates() async {
+    print("Setting location listener...");
+
+    print("Location listener set.");
+  }
+
+
   Future<void> clickPunch(BuildContext context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     List<String>? role = preferences.getStringList('roleName');
     final String? employeeID = preferences.getString('employeId');
     final String? token = preferences.getString('token');
+   final String? roamId =  preferences.getString('roamId');
+    final String? trackingMode =  preferences.getString('trackingMode');
+
     if (kDebugMode) {
       print(role?.first);
     }
@@ -291,6 +404,9 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               state = state.copyWith(punchStatus: value?.punchIn);
             },
           );
+        }
+        if(trackingMode!=null && roamId!=null){
+          initialiseRoamSdk(trackingMode, roamId);
         }
         if (value) {
           switch (role?.first.toString()) {
@@ -492,6 +608,4 @@ class PunchAttendanceModel{
   final bool punchIn;
 
   PunchAttendanceModel({required this.allowed, required this.punchIn});
-
-
 }

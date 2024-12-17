@@ -12,8 +12,8 @@ import '../../Eod/view/all_task.dart';
 import '../../Eod/view/bodlist.dart';
 import '../../ui/Collection/Collection cases/view/cases_screen.dart';
 import '../../ui/Collection/Collection cases/view/visitPending/more_info_screen.dart';
-import '../../ui/PD/view/PD Form/pd_existing_data/view/pd_existing_data_form.dart';
-import '../../ui/PD/view/PD Form/pd_form_screen.dart';
+import '../../ui/PD/PD Forms/pd_existing_data/view/pd_existing_data_form.dart';
+import '../../ui/PD/PD Forms/pd_form_screen.dart';
 import '../../ui/PD/view/pd_approved.dart';
 import '../../ui/PD/view/pd_dashboard_screen.dart';
 import '../../ui/PD/view/pd_pending.dart';
@@ -265,9 +265,11 @@ class AppRoutes {
           },
         );
       case pdfilledform:
-        return MaterialPageRoute(builder: (_) => PdFilledForm());
+        final customerId = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) => PdFilledForm(customerId: customerId,));
       case pdformscreen:
-        return MaterialPageRoute(builder: (_) => const PdFormScreen());
+        final customerId = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) =>  PdFormScreen(customerId: customerId,));
       case eodscreen:
         return MaterialPageRoute(builder: (_) => const EODScreenAdd());
       case bodscreen:

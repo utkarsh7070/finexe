@@ -143,7 +143,7 @@ class PdRequestScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          pdreitem.customerName!,
+                          pdreitem.customerName??'',
                           style: AppStyles.blackText16,
                         ),
                         SizedBox(
@@ -154,7 +154,7 @@ class PdRequestScreen extends ConsumerWidget {
                           style: AppStyles.gray7Text,
                         ),
                         Text(
-                          pdreitem.customerAddress!,
+                          pdreitem.customerAddress??'NA',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: AppStyles.blacktext14,
@@ -175,6 +175,7 @@ class PdRequestScreen extends ConsumerWidget {
                       pdRequestViewModel.pdRequestDefuse(pdreitem.sId!).then(
                         (value) {
                           if (value!) {
+
                             ref.refresh(fetchpdRefuseandAcceptListProvider);
                             ref.refresh(fetchPdRequestListProvider);
                             showCustomSnackBar(

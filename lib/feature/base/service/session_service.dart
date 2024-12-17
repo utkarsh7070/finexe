@@ -6,18 +6,23 @@ class SessionService {
       String? employeeId,
       String? name,
       String? email,
-        List<String>? role}) async {
+      String? romId,
+      String? trakingMode,
+      List<String>? role}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setString('token', accessToken!);
     preferences.setString('employeId', employeeId!);
     preferences.setString('name', name ?? '');
     preferences.setString('email', email ?? '');
+    preferences.setString('roamId', romId ?? '');
+    preferences.setString('trackingMode', trakingMode ?? '');
     preferences.setStringList('roleName', role ?? []);
 
-    print('session values ${preferences.getString('token')}  ${preferences.getString('employeId')}   ${preferences.getString('name')}   ${preferences.getString('email') }  ${preferences.getStringList('roleName') }');
+    print(
+        'session values ${preferences.getString('token')}  ${preferences.getString('employeId')}   ${preferences.getString('name')}   ${preferences.getString('email')}  ${preferences.getStringList('roleName')}');
   }
 
-  // Method to retrieve the token
+// Method to retrieve the token
   static Future<String?> getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString('token');
@@ -49,7 +54,7 @@ class SessionService {
 
   static Future<bool> deleteSession() async {
     SharedPreferences preferences = await getSession();
-    // await preferences.remove('token');
+// await preferences.remove('token');
     await preferences.clear();
     return true;
   }

@@ -10,6 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../base/api/api.dart';
+import '../../../base/utils/widget/app_button.dart';
+import '../../../base/utils/widget/app_text_filed_login.dart';
 
 class PdScreen extends ConsumerStatefulWidget {
   const PdScreen({super.key});
@@ -37,7 +39,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
     final pdRefuseList = ref.watch(fetchPdRefuseCasetProvider);
     final gridItems = ref.watch(griditemProvider);
     var _scaffoldKey = GlobalKey<ScaffoldState>();
-    final pdITems = ref.watch(pdItemsProvider);
+    // final pdITems = ref.watch(pdItemsProvider);
     return Scaffold(
       key: _scaffoldKey,
       drawer: const PdDrawer(),
@@ -293,14 +295,18 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                 ],
               ),
               //  constantSizedbox(context),
-              pdRefuseList.when(data: (data) {
-                return ListView.builder(
+              pdRefuseList.when(
+                data: (refuseItemsByPD) {
+                return
+                  refuseItemsByPD.length==0?
+                  Text('No refused cases'):
+                  ListView.builder(
                   shrinkWrap:
                   true, // Allows ListView to take up only the required height
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 4,
+                  itemCount: refuseItemsByPD.length,
                   itemBuilder: (context, index) {
-                    final items = pdITems[index];
+                    final items = refuseItemsByPD[index];
                     return Container(
                       height: displayHeight(context) * 0.06,
                       // width: displayWidth(context) * 0.9,
@@ -322,7 +328,8 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: CachedNetworkImage(
-                                  imageUrl: data[index].customerPhoto??'',
+                                  imageUrl: items.customerPhoto??'',
+                                  // imageUrl: data[index].customerPhoto??'',
                                   height: displayHeight(context) * 0.09,
                                   width: displayWidth(context) * 0.12,
                                   fit: BoxFit.cover,
@@ -342,11 +349,11 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    data[index].customerName??'',
+                                    items.customerName??'',
                                     style: AppStyles.blacktext14,
                                   ),
                                   Text(
-                                    data[index].customerFinId??'',
+                                    items.customerFinId??'',
                                     style: AppStyles.subHeading,
                                   ),
                                 ],
@@ -356,12 +363,13 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                           //SizedBox(width: displayWidth(context) * 0.4),
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, AppRoutes.pdformscreen,arguments: {
-                                'customerId': data[index].customerId
-                              });
+                              // Navigator.pushNamed(context, AppRoutes.pdformscreen,arguments: {
+                              //   'customerId': items.customerId
+                              // });
+                              _showCustomBottomSheet(context);
                             },
                             child: Text(
-                              items.initialPd,
+                              'initiate again',
                               style: AppStyles.blueText,
                             ),
                           )
@@ -370,7 +378,9 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                     );
                   },
                 );
-              }, error: (error, stackTrace) => throw Exception(), loading: () {
+              },
+                error: (error, stackTrace) => throw Exception(),
+                loading: () {
                 return const Center(child: CircularProgressIndicator());
               },)
 
@@ -456,4 +466,231 @@ class _PdScreenState extends ConsumerState<PdScreen> {
       ),
     );
   }
+
+  void _showCustomBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      // Allow custom height
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      backgroundColor: Colors.transparent,
+      // Make background transparent to see the cross icon
+      builder: (BuildContext bc) {
+        return Stack(
+          children: [
+            // This is the bottom sheet content
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(20.0),
+                height: displayHeight(context) *
+                    0.75, // Adjust height here (e.g., 75% of screen height)
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(25.0)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/icon_image.png',
+                      height: displayHeight(context) * 0.1,
+                      width: displayWidth(context) * 0.3,
+                    ),
+                    SizedBox(
+                      height: displayHeight(context) * 0.04,
+                    ),
+                    Text(
+                      'Do Customer have these 3 \n documents?',
+                      textAlign: TextAlign.center,
+                      style: AppStyles.TextStyle16,
+                    ),
+                    SizedBox(height: displayHeight(context) * 0.01),
+                    Image.asset(
+                      'assets/images/mesag_container.png',
+                      height: displayHeight(context) * 0.3,
+                      width: displayWidth(context) * 0.5,
+                    ),
+                    AppButton(
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showSecondBottomSheet(context);
+
+                      },
+                      textStyle: AppStyles.buttonLightTextStyle,
+                      label: 'Yes, Applicant has it',
+                      height: MediaQuery.of(context).size.height * 0.06,
+                      width: MediaQuery.of(context).size.width * 0.8,
+                    ),
+                    SizedBox(height: displayHeight(context) * 0.02),
+                    AppButton(
+                      onTap: () {},
+                      textStyle: AppStyles.buttonLightTextStyle,
+                      label: 'No',
+                      isFill: true,
+                      // textStyle: AppStyles.grayStyle,
+                      bgColor: const Color(0xffF4F4F4),
+                      height: MediaQuery.of(context).size.height * 0.06,
+                      width: MediaQuery.of(context).size.width * 0.8,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // This is the cross icon above the bottom sheet
+            Positioned(
+              top: displayHeight(context) *
+                  0.12, // You can adjust the distance from the top
+              right: displayWidth(context) *
+                  0.45, // Adjust the right margin for the cross icon
+              child: Container(
+                height: displayHeight(context) * 0.13,
+                width: displayWidth(context) * 0.13,
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.white),
+                child: IconButton(
+                  icon: const Icon(Icons.close, size: 30, color: Colors.black),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the bottom sheet
+                  },
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showSecondBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      // Allow custom height
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      backgroundColor: Colors.transparent,
+      // Make background transparent to see the cross icon
+      builder: (BuildContext bc) {
+        return Stack(
+          children: [
+            // This is the bottom sheet content
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(20.0),
+                height: displayHeight(context) *
+                    0.6, // Adjust height here (e.g., 75% of screen height)
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(25.0)),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Do Write your Particular reason for reject this case.',
+                      style: AppStyles.TextStyle16,textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    const Text('Remark'),
+                    const SizedBox(height: 10),
+                    AppFloatTextField(
+                      onChange: (value) {
+                        // checkpassValidation.checkPassword(value);
+                      },
+                      // initialValue: 'cvfcfbcvb',
+                      maxLine: 1,
+                      //   focusNode: focusViewModel.passFocusNode,
+                      //  currentState: focusStates['passFocusNode'],
+                      // height: passwordValidations
+                      //     ? displayHeight(context) * 0.09
+                      //     : null,
+                      // focusNode: FocusNode(),
+                      onValidate: (value) {
+                        print(value);
+                        if (value!.isEmpty) {
+                          return "password is a required field";
+                        }
+                        return '';
+                      },
+                      onFiledSubmitted: (value) {
+                        // ref
+                        //     .read(passwordValidationProvider.notifier)
+                        //     .checkPassword(value);
+                      },
+                      inerHint: 'enter your remark',
+                      errorText: "password is a required field",
+                      //    isError: passwordValidations,
+                      textInputAction: TextInputAction.next,
+                      isSuffix: true,
+
+                      hint: 'enter your remark',
+                      // controller: _passwordController,
+                    ),
+                    SizedBox(
+                      height: displayHeight(context) * 0.05,
+                    ),
+                    AppButton(
+                      onTap: () {},
+                      label: 'Submit',
+                      textStyle: AppStyles.buttonLightTextStyle,
+                      height: MediaQuery.of(context).size.height * 0.06,
+                      width: MediaQuery.of(context).size.width,
+                    ),
+                    SizedBox(height: displayHeight(context) * 0.02),
+                    AppButton(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      label: 'Cancel',
+                      isFill: true,
+                      textStyle: AppStyles.buttonLightTextStyle,
+                      bgColor: const Color(0xffF4F4F4),
+                      height: displayHeight(context) * 0.06,
+                      width: displayWidth(context),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // This is the cross icon above the bottom sheet
+            Positioned(
+              top: displayHeight(context) *
+                  0.28, // You can adjust the distance from the top
+              right: displayWidth(context) *
+                  0.45, // Adjust the right margin for the cross icon
+              child: Container(
+                height: displayHeight(context) * 0.13,
+                width: displayWidth(context) * 0.13,
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.white),
+                child: IconButton(
+                  icon: const Icon(Icons.close, size: 30, color: Colors.black),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the bottom sheet
+                  },
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+
 }

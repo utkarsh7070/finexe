@@ -37,12 +37,18 @@ class Items {
   List<String> roleName;
   @JsonKey(name: "token")
   String token;
+  @JsonKey(name: "roamId")
+  String roamId;
+  @JsonKey(name: "trackingMode")
+  String trackingMode;
 
   Items({
     required this.employeId,
     required this.userName,
     required this.roleName,
     required this.token,
+    required this.roamId,
+    required this.trackingMode,
   });
 
   factory Items.fromJson(Map<String, dynamic> json) => _$ItemsFromJson(json);

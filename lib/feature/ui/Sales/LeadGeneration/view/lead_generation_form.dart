@@ -296,6 +296,7 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
 
                 Row(
                   children: [
+
                     Expanded(
                       child: DropdownButtonFormField<String>(
                         value: loanAmountController.text.isEmpty ? null : loanAmountController.text,
@@ -318,6 +319,7 @@ class _LeadGenerationFormState extends ConsumerState<LeadGenerationForm> {
                         },
                       ),
                     ),
+
                     const SizedBox(width: 10), // Optional spacing between the fields
                     Expanded(
                       child: DropdownButtonFormField<String>(

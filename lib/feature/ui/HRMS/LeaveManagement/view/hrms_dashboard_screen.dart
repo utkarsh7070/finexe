@@ -270,6 +270,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                               IconButton(
                                 onPressed: () {
                                   hrmsViewModel.onPunchOut(context);
+                                  ref.refresh(loginUserProfileProvider);
                                 },
                                 icon: const Icon(Icons.fingerprint,
                                     size: 40, color: Colors.green),
