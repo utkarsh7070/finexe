@@ -13,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../base/routes/routes.dart';
+import '../../../base/service/socket_io_service.dart';
 import '../../../base/utils/namespase/display_size.dart';
 import '../../../base/utils/widget/app_text_field.dart';
 import '../../../base/utils/widget/app_text_filed_login.dart';
@@ -301,6 +302,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             if (kDebugMode) {
                               print(role);
                             }
+                            SocketService().startTracking();
                             loginStateViewModel.clickPunchInButton(
                                 context: context,
                                 email: _emailController.text.trim(),

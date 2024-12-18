@@ -10,8 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../../../base/routes/routes.dart';
 import '../../../../../base/utils/namespase/app_colors.dart';
 import '../../../widget/Visit Pending Dialogs/clouser_dialog/clouser_dialog.dart';
 import '../../../widget/Visit Pending Dialogs/map/map_dialog.dart';
@@ -32,351 +30,354 @@ class VisitPendingScreen extends ConsumerWidget {
         List<ItemsDetails> listOfLists = data.map((map) {
           return ItemsDetails.fromJson(map);
         }).toList();
-
         // print(sea?rchList);
         return Container(
           padding: const EdgeInsets.only(left: 16, right: 16),
           height: displayHeight(context),
           width: displayWidth(context),
-          child: Column(
-            children: [
-              // AdvancedSearch(
-              //   // data: ,
-              //   maxElementsToDisplay: 10,
-              //   singleItemHeight: 50,
-              //   borderColor: Colors.grey,
-              //   minLettersForSearch: 0,
-              //   selectedTextColor: const Color(0xFF3363D9),
-              //   fontSize: 14,
-              //   borderRadius: 12.0,
-              //   hintText: 'Search Me',
-              //   cursorColor: Colors.blueGrey,
-              //   autoCorrect: false,
-              //   focusedBorderColor: Colors.blue,
-              //   searchResultsBgColor: const Color(0xFAFAFA),
-              //   disabledBorderColor: Colors.cyan,
-              //   enabledBorderColor: Colors.black,
-              //   enabled: true,
-              //   caseSensitive: false,
-              //   inputTextFieldBgColor: Colors.white10,
-              //   clearSearchEnabled: true,
-              //   itemsShownAtStart: 10,
-              //   searchMode: SearchMode.CONTAINS,
-              //   showListOfResults: true,
-              //   unSelectedTextColor: Colors.black54,
-              //   verticalPadding: 10,
-              //   horizontalPadding: 10,
-              //   hideHintOnTextInputFocus: true,
-              //   hintTextColor: Colors.grey,
-              //   onItemTap: (index, value) {
-              //     if (kDebugMode) {
-              //       print("selected item index is $index");
-              //     }
-              //   },
-              //   onSearchClear: () {
-              //     if (kDebugMode) {
-              //       print("Cleared Search");
-              //     }
-              //   },
-              //   onSubmitted: (searchText, listOfResults) {
-              //     print("Submitted: " + searchText);
-              //   },
-              //   onEditingProgress: (searchText, listOfResults) {
-              //     print("TextEdited: " + searchText);
-              //     print("LENGTH: " + listOfResults.length.toString());
-              //   },
-              //
-              //   searchItems:[]
-              // ),
-              // SizedBox(
-              //   height: displayHeight(context) * 0.03,
-              // ),
-              Expanded(
-                child: SizedBox(
-                  height: displayHeight(context),
-                  width: displayWidth(context),
-                  child: ListView.builder(
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      final item = listOfLists[index];
+          child:
+          Visibility(
+            replacement:  Center(child: Text('No Visit Assign',style: AppStyles.headingTextStyle.copyWith(color: AppColors.gray),)),
+            visible: listOfLists.isNotEmpty,
+            child: Column(
+              children: [
+                // AdvancedSearch(
+                //   // data: ,
+                //   maxElementsToDisplay: 10,
+                //   singleItemHeight: 50,
+                //   borderColor: Colors.grey,
+                //   minLettersForSearch: 0,
+                //   selectedTextColor: const Color(0xFF3363D9),
+                //   fontSize: 14,
+                //   borderRadius: 12.0,
+                //   hintText: 'Search Me',
+                //   cursorColor: Colors.blueGrey,
+                //   autoCorrect: false,
+                //   focusedBorderColor: Colors.blue,
+                //   searchResultsBgColor: const Color(0xFAFAFA),
+                //   disabledBorderColor: Colors.cyan,
+                //   enabledBorderColor: Colors.black,
+                //   enabled: true,
+                //   caseSensitive: false,
+                //   inputTextFieldBgColor: Colors.white10,
+                //   clearSearchEnabled: true,
+                //   itemsShownAtStart: 10,
+                //   searchMode: SearchMode.CONTAINS,
+                //   showListOfResults: true,
+                //   unSelectedTextColor: Colors.black54,
+                //   verticalPadding: 10,
+                //   horizontalPadding: 10,
+                //   hideHintOnTextInputFocus: true,
+                //   hintTextColor: Colors.grey,
+                //   onItemTap: (index, value) {
+                //     if (kDebugMode) {
+                //       print("selected item index is $index");
+                //     }
+                //   },
+                //   onSearchClear: () {
+                //     if (kDebugMode) {
+                //       print("Cleared Search");
+                //     }
+                //   },
+                //   onSubmitted: (searchText, listOfResults) {
+                //     print("Submitted: " + searchText);
+                //   },
+                //   onEditingProgress: (searchText, listOfResults) {
+                //     print("TextEdited: " + searchText);
+                //     print("LENGTH: " + listOfResults.length.toString());
+                //   },
+                //
+                //   searchItems:[]
+                // ),
+                // SizedBox(
+                //   height: displayHeight(context) * 0.03,
+                // ),
+                Expanded(
+                  child: SizedBox(
+                    height: displayHeight(context),
+                    width: displayWidth(context),
+                    child: ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        final item = listOfLists[index];
+                        // List<String> valueList = item.values.toList();
 
-                      // List<String> valueList = item.values.toList();
-
-                      return Card(
-                          elevation: 5,
-                          child: IntrinsicHeight(
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                        return Card(
+                            elevation: 5,
+                            child: IntrinsicHeight(
+                              child: Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          customerNameDetails(
+                                            mobile: item.mobile!,
+                                            context,
+                                            heading: 'Customer Name',
+                                            data:
+                                                '${item.customerName} S/O ${item.fatherName}',
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CollectionMoreInfoScreen(
+                                                          index: index),
+                                                ),
+                                              );
+                                            },
+                                            child: Center(
+                                                child: Image.asset(
+                                              'assets/images/info.png',
+                                              height: 20,
+                                              width: 20,
+                                            )),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: displayHeight(context) * 0.02,
+                                    ),
+                                    Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        customerNameDetails(
-                                          mobile: item.mobile!,
-                                          context,
-                                          heading: 'Customer Name',
-                                          data:
-                                              '${item.customerName} S/O ${item.fatherName}',
+                                        Center(
+                                            child: Text(
+                                          item.ld!,
+                                          style: AppStyles.cardTextStyle16
+                                              .copyWith(
+                                                  color: AppColors.primary,
+                                                  fontSize: FontSize.fontSizeS),
+                                        )),
+                                        Container(
+                                            padding: const EdgeInsets.all(6),
+                                            decoration: const BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(10),
+                                                    bottomRight:
+                                                        Radius.circular(10)),
+                                                color: AppColors.primaryOrange),
+                                            child: Center(
+                                                child: Text(
+                                              item.partner!,
+                                              style: const TextStyle(
+                                                  color: Colors.orange),
+                                            ))),
+                                      ],
+                                    ),
+                                    const Divider(
+                                      thickness: 1,
+                                      color: AppColors.dividerColors,
+                                      indent: 10,
+                                      endIndent: 10,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Address',
+                                              style: AppStyles.subTextStyle,
+                                            ),
+                                            SizedBox(
+                                                width:
+                                                    displayWidth(context) * 0.65,
+                                                child: Text(
+                                                    item.address!.capitalize(),
+                                                    maxLines: 3,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: AppStyles
+                                                        .subHeadingW500
+                                                        .copyWith(
+                                                            fontWeight: FontWeight
+                                                                .w600))),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: displayHeight(context) * 0.01,
                                         ),
                                         GestureDetector(
                                           onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CollectionMoreInfoScreen(
-                                                        index: index),
-                                              ),
-                                            );
+                                            MapDialog().mapDialog(
+                                                context: context,
+                                                lat: item.lat!,
+                                                log: item.longValue!);
                                           },
-                                          child: Center(
-                                              child: Image.asset(
-                                            'assets/images/info.png',
-                                            height: 20,
-                                            width: 20,
-                                          )),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(10),
+                                            decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                // borderRadius: BorderRadius.all(
+                                                //     Radius.circular(10)),
+                                                color: AppColors.primaryLight),
+                                            child: Center(
+                                                child: Image.asset(
+                                              'assets/images/Location.png',
+                                              height: 20,
+                                              width: 20,
+                                            )),
+                                          ),
                                         )
                                       ],
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: displayHeight(context) * 0.02,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Center(
-                                          child: Text(
-                                        item.ld!,
-                                        style: AppStyles.cardTextStyle16
-                                            .copyWith(
-                                                color: AppColors.primary,
-                                                fontSize: FontSize.fontSizeS),
-                                      )),
-                                      Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: const BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(10),
-                                                  bottomRight:
-                                                      Radius.circular(10)),
-                                              color: AppColors.primaryOrange),
-                                          child: Center(
-                                              child: Text(
-                                            item.partner!,
-                                            style: const TextStyle(
-                                                color: Colors.orange),
-                                          ))),
-                                    ],
-                                  ),
-                                  const Divider(
-                                    thickness: 1,
-                                    color: AppColors.dividerColors,
-                                    indent: 10,
-                                    endIndent: 10,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Address',
-                                            style: AppStyles.subTextStyle,
-                                          ),
-                                          SizedBox(
-                                              width:
-                                                  displayWidth(context) * 0.65,
-                                              child: Text(
-                                                  item.address!.capitalize(),
-                                                  maxLines: 3,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: AppStyles
-                                                      .subHeadingW500
-                                                      .copyWith(
-                                                          fontWeight: FontWeight
-                                                              .w600))),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: displayHeight(context) * 0.01,
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          MapDialog().mapDialog(
-                                              context: context,
-                                              lat: item.lat!,
-                                              log: item.longValue!);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.all(10),
-                                          decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              // borderRadius: BorderRadius.all(
-                                              //     Radius.circular(10)),
-                                              color: AppColors.primaryLight),
-                                          child: Center(
-                                              child: Image.asset(
-                                            'assets/images/Location.png',
-                                            height: 20,
-                                            width: 20,
-                                          )),
-                                        ),
-                                      )
-                                    ],
-                                  ),
 
-                                  SizedBox(
-                                    height: displayHeight(context) * 0.02,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Container(
-                                        width: displayWidth(context) * 0.25,
-                                        height: displayHeight(context) * 0.06,
-                                        decoration: const BoxDecoration(
-                                            color: AppColors.bgGreenLight,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10))),
-                                        child: emiText(
-                                            text1: 'EMI',
-                                            text2: '₹${item.emiAmount}',
-                                            text1Color: Colors.green,
-                                            text2Color: Colors.green),
-                                      ),
-                                      SizedBox(
-                                        width: displayWidth(context) * 0.25,
-                                        height: displayHeight(context) * 0.06,
-                                        child: emiText(
-                                            text1: 'Net Due',
-                                            text2: '₹${item.netDue}',
-                                            text1Color: AppColors.gray,
-                                            text2Color: AppColors.black),
-                                      ),
-                                      SizedBox(
-                                        width: displayWidth(context) * 0.25,
-                                        height: displayHeight(context) * 0.06,
-                                        child: emiText(
-                                            text1: 'Old Due',
-                                            text2: '₹${item.oldDue}',
-                                            text1Color: AppColors.gray,
-                                            text2Color: AppColors.black),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: displayHeight(context) * 0.02,
-                                  ),
-                                  // const Divider(
-                                  //   thickness: 1,
-                                  //   color: AppColors.dividerColors,
-                                  //   indent: 10,
-                                  //   endIndent: 10,
-                                  // ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      SizedBox(
-                                        width: displayWidth(context) * 0.37,
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              side: const BorderSide(
-                                                  color: AppColors.primary),
-                                              backgroundColor: AppColors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                            ),
-                                            onPressed: () {
-                                              UpdateVisitDialog()
-                                                  .updateVisitDialog(
-                                                      item: item,
-                                                      context: context,
-                                                      index: index);
-                                            },
-                                            child: const Text(
-                                              'Update Visit',
-                                              style: TextStyle(
-                                                  color: AppColors.primary),
-                                            )),
-                                      ),
-                                      SizedBox(
-                                        width: displayWidth(context) * 0.37,
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              side: const BorderSide(
-                                                  color: AppColors.primary),
-                                              backgroundColor: AppColors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                            ),
-                                            onPressed: () {
-                                              ClosuerDialog().closuerDialog(
-                                                  item: item,
-                                                  context: context,
-                                                  index: index);
-                                            },
-                                            child: const Text(
-                                              'Closure',
-                                              style: TextStyle(
-                                                  color: AppColors.primary),
-                                            )),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: displayHeight(context) * 0.01,
-                                  ),
-                                  SizedBox(
-                                    width: displayWidth(context),
-                                    child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          side: const BorderSide(
-                                              color: AppColors.primary),
-                                          backgroundColor: AppColors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
+                                    SizedBox(
+                                      height: displayHeight(context) * 0.02,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Container(
+                                          width: displayWidth(context) * 0.25,
+                                          height: displayHeight(context) * 0.06,
+                                          decoration: const BoxDecoration(
+                                              color: AppColors.bgGreenLight,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10))),
+                                          child: emiText(
+                                              text1: 'EMI',
+                                              text2: '₹${item.emiAmount}',
+                                              text1Color: Colors.green,
+                                              text2Color: Colors.green),
                                         ),
-                                        onPressed: () {
-                                          UpdateEmiDialog().updateEmiDialog(
-                                              context: context,
-                                              index: index,
-                                              item: item);
-                                        },
-                                        child: const Text(
-                                          'Update EMI',
-                                          style: TextStyle(
-                                              color: AppColors.primary),
-                                        )),
-                                  ),
-                                ],
+                                        SizedBox(
+                                          width: displayWidth(context) * 0.25,
+                                          height: displayHeight(context) * 0.06,
+                                          child: emiText(
+                                              text1: 'Net Due',
+                                              text2: '₹${item.netDue}',
+                                              text1Color: AppColors.gray,
+                                              text2Color: AppColors.black),
+                                        ),
+                                        SizedBox(
+                                          width: displayWidth(context) * 0.25,
+                                          height: displayHeight(context) * 0.06,
+                                          child: emiText(
+                                              text1: 'Old Due',
+                                              text2: '₹${item.oldDue}',
+                                              text1Color: AppColors.gray,
+                                              text2Color: AppColors.black),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: displayHeight(context) * 0.02,
+                                    ),
+                                    // const Divider(
+                                    //   thickness: 1,
+                                    //   color: AppColors.dividerColors,
+                                    //   indent: 10,
+                                    //   endIndent: 10,
+                                    // ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        SizedBox(
+                                          width: displayWidth(context) * 0.37,
+                                          child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                side: const BorderSide(
+                                                    color: AppColors.primary),
+                                                backgroundColor: AppColors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                UpdateVisitDialog()
+                                                    .updateVisitDialog(
+                                                        item: item,
+                                                        context: context,
+                                                        index: index);
+                                              },
+                                              child: const Text(
+                                                'Update Visit',
+                                                style: TextStyle(
+                                                    color: AppColors.primary),
+                                              )),
+                                        ),
+                                        SizedBox(
+                                          width: displayWidth(context) * 0.37,
+                                          child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                side: const BorderSide(
+                                                    color: AppColors.primary),
+                                                backgroundColor: AppColors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                ClosuerDialog().closuerDialog(
+                                                    item: item,
+                                                    context: context,
+                                                    index: index);
+                                              },
+                                              child: const Text(
+                                                'Closure',
+                                                style: TextStyle(
+                                                    color: AppColors.primary),
+                                              )),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: displayHeight(context) * 0.01,
+                                    ),
+                                    SizedBox(
+                                      width: displayWidth(context),
+                                      child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            side: const BorderSide(
+                                                color: AppColors.primary),
+                                            backgroundColor: AppColors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            UpdateEmiDialog().updateEmiDialog(
+                                                context: context,
+                                                index: index,
+                                                item: item);
+                                          },
+                                          child: const Text(
+                                            'Update EMI',
+                                            style: TextStyle(
+                                                color: AppColors.primary),
+                                          )),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ));
-                    },
+                            ));
+                      },
+                    ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         );
       },

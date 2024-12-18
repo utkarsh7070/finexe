@@ -8,6 +8,7 @@ import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/service/socket_io_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -93,9 +94,6 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   final TextEditingController taskTitleController = TextEditingController();
   final TextEditingController taskDescriptionController =
   TextEditingController();
-
-  final double targetLatitude = 22.724366;
-  final double targetLongitude = 75.882175;
   String? storedToken;
 
   @override
@@ -269,109 +267,118 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     return null;
   }
 
-  Future<void> initialiseRoamSdk(String? trackingMode, String? roamId) async {
-    print("Attempting to initialize Roam SDK...");
-    try {
-
-      await requestLocationPermissions();
-
-      // Roam.createUser(description: 'First user', callBack: ({user}) {
-      //   if (user != null) {
-      //     // print("User created successfully: ${user['userId']}")
-      //
-      //     print('User created successfully: $user');
-      //
-      //     // Roam.offlineTracking(true);
-      //     // Roam.allowMockLocation(allow: true);
-      //
-      //   } else {
-      //     print("Failed to create user.");
-      //   }
-      // });
-      Roam.getUser(userId:roamId!,callBack: ({user}) {
-// do something on get user
-        Roam.startTracking(trackingMode: trackingMode);
-        print(user);
-      });
-      // try {
-      //   await Roam.enableAccuracyEngine();
-      // } on PlatformException {
-      //   print('Enable Accuracy Engine Error');
-      // }
-
-      // listenToLocationUpdates();
-
-
-
-      // if (Platform.isAndroid) {
-      //   initializeService();
-      // } else {
-      //   Roam.onLocation((location) async {
-      //     print(jsonEncode(location));
-      //     await platform.invokeMethod('send_notification', {'body': jsonEncode(location)});
-      //     setState(() {
-      //       locationResponse = location.toString();
-      //     });
-      //   });
-      // }
-
-      // Roam.setForeground(true, "Flutter Example", "Tap to open", "mipmap/ic_launcher", "ai.roam.example.MainActivity");
-      print('tracking begain');
-
-
-      print('tracking end');
-
-
-      Roam.onLocation((location) {
-        if (location != null) {
-          print("Location update: ${jsonEncode(location)}");
-        } else {
-          print("No location update received.");
-        }
-        print("Received location from Roam SDK: ${jsonEncode(location)}");
-        /*showCustomSnackBar(
-          context, "Received location from Roam SDK: ${jsonEncode(location)}", Colors.green);*/
-      });
-      // await listenToLocationUpdates();
-
-
-      trackingTimer = Timer(Duration(hours: 15), () {
-        Roam.stopTracking();
-        print("Tracking stopped after 15 minutes.");
-      });
-
-    } catch (e) {
-      print("Failed to initialize Roam SDK: $e");
-    }
-  }
-
-  Future<void> requestLocationPermissions() async {
-    final locationWhenInUse = await Permission.locationWhenInUse.request();
-    if (locationWhenInUse.isGranted) {
-      final locationAlways = await Permission.locationAlways.request();
-      if (!locationAlways.isGranted) {
-        print("Location always permission not granted.");
-      } else {
-        print("Location permissions granted.");
-        await getCurrentLocation1();
-      }
-    } else {
-      print("Location permission denied.");
-    }
-  }
-
-  Future<void> getCurrentLocation1() async {
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    print("Initial location: ${position.latitude}, ${position.longitude}");
-  }
-
-  Future<void> listenToLocationUpdates() async {
-    print("Setting location listener...");
-
-    print("Location listener set.");
-  }
+//   Future<void> initialiseRoamSdk(String? trackingMode, String? roamId) async {
+//     print("Attempting to initialize Roam SDK...");
+//     try {
+//
+//       await requestLocationPermissions();
+//
+//       // Roam.createUser(description: 'First user', callBack: ({user}) {
+//       //   if (user != null) {
+//       //     // print("User created successfully: ${user['userId']}")
+//       //
+//       //     print('User created successfully: $user');
+//       //
+//       //     // Roam.offlineTracking(true);
+//       //     // Roam.allowMockLocation(allow: true);
+//       //
+//       //   } else {
+//       //     print("Failed to create user.");
+//       //   }
+//       // });
+//       Roam.getUser(userId:roamId!,callBack: ({user}) {
+// // do something on get user
+//         Roam.startTracking(trackingMode: trackingMode);
+//         print(user);
+//       });
+//       Roam.enableAccuracyEngine();
+//       print('after AccuracyEngine');
+//       Roam.onLocation((location) async {
+//         if (kDebugMode) {
+//           print(jsonEncode(location));
+//         }
+//       });
+//       print('after onLocation');
+//       // try {
+//       //
+//       // } on PlatformException {
+//       //   print('Enable Accuracy Engine Error');
+//       // }
+//
+//       // listenToLocationUpdates();
+//
+//
+//
+//
+//       // if (Platform.isAndroid) {
+//       //   initializeService();
+//       // } else {
+//       //   Roam.onLocation((location) async {
+//       //     print(jsonEncode(location));
+//       //     await platform.invokeMethod('send_notification', {'body': jsonEncode(location)});
+//       //     setState(() {
+//       //       locationResponse = location.toString();
+//       //     });
+//       //   });
+//       // }
+//
+//       // Roam.setForeground(true, "Flutter Example", "Tap to open", "mipmap/ic_launcher", "ai.roam.example.MainActivity");
+//       print('tracking begain');
+//
+//
+//       print('tracking end');
+//
+//
+//       Roam.onLocation((location) {
+//         if (location != null) {
+//           print("Location update: ${jsonEncode(location)}");
+//         } else {
+//           print("No location update received.");
+//         }
+//         print("Received location from Roam SDK: ${jsonEncode(location)}");
+//         /*showCustomSnackBar(
+//           context, "Received location from Roam SDK: ${jsonEncode(location)}", Colors.green);*/
+//       });
+//       // await listenToLocationUpdates();
+//
+//
+//       trackingTimer = Timer(Duration(hours: 15), () {
+//         Roam.stopTracking();
+//         print("Tracking stopped after 15 minutes.");
+//       });
+//
+//     } catch (e) {
+//       print("Failed to initialize Roam SDK: $e");
+//     }
+//   }
+//
+//   Future<void> requestLocationPermissions() async {
+//     final locationWhenInUse = await Permission.locationWhenInUse.request();
+//     if (locationWhenInUse.isGranted) {
+//       final locationAlways = await Permission.locationAlways.request();
+//       if (!locationAlways.isGranted) {
+//         print("Location always permission not granted.");
+//       } else {
+//         print("Location permissions granted.");
+//         await getCurrentLocation1();
+//       }
+//     } else {
+//       print("Location permission denied.");
+//     }
+//   }
+//
+//   Future<void> getCurrentLocation1() async {
+//     Position position = await Geolocator.getCurrentPosition(
+//       desiredAccuracy: LocationAccuracy.high,
+//     );
+//     print("Initial location: ${position.latitude}, ${position.longitude}");
+//   }
+//
+//   Future<void> listenToLocationUpdates() async {
+//     print("Setting location listener...");
+//
+//     print("Location listener set.");
+//   }
 
 
   Future<void> clickPunch(BuildContext context) async {
@@ -390,11 +397,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     // if (state.punchStatus) {
     await onPunchIn(context).then(
           (value) async {
-        //   if (value!) {
-        //     await AddBodDialog().addAlbumDialog(
-        //       context,
-        //     );
-        //   }
+
         if (kDebugMode) {
           print(value);
         }
@@ -405,9 +408,10 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
             },
           );
         }
-        if(trackingMode!=null && roamId!=null){
-          initialiseRoamSdk(trackingMode, roamId);
-        }
+
+        // if(trackingMode!=null && roamId!=null){
+        //   // initialiseRoamSdk(trackingMode, roamId);
+        // }
         if (value) {
           switch (role?.first.toString()) {
             case 'admin':
@@ -537,6 +541,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       if (response.statusCode == 200) {
 
         showCustomSnackBar(context, message, AppColors.green);
+        Roam.stopTracking();
         // PunchInModel punchInModel = PunchInModel.fromJson(response.data);
       } else {
         showCustomSnackBar(context, message, AppColors.green);
@@ -551,6 +556,12 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   }
 }
 
+// final socketServiceProvider = Provider<SocketService>((ref) {
+//   final socketService = SocketService();
+//   socketService.connectSocket();  // Connect when the provider is created
+//   return socketService;
+// });
+
 final punchInRepositoryProvider =
 Provider.autoDispose<PunchInRepositoryImp>((ref) {
   return PunchInRepositoryImp(); // Provides instance of PunchInRepository
@@ -560,6 +571,7 @@ Provider.autoDispose<PunchInRepositoryImp>((ref) {
 final attendanceProvider =
 StateNotifierProvider<AttendanceNotifier, AttendanceState>((ref) {
   final dio = ref.watch(dioProvider);
+  // final socket = ref.watch(socketServiceProvider);
   return AttendanceNotifier(ref.watch(punchInRepositoryProvider), dio);
 });
 
@@ -609,3 +621,10 @@ class PunchAttendanceModel{
 
   PunchAttendanceModel({required this.allowed, required this.punchIn});
 }
+
+final getScreenFirstData = FutureProvider((ref) {
+
+},);
+
+
+

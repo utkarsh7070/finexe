@@ -1,187 +1,170 @@
-
-
 import 'package:dio/dio.dart';
+import 'package:flutter/Material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../../base/api/api.dart';
 import '../../../../base/service/session_service.dart';
 import '../../../Collection/Collection_home_dashboard/home_collection_viewmodel/fetchUserProfile.dart';
 import '../model/attendance_listing_model.dart';
 
+final roleName = Provider<RoleListModel>(
+  (ref) {
+    final prefs = ref.watch(sharedPreferencesHrmsProvider).asData?.value;
+    List<String>? role = prefs?.getStringList('roleName');
+    RoleListModel roleListModel = RoleListModel(role: role ?? []);
+    return roleListModel;
+  },
+);
 
-final roleName = Provider<RoleListModel>((ref) {
-  final prefs = ref
-      .watch(sharedPreferencesHrmsProvider)
-      .asData
-      ?.value;
-  List<String>? role = prefs?.getStringList('roleName');
-  RoleListModel roleListModel = RoleListModel(role: role??[]);
-  return roleListModel;
-},);
-
-final sharedPreferencesHrmsProvider = FutureProvider<SharedPreferences>((
-    ref) async {
+final sharedPreferencesHrmsProvider =
+    FutureProvider<SharedPreferences>((ref) async {
   final prefs = await SharedPreferences.getInstance();
   return prefs;
 });
 
+class AttendanceState {
+  final bool isLoading;
+  final Map<String, dynamic>? data;
+  final String? error;
 
-final attendanceListingProvider = FutureProvider.autoDispose.family<Map<String, dynamic>, String>((ref, employeeId) async {
-  final viewModel = AttendanceProvider();
-  return viewModel.fetchAttendanceRequests(employeeId);
-});
+  AttendanceState({this.isLoading = false, this.data, this.error});
 
-class AttendanceProvider {
+  AttendanceState copyWith(
+      {bool? isLoading, Map<String, dynamic>? data, String? error}) {
+    return AttendanceState(
+      isLoading: isLoading ?? this.isLoading,
+      data: data ?? this.data,
+      error: error ?? this.error,
+    );
+  }
+}
+
+final attendanceListingProvider = StateNotifierProvider.family<
+    AttendanceNotifier, AsyncValue<Map<String, dynamic>>, String>(
+  (ref, employeeId) {
+    final controllerNotifier = ref.read(controllerProvider);
+    final notifier = AttendanceNotifier(controllerNotifier.monthController);
+    notifier.fetchAttendanceRequests(employeeId);
+    return notifier;
+  },
+);
+
+class AttendanceNotifier
+    extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
   final Dio _dio = Dio();
 
-  Future<Map<String, dynamic>> fetchAttendanceRequests(String employeeId) async {
+  final TextEditingController monthController;
+
+  AttendanceNotifier(this.monthController) : super(const AsyncValue.loading());
+
+  Future<void> fetchAttendanceRequests(String employeeId) async {
     try {
+      state = const AsyncValue.loading();
+
       String? token = await SessionService.getToken();
 
-      // Get the current month in the required format
-      String currentMonth = DateFormat('MM').format(DateTime.now());
+      // Check if monthController.text is empty (no month selected)
+      if (monthController.text.isEmpty) {
+        // Set current month as default if no month is selected
+        monthController.text = DateFormat('MMMM').format(DateTime.now());
+      }
+
+      // Get the selected month from the controller
+      String selectedMonth = monthController.text;
+      int monthNumber =
+          _getMonthNumber(selectedMonth); // Convert to numeric representation
 
       final response = await _dio.get(
         Api.getAttendanceDetails,
         queryParameters: {
           "employeeId": employeeId,
-          "month": currentMonth,
+          /*"month": currentMonth,*/
+          "month": monthNumber.toString().padLeft(2, '0'), // Ensure two digits
         },
         options: Options(headers: {"token": token}),
       );
 
-      print('Attendance Details Response ${response.data}');
+      print('Attendance Response $response');
 
       if (response.statusCode == 200 && response.data != null) {
         final data = response.data['items'];
-
-        // Ensure `attendanceRecords` is handled safely
         final attendanceList = (data?['attendanceRecords'] as List<dynamic>?)
-            ?.map((e) => AttendanceRecord.fromJson(e))
-            .toList() ??
-            <AttendanceRecord>[]; // Provide a default empty list if null
+                ?.map((e) => AttendanceRecord.fromJson(e))
+                .toList() ??
+            <AttendanceRecord>[];
 
         final counters = data != null ? AttendanceItems.fromJson(data) : null;
 
-        return {
+        state = AsyncValue.data({
           "counters": counters,
           "attendanceRecords": attendanceList,
-        };
+        });
       } else {
         throw Exception("Failed to load data");
       }
-    } catch (e) {
-      print("Error in fetchAttendanceRequests: $e");
-      throw Exception("Error fetching attendance data: $e");
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
     }
+  }
+
+  // Helper method to convert month name to numeric value
+  int _getMonthNumber(String monthName) {
+    const monthMap = {
+      'January': 1,
+      'February': 2,
+      'March': 3,
+      'April': 4,
+      'May': 5,
+      'June': 6,
+      'July': 7,
+      'August': 8,
+      'September': 9,
+      'October': 10,
+      'November': 11,
+      'December': 12,
+    };
+
+    return monthMap[monthName] ??
+        DateTime.now().month; // Default to current month if not found
   }
 }
 
+class ControllerNotifier extends StateNotifier<void> {
+  final TextEditingController monthController = TextEditingController();
 
-
-/*final attendanceListingProvider = FutureProvider<Map<String, dynamic>>((ref) async {
-  final viewModel = AttendanceProvider();
-  return viewModel.fetchAttendanceRequests();
-});
-
-class AttendanceProvider {
-  final Dio _dio = Dio();
-
-  Future<Map<String, dynamic>> fetchAttendanceRequests() async {
-    try {
-      String? token = await SessionService.getToken();
-
-      // Get the current month in the required format
-      String currentMonth = DateFormat('MM').format(DateTime.now());
-
-      final response = await _dio.get(
-        Api.getAttendanceDetails,
-        queryParameters: {
-          "employeeId": "66981647db41e6bc29efcc77",
-          "month": currentMonth,
-        },
-        options: Options(headers: {"token": token}),
-      );
-
-      print('Attendance Details Response ${response.data}');
-
-      if (response.statusCode == 200 && response.data != null) {
-        final data = response.data['items'];
-
-        // Ensure `attendanceRecords` is handled safely
-        final attendanceList = (data?['attendanceRecords'] as List<dynamic>?)
-            ?.map((e) => AttendanceRecord.fromJson(e))
-            .toList() ??
-            <AttendanceRecord>[]; // Provide a default empty list if null
-
-        final counters = data != null ? AttendanceItems.fromJson(data) : null;
-
-        return {
-          "counters": counters,
-          "attendanceRecords": attendanceList,
-        };
-      } else {
-        throw Exception("Failed to load data");
-      }
-    } catch (e) {
-      print("Error in fetchAttendanceRequests: $e");
-      throw Exception("Error fetching attendance data: $e");
-    }
+  ControllerNotifier() : super(null) {
+    resetToCurrentMonth(); // Initialize with current month
   }
 
+  final List<String> monthOptions = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'November',
+    'December',
+  ];
 
-*//*Future<Map<String, dynamic>> fetchAttendanceRequests() async {
-    try {
-      String? token = await SessionService.getToken();
+  void resetToCurrentMonth() {
+    monthController.text = DateFormat('MMMM').format(DateTime.now());
+  }
 
-      // Get the current month in the required format
-      String currentMonth = DateFormat('MM').format(DateTime.now());
+  @override
+  void dispose() {
+    monthController.dispose();
+    super.dispose();
+  }
+}
 
-      final response = await _dio.get( Api.getAttendanceDetails,
-        queryParameters: {"employeeId": "66981647db41e6bc29efcc77", "month": currentMonth},
-        options: Options(headers: {"token": token}),); // Replace with your endpoint.
-
-      print('Attendance Details Response ${response.data}');
-
-      if (response.statusCode == 200 && response.data != null) {
-        final data = response.data['items'];
-
-        AttendanceItems? counters = data != null ? AttendanceItems.fromJson(data) : null;
-
-        final attendanceList = data != null && data['attendanceRecords'] != null
-            ? (data['attendanceRecords'] as List)
-            .map((e) => AttendanceRecord.fromJson(e))
-            .toList()
-            : <AttendanceRecord>[];
-
-        return {
-          "counters": counters,
-          "attendanceRecords": attendanceList,
-        };
-      }else {
-        throw Exception("Failed to load data");
-      }
-
-
-      *//**//* if (response.statusCode == 200 && response.data != null) {
-        final data = response.data['items'];
-        final counters = AttendanceItems.fromJson(data);
-
-        final attendanceList = (data['attendanceRecords'] as List)
-            .map((e) => AttendanceRecord.fromJson(e))
-            .toList();
-
-        return {
-          "counters": counters,
-          "attendanceRecords": attendanceList,
-        };
-      } else {
-        throw Exception("Failed to load data");
-      }*//**//*
-    } catch (e) {
-      throw Exception("Error fetching leave requests: $e");
-    }
-  }*//*
-}*/
+final controllerProvider = Provider<ControllerNotifier>((ref) {
+  final controllerNotifier = ControllerNotifier();
+  ref.onDispose(() => controllerNotifier
+      .dispose()); // Dispose the controller when the provider is no longer used
+  return controllerNotifier;
+});

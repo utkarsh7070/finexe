@@ -5,11 +5,21 @@ import 'package:intl/intl.dart';
 
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
+import '../../../../base/utils/widget/dropdown_style.dart';
+import '../model/attendance_listing_model.dart';
+import '../view_model/attendance_listing_view_model.dart';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import '../../../../base/utils/namespase/app_colors.dart';
+import '../../../../base/utils/widget/dropdown_style.dart';
 import '../model/attendance_listing_model.dart';
 import '../view_model/attendance_listing_view_model.dart';
 
 class AttendanceDetailsScreen extends ConsumerStatefulWidget {
- // const AttendanceDetailsScreen({Key? key}) : super(key: key);
+  // const AttendanceDetailsScreen({Key? key}) : super(key: key);
 
   @override
   ConsumerState<AttendanceDetailsScreen> createState() => _AttendanceDetailsScreenState();
@@ -22,18 +32,21 @@ class AttendanceDetailsScreen extends ConsumerStatefulWidget {
 
 class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScreen> {
 
-/*class AttendanceDetailsScreen extends ConsumerStatefulWidget {
-
-
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() {
-    // TODO: implement createState
-    throw UnimplementedError();
-  }*/
+  void initState() {
+    super.initState();
+    // Reset the monthController to current month
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(controllerProvider).resetToCurrentMonth();
+      ref.read(attendanceListingProvider(widget.employeeId).notifier).fetchAttendanceRequests(widget.employeeId);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
 
+    // Access ControllerNotifier to get monthController
+    final controllerNotifier = ref.watch(controllerProvider);
 
     final attendanceAsync = ref.watch(attendanceListingProvider(widget.employeeId));
 
@@ -54,31 +67,65 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
           if (counters == null) {
             return const Center(child: Text("No attendance data available."));
           }
-          return Column(
-            children: [
-              const SizedBox(height: 20),
-              // Counters at the top
-              _buildCounters(
-                totalLeave: counters.monthDays,
-                totalApprove: counters.presentDays,
-                totalReject: counters.absentDays,
-              ),
+          return Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
 
-              const SizedBox(height: 20),
-              // Header Row
-              _buildHeader(),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10,20,10,0),
+                  child: DropdownButtonFormField<String>(
+                    value: controllerNotifier.monthController.text.isEmpty ? null : controllerNotifier.monthController.text,
+                    onChanged: (value) {
+                      if (value != null) {
+                        controllerNotifier.monthController.text = value;
+                        ref.read(attendanceListingProvider(widget.employeeId).notifier).fetchAttendanceRequests(widget.employeeId);
+                      }
+                    },
+                    items: controllerNotifier.monthOptions.map((String option) {
+                      return DropdownMenuItem<String>(
+                        value: option,
+                        child: Text(option),
+                      );
+                    }).toList(),
+                    decoration: dropdownDecoration('Select Month'),
 
-              // Leave List
-              Expanded(
-                child: ListView.builder(
-                  itemCount: leaveRequests.length,
-                  itemBuilder: (context, index) {
-                    final leave = leaveRequests[index];
-                    return _buildLeaveRow(leave);
-                  },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a month';
+                      }
+                      return null;
+                    },
+                  ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 10),
+                // Counters at the top
+                _buildCounters(
+                  totalLeave: counters.monthDays,
+                  punchCount: counters.punchCount,
+                  sundayPresentCount: counters.sundayPresentCount,
+                  totalReject: counters.absentDays,
+                ),
+
+                const SizedBox(height: 20),
+                // Header Row
+                // _buildHeader(),
+
+                // Leave List
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: leaveRequests.length,
+                    itemBuilder: (context, index) {
+                      final leave = leaveRequests[index];
+                      return _buildLeaveCard(leave);
+                    },
+                  ),
+                ),
+              ],
+            ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -92,16 +139,17 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
   // Counter Section
   Widget _buildCounters({
     required int totalLeave,
-    required int totalApprove,
-    required int totalReject,
+    required int punchCount,
+    required int totalReject, required int sundayPresentCount,
   }) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.fromLTRB(10,0,10,0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildCounter("Total", totalLeave, Colors.blue),
-          _buildCounter("Present", totalApprove, Colors.green),
+          _buildCounter("Punch", punchCount, Colors.green),
+          _buildCounter("Sunday", sundayPresentCount, Colors.green),
           _buildCounter("Absent", totalReject, Colors.red),
         ],
       ),
@@ -128,60 +176,79 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
     );
   }
 
-  // Header Row
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      color: Colors.grey[200],
-      child: const Row(
-        children: [
-          Expanded(child: Text("Date", style: TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(child: Text("Punch In", style: TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(child: Text("Punch Out", style: TextStyle(fontWeight: FontWeight.bold))),
-        ],
-      ),
-    );
-  }
-
-  // Leave Row
-  Widget _buildLeaveRow(AttendanceRecord leave) {
+  Widget _buildLeaveCard(AttendanceRecord leave) {
     String formatDate(String date) {
       final parsedDate = DateTime.parse(date);
-      return DateFormat("dd-MM-yyyy").format(parsedDate);
+      return DateFormat("dd-MM-yyyy").format(parsedDate); // Format to dd-MM-yyyy
     }
 
     String formatTime(String? dateTimes) {
-      print('time formate ${dateTimes}');
-     // if (dateTimes == null) return 'N/A'; // Handle null case
-      if (dateTimes == null || dateTimes.isEmpty) return 'N/A'; // Handle null or empty case
-      DateFormat format = DateFormat("yyyy-MM-dd'T'hh:mm:ss a");
-      DateTime dateTime = format.parse(dateTimes);// Handle empty strings
-      // final parsedTime = DateTime.parse(time);
-      print('parse time ${dateTime}');
-      return DateFormat.jm()
-          .format(dateTime); // Format as 09:3
+      if (dateTimes == null || dateTimes.isEmpty) return 'N/A';
+      DateFormat format = DateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      DateTime dateTime = format.parse(dateTimes);
+      return DateFormat.jm().format(dateTime); // Format to hh:mm a
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(child: Text(formatDate(leave.date))),
-              Expanded(child: Text(formatTime(leave.punchInTime))), // Format punch-in time
-              Expanded(child: Text(formatTime(leave.punchOutTime))), // Format punch-out time
-            ],
-          ),
-          const SizedBox(height: 8),
-          const Divider(color: Colors.grey),
-        ],
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // First Row: Date and Work Hours
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildLabelWithValue("Date", formatDate(leave.date)),
+                _buildLabelWithValue("Work Hours",
+                    (leave.workedHour == null || leave.workedHour!.isEmpty) ? '0' : leave.workedHour!,
+                    alignRight: true),
+              ],
+            ),
+            const SizedBox(height: 3),
+            // Second Row: Punch In and Punch Out Times
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildLabelWithValue("Punch In", formatTime(leave.punchInTime)),
+                _buildLabelWithValue("Punch Out", formatTime(leave.punchOutTime), alignRight: true),
+              ],
+            ),
+          ],
+        ),
       ),
     );
+
   }
 
-
-
+  Widget _buildLabelWithValue(String label, String value, {bool alignRight = false}) {
+    return Column(
+      crossAxisAlignment: alignRight ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 1),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: Colors.black54,
+          ),
+        ),
+      ],
+    );
+  }
 
 }

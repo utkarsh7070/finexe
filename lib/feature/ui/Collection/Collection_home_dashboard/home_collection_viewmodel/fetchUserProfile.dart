@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:roam_flutter/roam_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio_exception.dart';
@@ -42,6 +43,7 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
 
   Future<void> clickPunchOut(BuildContext context) async {
     await employeePunchOut(context);
+    Roam.stopTracking();
   }
 
   Future<void> fetchDashboardData() async {

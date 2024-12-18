@@ -211,13 +211,13 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
   Future<void> visitFormSubmit(
       {required ItemsDetails datas, required BuildContext context}) async {
     print('image of uploaded $imageApi');
-    // final strDate = DateFormat('dd-MM-yyyy').parse(state.date);
-    // final date = DateFormat('yyyy-MM-dd').format(strDate);
+    final strDate = DateFormat('dd/MM/yyyy').parse(state.date);
+    final date = DateFormat('yyyy-MM-dd').format(strDate);
     final requestModel = VisitUpdateSubmitRequestModel(
       ld: datas.ld ?? '',
       customerName: datas.customerName ?? '',
       visitDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-      revisitDate: state.date,
+      revisitDate: date,
       newContactNumber: datas.mobile ?? '',
       customerResponse: dropDownControllerProvider.dropDownValue?.name ?? '',
       paymentAmount: state.paymentAmount,
@@ -437,12 +437,15 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final isAmount = _validateEmiAmount(state.emiAmount);
     final isTransactionId = _validateTransactionId(state.transactionId);
     final isRemark = _validateRemark(state.remark);
+    if(state.transactionImage.isEmpty){
+      showCustomSnackBar(context, 'Image is not upload in server', Colors.red.shade200);
+    }
     state = state.copyWith(
         isTransactionImage: isPhoto,
         isTransactionId: isTransactionId,
         isEmiAmount: isAmount,
         isRemark: isRemark);
-    return isPhoto && isAmount && isTransactionId && isRemark;
+    return isPhoto && isAmount && isTransactionId && isRemark && state.transactionImage.isNotEmpty;
   }
 
   bool validAccountDeposit(context) {
@@ -454,6 +457,8 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final isRemark = _validateRemark(state.remark);
     if(!isBank){
       showCustomSnackBar(context, 'Please select bank name', Colors.red.shade200);
+    }else if(state.transactionImage.isEmpty){
+      showCustomSnackBar(context, 'Image is not upload in server', Colors.red.shade200);
     }
     state = state.copyWith(
         isReceipt: isMentionMail,
@@ -466,7 +471,8 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         isTransactionId &&
         isRemark &&
         isMentionMail &&
-        isBank;
+        isBank &&
+        state.transactionImage.isNotEmpty;
   }
 
   bool validCashCollection(context) {
@@ -543,7 +549,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         commonId: result1,
         bankName: state.bankName,
         customerEmail: state.receipt,
-        emiReceivedDate: DateFormat('dd/MM/yyyy').format(DateTime.now()),
+        emiReceivedDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
         remarkByCollection: state.remark,
         partner: detail.partner!);
 
@@ -1364,6 +1370,9 @@ final fetchVisitPendingDataProvider =
 
     GetVisitPendingResponseData apiResponseList =
         GetVisitPendingResponseData.fromJson(response.data);
+    // List<ItemsDetails> listOfLists = apiResponseList.items.map((map) {
+    //   return ItemsDetails.fromJson(map);
+    // }).toList();
     return apiResponseList.items;
   } else {
     throw Exception('Failed to load data');
@@ -1383,7 +1392,6 @@ final fetchCollectionDueDataProvider =
   print(response.statusCode);
   if (response.statusCode == 200) {
     print(response.data);
-
     GetVisitPendingResponseData apiResponseList =
         GetVisitPendingResponseData.fromJson(response.data);
     return apiResponseList.items;

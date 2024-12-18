@@ -125,7 +125,7 @@ final downloadProvider =  StateProvider.autoDispose<String>((ref) {
 
 class ApiService{
   ApiService();
-  static const platform = MethodChannel('apk_channel');
+  // static const platform = MethodChannel('apk_channel');
   // final PunchInRepositoryImp repositoryImp = PunchInRepositoryImp();
   // final Dio _dio = Dio();
   bool? punchStatus;

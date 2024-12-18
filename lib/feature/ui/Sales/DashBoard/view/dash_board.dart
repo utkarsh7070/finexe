@@ -42,7 +42,7 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this,initialIndex: 0);
-    initialiseRoamSdk();
+    // initialiseRoamSdk();
   }
   @override
   void dispose() {
@@ -51,72 +51,72 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
     super.dispose();
   }
 
-  Future<void> initialiseRoamSdk() async {
-    print("Attempting to initialize Roam SDK...");
-    try {
-      await requestLocationPermissions();
-      print("Permissions granted, initializing Roam SDK...");
-
-      Roam.initialize(
-        publishKey: '58f73be503e069888cf19289bf728c14c2e841c47e5842a1054f9e5f12f52583',
-      );
-      print("Roam SDK initialized."); // Check if this is reached
-
-      Roam.getUser(userId:'672b16d23e8a8f5a915d743e', callBack: ({user}) {
-        print('User name - $user');
-      });
-
-      Map<String, dynamic> fitnessTracking = {
-        "timeInterval": 10
-      };
-      Roam.startTracking(trackingMode: "custom", customMethods: fitnessTracking);
-      print("Custom tracking started with 10-second interval.");
-
-
-
-      listenToLocationUpdates();
-
-      trackingTimer = Timer(Duration(hours: 12), () {
-        Roam.stopTracking();
-        print("Tracking stopped after 15 minutes.");
-      });
-
-    } catch (e) {
-      print("Failed to initialize Roam SDK: $e");
-    }
-  }
-
-  Future<void> listenToLocationUpdates() async {
-    print("Setting location listener...");
-    Roam.onLocation((location) {
-      print("Received location from Roam SDK: ${jsonEncode(location)}");
-      showCustomSnackBar(
-          context, "Received location from Roam SDK: ${jsonEncode(location)}", Colors.green);
-    });
-    print("Location listener set.");
-  }
-
-  Future<void> requestLocationPermissions() async {
-    final locationWhenInUse = await Permission.locationWhenInUse.request();
-    if (locationWhenInUse.isGranted) {
-      final locationAlways = await Permission.locationAlways.request();
-      if (!locationAlways.isGranted) {
-        print("Location always permission not granted.");
-      } else {
-        print("Location permissions granted.");
-        await getCurrentLocation();
-      }
-    } else {
-      print("Location permission denied.");
-    }
-  }
-
-  Future<void> getCurrentLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    print("Initial location: ${position.latitude}, ${position.longitude}");
-  }
+  // Future<void> initialiseRoamSdk() async {
+  //   print("Attempting to initialize Roam SDK...");
+  //   try {
+  //     await requestLocationPermissions();
+  //     print("Permissions granted, initializing Roam SDK...");
+  //
+  //     Roam.initialize(
+  //       publishKey: '58f73be503e069888cf19289bf728c14c2e841c47e5842a1054f9e5f12f52583',
+  //     );
+  //     print("Roam SDK initialized."); // Check if this is reached
+  //
+  //     Roam.getUser(userId:'672b16d23e8a8f5a915d743e', callBack: ({user}) {
+  //       print('User name - $user');
+  //     });
+  //
+  //     Map<String, dynamic> fitnessTracking = {
+  //       "timeInterval": 10
+  //     };
+  //     Roam.startTracking(trackingMode: "custom", customMethods: fitnessTracking);
+  //     print("Custom tracking started with 10-second interval.");
+  //
+  //
+  //
+  //     listenToLocationUpdates();
+  //
+  //     trackingTimer = Timer(Duration(hours: 12), () {
+  //       Roam.stopTracking();
+  //       print("Tracking stopped after 15 minutes.");
+  //     });
+  //
+  //   } catch (e) {
+  //     print("Failed to initialize Roam SDK: $e");
+  //   }
+  // }
+  //
+  // Future<void> listenToLocationUpdates() async {
+  //   print("Setting location listener...");
+  //   Roam.onLocation((location) {
+  //     print("Received location from Roam SDK: ${jsonEncode(location)}");
+  //     showCustomSnackBar(
+  //         context, "Received location from Roam SDK: ${jsonEncode(location)}", Colors.green);
+  //   });
+  //   print("Location listener set.");
+  // }
+  //
+  // Future<void> requestLocationPermissions() async {
+  //   final locationWhenInUse = await Permission.locationWhenInUse.request();
+  //   if (locationWhenInUse.isGranted) {
+  //     final locationAlways = await Permission.locationAlways.request();
+  //     if (!locationAlways.isGranted) {
+  //       print("Location always permission not granted.");
+  //     } else {
+  //       print("Location permissions granted.");
+  //       await getCurrentLocation();
+  //     }
+  //   } else {
+  //     print("Location permission denied.");
+  //   }
+  // }
+  //
+  // Future<void> getCurrentLocation() async {
+  //   Position position = await Geolocator.getCurrentPosition(
+  //     desiredAccuracy: LocationAccuracy.high,
+  //   );
+  //   print("Initial location: ${position.latitude}, ${position.longitude}");
+  // }
 
   // final SessionService userSession = SessionService();
   @override

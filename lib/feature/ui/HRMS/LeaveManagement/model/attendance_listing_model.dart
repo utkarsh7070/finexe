@@ -1,5 +1,3 @@
-
-
 class AttendanceResponse {
   final bool status;
   final int subCode;
@@ -32,6 +30,8 @@ class AttendanceItems {
   final int presentDays;
   final int monthDays;
   final int absentDays;
+  final int punchCount;
+  final int sundayPresentCount;
   final EmployeeDetail employeeDetail;
   final List<AttendanceRecord> attendanceRecords;
 
@@ -41,6 +41,8 @@ class AttendanceItems {
     required this.presentDays,
     required this.monthDays,
     required this.absentDays,
+    required this.punchCount,
+    required this.sundayPresentCount,
     required this.employeeDetail,
     required this.attendanceRecords,
   });
@@ -52,6 +54,8 @@ class AttendanceItems {
       presentDays: json['presentDays'],
       monthDays: json['monthDays'],
       absentDays: json['absentDays'],
+      punchCount: json['punchCount'],
+      sundayPresentCount: json['sundayPresentCount'],
       employeeDetail: EmployeeDetail.fromJson(json['employeeDetail']),
       attendanceRecords: (json['attendanceRecords'] as List)
           .map((e) => AttendanceRecord.fromJson(e))
@@ -97,12 +101,14 @@ class AttendanceRecord {
   final String date;
   final String? punchInTime;
   final String? punchOutTime;
+  final String? workedHour;
 
   AttendanceRecord({
     required this.id,
     required this.date,
     this.punchInTime,
     this.punchOutTime,
+    this.workedHour,
   });
 
   factory AttendanceRecord.fromJson(Map<String, dynamic> json) {
@@ -111,6 +117,7 @@ class AttendanceRecord {
       date: json['date'],
       punchInTime: json['punchInTime'],
       punchOutTime: json['punchOutTime'],
+      workedHour: json['workedHour'],
     );
   }
 }
