@@ -402,8 +402,9 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                               },
                             );
                           },
-                          child: !paymentState.isLoading
-                              ? Visibility(
+                          child:
+                          !paymentState.isLoading ?
+                          Visibility(
                                   visible: paymentState.photoFile.isNotEmpty,
                                   replacement: const Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -438,6 +439,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                       AppButton(
                         textStyle: AppStyles.buttonLightTextStyle,
                         width: displayWidth(context),
+                        isDisabled: !paymentState.isButtonVissible,
                         onTap: () {
                           if (paymentViewModel.modeOfCollectionController
                                   .dropDownValue?.name !=
@@ -555,4 +557,30 @@ class UpdateEmiDialogContent extends ConsumerWidget {
       ),
     );
   }
+}
+
+void showLoadingDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // Prevents dismissing the dialog by tapping outside
+    builder: (context) {
+      return Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 16),
+              Text("Loading..."),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

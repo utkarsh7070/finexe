@@ -622,9 +622,6 @@ class PunchAttendanceModel{
   PunchAttendanceModel({required this.allowed, required this.punchIn});
 }
 
-final getScreenFirstData = FutureProvider((ref) {
-
-},);
 
 
 

@@ -41,6 +41,9 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     final checkPunchProvider = ref.watch(attendanceProvider);
     // final socketService = ref.read(socketServiceProvider);
     final data = ref.watch(attendanceProvider);
+    //--------------------------------new code in progress-----------------------------------
+    // final attendeance
+    //---------------------------------------------------------------------------------------
 
     return Scaffold(
       appBar: AppBar(),

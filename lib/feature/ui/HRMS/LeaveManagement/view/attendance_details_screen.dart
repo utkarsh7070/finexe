@@ -184,7 +184,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
 
     String formatTime(String? dateTimes) {
       if (dateTimes == null || dateTimes.isEmpty) return 'N/A';
-      DateFormat format = DateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      DateFormat format = DateFormat("yyyy-MM-dd'T'hh:mm:ss a");
       DateTime dateTime = format.parse(dateTimes);
       return DateFormat.jm().format(dateTime); // Format to hh:mm a
     }

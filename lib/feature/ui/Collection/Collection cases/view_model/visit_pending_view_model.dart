@@ -193,14 +193,14 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     } else {}
   }
 
-  bool validateForm(String value) {
+  bool validateForm(String value,BuildContext context) {
     switch (value) {
       case 'CustomerWillPayEmi':
-        return validateCustomerPayForm();
+        return validateCustomerPayForm(context);
       case 'CustomerWillNotPayEmi':
-        return validateCustomerNotPay();
+        return validateCustomerNotPay(context);
       case 'CustomerNotContactable':
-        return validateCustomerNotContactable();
+        return validateCustomerNotContactable(context);
       case '':
         return false;
       default:
@@ -210,6 +210,7 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
 
   Future<void> visitFormSubmit(
       {required ItemsDetails datas, required BuildContext context}) async {
+    state = state.copyWith(isButtonVissible: true);
     print('image of uploaded $imageApi');
     final strDate = DateFormat('dd/MM/yyyy').parse(state.date);
     final date = DateFormat('yyyy-MM-dd').format(strDate);
@@ -229,6 +230,8 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
       // latitude: data.latitude,
       // longitude: data.longitude
     );
+
+
     print(requestModel);
     String? token = await SessionService.getToken();
 
@@ -242,6 +245,7 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
         print(response.data);
       }
       if (response.statusCode == 200) {
+        state = state.copyWith(isButtonVissible: false);
         log('updated vist test');
         showCustomSnackBar(context, response.data['message'], Colors.green);
       } else {
@@ -309,34 +313,43 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     state = state.copyWith(photoFile: value, isPhotoFile: isValid);
   }
 
-  bool validateCustomerPayForm() {
+  bool validateCustomerPayForm(BuildContext context) {
     final isPaymentAmountValid = _validatePaymentAmount(state.paymentAmount);
     final isDateValid = _validateDate(state.date);
     final isPhoto = _validateTransactionImage(state.photoFile);
+    if(state.transitionImage.isEmpty){
+      showCustomSnackBar(context, 'Image is not uploaded in server', Colors.red.shade200);
+    }
     state = state.copyWith(
         isPaymentAmountValid: isPaymentAmountValid,
         isDateValid: isDateValid,
         isPhotoFile: isPhoto);
-    return isPaymentAmountValid && isDateValid && isPhoto;
+    return isPaymentAmountValid && isDateValid && isPhoto && state.transitionImage.isNotEmpty;
   }
 
-  bool validateCustomerNotContactable() {
+  bool validateCustomerNotContactable(BuildContext context) {
     final isDate = _validateDate(state.date);
     final isReasonValid = _validateReason(state.reason);
     final isImage = _validateTransactionImage(state.photoFile);
+    if(state.transitionImage.isEmpty){
+      showCustomSnackBar(context, 'Image is not uploaded in server', Colors.red.shade200);
+    }
     state = state.copyWith(
         isDateValid: isDate,
         isPhotoFile: isImage,
         isReasonValid: isReasonValid);
-    return isDate && isReasonValid && isImage;
+    return isDate && isReasonValid && isImage && state.transitionImage.isNotEmpty;
   }
 
-  bool validateCustomerNotPay() {
+  bool validateCustomerNotPay(BuildContext context) {
     // final isPaymentStatusValid = _validatePaymentStatus(dropDownControllerProvider.dropDownValue!.name);
     final isReasonValid = _validateReason(state.reason);
     final isSolutionValid = _validateSolution(state.solution);
     final isDateValid = _validateDate(state.date);
     final isPhoto = _validateTransactionImage(state.photoFile);
+    if(state.transitionImage.isEmpty){
+      showCustomSnackBar(context, 'Image is not uploaded in server', Colors.red.shade200);
+    }
     state = state.copyWith(
         // isPaymentStatusValid: isPaymentStatusValid,
         isReasonValid: isReasonValid,
@@ -346,7 +359,7 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     return isDateValid &&
         isSolutionValid &&
         isReasonValid &&
-        // isPaymentStatusValid &&
+        state.transitionImage.isNotEmpty &&
         isPhoto;
   }
 
@@ -530,10 +543,12 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       {required ItemsDetails detail,
       required BuildContext context,
       required WidgetRef ref}) async {
+    state = state.copyWith(isButtonVissible: true);
     if (kDebugMode) {
       print(
           'Ld o:-${detail.ld}, customerName:- ${detail.customerName}, mobile:- ${detail.mobile},  commonId:- ${state.commonId}, image:- ${state.transactionImage}');
     }
+
     ObjectId? result1 = parseObjectId(state.commonId);
 
     UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
@@ -573,6 +588,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
 
     if (response.statusCode == 200 || responseData['status'] == true) {
       showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
+      state = state.copyWith(isButtonVissible: false);
       updatePhotoValue(context);
       ref.refresh(fetchVisitPendingDataProvider);
       ref.invalidate(updateEmiViewModelProvider);
@@ -933,6 +949,7 @@ class ClosuerFocusProvider extends StateNotifier<Map<String, bool>> {
 
 class UpdateVisitModel {
   final bool isLoading;
+  final bool isButtonVissible;
   final int selectedValue;
   final String photoFile;
   final String transitionImage;
@@ -949,6 +966,7 @@ class UpdateVisitModel {
   final bool isSolutionValid;
 
   UpdateVisitModel({
+    this.isButtonVissible = false,
     this.transitionImage = '',
     this.isPhotoFile = true,
     this.isLoading = false,
@@ -967,6 +985,7 @@ class UpdateVisitModel {
   });
 
   UpdateVisitModel copyWith({
+    bool? isButtonVissible,
     String? transitionImage,
     bool? isPhotoFile,
     String? photoFile,
@@ -984,6 +1003,7 @@ class UpdateVisitModel {
     bool? isSolutionValid,
   }) {
     return UpdateVisitModel(
+      isButtonVissible: isButtonVissible??this.isButtonVissible,
       transitionImage: transitionImage ?? this.transitionImage,
       isPhotoFile: isPhotoFile ?? this.isPhotoFile,
       isLoading: isLoading ?? this.isLoading,
@@ -1043,6 +1063,7 @@ class UpdateEmiModel {
   final String photoFile;
   final List<DropDownValueModel> subDropdown;
   final bool isLoading;
+  final bool isButtonVissible;
   final bool isTransactionId;
   final bool isTransactionIdVisible;
   final bool isTransactionImage;
@@ -1065,7 +1086,9 @@ class UpdateEmiModel {
   final String modeTitle;
 
   UpdateEmiModel(
-      {this.isTransactionImageVisible = false,
+      {
+        this.isButtonVissible = false,
+        this.isTransactionImageVisible = false,
       this.isReceiptVisible = false,
       this.isEmailVisible = false,
       this.isTransactionIdVisible = false,
@@ -1092,6 +1115,7 @@ class UpdateEmiModel {
       this.isLoading = false});
 
   UpdateEmiModel copyWith({
+    bool? isButtonVissible,
     bool? isTransactionImageVisible,
     bool? isReceiptVisible,
     bool? isEmailVisible,
@@ -1119,6 +1143,7 @@ class UpdateEmiModel {
     bool? isReceipt,
   }) {
     return UpdateEmiModel(
+      isButtonVissible: isButtonVissible?? this.isButtonVissible,
       isEmailVisible: isEmailVisible?? this.isEmailVisible,
         isReceiptVisible: isReceiptVisible?? this.isReceiptVisible,
         isTransactionIdVisible: isTransactionIdVisible?? this.isTransactionIdVisible,
