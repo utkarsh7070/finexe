@@ -7,7 +7,7 @@ import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/Income%20
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view/Income%20Details/view/Salary%20Income/salary_view_model.dart';
 // import 'package:finexe/feature/ui/PD/view/common%20imagePicker/dynamic_listing_images.dart';
 // import 'package:finexe/feature/ui/PD/view/common%20imagePicker/image_picker.dart';
-import 'package:flutter/Material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../../common imagePicker/dynamic_listing_images.dart';

@@ -5,7 +5,7 @@ import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
-import 'package:flutter/Material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 

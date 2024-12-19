@@ -1,5 +1,5 @@
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
-import 'package:flutter/Material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/src/widgets/framework.dart';
