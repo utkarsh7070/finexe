@@ -14,10 +14,9 @@ import '../../../Punch_In_Out/model/check_attendance_responce_model.dart';
 import '../../../Punch_In_Out/repository/puch_In_repository_imp.dart';
 import '../../../base/api/dio_exception.dart';
 import '../../../base/routes/routes.dart';
+import '../../../base/service/background_service.dart';
 import '../../../base/utils/widget/custom_snackbar.dart';
 import '../model/login_response_model.dart';
-
-
 
 final userValidationProvider =
 StateNotifierProvider.autoDispose<UserValidationNotifier, bool>(
@@ -217,6 +216,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
 
       if (response.statusCode == 200) {
         isLoading = false;
+
         LoginResponseModel loginResponseModel =
         LoginResponseModel.fromJson(response.data);
         if (kDebugMode) {
@@ -226,6 +226,10 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
           print('role:: ${loginResponseModel.items.roleName}');
           print('role:: ${loginResponseModel.items}');
         }
+        //------------------------------start background service----------------
+        // SocketService().startTracking(loginResponseModel.items.employeId);
+        // FlutterBackgroundService().invoke("startService");
+        //----------------------------------------------------------------------
         // Create session after login
         await SessionService.createSession(
             role:  loginResponseModel.items.roleName,
@@ -237,7 +241,9 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
             trakingMode: loginResponseModel.items.trackingMode
         );
         ref.refresh(attendanceProvider);
-
+        //------------------------background service----------------------------
+        await BackgroundService().initializeService();
+        //---------------------------------------------------------------------
         PunchModel punchStatus = await punchStatusFunction(
             _punchInRepository,
             loginResponseModel.items.token,
@@ -356,7 +362,6 @@ Future<Position> _getCurrentLocation() async {
 
   if (permission == LocationPermission.deniedForever) {
     // Permissions are permanently denied, handle this scenario
-
     // return null;
   }
   LocationSettings locationSettings = const LocationSettings(
