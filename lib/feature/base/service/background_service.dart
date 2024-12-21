@@ -228,6 +228,7 @@ class BackgroundService {
       });
     }
     service.on('stopService').listen((event) {
+      print('Stopping background service...');
       SocketService().disconnect();
       service.stopSelf();
     });
@@ -343,6 +344,15 @@ class BackgroundService {
       }
     });
     // }
+
+  }
+
+  Future<void> stopService() async {
+    final service = FlutterBackgroundService();
+    service.invoke('stopService');
+    // setState(() {
+    //   isServiceRunning = false;
+    // });
   }
 
   Future<void> onSelectNotification(String? payload, service) async {
