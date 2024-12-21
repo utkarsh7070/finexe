@@ -3,6 +3,7 @@ import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
 class AppButton extends StatelessWidget {
   const AppButton({
     String? label,
@@ -15,7 +16,7 @@ class AppButton extends StatelessWidget {
     TextStyle? textStyle,
     bool? isDisabled,
     super.key,
-  })  : _label = label,
+  }) : _label = label,
         _onTap = onTap,
         _isFill = false,
         _height = height,
@@ -24,6 +25,7 @@ class AppButton extends StatelessWidget {
         _isDisabled = false,
         _bgColor = bgColor,
         _borderColor = borderColor;
+
 
   final String? _label;
   final VoidCallback? _onTap;
@@ -35,6 +37,7 @@ class AppButton extends StatelessWidget {
   final Color? _bgColor;
   final Color? _borderColor;
 
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -43,18 +46,18 @@ class AppButton extends StatelessWidget {
       child: ElevatedButton(
         style: _isFill
             ? ElevatedButton.styleFrom(
-                backgroundColor: _bgColor,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: _borderColor!),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              )
+          backgroundColor: _bgColor,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: _borderColor!),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        )
             : ElevatedButton.styleFrom(
-                padding: const EdgeInsets.only(top: 10, bottom: 10),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+          padding: const EdgeInsets.only(top: 10, bottom: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
         onPressed: _isDisabled! ? null : _onTap,
         child: Text(
           _label!,
@@ -65,16 +68,16 @@ class AppButton extends StatelessWidget {
   }
 // @override
 // Widget build(BuildContext context) {
-//   return SizedBox(
-//     width: MediaQuery.of(context).size.width,
-//     child: ElevatedButton(
-//         style: ElevatedButton.styleFrom(),
-//   onPressed: _isDisabled! ? null : _onTap,
-//         child: Text(
-//           _label!,
-//           style: _isFill! ? AppStyles.buttonLightTextStyle : _textStyle,
-//         ),
-//         // child: Text('$text',style: AppStyles.buttonLightTextStyle,)),
-//   );
+// return SizedBox(
+// width: MediaQuery.of(context).size.width,
+// child: ElevatedButton(
+// style: ElevatedButton.styleFrom(),
+// onPressed: _isDisabled! ? null : _onTap,
+// child: Text(
+// _label!,
+// style: _isFill! ? AppStyles.buttonLightTextStyle : _textStyle,
+// ),
+// // child: Text('$text',style: AppStyles.buttonLightTextStyle,)),
+// );
 // }
 }

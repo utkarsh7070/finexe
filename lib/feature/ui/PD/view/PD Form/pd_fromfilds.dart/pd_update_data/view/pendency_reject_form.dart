@@ -1,12 +1,14 @@
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
-import 'package:finexe/feature/ui/PD/common_textfield.dart';
+import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
+import 'package:finexe/feature/ui/PD/dialog/CustomPopup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../dialog/CustomPopup.dart';
+import '../model/Submit Data Models/pendency_reject_modal.dart';
+import '../view_model.dart/pendency_view_modal.dart';
 
 class PendencyReject extends ConsumerStatefulWidget {
   const PendencyReject({super.key});
@@ -24,6 +26,15 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
 
   final _formKey = GlobalKey<FormState>();
 
+  @override
+  void dispose() {
+    pendencyDetailFormApproveAmount.dispose();
+    pendencyDetailFormFinalDecision.dispose();
+    pendencyDetailFormRemark.dispose();
+    super.dispose();
+  }
+
+
   SizedBox sizedBoxWithContext(BuildContext context, double heightFactor) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * heightFactor,
@@ -32,6 +43,18 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
 
   @override
   Widget build(BuildContext context) {
+    final pendencyDetailsState = ref.watch(getPendencyDetailsProvider("66f53ffbd7011eb65160f292"));
+
+ return  pendencyDetailsState.when(
+        data: (pendencyData) {
+          if (pendencyDetailFormApproveAmount.text.isEmpty) {
+            pendencyDetailFormApproveAmount.text =
+                pendencyData.approveLoanDetails?.approvedAmount?.toString() ?? '';
+            pendencyDetailFormFinalDecision.text = pendencyData.approveLoanDetails?.finalDecision?.toString() ?? '';
+            pendencyDetailFormRemark.text =
+                pendencyData.remarkByPd.toString() ?? '';
+          }
+
     return ExpansionTile(
       backgroundColor: Colors.white,
       childrenPadding: const EdgeInsets.only(left: 16, bottom: 10),
@@ -101,7 +124,7 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                       context: context,
                       title: 'Mark as Complete',
                       message:
-                          'This will mark the entry as \n rejected. Are you sure you want to proceed?',
+                      'This will mark the entry as \n rejected. Are you sure you want to proceed?',
                       imagePath: 'assets/images/confirmComplete.png',
                       buttonName: 'Set as Pending',
                       buttonColor: Color(0xFFEE6C52),
@@ -109,14 +132,38 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                       rejectTextColor: Colors.grey,
                       onReject: () {
                         Navigator.of(context).pop();
-                        // Handle rejection logic here
                       },
-                      onCancel: () {
+                      onCancel: () async {
                         Navigator.of(context).pop();
-                        // Handle cancel logic here
+
+                        // Create the model with the data from the UI
+                        PendencyDetailsFormModel model = PendencyDetailsFormModel(
+                          customerId: "66f53ffbd7011eb65160f292", // Example customerId
+                          pdType: "creditPd",  // Example pdType
+                          remarkByPd: pendencyDetailFormRemark.text,  // Using the remark from UI
+                          approveLoanDetails: PendencyApproveLoanDetails(
+                            approvedAmount: int.parse(pendencyDetailFormApproveAmount.text),
+                            finalDecision: int.parse(pendencyDetailFormFinalDecision.text),
+                            roi: 7.5,
+                            tenure: 55,
+                            emi: 123,
+                            demandLoanAmountByCustomer: "123",
+                            endUseOfLoan: "popular",
+                          ),
+                        );
+
+                        // Call the FutureProvider to post the data
+                        ref.read(postPendencyDetailsProvider(model).future).then((response) {
+                          if (response.statusCode == 200) {
+                            print("Data submitted successfully: ${response.data}");
+                          }
+                        }).catchError((error) {
+                          print("Error: $error");
+                        });
                       },
                     );
                   },
+
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     padding:
@@ -125,6 +172,7 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -169,17 +217,7 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                     height: displayHeight(context) * 0.065,
                     child: ElevatedButton(
                       onPressed: () {
-                        //Mark as Complete
-                        // showCustomPopup(
-                        //   context,
-                        //   'Set as Pending',
-                        //   'This will mark the entry as \n pending. Are you sure you want to proceed?',
-                        //   'Set as pending',
-                        //   'assets/images/confirmpending.png',
-                        //   buttonColor: Color(0xFFFFA500),
-                        //   rejectText: "No I Don't",
-                        //   rejectTextColor: Colors.grey,
-                        // );
+
 
                         CustomPopup.showPopup(
                           context: context,
@@ -292,6 +330,10 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
         ),
       ],
     );
+        },
+   loading: () => const Center(child: CircularProgressIndicator()),
+   error: (error, stackTrace) => Center(child: Text('Error: $error')),
+ );
   }
 
   void showCustomPopup(
