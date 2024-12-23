@@ -292,76 +292,133 @@ class SplashScreen extends ConsumerWidget {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   AppRoutes.attendance,
-                  (route) => false,
+                      (route) => false,
                 );
-              } else {
-                switch (isLoggedIn.role) {
-                  case 'admin':
-                    log("Navigating to admin dashboard");
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.dashBoard, // Admin dashboard route
-                      (route) => false, // Remove all previous routes
-                    );
-                    break;
-                  case 'sales':
-                    log("Navigating to sales dashboard");
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.dashBoard, // Sales dashboard route
-                      (route) => false, // Remove all previous routes
-                    );
-                    break;
-                  case 'collection':
-                    log("Navigating to collection dashboard");
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.collectionHome, // Collection dashboard route
-                      (route) => false, // Remove all previous routes
-                    );
-                    break;
-                  case 'salesAndCollection':
-                    log("Navigating to collection dashboard");
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.dashBoard, // Collection dashboard route
-                      (route) => false, // Remove all previous routes
-                    );
-                    break;
-                  case 'salesPdAndCollection':
-                    log("Navigating to collection dashboard");
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.dashBoard, // Collection dashboard route
-                      (route) => false, // Remove all previous routes
-                    );
-                    break;
-                  case 'cibil':
-                    log("Navigating to collection dashboard");
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.dashBoard, // Collection dashboard route
-                      (route) => false, // Remove all previous routes
-                    );
-                    break;
-
-                  default:
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.hrms, // Collection dashboard route
-                      (route) => false, // Remove all previous routes
-                    );
-                    // Handle unknown roles or navigate to a default screen
-                    log('No matching role found');
-                    break;
+              }else if (isLoggedIn.role != null) {
+                if (isLoggedIn.role!.contains('admin')) {
+                  log("Navigating to admin dashboard");
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.dashBoard, // Admin dashboard route
+                        (route) => false, // Remove all previous routes
+                  );
+                } else if (isLoggedIn.role!.contains('sales')) {
+                  log("Navigating to sales dashboard");
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.dashBoard, // Sales dashboard route
+                        (route) => false, // Remove all previous routes
+                  );
+                } else if (isLoggedIn.role!.contains('collection')) {
+                  log("Navigating to collection dashboard");
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.collectionHome, // Collection dashboard route
+                        (route) => false, // Remove all previous routes
+                  );
+                } else if (isLoggedIn.role!.contains('salesAndCollection')) {
+                  log("Navigating to sales and collection dashboard");
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.dashBoard, // Sales and Collection dashboard route
+                        (route) => false, // Remove all previous routes
+                  );
+                } else if (isLoggedIn.role!.contains('salesPdAndCollection')) {
+                  log("Navigating to sales PD and collection dashboard");
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.dashBoard,
+                    // Sales PD and Collection dashboard route
+                        (route) => false, // Remove all previous routes
+                  );
+                } else if (isLoggedIn.role!.contains('cibil')) {
+                  log("Navigating to CIBIL dashboard");
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.dashBoard, // CIBIL dashboard route
+                        (route) => false, // Remove all previous routes
+                  );
+                } else {
+                  // Default role navigation
+                  log('No matching role found, navigating to HRMS');
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.hrms, // Default route
+                        (route) => false, // Remove all previous routes
+                  );
                 }
+              } else {
+                // Handle the case where roles are null
+                log('No roles found, navigating to HRMS');
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.hrms, // Default route
+                      (route) => false, // Remove all previous routes
+                );
               }
-            } else {
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                AppRoutes.login, // Collection dashboard route
-                (route) => false, // Remove all previous routes
-              );
+
+
+              //   switch (isLoggedIn.role) {
+              //     case 'admin':
+              //       log("Navigating to admin dashboard");
+              //       Navigator.pushNamedAndRemoveUntil(
+              //         context,
+              //         AppRoutes.dashBoard, // Admin dashboard route
+              //         (route) => false, // Remove all previous routes
+              //       );
+              //       break;
+              //     case 'sales':
+              //       log("Navigating to sales dashboard");
+              //       Navigator.pushNamedAndRemoveUntil(
+              //         context,
+              //         AppRoutes.dashBoard, // Sales dashboard route
+              //         (route) => false, // Remove all previous routes
+              //       );
+              //       break;
+              //     case 'collection':
+              //       log("Navigating to collection dashboard");
+              //       Navigator.pushNamedAndRemoveUntil(
+              //         context,
+              //         AppRoutes.collectionHome, // Collection dashboard route
+              //         (route) => false, // Remove all previous routes
+              //       );
+              //       break;
+              //     case 'salesAndCollection':
+              //       log("Navigating to collection dashboard");
+              //       Navigator.pushNamedAndRemoveUntil(
+              //         context,
+              //         AppRoutes.dashBoard, // Collection dashboard route
+              //         (route) => false, // Remove all previous routes
+              //       );
+              //       break;
+              //     case 'salesPdAndCollection':
+              //       log("Navigating to collection dashboard");
+              //       Navigator.pushNamedAndRemoveUntil(
+              //         context,
+              //         AppRoutes.dashBoard, // Collection dashboard route
+              //         (route) => false, // Remove all previous routes
+              //       );
+              //       break;
+              //     case 'cibil':
+              //       log("Navigating to collection dashboard");
+              //       Navigator.pushNamedAndRemoveUntil(
+              //         context,
+              //         AppRoutes.dashBoard, // Collection dashboard route
+              //         (route) => false, // Remove all previous routes
+              //       );
+              //       break;
+              //
+              //     default:
+              //       Navigator.pushNamedAndRemoveUntil(
+              //         context,
+              //         AppRoutes.hrms, // Collection dashboard route
+              //         (route) => false, // Remove all previous routes
+              //       );
+              //       // Handle unknown roles or navigate to a default screen
+              //       log('No matching role found');
+              //       break;
+              //   }
+              // }
             }
           });
           // Future.microtask(() {

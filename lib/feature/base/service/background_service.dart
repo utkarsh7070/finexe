@@ -101,6 +101,14 @@ class BackgroundService {
   static SwitchService staticValue = SwitchService.start;
   static String? serviceSatus;
 
+  static final BackgroundService _instance = BackgroundService._internal();
+
+  factory BackgroundService() => _instance;
+
+  late IO.Socket socket;
+
+  BackgroundService._internal();
+
   Future<void> initializeService() async {
     final service = FlutterBackgroundService();
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -213,28 +221,6 @@ class BackgroundService {
     FlutterLocalNotificationsPlugin();
     // Only available for flutter 3.0.0 and later
     DartPluginRegistrant.ensureInitialized();
-//---------------------------------------
-    //-----------------------------------
-    if (service is AndroidServiceInstance) {
-      service.on('setAsForeground').listen((event) {
-        service.setAsForegroundService();
-      });
-
-      service.on('setAsBackground').listen((event) {
-        service.setAsBackgroundService();
-        if (kDebugMode) {
-          print('in backgroundService Start ');
-        }
-      });
-    }
-    service.on('stopService').listen((event) {
-      print('Stopping background service...');
-      SocketService().disconnect();
-      service.stopSelf();
-    });
-
-    // Initialize Socket.IO connection
-    // initializeSocket();
     IO.Socket socket=IO.io(
       'https://stageapi.fincooper.in', // Replace with your server URL
       IO.OptionBuilder()
@@ -256,6 +242,30 @@ class BackgroundService {
     // Handle connection errors
     socket.onConnectError((data) => print("Connect Error: $data"));
     socket.onError((data) => print("Error: $data"));
+//---------------------------------------
+    //-----------------------------------
+    if (service is AndroidServiceInstance) {
+      service.on('setAsForeground').listen((event) {
+        service.setAsForegroundService();
+      });
+
+      service.on('setAsBackground').listen((event) {
+        service.setAsBackgroundService();
+        if (kDebugMode) {
+          print('in backgroundService Start ');
+        }
+      });
+    }
+    service.on('stopService').listen((event) {
+      print('Stopping background service...');
+      socket.disconnect();
+      // SocketService().disconnect();
+      service.stopSelf();
+    });
+
+    // Initialize Socket.IO connection
+    // initializeSocket();
+
 
     // bring to foreground
     // SharedPreferences preferences = await SessionService.getSession();

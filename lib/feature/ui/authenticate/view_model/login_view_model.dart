@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Punch_In_Out/model/check_attendance_responce_model.dart';
 import '../../../Punch_In_Out/repository/puch_In_repository_imp.dart';
 import '../../../base/api/dio_exception.dart';
@@ -50,7 +51,7 @@ StateNotifierProvider.autoDispose<LoginViewModel, AsyncValue<DataModel>>((ref) {
   final punchInRepository = ref.watch(punchInRepositoryProvider);
   final dio = ref.read(dioProvider);
   return LoginViewModel(
-      AsyncValue.data(DataModel(loginStatus: '', checkPunch: false, role: '',allowed: false)),
+      AsyncValue.data(DataModel(loginStatus: '', checkPunch: false, role: [],allowed: false)),
       dio,
       punchInRepository);
 });
@@ -108,14 +109,79 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
         required String role,
         required WidgetRef ref}) async {
     await login(email: email, password: password, ref: ref,role: role,context: context).then(
-          (value) {
+          (value) async {
         if (value) {
           if (kDebugMode) {
             print('check punch ${state.value?.checkPunch}');
             print('check punchCheck punch ${state.value?.role}');
           }
           if (state.value!.checkPunch) {
-            switch (state.value?.role) {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            List<String>? roles = prefs.getStringList('roleName');
+            print('Login screen roles-${roles} ');
+
+            if (roles != null) {
+              if (roles.contains('admin')) {
+                log("Navigating to admin dashboard");
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.dashBoard, // Admin dashboard route
+                      (route) => false, // Remove all previous routes
+                );
+              } else if (roles.contains('sales')) {
+                log("Navigating to sales dashboard");
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.dashBoard, // Sales dashboard route
+                      (route) => false, // Remove all previous routes
+                );
+              } else if (roles.contains('collection')) {
+                log("Navigating to collection dashboard");
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.collectionHome, // Collection dashboard route
+                      (route) => false, // Remove all previous routes
+                );
+              } else if (roles.contains('salesAndCollection')) {
+                log("Navigating to sales and collection dashboard");
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.dashBoard, // Sales and Collection dashboard route
+                      (route) => false, // Remove all previous routes
+                );
+              } else if (roles.contains('salesPdAndCollection')) {
+                log("Navigating to sales PD and collection dashboard");
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.dashBoard, // Sales PD and Collection dashboard route
+                      (route) => false, // Remove all previous routes
+                );
+              } else if (roles.contains('cibil')) {
+                log("Navigating to CIBIL dashboard");
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.dashBoard, // CIBIL dashboard route
+                      (route) => false, // Remove all previous routes
+                );
+              } else {
+                // Default role navigation
+                log('No matching role found, navigating to HRMS');
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.hrms, // Default route
+                      (route) => false, // Remove all previous routes
+                );
+              }
+            } else {
+              // Handle the case where roles are null
+              log('No roles found, navigating to HRMS');
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.hrms, // Default route
+                    (route) => false, // Remove all previous routes
+              );
+            }
+            /*switch (state.value?.role) {
               case 'admin':
                 log("Navigating to admin dashboard");
 
@@ -180,7 +246,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                 // Handle unknown roles or navigate to a default screen
                 log('No matching role found');
                 break;
-            }
+            }*/
           } else {
             Navigator.pushNamedAndRemoveUntil(
               context,
@@ -254,7 +320,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
             allowed: punchStatus.allowed,
             checkPunch: punchStatus.punchIn,
             loginStatus: 'Sucsses',
-            role: loginResponseModel.items.roleName.first.toString()));
+            role: loginResponseModel.items.roleName));
         showCustomSnackBar(context, loginResponseModel.message, Colors.green);
         return true;
         // Return true here to indicate success
@@ -286,15 +352,18 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
 
 class DataModel {
   final String loginStatus;
-  final String role;
+  // final String role;
+  final List<String> role;
   final bool checkPunch;
   final bool allowed;
+
 
   DataModel(
       {required this.loginStatus,
         required this.checkPunch,
         required this.role,
-        required this.allowed});
+        required this.allowed,
+      });
 }
 
 class RadioNotifier extends StateNotifier<Role> {

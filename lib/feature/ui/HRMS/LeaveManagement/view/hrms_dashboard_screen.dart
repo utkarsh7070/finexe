@@ -21,10 +21,20 @@ class HRMSDashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userProfileAsync = ref.watch(loginUserProfileProvider);
     final hrmsViewModel = ref.read(hrmsDashBordProvider.notifier);
-    final role = ref.watch(roleName);
+    // final role = ref.watch(roleName)
+
+    ref.listen(roleListProvider, (previous, next) {
+      if (previous == null && next.role.isEmpty) {
+        ref.read(roleListProvider.notifier).loadRoles();
+      }
+    });
+    final role = ref.watch(roleListProvider);
+
+    print('hr dashbord role ${role.role}');
 
     return userProfileAsync.when(
       data: (userProfile) {
+
         final joiningDate = DateFormat('dd/MM/yyyy')
             .format(DateTime.parse(userProfile.joiningDate));
         final dateOfBirth = DateFormat('dd/MM/yyyy')
@@ -34,9 +44,11 @@ class HRMSDashboardScreen extends ConsumerWidget {
             punchInTime: userProfile.punchInTime,
             punchOutTime: userProfile.punchOutTime,
           ),
+
+
           appBar: AppBar(
             title:
-                const Text("Dashboard", style: TextStyle(color: Colors.white)),
+            const Text("Dashboard", style: TextStyle(color: Colors.white)),
             backgroundColor: AppColors.primary,
             centerTitle: true,
             leading: Visibility(
@@ -65,7 +77,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                         // Set your desired background color
                         shape: RoundedRectangleBorder(
                           borderRadius:
-                              BorderRadius.circular(12), // Rounded corners
+                          BorderRadius.circular(12), // Rounded corners
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -79,14 +91,14 @@ class HRMSDashboardScreen extends ConsumerWidget {
                                   radius: 50,
                                   // backgroundImage: NetworkImage(userProfile.employeePhoto),
                                   backgroundImage: userProfile
-                                              .employeePhoto.isNotEmpty &&
-                                          userProfile.employeePhoto
-                                              .contains('upload')
+                                      .employeePhoto.isNotEmpty &&
+                                      userProfile.employeePhoto
+                                          .contains('upload')
                                       ? NetworkImage(
-                                          '${Api.imageUrl}${userProfile.employeePhoto}')
+                                      '${Api.imageUrl}${userProfile.employeePhoto}')
                                       : const AssetImage(
-                                              'assets/images/prof.jpeg')
-                                          as ImageProvider,
+                                      'assets/images/prof.jpeg')
+                                  as ImageProvider,
                                   // Placeholder image
                                   onBackgroundImageError: (error, stackTrace) {
                                     // Set a default image if the API image fails to load
@@ -105,13 +117,13 @@ class HRMSDashboardScreen extends ConsumerWidget {
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold),
                                       textAlign:
-                                          TextAlign.center, // Center the name
+                                      TextAlign.center, // Center the name
                                     ),
                                     Text(
                                       userProfile.email,
                                       style: AppStyles.subTextStyle,
                                       textAlign:
-                                          TextAlign.center, // Center the name
+                                      TextAlign.center, // Center the name
                                     ),
                                   ],
                                 ),
@@ -215,7 +227,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                         content:
-                                            Text('Employee ID not available')),
+                                        Text('Employee ID not available')),
                                   );
                                 }
                               },
@@ -229,7 +241,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content:
-                                          Text('Failed to load user profile')),
+                                      Text('Failed to load user profile')),
                                 );
                               },
                             );
@@ -251,7 +263,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const LeaveRequestScreen()),
+                                  const LeaveRequestScreen()),
                             );
                           },
                         ),
@@ -260,39 +272,40 @@ class HRMSDashboardScreen extends ConsumerWidget {
                     SizedBox(
                       height: displayHeight(context) * 0.02,
                     ),
-                    Visibility(
+                    /*Visibility(
                       visible: !(role.role.contains('sales') || role.role.contains('collection') || role.role.contains('pd') || role.role.contains('admin')),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Column(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  hrmsViewModel.onPunchOut(context);
-                                  ref.refresh(loginUserProfileProvider);
-                                },
-                                icon: const Icon(Icons.fingerprint,
-                                    size: 40, color: Colors.green),
-                              ),
-                              const Text('Punch Out')
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  LogOutDialog.logOutDialog(context: context);
-                                },
-                                icon: Icon(Icons.logout,color: AppColors.primary,),
-                              ),
-                              Text('Logout')
+                      child: */
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                hrmsViewModel.onPunchOut(context);
+                                ref.refresh(loginUserProfileProvider);
+                              },
+                              icon: const Icon(Icons.fingerprint,
+                                  size: 40, color: Colors.green),
+                            ),
+                            const Text('Punch Out')
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                LogOutDialog.logOutDialog(context: context);
+                              },
+                              icon: Icon(Icons.logout,color: AppColors.primary,),
+                            ),
+                            Text('Logout')
 
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
+                          ],
+                        ),
+                      ],
+                    ),
+                    // )
                   ],
                 ),
               ),
