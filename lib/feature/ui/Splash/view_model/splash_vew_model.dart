@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/dio.dart';
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -64,16 +67,12 @@ class SessionModel {
   final bool? puntchStatus;
   final String? apkUrl;
   final bool? isUpdateRequired;
+ // final List<String>?allRoleName;
+
 
   SessionModel(
-      {this.token = false, this.role = '', this.puntchStatus = false,this.apkUrl='', this.isUpdateRequired= false});
-//   SessionModel copyWith({
-//      bool? token;
-//      String? role;
-//      bool? puntchStatus;
-//     final String? apkUrl;
-//     final bool isUpdateRequired;
-// })
+      {/*this.allRoleName,*/this.token = false, this.role = '', this.puntchStatus = false,this.apkUrl='', this.isUpdateRequired= false});
+
 
 }
 
@@ -97,6 +96,8 @@ final splashViewModelProvider = AsyncNotifierProvider<SplashViewModel, SessionMo
   return SplashViewModel();
 });
 
+
+
 // class VersionCheckState {
 //   final String? apkUrl;
 //   final bool isUpdateRequired;
@@ -105,13 +106,15 @@ final splashViewModelProvider = AsyncNotifierProvider<SplashViewModel, SessionMo
 //   VersionCheckState({this.apkUrl, required this.isUpdateRequired});
 // }
 
-class SplashViewModel extends AsyncNotifier<SessionModel> {
+class SplashViewModel extends AsyncNotifier<SessionModel>   {
   // SplashViewModel() : super(const AsyncValue.loading());
   final ApiService _apiService = ApiService();
 
   @override
   FutureOr<SessionModel> build() {
-   return _apiService.fetchPosts(ref);
+   
+    return _apiService.fetchPosts(ref);
+  //  return _apiService.fetchPosts(  ref);
   }
   // void downloadApk(String apkUrl,context){
   //   _apiService.downloadAndInstallApk(apkUrl);
@@ -133,9 +136,19 @@ class ApiService{
   bool isUpdateRequired =  false;
 
   Future<SessionModel> fetchPosts( ref) async {
+  
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? tokens = prefs.getString('token');
-    final dio = ref.watch(dioProvider);
+      print('>>>>>>>>>>>>$tokens');
+         var connectivityResult = await Connectivity().checkConnectivity();
+ 
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+     
+      return SessionModel();
+      // throw Exception('No internet connection');
+    }else{ 
+
+      final dio = ref.watch(dioProvider);
     List<String>? role = prefs.getStringList('roleName');
     final position = await getCurrentLocation();
     if (tokens != null) {
@@ -144,11 +157,14 @@ class ApiService{
         "latitude": position.latitude,
         "longitude": position.longitude,
       };
+       print('>>>>location>>>>>>>>$location');
       try {
+
+
         Response response =
         await dio.get(Api.checkPunchIn,
             queryParameters: location, options: Options(headers: token));
-        print(response.data);
+        print('response$response');
         var checkAttendanceResponse =
         CheckAttendanceResponseModel.fromJson(response.data);
         print(response.data);
@@ -160,15 +176,19 @@ class ApiService{
         print(response.data);
 
         print('app server version- ${serverVersion} and App version-${AppConstants.staticAppVersion}');
-        isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
+        // isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
 
       } on DioException catch (error) {
+      
+       
         throw Exception(error);
         // DioExceptions.fromDioError(error,context);
       }
     }
     return SessionModel(
-        token: tokens != null, role: role?.first, puntchStatus: punchStatus,apkUrl: apkUrl,isUpdateRequired: isUpdateRequired);
+        /*allRoleName:role,*/token: tokens != null, role: role?.first, puntchStatus: punchStatus,apkUrl: apkUrl,isUpdateRequired: isUpdateRequired);
+    }
+    
   }
 
   // Future<void> downloadAndInstallApk(String apkUrl) async {
