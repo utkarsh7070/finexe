@@ -302,7 +302,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             if (kDebugMode) {
                               print(role);
                             }
-                            SocketService().startTracking();
+
                             loginStateViewModel.clickPunchInButton(
                                 context: context,
                                 email: _emailController.text.trim(),
@@ -426,12 +426,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               await Permission.microphone.status.isDenied ||
               await Permission.videos.status.isDenied ||
               await Permission.photos.status.isDenied ||
+              await Permission.notification.status.isDenied||
               await Permission.systemAlertWindow.status.isDenied;
         } else {
           return await Permission.camera.status.isDenied ||
               await Permission.locationWhenInUse.status.isDenied ||
               await Permission.microphone.status.isDenied ||
               await Permission.storage.status.isDenied ||
+              await Permission.notification.status.isDenied||
               await Permission.systemAlertWindow.status.isDenied;
         }
       } else {
@@ -443,6 +445,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       return await Permission.camera.status.isDenied ||
           await Permission.locationWhenInUse.status.isDenied ||
           await Permission.microphone.status.isDenied ||
+          await Permission.notification.status.isDenied||
           await Permission.storage.status.isDenied;
     }
   }
@@ -460,6 +463,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           Permission.locationWhenInUse,
           Permission.videos,
           Permission.photos,
+          Permission.notification,
           Permission.systemAlertWindow
         ].request().then((value) async {
           if (kDebugMode) {
@@ -474,6 +478,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           Permission.camera,
           Permission.locationWhenInUse,
           Permission.storage,
+          Permission.notification,
           Permission.systemAlertWindow
           //add more permission to request here.
         ].request().then((value) async {
@@ -489,8 +494,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         Permission.camera,
         Permission.locationWhenInUse,
         Permission.storage,
-        // Permission.notification,
-        // Permission.systemAlertWindow
+        Permission.notification,
+        Permission.systemAlertWindow
         //add more permission to request here.
       ].request().then((value) async {
         if (kDebugMode) {

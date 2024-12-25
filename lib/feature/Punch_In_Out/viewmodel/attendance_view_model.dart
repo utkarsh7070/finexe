@@ -20,6 +20,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/model/add_task_request_model.dart';
 import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/model/add_task_response_model.dart';
 import '../../base/api/api.dart';
+import '../../base/service/background_service.dart';
 import '../../base/utils/namespase/app_colors.dart';
 import '../../base/utils/widget/custom_snackbar.dart';
 import '../model/response_model.dart';
@@ -539,7 +540,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       var message = responseData['message'];
       // Punch punchInModel = PunchInModel.fromJson(response.data);
       if (response.statusCode == 200) {
-
+        BackgroundService().stopService();
         showCustomSnackBar(context, message, AppColors.green);
         Roam.stopTracking();
         // PunchInModel punchInModel = PunchInModel.fromJson(response.data);

@@ -8,7 +8,8 @@ import '../../../../base/service/session_service.dart';
 import '../../../Collection/Collection_home_dashboard/home_collection_viewmodel/fetchUserProfile.dart';
 import '../model/attendance_listing_model.dart';
 
-final roleName = Provider<RoleListModel>(
+
+/*final roleName = Provider<RoleListModel>(
   (ref) {
     final prefs = ref.watch(sharedPreferencesHrmsProvider).asData?.value;
     List<String>? role = prefs?.getStringList('roleName');
@@ -21,7 +22,10 @@ final sharedPreferencesHrmsProvider =
     FutureProvider<SharedPreferences>((ref) async {
   final prefs = await SharedPreferences.getInstance();
   return prefs;
-});
+});*/
+
+
+
 
 class AttendanceState {
   final bool isLoading;
@@ -42,7 +46,7 @@ class AttendanceState {
 
 final attendanceListingProvider = StateNotifierProvider.family<
     AttendanceNotifier, AsyncValue<Map<String, dynamic>>, String>(
-  (ref, employeeId) {
+      (ref, employeeId) {
     final controllerNotifier = ref.read(controllerProvider);
     final notifier = AttendanceNotifier(controllerNotifier.monthController);
     notifier.fetchAttendanceRequests(employeeId);
@@ -73,7 +77,7 @@ class AttendanceNotifier
       // Get the selected month from the controller
       String selectedMonth = monthController.text;
       int monthNumber =
-          _getMonthNumber(selectedMonth); // Convert to numeric representation
+      _getMonthNumber(selectedMonth); // Convert to numeric representation
 
       final response = await _dio.get(
         Api.getAttendanceDetails,
@@ -90,8 +94,8 @@ class AttendanceNotifier
       if (response.statusCode == 200 && response.data != null) {
         final data = response.data['items'];
         final attendanceList = (data?['attendanceRecords'] as List<dynamic>?)
-                ?.map((e) => AttendanceRecord.fromJson(e))
-                .toList() ??
+            ?.map((e) => AttendanceRecord.fromJson(e))
+            .toList() ??
             <AttendanceRecord>[];
 
         final counters = data != null ? AttendanceItems.fromJson(data) : null;
