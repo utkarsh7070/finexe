@@ -2,6 +2,7 @@
 
 
 import 'package:dio/dio.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/model/get_all_reporting_manager.dart';
 import 'package:flutter/Material.dart';
@@ -53,7 +54,7 @@ class ExpenseSubmitViewModel extends StateNotifier<ExpenseSubmitState> {
     state = state.copyWith(isLoading: true);
 
     try {
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
       // Prepare form data for upload
       final formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(imagePath),
@@ -100,7 +101,7 @@ class ExpenseSubmitViewModel extends StateNotifier<ExpenseSubmitState> {
     };
 
     try {
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
       final response = await _dio.post(
         Api.expenseSubmitForm,
         data: formData,
@@ -187,7 +188,7 @@ final expenseFormControllerProvider = Provider.autoDispose<ExpenseFormController
 });
 
 final fetchAllManagerProvider = FutureProvider.family.autoDispose<List<ReportingManager>,BuildContext>((ref,context) async {
-  String? token = await SessionService.getToken();
+  String? token = speciality.getToken();
   final dio = ref.read(dioProvider);
   final response = await dio.get(Api.getReportingManager,
     options: Options(headers: {"token": token}
@@ -224,7 +225,7 @@ final fetchAllManagerProvider = FutureProvider.family.autoDispose<List<Reporting
 });
 
 final fetchAllEmployeeProvider = FutureProvider.family.autoDispose<List<Employee>,BuildContext>((ref,context) async {
-  String? token = await SessionService.getToken();
+  String? token = speciality.getToken();
   final dio = ref.read(dioProvider);
   final response = await dio.get(Api.getEmployeeList,
     options: Options(headers: {"token": token}
