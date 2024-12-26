@@ -12,21 +12,24 @@ class UploadBox extends StatelessWidget {
   final String? title;
   final String? subTitle;
   final Color? color;
+  final bool isError;
+  final Color? errorColor;
   final Color? subTextColor;
   final Color? textColor;
   final double? height;
   final double? width;
 
-  const UploadBox(
-      {super.key,
-      required this.iconData,
-      this.title,
-      this.subTitle,
-      this.color,
-      this.height,
-      this.width,
-      this.subTextColor,
-      this.textColor,  this.isImage=false});
+  const UploadBox({super.key,
+    this.isError = false,
+    this.errorColor,
+    required this.iconData,
+    this.title,
+    this.subTitle,
+    this.color,
+    this.height,
+    this.width,
+    this.subTextColor,
+    this.textColor, this.isImage = false});
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +37,10 @@ class UploadBox extends StatelessWidget {
       padding: EdgeInsets.all(16),
       height: height ?? displayHeight(context) * 0.15,
       width: width ?? displayWidth(context) * 0.40,
-      decoration: const BoxDecoration(
+      decoration:  BoxDecoration(
           border: DashedBorder.fromBorderSide(
             dashLength: 10,
-            side: BorderSide(color: Colors.black, width: 1),
+            side: BorderSide(color: isError?Colors.red:Colors.black, width: 1),
           ),
           borderRadius: BorderRadius.all(Radius.circular(10)),
           color: AppColors.boxBagGray),
@@ -45,14 +48,16 @@ class UploadBox extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            isImage?Image.asset('assets/images/image.png',height: 36,width: 36,):Icon(
+            isImage ? Image.asset(
+              'assets/images/image.png', height: 36, width: 36,) : Icon(
               iconData,
               color: color,
             ),
             SizedBox(
               height: displayHeight(context) * 0.01,
             ),
-            Text(subTitle!, style: AppStyles.subTextStyle.copyWith(color: subTextColor)),
+            Text(subTitle!,
+                style: AppStyles.subTextStyle.copyWith(color: subTextColor)),
 
             SizedBox(
               height: displayHeight(context) * 0.01,

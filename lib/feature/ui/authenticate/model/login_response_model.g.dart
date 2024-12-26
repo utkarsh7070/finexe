@@ -12,7 +12,7 @@ LoginResponseModel _$LoginResponseModelFromJson(Map<String, dynamic> json) =>
       subCode: (json['subCode'] as num).toInt(),
       message: json['message'] as String,
       error: json['error'] as String,
-      items: LoginItem.fromJson(json['items'] as Map<String, dynamic>),
+      items: Items.fromJson(json['items'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$LoginResponseModelToJson(LoginResponseModel instance) =>
@@ -24,16 +24,21 @@ Map<String, dynamic> _$LoginResponseModelToJson(LoginResponseModel instance) =>
       'items': instance.items,
     };
 
-LoginItem _$LoginItemFromJson(Map<String, dynamic> json) => LoginItem(
+Items _$ItemsFromJson(Map<String, dynamic> json) => Items(
       employeId: json['employeId'] as String,
       userName: json['userName'] as String,
-      roleName: json['roleName'] as String,
+      roleName:
+          (json['roleName'] as List<dynamic>).map((e) => e as String).toList(),
       token: json['token'] as String,
+      roamId: json['roamId'] as String,
+      trackingMode: json['trackingMode'] as String,
     );
 
-Map<String, dynamic> _$LoginItemToJson(LoginItem instance) => <String, dynamic>{
+Map<String, dynamic> _$ItemsToJson(Items instance) => <String, dynamic>{
       'employeId': instance.employeId,
       'userName': instance.userName,
       'roleName': instance.roleName,
       'token': instance.token,
+      'roamId': instance.roamId,
+      'trackingMode': instance.trackingMode,
     };

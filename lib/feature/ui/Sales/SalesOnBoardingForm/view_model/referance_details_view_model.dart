@@ -18,7 +18,7 @@ class PaymentWithRazorPay extends StateNotifier<PaymentState>{
   void payWithRazorPay(int double){
     var options = {
       'key': 'rzp_live_ILgsfZCZoFIKMb',
-      'amount': 2000,
+      'amount': 3000,
       'name': 'Acme Corp.',
       'description': 'Fine T-Shirt',
       'retry': {'enabled': true, 'max_count': 1},

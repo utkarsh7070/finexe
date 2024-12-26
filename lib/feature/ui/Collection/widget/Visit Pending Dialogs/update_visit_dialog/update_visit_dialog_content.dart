@@ -1,29 +1,38 @@
+import 'dart:io';
+
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:finexe/feature/base/extentions/capital_letter.dart';
+import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_pending_items_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../base/utils/namespase/display_size.dart';
 import '../../../../../base/utils/namespase/font_size.dart';
 import '../../../../../base/utils/widget/app_button.dart';
 import '../../../../../base/utils/widget/app_text_filed_login.dart';
+import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../../../Collection cases/view_model/visit_pending_view_model.dart';
 
 class UpdateVisitDialogContent extends ConsumerWidget {
-  const UpdateVisitDialogContent({super.key});
+  final ItemsDetails? item;
+  final int? index;
+
+  const UpdateVisitDialogContent(
+      {super.key, required this.index, required this.item});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final dropDownControllers = ref.watch(dropDownControllerProvider);
     final dropDownData = ref.read(updateVisitDropDown);
-    final paymentState = ref.watch(paymentStatusViewModelProvider);
-    final paymentViewModel = ref.read(paymentStatusViewModelProvider.notifier);
+    final paymentState = ref.watch(updateVisitViewModelProvider);
+    final paymentViewModel = ref.read(updateVisitViewModelProvider.notifier);
     final paymentFocusStates =
         ref.watch(paymentStatusFocusProviderFocusProvider);
     final paymentFocusViewModel =
         ref.read(paymentStatusFocusProviderFocusProvider.notifier);
+    String? imagePath;
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       child: SizedBox(
@@ -37,10 +46,12 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(height: displayHeight(context)*0.02,width: displayWidth(context)*0.10,),
+                      SizedBox(
+                        height: displayHeight(context) * 0.02,
+                        width: displayWidth(context) * 0.10,
+                      ),
                       SizedBox(
                           child: Align(
                               alignment: Alignment.center,
@@ -50,20 +61,25 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                               ))),
                       IconButton(
                           onPressed: () {
-                            Navigator.pop(context);
-                          }, icon: const Icon(Icons.cancel_sharp))
+
+                            paymentViewModel.updatePhotoValue( context);
+                            ref.invalidate(updateVisitViewModelProvider);
+                          },
+                          icon: const Icon(Icons.cancel_sharp))
                     ],
                   ),
                   SizedBox(
                     height: displayHeight(context) * 0.02,
                   ),
-                  topWidget(context, text1: 'FINC956', text2: 'UGRO'),
+                  topWidget(context, text1: item?.ld!, text2: item?.partner!),
                   SizedBox(
                     height: displayHeight(context) * 0.01,
                   ),
                   nameField(
-                      text1: 'Customer Name', text2: 'Lakhan S/O  Ramprasad'),
-                  nameField(text1: 'Collection Type', text2: 'Bounce EMI'),
+                      text1: 'Customer Name',
+                      text2: '${item?.customerName}  S/O ${item?.fatherName}'),
+                  nameField(
+                      text1: 'Collection Type', text2: item!.collectionType),
                   SizedBox(
                     height: displayHeight(context) * 0.02,
                   ),
@@ -72,18 +88,18 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     children: [
                       boxData(
                         context,
-                        text1: 'Closure Am.',
-                        text2: '₹14384',
+                        text1: 'Emi Amount',
+                        text2: '₹${item?.emiAmount}',
                       ),
                       boxData(
                         context,
-                        text1: 'Closure Am.',
-                        text2: '₹14384',
+                        text1: 'Net Due',
+                        text2: '₹${item?.netDue}',
                       ),
                       boxData(
                         context,
-                        text1: 'Closure Am.',
-                        text2: '₹14384',
+                        text1: 'Old Due',
+                        text2: '₹${item?.oldDue}',
                       ),
                     ],
                   ),
@@ -124,7 +140,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     listTextStyle: const TextStyle(color: AppColors.primary),
                     dropDownItemCount: 4,
                     // onChanged: (val) {
-                    //   // paymentViewModel.updatePaymentStatus(val);
+                    //   paymentViewModel.updatePaymentStatus(val);
                     // },
                     textFieldFocusNode:
                         paymentFocusViewModel.paymentStatusFocusNode,
@@ -167,7 +183,8 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     height: displayHeight(context) * 0.01,
                   ),
                   Visibility(
-                    visible: paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                    visible: paymentViewModel
+                            .dropDownControllerProvider.dropDownValue?.value ==
                         'CustomerWillPayEmi',
                     child: AppFloatTextField(
                       focusNode: paymentFocusViewModel.paymentAmountFocusNode,
@@ -190,16 +207,25 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     height: displayHeight(context) * 0.01,
                   ),
                   Visibility(
-                    visible: paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                    visible: paymentViewModel.dropDownControllerProvider
+                                .dropDownValue?.value ==
                             'CustomerWillPayEmi' ||
-                        paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                        paymentViewModel.dropDownControllerProvider
+                                .dropDownValue?.value ==
                             'CustomerWillNotPayEmi' ||
-                        paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                        paymentViewModel.dropDownControllerProvider
+                                .dropDownValue?.value ==
                             'CustomerNotContactable',
                     child: AppFloatTextField(
+                      isReadOnly: true,
+                      isSuffix: true,
+                      suffixIcon: Icons.date_range,
+                      suffixOnTap: () {
+                        paymentViewModel.dateFilter(context);
+                      },
                       focusNode: paymentFocusViewModel.dateFocusNode,
                       currentState: paymentFocusStates['dateFocusNode'],
-                      // controller: licenseController,
+                      controller: paymentViewModel.dateController,
                       onChange: (value) {
                         paymentViewModel.updateDate(value);
                       },
@@ -217,9 +243,11 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     height: displayHeight(context) * 0.01,
                   ),
                   Visibility(
-                    visible: paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                    visible: paymentViewModel.dropDownControllerProvider
+                                .dropDownValue?.value ==
                             'CustomerWillNotPayEmi' ||
-                        paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                        paymentViewModel.dropDownControllerProvider
+                                .dropDownValue?.value ==
                             'CustomerNotContactable',
                     child: AppFloatTextField(
                       maxLine: 5,
@@ -232,7 +260,8 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                       height: !paymentState.isReasonValid
                           ? displayHeight(context) * 0.16
                           : displayHeight(context) * 0.13,
-                      inerHint: paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                      inerHint: paymentViewModel.dropDownControllerProvider
+                                  .dropDownValue?.value ==
                               'CustomerNotContactable'
                           ? 'Reason For Customer Not Contactable*'
                           : 'Reason For Not Pay (500 Character)*',
@@ -245,7 +274,8 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                     height: displayHeight(context) * 0.01,
                   ),
                   Visibility(
-                    visible: paymentViewModel.dropDownControllerProvider.dropDownValue?.value ==
+                    visible: paymentViewModel
+                            .dropDownControllerProvider.dropDownValue?.value ==
                         'CustomerWillNotPayEmi',
                     child: AppFloatTextField(
                       maxLine: 5,
@@ -265,31 +295,77 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                       textInputAction: TextInputAction.done,
                     ),
                   ),
-                  // SizedBox(
-                  //   height: displayHeight(context) * 0.01,
-                  // ),
-                  TextButton(
-                      onPressed: () {},
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.file_upload_outlined,
-                            color: AppColors.primary,
-                          ),
-                          Text('Take Visit Photo')
-                        ],
-                      )),
-                  // AppButton(
-                  //   textStyle: AppStyles.buttonLightTextStyle,
-                  //   width: displayWidth(context) ,
-                  //   onTap: () {},
-                  //   label: 'Take Photo Visit',
-                  // ),
+                  SizedBox(
+                    height: displayHeight(context) * 0.01,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      paymentViewModel.clickPhoto().then(
+                        (value) {
+                          if (value != null) {
+                            imagePath = value.path;
+
+                            paymentViewModel.updateTransactionImage(imagePath!);
+
+                            print('imagepath ${imagePath}');
+                            paymentViewModel.uploadImage(value.path);
+                          } else {
+                            print('elsepart');
+                          }
+                        },
+                      );
+                    },
+                    child: !paymentState.isLoading
+                        ? Visibility(
+                            visible: paymentState.photoFile.isNotEmpty,
+                            replacement: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.file_upload_outlined,
+                                  color: AppColors.primary,
+                                ),
+                                Text('Take Visit Photo')
+                              ],
+                            ),
+                            child: SizedBox(
+                                height: displayHeight(context) * 0.07,
+                                width: displayWidth(context),
+                                child:
+                                    Image.file(File(paymentState.photoFile))))
+                        : SizedBox(
+                            height: displayHeight(context) * 0.04,
+                            width: displayWidth(context) * 0.10,
+                            child: CircularProgressIndicator()),
+                  ),
+                  SizedBox(
+                    height: displayHeight(context) * 0.02,
+                  ),
                   AppButton(
                     textStyle: AppStyles.buttonLightTextStyle,
                     width: displayWidth(context),
-                    onTap: () {},
+                    isDisabled: !paymentState.isButtonVissible,
+                    onTap: () {
+                      if (paymentViewModel.dropDownControllerProvider
+                              .dropDownValue?.value !=
+                          null) {
+                        // print(
+                        //     ' value  ${paymentViewModel.validateForm(paymentViewModel.dropDownControllerProvider.dropDownValue?.value,context)}');
+                        final isValid = paymentViewModel.validateForm(
+                            paymentViewModel.dropDownControllerProvider
+                                .dropDownValue?.value,context);
+                        if (isValid) {
+                          paymentViewModel.visitFormSubmit(datas: item!,context: context).then(
+                            (value) {
+
+                              paymentViewModel.updatePhotoValue(context);
+                              ref.invalidate(updateVisitViewModelProvider);
+                            },
+                          );
+                          // paymentViewModel.updatePhotoValue('',context);
+                        }
+                      }
+                    },
                     label: 'Submit',
                   )
                 ],
@@ -301,19 +377,19 @@ class UpdateVisitDialogContent extends ConsumerWidget {
     );
   }
 
-  Widget topWidget(context, {required String text1, required String text2}) {
+  Widget topWidget(context, {required String? text1, required String? text2}) {
     return SizedBox(
       width: displayWidth(context),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            text1,
+            text1!,
             style: AppStyles.headingTextStyleXL1
                 .copyWith(fontSize: FontSize.fontSizeXL),
           ),
           Text(
-            text2,
+            text2!,
             style: AppStyles.headingTextStyleXL2
                 .copyWith(fontSize: FontSize.fontSize16),
           ),
@@ -322,17 +398,17 @@ class UpdateVisitDialogContent extends ConsumerWidget {
     );
   }
 
-  Widget nameField({required String text1, required String text2}) {
+  Widget nameField({required String? text1, required String? text2}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          text1,
+          text1!,
           style: AppStyles.subHeadingW500
               .copyWith(color: AppColors.gray7, fontSize: FontSize.fontSizeXS),
         ),
         Text(
-          text2,
+          text2!.capitalize(), // Use for only first Letter capital.
           style: AppStyles.nameText.copyWith(
               fontSize: FontSize.fontSizeS, fontWeight: FontWeight.w600),
         ),
@@ -361,7 +437,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
             style: AppStyles.subTextStyle.copyWith(color: AppColors.white),
           ),
           Text(
-            text2,
+            text2.capitalize(),
             style: AppStyles.nameText.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppColors.white,

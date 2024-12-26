@@ -4,11 +4,12 @@ import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/namespase/app_style.dart';
 import '../../../../base/utils/widget/app_button.dart';
@@ -21,6 +22,7 @@ class NewLoanScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //-----------------------------------------------------------------------------
     final getAllProduct = ref.watch(fetchDataProvider);
     final phoneState = ref.watch(personalDetailViewModelProvider);
     final phoneViewModel = ref.read(personalDetailViewModelProvider.notifier);
@@ -67,6 +69,14 @@ class NewLoanScreen extends ConsumerWidget {
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: getAllProduct.when(
                       data: (data) {
+                        List<DropDownValueModel> dropdown = [];
+                        for (var element in data) {
+                          if (element.productName.isNotEmpty) {
+                            dropdown.add(DropDownValueModel(
+                                name: element.productName, value: element.id));
+                          }
+                        }
+
                         final item = data.firstWhere(
                           (element) =>
                               element.productName ==
@@ -86,6 +96,10 @@ class NewLoanScreen extends ConsumerWidget {
                               permissionFormId: 'permissionFormId',
                               productFinId: 'productFinId'),
                         );
+
+                        final int division = (item.loanAmount.max?.toDouble()??0/5).toInt();
+                        print('division ${division}');
+
                         return Wrap(
                           crossAxisAlignment: WrapCrossAlignment.center,
                           verticalDirection: VerticalDirection.down,
@@ -112,6 +126,7 @@ class NewLoanScreen extends ConsumerWidget {
                                   inerHint: 'Customer Mobile no',
                                   errorText: "Mobile no is a required field",
                                   isError: !phoneState.isPhoneNumberValid,
+                                  textInputType: TextInputType.phone,
                                   textInputAction: TextInputAction.done,
                                 ),
                                 SizedBox(
@@ -120,61 +135,19 @@ class NewLoanScreen extends ConsumerWidget {
                                 DropDownTextField(
                                   clearOption: false,
                                   controller: phoneViewModel.dropDownController,
-                                  // initialValue:
-                                  // phoneViewModel.dropDownController.dropDownValue,
                                   listSpace: 20,
-
                                   listPadding: ListPadding(top: 20),
                                   enableSearch: false,
-                                  dropDownList: const [
-                                    DropDownValueModel(
-                                        name: 'MICRO LAP', value: "microLap"),
-                                    DropDownValueModel(
-                                        name: 'LAp', value: "lap"),
-                                    DropDownValueModel(
-                                        name: 'LAp1', value: "lap1"),
-                                    DropDownValueModel(
-                                        name: 'LAp2', value: "lap2"),
-                                    DropDownValueModel(
-                                        name: 'Local stage',
-                                        value: "localStage"),
-                                    DropDownValueModel(
-                                        name: 'Test', value: "test"),
-                                    DropDownValueModel(
-                                        name: 'FIN PRODUCT 1RS',
-                                        value: "finProduct1Rs"),
-                                    DropDownValueModel(
-                                        name: 'FIN PRODUCT',
-                                        value: "finProduct"),
-                                    DropDownValueModel(
-                                        name: 'Test 3', value: "test3"),
-                                    DropDownValueModel(
-                                        name: 'FIN CAR', value: "finCar"),
-                                    DropDownValueModel(
-                                        name: 'New Producet Added ',
-                                        value: "newProducetAdded"),
-                                    DropDownValueModel(
-                                        name: 'LAp4', value: "Lap4"),
-                                    DropDownValueModel(
-                                        name: 'testBT', value: "testBt"),
-                                    DropDownValueModel(
-                                        name: 'NEW PRODUCT FIN COOPERS 28',
-                                        value: "newProductFinCoopers28"),
-                                    DropDownValueModel(
-                                        name: 'Product Name FIN',
-                                        value: "productNameFin"),
-                                    DropDownValueModel(
-                                        name: '3rd product',
-                                        value: "3rdProduct"),
-                                    DropDownValueModel(
-                                        name: 'Secured LAP MICRO',
-                                        value: "securedLapMicro"),
-                                  ],
+                                  dropDownList: dropdown,
                                   listTextStyle:
                                       const TextStyle(color: AppColors.primary),
                                   dropDownItemCount: 9,
-                                  onChanged: (val) {
-                                    phoneViewModel.updateProduct(item.id);
+                                  onChanged: (dropDown) {
+                                    if (kDebugMode) {
+                                      print(dropDown.name);
+                                    }
+                                    phoneViewModel.updateProduct(
+                                        dropDown.name, data);
                                   },
                                   textFieldFocusNode:
                                       phoneFocusViewModel.productFocusNode,
@@ -215,7 +188,7 @@ class NewLoanScreen extends ConsumerWidget {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: displayHeight(context) * 0.04,
+                                  height: displayHeight(context) * 0.02,
                                 ),
                                 amountShow(
                                     context,
@@ -224,168 +197,255 @@ class NewLoanScreen extends ConsumerWidget {
                                     phoneState.tenure,
                                     phoneState.emi),
                                 SizedBox(
-                                  height: displayHeight(context) * 0.04,
+                                  height: displayHeight(context) * 0.02,
                                 ),
+                                // SizedBox(
+                                //   height: displayHeight(context) * 0.01,
+                                // ),
+                                AppFloatTextField(
+                                  // focusNode:
+                                  // phoneFocusViewModel.phoneNumberFocusNode,
+                                  // currentState: personalFocusStates[
+                                  // 'phoneNumberFocusNode'],
+                                  // controller: licenseController,
+                                  onChange: (value) {
+                                    final double val = double.parse(value);
+                                    if(val >= item.loanAmount.min! && val <= item.loanAmount.max!) {
+                                      phoneViewModel.updateLoanAmount(val);
+                                      phoneViewModel.updateEmi();
+                                    }
+                                  },
+                                  // height: !phoneState.isPhoneNumberValid
+                                  //     ? displayHeight(context) * 0.09
+                                  //     : null,
+                                  inerHint: 'Enter Lone Amount',
+                                  // errorText: "Mobile no is a required field",
+                                  // isError: !(phoneState.loanAmount >= item.loanAmount.min! && phoneState.loanAmount <= item.loanAmount.max!),
+                                  textInputType: TextInputType.phone,
+                                  textInputAction: TextInputAction.done,
+                                ),
+                                SizedBox(height: displayHeight(context)*0.01,),
                                 amountTextShow(
-                                    data: 'Loan Amount',
+                                    data: 'Loan Amount (Lack)',
                                     price: '${phoneState.loanAmount.toInt()}'),
-                                SizedBox(
-                                  height: displayHeight(context) * 0.01,
+                                // SizedBox(
+                                //   height: displayHeight(context) * 0.01,
+                                // ),
+                                // SfLinearGauge(
+                                //   interval: 50000,
+                                //   axisTrackStyle: const LinearAxisTrackStyle(
+                                //       edgeStyle: LinearEdgeStyle.bothCurve,
+                                //       color: AppColors.linearBarColor),
+                                //   minimum: item.loanAmount.min.toDouble(),
+                                //   maximum: item.loanAmount.max.toDouble(),
+                                //   showTicks: true,
+                                //   showLabels: false,
+                                //   minorTicksPerInterval: 1,
+                                //   majorTickStyle:
+                                //       const LinearTickStyle(length: 7),
+                                //   minorTickStyle:
+                                //       const LinearTickStyle(length: 5),
+                                //   axisLabelStyle: const TextStyle(fontSize: 12),
+                                //   markerPointers: [
+                                //     // Widget for the draggable pointer
+                                //     LinearWidgetPointer(
+                                //         value: phoneState.loanAmount,
+                                //         onChanged: (double value) {
+                                //           phoneViewModel
+                                //               .updateLoanAmount(value);
+                                //           phoneViewModel.updateEmi();
+                                //         },
+                                //         child: const Icon(
+                                //           Icons.circle,
+                                //           color: AppColors.primary,
+                                //           size: 20,
+                                //         )),
+                                //   ],
+                                //   ranges: [
+                                //     LinearGaugeRange(
+                                //       edgeStyle: LinearEdgeStyle.bothCurve,
+                                //       position: LinearElementPosition.cross,
+                                //       startValue:
+                                //           item.loanAmount.min.toDouble(),
+                                //       endValue: phoneState.loanAmount,
+                                //       color: AppColors.primary,
+                                //     ),
+                                //   ],
+                                // ),
+                                Slider(
+                                  activeColor: AppColors.primary,
+                                  inactiveColor: AppColors.linearBarColor,
+                                  value: phoneState.loanAmount,
+                                  min: item.loanAmount.min?.toDouble()??0,
+                                  max: item.loanAmount.max?.toDouble()??0,
+                                  divisions: 4,
+                                  // label: phoneState.loanAmount.round().toString(),
+                                  onChanged: (double value) {
+                                    phoneViewModel.updateLoanAmount(value);
+                                    phoneViewModel.updateEmi();
+                                  },
                                 ),
-                                SfLinearGauge(
-                                  axisTrackStyle: const LinearAxisTrackStyle(
-                                      edgeStyle: LinearEdgeStyle.bothCurve,
-                                      color: AppColors.linearBarColor),
-                                  minimum: item.loanAmount.min.toDouble(),
-                                  maximum: item.loanAmount.max.toDouble(),
-                                  showTicks: true,
-                                  showLabels: false,
-                                  minorTicksPerInterval: 1,
-                                  majorTickStyle:
-                                      const LinearTickStyle(length: 7),
-                                  minorTickStyle:
-                                      const LinearTickStyle(length: 5),
-                                  axisLabelStyle: const TextStyle(fontSize: 12),
-                                  markerPointers: [
-                                    // Widget for the draggable pointer
-                                    LinearWidgetPointer(
-                                        value: phoneState.loanAmount,
-                                        onChanged: (double value) {
-                                          phoneViewModel
-                                              .updateLoanAmount(value);
-                                          phoneViewModel.updateEmi();
-                                        },
-                                        child: const Icon(
-                                          Icons.circle,
-                                          color: AppColors.primary,
-                                          size: 15,
-                                        )),
-                                  ],
-                                  ranges: [
-                                    LinearGaugeRange(
-                                      edgeStyle: LinearEdgeStyle.bothCurve,
-                                      position: LinearElementPosition.cross,
-                                      startValue: 0,
-                                      endValue: phoneState.loanAmount,
-                                      color: AppColors.primary,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: displayHeight(context) * 0.03,
-                                ),
-                                amountTextShow(
+
+                                // SizedBox(
+                                //       height: displayHeight(context) * 0.02,
+                                // ),
+                                 amountTextShow(
                                     data: 'Interest Rate',
                                     price: '${phoneState.roi.toInt()}%'),
-                                SizedBox(
-                                  height: displayHeight(context) * 0.01,
+                                Slider(
+                                  activeColor: AppColors.primary,
+                                  inactiveColor: AppColors.linearBarColor,
+                                  value: phoneState.roi,
+                                  min: item.roi.min?.toDouble()??0,
+                                  max: item.roi.max?.toDouble()??0,
+                                  // divisions: 4??division,
+                                  // label: phoneState.loanAmount.round().toString(),
+                                  onChanged: (double value) {
+                                    phoneViewModel.updateInterestLone(value);
+                                    phoneViewModel.updateEmi();
+                                  },
                                 ),
-                                SfLinearGauge(
-                                  axisTrackStyle: const LinearAxisTrackStyle(
-                                      color: AppColors.linearBarColor,
-                                      edgeStyle: LinearEdgeStyle.bothCurve),
-                                  minimum: item.roi.min.toDouble(),
-                                  maximum: item.roi.max.toDouble(),
-                                  showTicks: true,
-                                  showLabels: false,
-                                  majorTickStyle:
-                                      const LinearTickStyle(length: 7),
-                                  minorTickStyle:
-                                      const LinearTickStyle(length: 5),
-                                  axisLabelStyle: const TextStyle(fontSize: 12),
-                                  markerPointers: [
-                                    // Widget for the draggable pointer
-                                    LinearWidgetPointer(
-                                        value: phoneState.roi,
-                                        onChanged: (double value) {
-                                          phoneViewModel
-                                              .updateInterestLone(value);
-                                          phoneViewModel.updateEmi();
-                                        },
-                                        child: const Icon(
-                                          Icons.circle,
-                                          color: AppColors.primary,
-                                          size: 15,
-                                        )),
-                                  ],
-                                  ranges: [
-                                    LinearGaugeRange(
-                                      edgeStyle: LinearEdgeStyle.bothCurve,
-                                      position: LinearElementPosition.cross,
-                                      startValue: 0,
-                                      endValue: phoneState.roi,
-                                      color: AppColors.primary,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: displayHeight(context) * 0.03,
-                                ),
+                                // SizedBox(
+                                //   height: displayHeight(context) * 0.01,
+                                // ),
+                                // SfLinearGauge(
+                                //   axisTrackStyle: const LinearAxisTrackStyle(
+                                //       color: AppColors.linearBarColor,
+                                //       edgeStyle: LinearEdgeStyle.bothCurve),
+                                //   minimum: item.roi.min.toDouble(),
+                                //   maximum: item.roi.max.toDouble(),
+                                //   showTicks: true,
+                                //   showLabels: false,
+                                //   majorTickStyle:
+                                //       const LinearTickStyle(length: 7),
+                                //   minorTickStyle:
+                                //       const LinearTickStyle(length: 5),
+                                //   axisLabelStyle: const TextStyle(fontSize: 12),
+                                //   markerPointers: [
+                                //     // Widget for the draggable pointer
+                                //     LinearWidgetPointer(
+                                //         value: phoneState.roi,
+                                //         onChanged: (double value) {
+                                //           phoneViewModel
+                                //               .updateInterestLone(value);
+                                //           phoneViewModel.updateEmi();
+                                //         },
+                                //         child: const Icon(
+                                //           Icons.circle,
+                                //           color: AppColors.primary,
+                                //           size: 20,
+                                //         )),
+                                //   ],
+                                //   ranges: [
+                                //     LinearGaugeRange(
+                                //       edgeStyle: LinearEdgeStyle.bothCurve,
+                                //       position: LinearElementPosition.cross,
+                                //       startValue: item.roi.min.toDouble(),
+                                //       endValue: phoneState.roi,
+                                //       color: AppColors.primary,
+                                //     ),
+                                //   ],
+                                // ),
+                                // SizedBox(
+                                //   height: displayHeight(context) * 0.03,
+                                // ),
                                 amountTextShow(
                                     data: 'Tenure',
                                     price: '${phoneState.tenure.toInt()}'),
-                                SizedBox(
-                                  height: displayHeight(context) * 0.01,
+                                Slider(
+                                  activeColor: AppColors.primary,
+                                  inactiveColor: AppColors.linearBarColor,
+                                  value: phoneState.tenure,
+                                  min: item.tenure.min?.toDouble()??0,
+                                  max: item.tenure.max?.toDouble()??0,
+                                  // divisions: 4??division,
+                                  // label: phoneState.loanAmount.round().toString(),
+                                  onChanged: (double value) {
+                                    phoneViewModel.updateTenureRate(value);
+                                    phoneViewModel.updateEmi();
+                                  },
                                 ),
-                                SfLinearGauge(
-                                  showAxisTrack: true,
-                                  axisTrackStyle: const LinearAxisTrackStyle(
-                                      color: AppColors.linearBarColor,
-                                      edgeStyle: LinearEdgeStyle.bothCurve),
-                                  minimum: item.tenure.min.toDouble(),
-                                  maximum: item.tenure.max.toDouble(),
-                                  showTicks: true,
-                                  showLabels: false,
-                                  majorTickStyle: const LinearTickStyle(
-                                      length: 7,
-                                      color: AppColors.linearBarColor,
-                                      thickness: 2),
-                                  minorTickStyle: const LinearTickStyle(
-                                      length: 5,
-                                      color: AppColors.linearBarColor,
-                                      thickness: 2),
-                                  // axisLabelStyle: const TextStyle(fontSize: 12),
-                                  markerPointers: [
-                                    // Widget for the draggable pointer
-                                    LinearWidgetPointer(
-                                        value: phoneState.tenure,
-                                        onChanged: (double value) {
-                                          phoneViewModel
-                                              .updateTenureRate(value);
-                                          phoneViewModel.updateEmi();
-                                        },
-                                        child: const Icon(
-                                          CupertinoIcons.circle_fill,
-                                          color: AppColors.primary,
-                                          size: 15,
-                                        )),
-                                  ],
-                                  ranges: [
-                                    LinearGaugeRange(
-                                      edgeStyle: LinearEdgeStyle.bothCurve,
-                                      startValue: 0,
-                                      endValue: phoneState.tenure,
-                                      color: AppColors.primary,
-                                      position: LinearElementPosition.cross,
-                                    ),
-                                  ],
-                                ),
+                                // SizedBox(
+                                //   height: displayHeight(context) * 0.01,
+                                // ),
+                                // SfLinearGauge(
+                                //   showAxisTrack: true,
+                                //   axisTrackStyle: const LinearAxisTrackStyle(
+                                //       color: AppColors.linearBarColor,
+                                //       edgeStyle: LinearEdgeStyle.bothCurve),
+                                //   minimum: item.tenure.min.toDouble(),
+                                //   maximum: item.tenure.max.toDouble(),
+                                //   showTicks: true,
+                                //   showLabels: false,
+                                //   majorTickStyle: const LinearTickStyle(
+                                //       length: 7,
+                                //       color: AppColors.linearBarColor,
+                                //       thickness: 2),
+                                //   minorTickStyle: const LinearTickStyle(
+                                //       length: 5,
+                                //       color: AppColors.linearBarColor,
+                                //       thickness: 2),
+                                //   // axisLabelStyle: const TextStyle(fontSize: 12),
+                                //   markerPointers: [
+                                //     // Widget for the draggable pointer
+                                //     LinearWidgetPointer(
+                                //         value: phoneState.tenure,
+                                //         onChanged: (double value) {
+                                //           phoneViewModel
+                                //               .updateTenureRate(value);
+                                //           phoneViewModel.updateEmi();
+                                //         },
+                                //         child: const Icon(
+                                //           CupertinoIcons.circle_fill,
+                                //           color: AppColors.primary,
+                                //           size: 20,
+                                //         )),
+                                //   ],
+                                //   ranges: [
+                                //     LinearGaugeRange(
+                                //       edgeStyle: LinearEdgeStyle.bothCurve,
+                                //       startValue: item.tenure.min.toDouble(),
+                                //       endValue: phoneState.tenure,
+                                //       color: AppColors.primary,
+                                //       position: LinearElementPosition.cross,
+                                //     ),
+                                //   ],
+                                // ),
+                                // SizedBox(
+                                //   height: displayHeight(context) * 0.01,
+                                // ),
                                 SizedBox(
-                                  height: displayHeight(context) * 0.01,
-                                ),
-                                SizedBox(
-                                  height: displayHeight(context) * 0.04,
+                                  height: displayHeight(context) * 0.02,
                                 ),
                                 AppButton(
                                   width: displayWidth(context),
                                   onTap: () {
-                                    phoneViewModel.submitNewLoan(item.id).then((value) {
-                                      if(value){
-                                        Navigator.pushNamed(
-                                            context, AppRoutes.saleApplicationForm);
-                                      }
-                                    },);
-
+                                    bool isValidate =
+                                        phoneViewModel.validation();
+                                    if (isValidate) {
+                                      phoneViewModel
+                                          .submitNewLoan(item.id)
+                                          .then(
+                                        (value) {
+                                          if (value) {
+                                            print(phoneState.phoneNumber);
+                                            showCustomSnackBar(
+                                                context,
+                                                'New Loan is Created Successfully',
+                                                Colors.green);
+                                            Navigator.pushNamedAndRemoveUntil(
+                                              context,
+                                              AppRoutes.saleApplicationForm,
+                                              (route) => false,
+                                              arguments: {
+                                                'phoneNumber': phoneState.phoneNumber,
+                                              },
+                                            );
+                                            // goPayment.payWithRazorPay(phoneState.loanAmount.toDouble());
+                                          }
+                                        },
+                                      );
+                                    }
                                   },
                                   label: 'Submit',
                                   textStyle:
@@ -443,15 +503,9 @@ class NewLoanScreen extends ConsumerWidget {
 
   Widget amountShow(BuildContext context, double loanAmount, double interest,
       double tenure, emi) {
-    // double monthlyRate = interest / (12 * 100);
-    // double emi =
-    //     (loanAmount * monthlyRate * (pow((1 + monthlyRate), tenure.toInt()))) /
-    //         (pow((1 + monthlyRate), tenure.toInt()) - 1);
-    // String formattedNumber = emi.toStringAsFixed(1);
-    // phoneViewModel.updateEmi(double.parse(formattedNumber));
     return Container(
       padding: const EdgeInsets.all(16),
-      height: displayHeight(context) * 0.20,
+      height: displayHeight(context) * 0.18,
       decoration: BoxDecoration(
           gradient: const LinearGradient(
               begin: Alignment.topLeft,
@@ -487,7 +541,7 @@ class NewLoanScreen extends ConsumerWidget {
             thickness: 1,
           ),
           SizedBox(
-            height: displayHeight(context) * 0.01,
+            height: displayHeight(context) * 0.003,
           ),
           IntrinsicHeight(
             child: Row(

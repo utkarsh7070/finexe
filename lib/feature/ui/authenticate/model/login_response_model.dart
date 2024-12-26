@@ -12,7 +12,7 @@ class LoginResponseModel {
   @JsonKey(name: "error")
   String error;
   @JsonKey(name: "items")
-  LoginItem items;
+  Items items;
 
   LoginResponseModel({
     required this.status,
@@ -28,24 +28,31 @@ class LoginResponseModel {
 }
 
 @JsonSerializable()
-class LoginItem {
+class Items {
   @JsonKey(name: "employeId")
   String employeId;
   @JsonKey(name: "userName")
   String userName;
   @JsonKey(name: "roleName")
-  String roleName;
+  List<String> roleName;
   @JsonKey(name: "token")
   String token;
+  @JsonKey(name: "roamId")
+  String roamId;
+  @JsonKey(name: "trackingMode")
+  String trackingMode;
 
-  LoginItem({
+  Items({
     required this.employeId,
     required this.userName,
     required this.roleName,
     required this.token,
+    required this.roamId,
+    required this.trackingMode,
   });
 
-  factory LoginItem.fromJson(Map<String, dynamic> json) => _$LoginItemFromJson(json);
+  factory Items.fromJson(Map<String, dynamic> json) => _$ItemsFromJson(json);
 
-  Map<String, dynamic> toJson() => _$LoginItemToJson(this);
+  Map<String, dynamic> toJson() => _$ItemsToJson(this);
 }
+

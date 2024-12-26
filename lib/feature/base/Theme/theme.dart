@@ -25,9 +25,6 @@ class AppTheme extends Themeable {
       ),
       useMaterial3: true,
       brightness: Brightness.light,
-      // dialogTheme: const DialogTheme(
-      //   backgroundColor: AppColors.black,
-      // ),
     );
   }
 }

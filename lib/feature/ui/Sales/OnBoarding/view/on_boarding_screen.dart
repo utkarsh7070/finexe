@@ -3,9 +3,7 @@ import 'package:finexe/feature/ui/Sales/OnBoarding/view_model/on_boarding_view_m
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'widget/list_of_form.dart';
-import 'widget/radio_button.dart';
 
 class OnBoardingScreen extends ConsumerWidget{
   const OnBoardingScreen({super.key});

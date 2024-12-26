@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 
 class AppFloatTextField extends StatelessWidget {
   final String? hint;
+  final TextCapitalization textCapitalize;
   final String? inerHint;
   final double? width;
   final String? errorText;
+  final bool isReadOnly;
   final TextEditingController? controller;
   final IconData? suffixIcon;
   final IconData? prefixIcon;
@@ -16,6 +18,7 @@ class AppFloatTextField extends StatelessWidget {
   final bool? isError;
   final VoidCallback? suffixOnTap;
   final VoidCallback? onTap;
+  final VoidCallback? onEditingComplete;
   final ValueChanged<String>? onFiledSubmitted;
   final bool? isSuffix;
   final FocusNode? focusNode;
@@ -31,6 +34,7 @@ class AppFloatTextField extends StatelessWidget {
 
   const AppFloatTextField(
       {super.key,
+        this.textCapitalize = TextCapitalization.none,
       this.maxLine,
       this.width,
       this.hint,
@@ -42,7 +46,9 @@ class AppFloatTextField extends StatelessWidget {
       this.isError = false,
       this.suffixOnTap,
       this.onTap,
+      this.onEditingComplete,
       this.isSuffix = false,
+        this.isReadOnly = false,
       this.textInputAction = TextInputAction.done,
       this.textInputType = TextInputType.text,
       // this.initialValue,
@@ -65,6 +71,9 @@ class AppFloatTextField extends StatelessWidget {
 
       alignment: Alignment.center,
       child: TextFormField(
+        onEditingComplete: onEditingComplete,
+        textCapitalization: textCapitalize,
+        readOnly: isReadOnly,
         // initialValue: initialValue,
         maxLines: maxLine,
         focusNode: focusNode,
@@ -79,6 +88,7 @@ class AppFloatTextField extends StatelessWidget {
         textInputAction: textInputAction,
         keyboardType: textInputType,
         style: const TextStyle(fontSize: 12),
+        textAlignVertical: TextAlignVertical.center,  // Add this property
         decoration: InputDecoration(
           isDense: false,
           // hintText: inerHint,
@@ -104,6 +114,7 @@ class AppFloatTextField extends StatelessWidget {
                   child: Icon(suffixIcon, color: Colors.grey),
                 )
               : null,
+          contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),  // Add this property
           enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: AppColors.gray, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(10))),

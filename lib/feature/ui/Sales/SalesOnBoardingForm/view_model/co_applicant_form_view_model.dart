@@ -1,21 +1,28 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/api/api.dart';
-import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/submit_co_applicant_response_model.dart';
+import 'package:finexe/feature/ui/Sales/NewLone/view_model/new_loan_view_model.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/pan_response_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/dio.dart';
+import '../../../../base/api/dio_exception.dart';
+import '../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/request_model/aadhaar_number_request_model.dart';
 import '../model/request_model/aadhaar_otp_request_model.dart';
 import '../model/request_model/pan_request_model.dart';
 import '../model/request_model/submit_co_applicant_form_data.dart';
-import '../model/request_model/submite_applicant_form_data_model.dart';
 import '../model/responce_model/aadhaar_otp_responce_model.dart';
 import '../model/responce_model/aadhar_number_response_model.dart';
+import '../model/responce_model/pan_father_name_response_model.dart';
 import '../view/Sales_on_boarding_form/co-applicant_form/co_applicant_form1.dart';
 
 final uploadCoDoc = StateProvider(
@@ -35,13 +42,63 @@ final isCoTickColorChange = StateProvider(
   },
 );
 
-final checkBoxTermsConditionCoApplicant = StateProvider(
+class ImagePickerNotifier extends StateNotifier<File?> {
+  ImagePickerNotifier() : super(null);
+  final ImagePicker picker = ImagePicker();
+
+  // XFile image = await _picker.pickImage(...)
+
+  Future<void> pickImage() async {
+    await Permission.photos.request();
+    await Permission.videos.request();
+
+    // var video = await Permission.storage.status;
+    if (await Permission.photos.status.isDenied &&
+        await Permission.videos.status.isDenied) {
+      // We haven't asked for permission yet or the permission has been denied before, but not permanently.
+    }
+    if (await Permission.photos.status.isGranted &&
+        await Permission.videos.status.isGranted) {
+      try {
+        XFile? pickedImage =
+        await picker.pickImage(source: ImageSource.gallery);
+        if (pickedImage != null) {
+          state = File(pickedImage.path);
+        }
+      } catch (e) {
+        print('Failed to pick image: $e');
+      }
+    }
+
+// You can also directly ask permission about its status.
+//     if (await Permission.location.isRestricted) {
+//       // The OS restricts access, for example, because of parental controls.
+//     }
+  }
+
+  void clearImage() {
+    state = null;
+  }
+}
+
+final imagePickerProvider =
+StateNotifierProvider<ImagePickerNotifier, File?>((ref) {
+  return ImagePickerNotifier();
+});
+
+
+// final checkBoxTermsConditionCoApplicant = StateProvider(
+//   (ref) {
+//     return false;
+//   },
+// );
+
+final getOptCoApp = StateProvider(
   (ref) {
     return false;
   },
 );
-
-final getOptCoApp = StateProvider(
+final submitCoApplicantForm = StateProvider(
   (ref) {
     return false;
   },
@@ -113,6 +170,7 @@ class FormDataControllerNotifier
       : super([
           FormDataController(
             aadhaarController: TextEditingController(),
+            coApplicantMobileController: TextEditingController(),
             kycDocumentController: TextEditingController(),
             contactController: TextEditingController(),
             ageController: TextEditingController(),
@@ -143,6 +201,7 @@ class FormDataControllerNotifier
       ...state,
       FormDataController(
         aadhaarController: TextEditingController(),
+    coApplicantMobileController: TextEditingController(),
         kycDocumentController: TextEditingController(),
         contactController: TextEditingController(),
         ageController: TextEditingController(),
@@ -199,7 +258,7 @@ final formDataProvider =
 
 final coApplicantViewModelProvider =
     StateNotifierProvider<ApplicantViewModel, List<KycFormState>>((ref) {
-  final dio = ref.read(dioProvider);
+  final dio = ref.watch(dioProvider);
   return ApplicantViewModel(dio);
 });
 
@@ -228,30 +287,23 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
 
 // Add a new text field
 
-  // Update a specific text field's name or last name
-  // void updateTextField(int index, String newValue, bool isNameField) {
-  //   if (index >= 0 && index < state.length) {
-  //     state = [
-  //       for (var i = 0; i < state.length; i++)
-  //         if (i == index)
-  //           KycFormState()
-  //         else
-  //           state[i]
-  //     ];
-  //   }
+  // void removeCoApplicant(int todoId) {
+  //   // Again, our state is immutable. So we're making a new list instead of
+  //   // changing the existing list.
+  //   state = [
+  //     for (final todo in state)
+  //       if (todo.id == todoId) removeItem(index),
+  //   ];
   // }
-  // Update email field
 
-  void removeCoApplicant(String todoId) {
-    // Again, our state is immutable. So we're making a new list instead of
-    // changing the existing list.
+  Future<bool> fetchAadhaarNumber(int index,BuildContext context) async {
     state = [
       for (final todo in state)
-        if (todo.id != todoId) todo,
+        if (todo.id == index) todo.copyWith(isLoading: true) else todo
     ];
-  }
-
-  Future<bool> fetchAadhaarNumber(int index) async {
+    if(dropDownController.dropDownValue?.value == 'panCard'){
+      await fetchPanVerify(index, context);
+    }
     print(state[index].aadhaar);
     final aadhaarNumberRequestModel = AadhaarNumberRequestModel(
         aadharNo: state[index].aadhaar.trim().toString(),
@@ -264,16 +316,32 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
       if (response.statusCode == 200) {
         aadhaarNumberResponseModel =
             AadhaarNumberResponseModel.fromJson(response.data);
+        state = [
+          for (final todo in state)
+            if (todo.id == index) todo.copyWith(isLoading: false) else todo
+        ];
         return true;
       } else {
+        state = [
+          for (final todo in state)
+            if (todo.id == index) todo.copyWith(isLoading: false) else todo
+        ];
         return false;
       }
     } catch (e) {
+      state = [
+        for (final todo in state)
+          if (todo.id == index) todo.copyWith(isLoading: false) else todo
+      ];
       throw Exception(e);
     }
   }
 
-  Future<bool> fetchOtp(int index) async {
+  Future<bool> fetchOtp(int index,context) async {
+    state = [
+      for (final todo in state)
+        if (todo.id == index) todo.copyWith(isLoading: true) else todo
+    ];
     if (kDebugMode) {
       print(state[index].otp);
     }
@@ -292,9 +360,25 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     try {
       final response = await dio.post(Api.aadhaarOtpVerify,
           data: aadhaarOtpResquestModel.toJson());
+
+      var responseData = response.data;
+      print('fetch pan father response: ${responseData}');
+      var message = responseData['message'];
+      print('message - ${message}');
+
+      if(response.statusCode == 400){
+        DioExceptions.fromDioError(responseData as DioException, context);
+      }
+
       if (response.statusCode == 200) {
+        state = [
+          for (final todo in state)
+            if (todo.id == index) todo.copyWith(isLoading: false) else todo
+        ];
         aadhaarOtpResponseModel =
             AadhaarOtpResponseModel.fromJson(response.data);
+
+        final age = calculateAge(aadhaarOtpResponseModel!.items.msg.dob);
         if (aadhaarOtpResponseModel != null) {
           state = [
             for (final todo in state)
@@ -302,6 +386,8 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
                 todo.copyWith(
                   fullName: aadhaarOtpResponseModel!.items.msg.name,
                   dob: aadhaarOtpResponseModel!.items.msg.dob,
+                  careOf: aadhaarOtpResponseModel!.items.msg.careof,
+                  age: age.toString(),
                   communicationAddress1:
                       '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!.items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark}',
                   communicationAddress2:
@@ -320,34 +406,63 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         // AadhaarNumberResponseModel.fromJson(response.data);
         return true;
       } else {
+        state = [
+          for (final todo in state)
+            if (todo.id == index) todo.copyWith(isLoading: false) else todo
+        ];
         return false;
       }
     } catch (e) {
+      state = [
+        for (final todo in state)
+          if (todo.id == index) todo.copyWith(isLoading: false) else todo
+      ];
       throw Exception(e);
     }
   }
 
-  Future<bool> submitCoApplicantForm(int index) async {
+  int calculateAge(String birthOfDate) {
+    DateTime birthDate = DateFormat("dd-MM-yyyy").parse(birthOfDate);
+    DateTime today = DateTime.now();
+    int age = today.year - birthDate.year;
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+    return age;
+  }
+
+  Future<bool> submitCoApplicantForm(int index,context) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final token = sharedPreferences.getString('token');
-    final employeId = sharedPreferences.getString('employeId');
-    final customerId = sharedPreferences.getString('customerId');
+    final String? employeId = sharedPreferences.getString('employeId');
+    final String? customerId = sharedPreferences.getString('customerId');
+    if (kDebugMode) {
+      print(employeId);
+      print(customerId);
+    }
+    final strDate = DateFormat('dd-MM-yyyy').parse(state[index].dob);
+    final dob = DateFormat('yyyy-MM-dd').format(strDate);
+    if (kDebugMode) {
+      print(dob);
+    }
+
     final formData = CoApplicantFormData(
         relationWithApplicant: '',
-        docType: dropDownController.dropDownValue!.name,
-        employeId: employeId!,
-        customerId: customerId!,
+        docType: dropDownController.dropDownValue?.value,
+        employeId: employeId ?? '',
+        customerId: customerId ?? '',
         fullName: state[index].fullName,
         email: state[index].email,
         aadharNo: state[index].aadhaar,
-        mobileNo: state[index].contact,
+        mobileNo: state[index].coApplicantContact,
         docNo: state[index].pan,
         gender: state[index].gender,
-        fatherName: state[index].fatherName,
+        fatherName: state[index].panFather,
         maritalStatus: '',
         spouseName: '',
         motherName: '',
-        dob: state[index].dob,
+        dob: dob,
         religion: '',
         caste: '',
         age: state[index].age,
@@ -363,15 +478,27 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         localAddresspinCode: state[index].communicationPinCode,
         localAddresscity: state[index].communicationCity,
         localAddressdistrict: state[index].communicationDistrict,
-        localAddressstate: state[index].communicationState);
+        localAddressstate: state[index].communicationState, coApplicantContact: state[index].coApplicantContact,);
     FormData dioFormData = formData.toFormData();
 
     final response = await dio.post(Api.submitCoApplicantForm,
         data: dioFormData, options: Options(headers: {'token': token}));
-    print(response.statusMessage);
-    print(response.statusCode);
+    print('Co applicant submit response - ${response}');
+   // print(response.statusMessage);
+  //  print(response.statusCode);
+
+    var responseData = response.data;
+    print('fetch pan father response: ${responseData}');
+    var message = responseData['message'];
+    print('message - ${message}');
+
+    if(response.statusCode == 400){
+      DioExceptions.fromDioError(responseData as DioException, context);
+    }
+
     if (response.statusCode == 200) {
-      SubmitCoApplicantResponseModel.fromJson(response.data);
+      // SubmitCoApplicantResponseModel.fromJson(response.data);
+
       return true;
     } else {
       throw Exception('Failed to load data');
@@ -424,29 +551,119 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     }
   }
 
-  Future<bool> fetchPanVerify(int index) async {
+  Future<void> fetchPanFatherName(int index,BuildContext context) async {
+    final panRequestModel ={
+      "trans_id":"12345",
+      "docType":"522",
+      "docNumber":state[index].pan,
+      "formName": "coApplicant"
+    };
+    try {
+      final response =
+      await dio.post(Api.panFatherName, data: panRequestModel);
+      if (kDebugMode) {
+        print('fetchPanFatherName Api Response ${response.data}');
+       // print('Set father name Response ${response.data['items']['msg']['data']['father_name']}');
+      }
+      PanFatherNameResponseModel? responseModel;
+      if(response.data['items']['msg'] is List){
+    responseModel =
+        PanFatherNameResponseModel.fromJson(response.data);
+      }
+
+      var responseData = response.data;
+      print('fetch pan father response: ${responseData}');
+      var message = responseData['message'];
+      print('message - ${message}');
+
+      if(response.statusCode == 400){
+        DioExceptions.fromDioError(responseData as DioException, context);
+      }
+
+      if(response.statusCode ==200){
+        state = [
+          for (final todo in state)
+            if (todo.id == index)
+              todo.copyWith(panFather: responseModel?.items.msg?.data?.fatherName)
+
+            else
+              todo
+        ];
+        // state = state.copyWith(panFather: response.data['']);
+      }
+    } on DioException catch (error) {
+      state = [
+        for (final todo in state)
+          if (todo.id == index) todo.copyWith(isLoading: false) else todo
+      ];
+      DioExceptions.fromDioError(error as DioException, context);
+      throw Exception(error);
+      // throw Exception(error);
+    }
+  }
+
+  Future<bool> fetchPanVerify(int index , BuildContext context) async {
+    await fetchPanFatherName(index,context);
     if (kDebugMode) {
       print(state[index].otp);
     }
     final panRequestModel = PanRequestModel(
-        docType: 523, panNumber: state[index].pan, transId: "111XXXXX");
+        docType: 523, panNumber: state[index].pan, transId: "111XXXXX",formName: "coApplicant");
+    print('pan panRequestModel ${panRequestModel}');
     try {
       final response =
           await dio.post(Api.panVerify, data: panRequestModel.toJson());
+
+      print('pan verify respons ${response}');
+
+      var responseData = response.data;
+      print('fetch pan father response: ${responseData}');
+      var message = responseData['message'];
+      print('message - ${message}');
+
+      if(response.statusCode == 400){
+        DioExceptions.fromDioError(responseData as DioException, context);
+      }
+
       if (response.statusCode == 200) {
+        PanResponseModel panResponseModel =
+            PanResponseModel.fromJson(response.data);
+
+        final String dob =
+            DateFormat("dd-MM-yyyy").format(panResponseModel.items.data.dob);
+
+        state = [
+          for (final todo in state)
+            if (todo.id == index)
+              todo.copyWith(
+                  panName: panResponseModel.items.data.fullName,
+                  panGender: panResponseModel.items.data.gender,
+                  panDob: dob)
+            else
+              todo
+        ];
         if (kDebugMode) {
           print(response.data);
         }
         return true;
       } else {
+        state = [
+          for (final todo in state)
+            if (todo.id == index) todo.copyWith(isLoading: false) else todo
+        ];
         return false;
       }
     } catch (e) {
+      state = [
+        for (final todo in state)
+          if (todo.id == index) todo.copyWith(isLoading: false) else todo
+      ];
+      DioExceptions.fromDioError(e as DioException, context);
       throw Exception(e);
     }
   }
 
-  Future<void> pickImages(int index) async {
+ /* Future<void> pickImages(int index) async {
     await Permission.photos.request();
     await Permission.videos.request();
 
@@ -458,8 +675,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     if (await Permission.photos.status.isGranted &&
         await Permission.videos.status.isGranted) {
       try {
-        XFile? pickedImage =
-            await picker.pickImage(source: ImageSource.gallery);
+        XFile? pickedImage = await picker.pickImage(source: ImageSource.camera);
         if (kDebugMode) {
           print('image before null condition  ${pickedImage!.path.toString()}');
         }
@@ -481,15 +697,90 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         }
       }
     }
+  }*/
+
+  Future<void> pickImages(int index) async {
+    final ImagePicker picker = ImagePicker();
+
+    try {
+      // Check Android version
+      if (Platform.isAndroid) {
+        if (await _checkPermissions()) {
+          // Permissions are granted, proceed to capture image
+          XFile? pickedImage = await picker.pickImage(source: ImageSource.camera);
+          if (pickedImage != null) {
+            print('Image path: ${pickedImage.path}');
+            state = [
+              for (final todo in state)
+                if (todo.id == index)
+                  todo.copyWith(applicantPhotoFilePath: pickedImage?.path)
+                else
+                  todo
+            ];
+          //  state = state.copyWith(applicantPhotoFilePath: pickedImage.path);
+            // Handle the picked image as needed
+          } else {
+            print('No image selected.');
+          }
+        } else {
+          print('Permissions denied.');
+        }
+      } else {
+        print('This functionality is only available on Android.');
+      }
+    } catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
+  Future<bool> _checkPermissions() async {
+    final AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
+    debugPrint('releaseVersion : ${androidInfo.version.release}');
+    final int androidVersion = int.parse(androidInfo.version.release);
+    if (androidVersion >= 13) {
+      // Android 13 and above
+      final photosPermission = await Permission.photos.request();
+      final videosPermission = await Permission.videos.request();
+
+      if (photosPermission.isGranted && videosPermission.isGranted) {
+        return true;
+      } else {
+        print('Photos/Videos permissions denied.');
+        return false;
+      }
+    } else {
+      // Below Android 13
+      final cameraPermission = await Permission.camera.request();
+      final storagePermission = await Permission.storage.request();
+
+      if (cameraPermission.isGranted && storagePermission.isGranted) {
+        return true;
+      } else {
+        print('Camera/Storage permissions denied.');
+        return false;
+      }
+    }
   }
 
   // void clearImage() {
   //   state = null;
   // }
 
-  void removeItem(int index){
+  void removeItem(int index) {
+    state = [
+      for (int i = 0; i < state.length; i++)
+        if (i != index) state[i],
+    ];
 
+    // state = [
+    //   for (final todo in state)
+    //     if (todo.id != index) todo,
+    // ];
   }
+
+  // void removeItem(String item) {
+  //   state = state.where((i) => i != item).toList();
+  // }
 
   Future<void> pickAadhaar1Images(int index) async {
     await Permission.photos.request();
@@ -578,6 +869,27 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         'permanent add ${state[index].permanentAddress1}, ${state[index].permanentAddress2}');
   }
 
+  bool validateCoApplicant(int index) {
+    final isAadhaar = _validateAadhaar(state[index].aadhaar);
+    final isDoc = _validatePan(state[index].pan);
+    final isCheckBox = state[index].checkBoxTermsConditionCoApplicant;
+    state = state = [
+      for (final todo in state)
+        if (todo.id == index)
+          todo.copyWith(isAadhaarValid: isAadhaar, isPanValid: isDoc)
+        else
+          todo
+    ];
+    return isAadhaar && isDoc && isCheckBox;
+  }
+
+  void submitCoApplicant(bool value, int index) {
+    state = [
+      for (final todo in state)
+        if (todo.id == index) todo.copyWith(isSubmitCoApplicant: value) else todo
+    ];
+  }
+
   void updateKycDoc(String value, int index) {
     final isValid = _validateKycDoc(value);
 
@@ -603,9 +915,22 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     // copyWith(kycDocument: value, isKycValid: isValid);
   }
 
+
+  void updateCoApplintContact(String value, int index) {
+    final isValid = _validateCoApplicantContact(value);
+    state = [
+      for (final todo in state)
+        if (todo.id == index)
+          todo.copyWith(coApplicantContact: value, isCoApplicantValid: isValid)
+        else
+          todo
+    ];
+    // copyWith(kycDocument: value, isKycValid: isValid);
+  }
+
+
   void updateOtp(String value, int index) {
     final isValid = _validateOtp(value);
-
     state = [
       for (final todo in state)
         if (todo.id == index)
@@ -847,6 +1172,13 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     ];
   }
 
+  void updateIsOtpVerified(bool value, int index) {
+    state = [
+      for (final todo in state)
+        if (todo.id == index) todo.copyWith(isOtpVerified: value) else todo
+    ];
+  }
+
   void updatePermanentAddress1(String value, int index) {
     final isValid = _validatePermanentAddress1(value);
     state = [
@@ -854,6 +1186,16 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         if (todo.id == index)
           todo.copyWith(
               permanentAddress1: value, isPermanentAddress1Valid: isValid)
+        else
+          todo
+    ];
+  }
+
+  void updateCheckBox(bool value, int index) {
+    state = [
+      for (final todo in state)
+        if (todo.id == index)
+          todo.copyWith(checkBoxTermsConditionCoApplicant: value)
         else
           todo
     ];
@@ -1087,9 +1429,13 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     return aadhaar.length >= 12 && aadhaar.isNotEmpty;
   }
 
+  bool _validateCoApplicantContact(String coApplicantContact) {
+    return coApplicantContact.length != 10 && coApplicantContact.isNotEmpty;
+  }
+
 // License validation logic
   bool _validatePan(String pan) {
-    return pan.length >= 12;
+    return pan.length >= 10;
   }
 
   bool _validateMother(String mother) {
@@ -1153,6 +1499,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
 
 class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
   final FocusNode aadhaarFocusNode;
+  final FocusNode coAppliContactFocusNode;
   final FocusNode kycDocFocusNode;
   final FocusNode panFocusNode;
   final FocusNode motherFocusNode;
@@ -1186,6 +1533,7 @@ class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
 
   ApplicantFocusProvider()
       : aadhaarFocusNode = FocusNode(),
+        coAppliContactFocusNode= FocusNode(),
         kycDocFocusNode = FocusNode(),
         panFocusNode = FocusNode(),
         motherFocusNode = FocusNode(),
@@ -1215,6 +1563,7 @@ class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
         permanentStateFocusNode = FocusNode(),
         super({
           'aadhaarFocusNode': false,
+          'coAppliContactFocusNode': false,
           'kycDocFocusNode': false,
           'panFocusNode': false,
           'motherFocusNode': false,
@@ -1246,6 +1595,12 @@ class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
     aadhaarFocusNode.addListener(
       () => _focusListener('aadhaarFocusNode', aadhaarFocusNode),
     );
+
+    coAppliContactFocusNode.addListener(
+          () => _focusListener('coAppliContactFocusNode', coAppliContactFocusNode),
+    );
+
+
     kycDocFocusNode
         .addListener(() => _focusListener('kycDocFocusNode', kycDocFocusNode));
     panFocusNode
@@ -1403,6 +1758,7 @@ class ApplicantFocusProvider extends StateNotifier<Map<String, bool>> {
 
 class FormDataController {
   final TextEditingController aadhaarController;
+  final TextEditingController coApplicantMobileController;
   final TextEditingController kycDocumentController;
   final TextEditingController panController;
   final TextEditingController contactController;
@@ -1434,6 +1790,7 @@ class FormDataController {
 
   FormDataController({
     required this.kycDocumentController,
+    required this.coApplicantMobileController,
     required this.contactController,
     required this.emailController,
     required this.fatherNameController,
@@ -1460,6 +1817,7 @@ class FormDataController {
 
   void dispose() {
     aadhaarController.dispose();
+    coApplicantMobileController.dispose();
     ageController.dispose();
     communicationAddress1Controller.dispose();
     communicationAddress2Controller.dispose();
@@ -1471,12 +1829,23 @@ class FormDataController {
 }
 
 class KycFormState {
+  final bool isLoading;
   final int id;
   final String applicantPhotoFilePath;
   final String aadhaarPhotoFilePath1;
   final String aadhaarPhotoFilePath2;
+  final bool checkBoxTermsConditionCoApplicant;
+  final bool isCoApplicantFormSubmitted;
+  final bool isOtpVerified;
+  final String careOf;
+
+  final String panName;
+  final String panGender;
+  final String panDob;
+  final bool isSubmitCoApplicant;
 
   final String aadhaar;
+  final String coApplicantContact;
   final String kycDocument;
   final String pan;
   final String mother;
@@ -1485,6 +1854,7 @@ class KycFormState {
   final String marital;
   final String religion;
   final String caste;
+  final String panFather;
   final String otp;
   final bool isOtpValid;
 
@@ -1542,7 +1912,19 @@ class KycFormState {
   final bool isPermanentDistrictValid;
   final bool isPermanentPinCodeValid;
 
+  final bool isCoApplicantContact;
+
   KycFormState({
+    this.panFather = '',
+    this.isSubmitCoApplicant = false,
+    this.panGender = '',
+    this.panDob = '',
+    this.panName = '',
+    this.careOf = '',
+    this.isOtpVerified = false,
+    this.isCoApplicantFormSubmitted = false,
+    this.isLoading = false,
+    this.checkBoxTermsConditionCoApplicant = false,
     this.id = 0,
     this.otp = '',
     this.isOtpValid = true,
@@ -1550,6 +1932,7 @@ class KycFormState {
     this.aadhaarPhotoFilePath1 = '',
     this.aadhaarPhotoFilePath2 = '',
     this.aadhaar = '',
+    this.coApplicantContact='',
     this.permanentAddress1 = '',
     this.permanentAddress2 = '',
     this.permanentCity = '',
@@ -1557,6 +1940,7 @@ class KycFormState {
     this.permanentPinCode = '',
     this.permanentState = '',
     this.isAadhaarValid = true,
+    this.isCoApplicantContact=true,
     this.isPermanentAddress1Valid = true,
     this.isPermanentAddress2Valid = true,
     this.isPermanentCityValid = true,
@@ -1608,11 +1992,23 @@ class KycFormState {
   });
 
   KycFormState copyWith(
-      {int? id,
+      {
+        String? panFather,
+        bool? isSubmitCoApplicant,
+      String? panName,
+      String? panGender,
+      String? panDob,
+      String? careOf,
+      bool? isOtpVerified,
+      bool? isCoApplicantFormSubmitted,
+      bool? isLoading,
+      bool? checkBoxTermsConditionCoApplicant,
+      int? id,
       String? applicantPhotoFilePath,
       String? aadhaarPhotoFilePath1,
       String? aadhaarPhotoFilePath2,
       String? aadhaar,
+        String? coApplicantContact,
       String? permanentAddress1,
       String? permanentAddress2,
       String? permanentCity,
@@ -1656,6 +2052,7 @@ class KycFormState {
       bool? isCommunicationPinCodeValid,
       bool? isKycValid,
       bool? isAadhaarValid,
+        bool? isCoApplicantValid,
       bool? isPanValid,
       bool? isMotherValid,
       bool? isContactValid,
@@ -1671,6 +2068,18 @@ class KycFormState {
       bool? isAgeValid,
       bool? isRelationWithApplicantValid}) {
     return KycFormState(
+      panFather: panFather??this.panFather,
+        isSubmitCoApplicant: isSubmitCoApplicant ?? this.isSubmitCoApplicant,
+        panName: panName ?? this.panName,
+        panGender: panGender ?? this.panGender,
+        panDob: panDob ?? this.panDob,
+        careOf: careOf ?? this.careOf,
+        isOtpVerified: isOtpVerified ?? this.isOtpVerified,
+        isCoApplicantFormSubmitted:
+            isCoApplicantFormSubmitted ?? this.isCoApplicantFormSubmitted,
+        isLoading: isLoading ?? this.isLoading,
+        checkBoxTermsConditionCoApplicant: checkBoxTermsConditionCoApplicant ??
+            this.checkBoxTermsConditionCoApplicant,
         applicantPhotoFilePath:
             applicantPhotoFilePath ?? this.applicantPhotoFilePath,
         aadhaarPhotoFilePath1:
@@ -1682,6 +2091,11 @@ class KycFormState {
         isOtpValid: isOtpValid ?? this.isOtpValid,
         isAadhaarValid: isAadhaarValid ?? this.isAadhaarValid,
         aadhaar: aadhaar ?? this.aadhaar,
+
+        isCoApplicantContact: isCoApplicantContact ?? this.isCoApplicantContact,
+        coApplicantContact: coApplicantContact ?? this.coApplicantContact,
+
+
         kycDocument: kycDocument ?? this.kycDocument,
         pan: pan ?? this.pan,
         mother: mother ?? this.mother,
@@ -1756,11 +2170,10 @@ class KycFormState {
   }
 }
 
-
 //-----------------------pageView-------------------------------------------------
 
 final pageViewModelProvider = StateNotifierProvider<CoTabViewModel, CoTabModel>(
-      (ref) => CoTabViewModel(),
+  (ref) => CoTabViewModel(),
 );
 
 class CoTabViewModel extends StateNotifier<CoTabModel> {

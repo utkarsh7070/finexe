@@ -54,7 +54,7 @@ GuarantorItems _$GuarantorItemsFromJson(Map<String, dynamic> json) =>
       caste: json['caste'] as String,
       education: json['education'] as String,
       age: json['age'] as String,
-      mobileNo: (json['mobileNo'] as num).toInt(),
+      mobileNo: (json['mobileNo'] as num?)?.toInt(),
       relationWithApplicant: json['relationWithApplicant'] as String,
       status: json['status'] as String,
       remarkMessage: json['remarkMessage'] as String,

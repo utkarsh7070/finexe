@@ -49,7 +49,7 @@ CoApplicantItems _$CoApplicantItemsFromJson(Map<String, dynamic> json) =>
       education: json['education'] as String,
       age: json['age'] as String,
       gender: json['gender'] as String,
-      mobileNo: (json['mobileNo'] as num).toInt(),
+      mobileNo: (json['mobileNo'] as num?)?.toInt(),
       permanentAddress:
           Address.fromJson(json['permanentAddress'] as Map<String, dynamic>),
       localAddress:

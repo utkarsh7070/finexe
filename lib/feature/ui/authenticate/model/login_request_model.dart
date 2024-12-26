@@ -7,10 +7,13 @@ class LoginRequestModel {
   String userName;
   @JsonKey(name: "password")
   String password;
+  @JsonKey(name: "employeeRole")
+  String employeeRole;
 
   LoginRequestModel({
     required this.userName,
     required this.password,
+    required this.employeeRole,
   });
 
   factory LoginRequestModel.fromJson(Map<String, dynamic> json) => _$LoginRequestModelFromJson(json);

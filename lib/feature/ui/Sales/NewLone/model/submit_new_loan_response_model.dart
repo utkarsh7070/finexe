@@ -68,6 +68,9 @@ class NewLoanItem {
   @JsonKey(name: "__v")
   int v;
 
+  @JsonKey(name: "PaymentGateway")
+  String PaymentGateway;
+
   NewLoanItem({
     required this.employeId,
     required this.productId,
@@ -88,6 +91,7 @@ class NewLoanItem {
     required this.createdAt,
     required this.updatedAt,
     required this.v,
+    required this.PaymentGateway,
   });
 
   factory NewLoanItem.fromJson(Map<String, dynamic> json) => _$NewLoanItemFromJson(json);

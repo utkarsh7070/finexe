@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:dropdown_textfield/dropdown_textfield.dart';
-
-import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/bottom_sheet/co_applicant_if_no_bottom_sheet.dart';
+import 'package:finexe/feature/base/routes/routes.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/guarantor_form_1.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../../base/utils/namespase/app_colors.dart';
@@ -14,7 +14,7 @@ import '../../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../../../../base/utils/widget/upload_box.dart';
 import '../../../view_model/co_applicant_form_view_model.dart';
 import 'bottom_sheet/co_applicant_bottom_sheet.dart';
-import 'co_applicant_form3.dart';
+import 'bottom_sheet/submit_co_applicant_form.dart';
 
 class CoApplicantForm1 extends ConsumerWidget {
   const CoApplicantForm1({super.key});
@@ -28,8 +28,11 @@ class CoApplicantForm1 extends ConsumerWidget {
     final isPanIconChange = ref.watch(isCoPanLoading);
     final colorChangeState = ref.watch(isCoTickColorChange);
     final uploadCoDocs = ref.watch(uploadCoDoc);
-    final checkBoxTerms = ref.watch(checkBoxTermsConditionCoApplicant);
+    // final checkBoxTerms = ref.watch(checkBoxTermsConditionCoApplicant);
     final selectedValue = ref.watch(coApplicantRoleProvider);
+
+    final isSubmit = ref.watch(submitCoApplicantForm);
+    final isSubmitViewModel = ref.read(submitCoApplicantForm.notifier);
 
     final coApplicationFormState = ref.watch(coApplicantViewModelProvider);
     final coApplicationFormViewModel =
@@ -39,6 +42,7 @@ class CoApplicantForm1 extends ConsumerWidget {
     final coApplicationFocusViewModel =
         ref.read(coApplicantFocusProvider.notifier);
     final index = ref.watch(listIndex);
+    final indexAdd = ref.watch(listIndex.notifier);
     // final removeScreen = ref.watch(count);
     // final remove = ref.read(count.notifier);
 
@@ -81,361 +85,566 @@ class CoApplicantForm1 extends ConsumerWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                Visibility(
-                  replacement:SizedBox(
-                    width: displayWidth(context) * 0.10,
-                  ),
-                  visible: index>0,
-                  child: IconButton(onPressed: () {
-
-                  }, icon: Icon(Icons.delete))
+                SizedBox(
+                  height: displayHeight(context) * 0.06,
+                  width: displayWidth(context) * 0.10,
                 )
+                // Visibility(
+                //   replacement:SizedBox(
+                //     width: displayWidth(context) * 0.10,
+                //   ),
+                //   visible: index>0,
+                //   child: IconButton(onPressed: () {
+                //     coApplicationFormViewModel.removeItem(index);
+                //   }, icon: Icon(Icons.delete))
+                // )
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Visibility(
+                    visible: index > 0,
+                    child: Text(
+                      'CoApplicant $index',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )),
+                Visibility(
+                    replacement: SizedBox(
+                      width: displayWidth(context) * 0.10,
+                    ),
+                    visible: index > 0 &&
+                        !coApplicationFormState[index].isSubmitCoApplicant,
+                    child: IconButton(
+                        onPressed: () {
+                          coApplicationFormViewModel.removeItem(index);
+                          formNotifierController.removeFormData(index);
+                          ref.read(listIndex.notifier).state = index - 1;
+                        },
+                        icon: const Icon(Icons.delete)))
               ],
             ),
             SizedBox(
               height: displayHeight(context) * 0.01,
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  verticalDirection: VerticalDirection.down,
-                  runSpacing: displayHeight(context) * 0.04,
-                  clipBehavior: Clip.none,
-                  // verticalDirection: VerticalDirection.down,
-                  // runAlignment: WrapAlignment.center,
-                  // alignment: WrapAlignment.center,
-                  // direction: Axis.vertical,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        coApplicationFormViewModel.pickImages(index);
-                      },
-                      child: Visibility(
-                        visible: coApplicationFormState[index]
-                                .applicantPhotoFilePath ==
-                            '',
-                        replacement: SizedBox(
-                          height: displayHeight(context) * 0.16,
-                          width: displayWidth(context),
-                          child: Image.file(File(coApplicationFormState[index]
-                              .applicantPhotoFilePath)),
-                        ),
-                        child: UploadBox(
-                          isImage: true,
-                          height: displayHeight(context) * 0.16,
-                          width: displayWidth(context),
-                          color: AppColors.buttonBorderGray,
-                          iconData: Icons.file_upload_outlined,
-                          textColor: AppColors.gray5,
-                          subTextColor: AppColors.primary,
-                          title: 'Support: JPG, PNG',
-                          subTitle: 'Click Applicant Image',
-                        ),
+            //-------------------------WE DO CHANGE -----------------------------------------
+            Visibility(
+              visible: !coApplicationFormState[index].isOtpVerified,
+              replacement: Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Co-Applicant Aadhaar Details',
+                            style: AppStyles.headingTextStyleXL2.copyWith(
+                                color: AppColors.black,
+                                fontSize: FontSize.fontSize16),
+                          ),
+                          SizedBox(
+                            height: displayHeight(context) * 0.01,
+                          ),
+                          commonText(
+                              context: context,
+                              heading: 'Name',
+                              value: coApplicationFormState[index].fullName),
+                          commonText(
+                              context: context,
+                              heading: 'Care Of',
+                              value: coApplicationFormState[index].careOf),
+                          commonText(
+                              context: context,
+                              heading: 'Date Of Birth',
+                              value: coApplicationFormState[index].dob),
+                          commonText(
+                              context: context,
+                              heading: 'Gender',
+                              value: coApplicationFormState[index].gender),
+                          commonText(
+                              context: context,
+                              heading: 'Age',
+                              value: coApplicationFormState[index].age),
+                          commonText(
+                              context: context,
+                              heading: 'Address',
+                              value:
+                                  '${coApplicationFormState[index].communicationAddress1} ${coApplicationFormState[index].communicationAddress2} ${coApplicationFormState[index].communicationCity} ${coApplicationFormState[index].communicationDistrict} ${coApplicationFormState[index].communicationPinCode}'),
+                          SizedBox(
+                            height: displayHeight(context) * 0.01,
+                          ),
+                          Text(
+                            'Co-Applicant Pan Details',
+                            style: AppStyles.headingTextStyleXL2.copyWith(
+                                color: AppColors.black,
+                                fontSize: FontSize.fontSize16),
+                          ),
+                          SizedBox(
+                            height: displayHeight(context) * 0.01,
+                          ),
+                          commonText(
+                              context: context,
+                              heading: 'Name',
+                              value: coApplicationFormState[index].panName),
+                          commonText(
+                              context: context,
+                              heading: 'Father Name',
+                              value: coApplicationFormState[index].panFather),
+                          commonText(
+                              context: context,
+                              heading: 'Date Of Birth',
+                              value: coApplicationFormState[index].panDob),
+                          commonText(
+                              context: context,
+                              heading: 'Gender',
+                              value: coApplicationFormState[index].panGender),
+                        ],
                       ),
-                    ),
-                    Column(
-                      // mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Is Customer Mobile No. Linked With Aadhaar ?',
-                          maxLines: 2,
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.30,
-                          child: Row(
-                            children: [
-                              Radio<CoApplicantOptionRole>(
-                                value: CoApplicantOptionRole.NO,
-                                groupValue: selectedValue,
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    ref
-                                        .read(coApplicantRoleProvider.notifier)
-                                        .select(value);
-                                  }
-                                  showBottomSheetIfNo(
-                                    context: context,
-                                    ref: ref,
-                                  );
-                                },
-                              ),
-                              const Text(
-                                'No',
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.30,
-                          child: Row(
-                            children: [
-                              Radio<CoApplicantOptionRole>(
-                                value: CoApplicantOptionRole.Yes,
-                                groupValue: selectedValue,
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    ref
-                                        .read(coApplicantRoleProvider.notifier)
-                                        .select(value);
-                                  }
-                                  showBottomSheetIfYes(
-                                    context: context,
-                                    ref: ref,
-                                  );
-                                },
-                              ),
-                              const Text(
-                                'Yes',
-                              )
-                            ],
-                          ),
-                        ),
-                        // aadhaarLinkRadios(
-                        //     context: context,
-                        //     title: 'No',
-                        //     value: CoApplicantOptionRole.NO,
-                        //     ref: ref,
-                        //     selectedValue: selectedValue,
-                        //     checkBoxTerms: checkBoxTerms,
-                        //     aadhaarFocusStates: aadhaarFocusStates,
-                        //     formState: applicantFormState,
-                        //     formViewModel: applicantFormViewModel,
-                        //     aadhaarFocusViewModel: aadhaarFocusViewModel),
+                      SizedBox(
+                        height: displayHeight(context) * 0.05,
+                      ),
 
-                        // SizedBox(
-                        //   height: displayHeight(context) * 0.03,
-                        // ),
-
-                        DropDownTextField(
-                          textStyle: const TextStyle(fontSize: 12),
-                          controller:
-                              coApplicationFormViewModel.dropDownController,
-                          // initialValue: "name4",
-                          listSpace: 20,
-                          listPadding: ListPadding(top: 20),
-                          enableSearch: false,
-                          dropDownList: const [
-                            DropDownValueModel(
-                                name: 'PAN Card', value: "PANCard"),
-                            DropDownValueModel(
-                                name: 'Driving License',
-                                value: "DrivingLicense"),
-                            DropDownValueModel(
-                                name: 'VoterId', value: "VoterId"),
-                          ],
-                          listTextStyle:
-                              const TextStyle(color: AppColors.primary),
-                          dropDownItemCount: 3,
-                          onChanged: (val) {
-                            // formViewModel.updateKycDoc(val);
-                          },
-                          clearOption: false,
-                          textFieldFocusNode:
-                              coApplicationFocusViewModel.kycDocFocusNode,
-                          textFieldDecoration: InputDecoration(
-                            hintStyle:
-                                const TextStyle(color: AppColors.textGray),
-                            floatingLabelStyle:
-                                coApplicationFocusStates['kycDocFocusNode']!
-                                    ? AppStyles.subHeading
-                                        .copyWith(color: AppColors.primary)
-                                    : AppStyles.subHeading,
-                            label: const Text(
-                              'Kyc Document',
-                              style: const TextStyle(
-                                  color: AppColors.boxBorderGray),
-                            ),
-
-                            // errorText: isError! ? errorText : null,
-                            enabledBorder: const OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: AppColors.gray, width: 1),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            // filled: true,
-                            // fillColor: AppColors.gray,
-                            border: const OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: AppColors.gray, width: 2),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                            ),
-
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: !coApplicationFormState[index]
-                                            .isKycValid
-                                        ? Colors.red
-                                        : Colors.blue,
-                                    width: 2),
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(10))),
-                            // ),
-                            // focusedErrorBorder: isError!
-                            //     ? const OutlineInputBorder(
-                            //     borderRadius: BorderRadius.all(Radius.circular(10)),
-                            //     borderSide: BorderSide(color: Colors.red, width: 2))
-                            //     : null       borderRadius: const BorderRadius.all(Radius.circular(10)),
-                          ),
-                        ),
-
-                        Visibility(
-                          visible: coApplicationFormViewModel
-                                  .dropDownController.dropDownValue?.value ==
-                              'PANCard',
-                          child: SizedBox(
-                            height: displayHeight(context) * 0.10,
-                            width: displayWidth(context),
-                            child: Row(children: [
-                              AppFloatTextField(
-                                width: displayWidth(context) * 0.71,
-                                focusNode:
-                                    coApplicationFocusViewModel.panFocusNode,
-                                currentState:
-                                    coApplicationFocusStates['panFocusNode'],
-                                // controller: contactController,
-                                onChange: (value) {
-                                  coApplicationFormViewModel.updatePan(
-                                      value, index);
-                                  print(coApplicationFormState[index].pan);
-                                },
-                                controller:
-                                    formListController[index].panController,
-                                height:
-                                    !coApplicationFormState[index].isPanValid
-                                        ? displayHeight(context) * 0.09
-                                        : null,
-                                inerHint: 'Pan',
-                                errorText: "Pan is a required field",
-                                isError:
-                                    !coApplicationFormState[index].isPanValid,
-                                textInputAction: TextInputAction.next,
-                              ),
-                              SizedBox(
-                                width: displayWidth(context) * 0.02,
-                              ),
-                              Container(
-                                  decoration: const BoxDecoration(
-                                      color: AppColors.boxBagGray,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10))),
-                                  height: displayHeight(context) * 0.06,
-                                  width: displayWidth(context) * 0.15,
-                                  child: IconButton(
-                                      onPressed: () {
-                                        ref
-                                            .read(isCoPanLoading.notifier)
-                                            .state = true;
-                                        coApplicationFormViewModel
-                                            .fetchPanVerify(index)
-                                            .onError(
-                                          (error, stackTrace) {
-                                            return ref
-                                                .read(isCoPanLoading.notifier)
-                                                .state = false;
-                                          },
-                                        ).onError((error, stackTrace) {
-                                         return ref
-                                              .read(isCoPanLoading.notifier)
-                                              .state = false;
-                                        }).then(
-                                          (value) {
-                                            if (value) {
-                                              ref
-                                                  .read(isCoTickColorChange
-                                                      .notifier)
-                                                  .state = true;
-                                              ref
-                                                  .read(isCoPanLoading.notifier)
-                                                  .state = false;
-                                            } else {
-                                              ref
-                                                  .read(isCoPanLoading.notifier)
-                                                  .state = false;
-
-                                            }
-                                          },
-                                        );
-                                      },
-                                      icon: isPanIconChange
-                                          ? const CircularProgressIndicator()
-                                          : Icon(
-                                              Icons.check_circle_rounded,
-                                              size: 25,
-                                              color: colorChangeState
-                                                  ? Colors.green
-                                                  : AppColors.black,
-                                            )))
-                            ]),
-                          ),
-                        ),
-                        SizedBox(
-                          height: displayHeight(context) * 0.02,
-                        ),
-                        AppButton(
-                          textStyle: const TextStyle(color: AppColors.white),
-                          width: displayWidth(context),
-                          label: 'Next',
+                      Visibility(
+                        visible:
+                            coApplicationFormState[index].isSubmitCoApplicant,
+                        child: InkWell(
                           onTap: () {
+                            indexAdd.state = index + 1;
+                            coApplicationFormViewModel.addForm();
+                            formNotifierController.addFormData();
+                            if (kDebugMode) {
+                              print(coApplicationFormState.length);
+                            }
+                            if (kDebugMode) {
+                              print(coApplicationFormState.toList());
+                            }
                             ref
                                 .read(pageViewModelProvider.notifier)
-                                .setTabIndex(1);
-                            // print(remove.state);
-                            // remove.state = removeScreen + 1;
-                            // Navigator.of(context).push(MaterialPageRoute(
-                            //     builder: (context) =>
-                            //         const CoApplicantForm3()));
-                            // Navigator.pushNamed(
-                            //     context, AppRoutes.saleCoApplicationForm3);
+                                .setTabIndex(0);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              const Icon(
+                                Icons.add,
+                              ),
+                              SizedBox(width: displayWidth(context) * 0.04),
+                              const Text('Add Co-applicant')
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: displayHeight(context) * 0.03,
+                      ),
+
+                      Visibility(
+                        visible:
+                            !coApplicationFormState[index].isSubmitCoApplicant,
+                        child: Visibility(
+                          visible: !coApplicationFormState[index].isLoading,
+                          replacement: const Center(child: CircularProgressIndicator()),
+                          child: AppButton(
+                            isFill: true,
+                            bgColor: AppColors.primaryLight,
+                            borderColor: AppColors.primary,
+                            onTap: () {
+                              coApplicationFormViewModel
+                                  .submitCoApplicantForm(index,context)
+                                  .then(
+                                (value) {
+                                  if (value) {
+                                    coApplicationFormViewModel.submitCoApplicant(
+                                        value, index);
+                                    // if (index < coApplicationFormState.length - 1 ==
+                                    //     false) {
+                                    //   isSubmitViewModel.state = true;
+                                    // }
+                                    // Navigator.pushNamed(
+                                    //     context, AppRoutes.saleGuarantorForm1);
+                                    // Navigator.pushNamed(context, routeName)
+                                  }
+                                },
+                              );
+                            },
+                            label: 'Submit',
+                            textStyle: AppStyles.smallTextStyleRich.copyWith(
+                                color: AppColors.white,
+                                fontSize: FontSize.fontSize16,
+                                fontWeight: FontWeight.w500),
+                            width: displayWidth(context),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: displayHeight(context) * 0.01,
+                      ),
+
+                      Visibility(
+                        visible:
+                            coApplicationFormState[index].isSubmitCoApplicant,
+                        child: AppButton(
+                          textStyle: const TextStyle(color: AppColors.white),
+                          width: displayWidth(context),
+                          label: index < coApplicationFormState.length - 1
+                              ? 'Next'
+                              : 'Done',
+                          onTap: () {
+                            if (index < coApplicationFormState.length - 1) {
+                              if (kDebugMode) {
+                                print(coApplicationFormState.length);
+                              }
+                              if (kDebugMode) {
+                                print(
+                                    "$index < ${coApplicationFormState.length - 1}");
+                              }
+                              indexAdd.state = index + 1;
+                            } else {
+                              Navigator.pushNamed(
+                                  context, AppRoutes.saleGuarantorForm1);
+                            }
                           },
                         ),
-                        SizedBox(
-                          height: displayHeight(context) * 0.01,
-                        ),
-                        // AppButton(
-                        //   textStyle: const TextStyle(color: AppColors.white),
-                        //   width: displayWidth(context),
-                        //   label: 'Back',
-                        //   onTap: () {},
-                        // ),
+                      ),
 
-                        // Row(
-                        //   children: [
-                        //     AppFloatTextField(
-                        //       width: displayWidth(context) * 0.75,
-                        //       focusNode: personalFocusViewModel.panFocusNode,
-                        //       currentState: personalFocusStates['panFocusNode'],
-                        //       // controller: licenseController,
-                        //       onChange: (value) {
-                        //         personalFormViewModel.updatePan(value);
-                        //       },
-                        //       height: !personalFormState.isPanValid
-                        //           ? displayHeight(context) * 0.09
-                        //           : null,
-                        //       inerHint: 'Pan',
-                        //       errorText: "Pan is a required field",
-                        //       isError: !personalFormState.isPanValid,
-                        //       textInputAction: TextInputAction.next,
-                        //     ),
-                        //     SizedBox(
-                        //       width: displayWidth(context) * 0.01,
-                        //     ),
-                        //     Container(
-                        //       color: AppColors.boxBagGray,
-                        //       width: displayWidth(context) * 0.12,
-                        //       child: IconButton(
-                        //         icon: const Icon(Icons.check),
-                        //         onPressed: () {},
-                        //       ),
-                        //     )
-                        //   ],
-                        // ),
-                      ],
-                    ),
-                  ],
+                      //add coApplicant button
+                    ],
+                  ),
+                ),
+              ),
+              child: Expanded(
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    verticalDirection: VerticalDirection.down,
+                    runSpacing: displayHeight(context) * 0.04,
+                    clipBehavior: Clip.none,
+                    // verticalDirection: VerticalDirection.down,
+                    // runAlignment: WrapAlignment.center,
+                    // alignment: WrapAlignment.center,
+                    // direction: Axis.vertical,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          coApplicationFormViewModel.pickImages(index);
+                        },
+                        child: Visibility(
+                          visible: coApplicationFormState[index]
+                                  .applicantPhotoFilePath ==
+                              '',
+                          replacement: SizedBox(
+                            height: displayHeight(context) * 0.16,
+                            width: displayWidth(context),
+                            child: Image.file(File(coApplicationFormState[index]
+                                .applicantPhotoFilePath)),
+                          ),
+                          child: UploadBox(
+                            // isError: !coApplicationFormState[index].isApplicantPhoto,
+                            isImage: true,
+                            height: displayHeight(context) * 0.16,
+                            width: displayWidth(context),
+                            color: AppColors.buttonBorderGray,
+                            iconData: Icons.file_upload_outlined,
+                            textColor: AppColors.gray5,
+                            subTextColor: AppColors.primary,
+                            title: 'Support: JPG, PNG',
+                            subTitle: 'Click Applicant Image',
+                          ),
+                        ),
+                      ),
+                      Column(
+                        // mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Customer Mobile No. Is Must Be Linked With Aadhaar.',
+                            maxLines: 2,
+                          ),
+                          SizedBox(
+                            height: displayHeight(context) * 0.02,
+                          ),
+                          Column(
+                            children: [
+                              AppFloatTextField(
+                                controller:
+                                formListController[index].coApplicantMobileController,
+                                focusNode: coApplicationFocusViewModel
+                                    .coAppliContactFocusNode,
+                                currentState: coApplicationFocusStates[
+                                'coAppliContactFocusNode'],
+                                onChange: (value) {
+                                  coApplicationFormViewModel.updateCoApplintContact(
+                                      value, index);
+                                },
+                                height: !coApplicationFormState[index]
+                                    .isCoApplicantContact
+                                    ? displayHeight(context) * 0.09
+                                    : null,
+                                inerHint: 'Co Applicant Contact',
+                                errorText: "CoApplicant Contact is a required field",
+                                isError: !coApplicationFormState[index]
+                                    .isCoApplicantContact,
+                                textInputAction: TextInputAction.done,
+                              ),
+
+                              // Align(
+                              //   alignment: Alignment.centerRight,
+                              //   child: TextButton(
+                              //       onPressed: () {
+                              //
+                              //       },
+                              //       child: const Text('Get OTP',style: TextStyle(color: AppColors.white),)),
+                              // )
+
+                          SizedBox(
+                            height: displayHeight(context) * 0.02,
+                          ),
+                              AppFloatTextField(
+                                controller:
+                                    formListController[index].aadhaarController,
+                                focusNode: coApplicationFocusViewModel
+                                    .aadhaarFocusNode,
+                                currentState: coApplicationFocusStates[
+                                    'aadhaarFocusNode'],
+                                onChange: (value) {
+                                  coApplicationFormViewModel.updateAadhaar(
+                                      value, index);
+                                },
+                                height: !coApplicationFormState[index]
+                                        .isAadhaarValid
+                                    ? displayHeight(context) * 0.09
+                                    : null,
+                                inerHint: 'Enter Aadhaar Number',
+                                errorText: "Aadhaar Number is a required field",
+                                isError: !coApplicationFormState[index]
+                                    .isAadhaarValid,
+                                textInputAction: TextInputAction.done,
+                              ),
+
+                              // Align(
+                              //   alignment: Alignment.centerRight,
+                              //   child: TextButton(
+                              //       onPressed: () {
+                              //
+                              //       },
+                              //       child: const Text('Get OTP',style: TextStyle(color: AppColors.white),)),
+                              // )
+                            ],
+                          ),
+                          SizedBox(
+                            height: displayHeight(context) * 0.02,
+                          ),
+                          DropDownTextField(
+                            textStyle: const TextStyle(fontSize: 12),
+                            controller:
+                                coApplicationFormViewModel.dropDownController,
+                            // initialValue: "name4",
+                            listSpace: 20,
+                            listPadding: ListPadding(top: 20),
+                            enableSearch: false,
+                            dropDownList: const [
+                              DropDownValueModel(
+                                  name: 'PAN Card', value: "panCard"),
+                              DropDownValueModel(
+                                  name: 'Driving License',
+                                  value: "drivingLicense"),
+                              DropDownValueModel(
+                                  name: 'VoterId', value: "voterId"),
+                            ],
+                            listTextStyle:
+                                const TextStyle(color: AppColors.primary),
+                            dropDownItemCount: 3,
+                            onChanged: (val) {
+                              // formViewModel.updateKycDoc(val);
+                            },
+                            clearOption: false,
+                            textFieldFocusNode:
+                                coApplicationFocusViewModel.kycDocFocusNode,
+                            textFieldDecoration: InputDecoration(
+                              hintStyle:
+                                  const TextStyle(color: AppColors.textGray),
+                              floatingLabelStyle:
+                                  coApplicationFocusStates['kycDocFocusNode']!
+                                      ? AppStyles.subHeading
+                                          .copyWith(color: AppColors.primary)
+                                      : AppStyles.subHeading,
+                              label: const Text(
+                                'Kyc Document',
+                                style: const TextStyle(
+                                    color: AppColors.boxBorderGray),
+                              ),
+
+                              // errorText: isError! ? errorText : null,
+                              enabledBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: AppColors.gray, width: 1),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10))),
+                              // filled: true,
+                              // fillColor: AppColors.gray,
+                              border: const OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: AppColors.gray, width: 2),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                              ),
+
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: !coApplicationFormState[index]
+                                              .isKycValid
+                                          ? Colors.red
+                                          : Colors.blue,
+                                      width: 2),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10))),
+                              // ),
+                              // focusedErrorBorder: isError!
+                              //     ? const OutlineInputBorder(
+                              //     borderRadius: BorderRadius.all(Radius.circular(10)),
+                              //     borderSide: BorderSide(color: Colors.red, width: 2))
+                              //     : null       borderRadius: const BorderRadius.all(Radius.circular(10)),
+                            ),
+                          ),
+                          SizedBox(
+                            height: displayHeight(context) * 0.02,
+                          ),
+                          AppFloatTextField(
+                            width: displayWidth(context),
+                            focusNode: coApplicationFocusViewModel.panFocusNode,
+                            currentState:
+                                coApplicationFocusStates['panFocusNode'],
+                            // controller: contactController,
+                            onChange: (value) {
+                              coApplicationFormViewModel.updatePan(
+                                  value, index);
+                              print(coApplicationFormState[index].pan);
+                            },
+                            controller: formListController[index].panController,
+                            height: !coApplicationFormState[index].isPanValid
+                                ? displayHeight(context) * 0.09
+                                : null,
+                            inerHint: coApplicationFormViewModel
+                                        .dropDownController
+                                        .dropDownValue
+                                        ?.value ==
+                                    'panCard'
+                                ? 'Pan'
+                                : coApplicationFormViewModel.dropDownController
+                                            .dropDownValue?.value ==
+                                        'drivingLicense'
+                                    ? 'Driving License'
+                                    : 'VoterId',
+                            errorText: "Pan is a required field",
+                            isError: !coApplicationFormState[index].isPanValid,
+                            textInputAction: TextInputAction.next,
+                          ),
+
+                          Row(
+                            children: [
+                              Checkbox(
+                                side: const BorderSide(
+                                    color: AppColors.boxBorderGray, width: 1.5),
+                                value: coApplicationFormState[index]
+                                    .checkBoxTermsConditionCoApplicant,
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    coApplicationFormViewModel.updateCheckBox(
+                                        value, index);
+                                  }
+                                },
+                              ),
+                              SizedBox(
+                                  width: displayWidth(context) * 0.68,
+                                  child: Text(
+                                    'I have read the Terms and Conditions and give my consent for the same.',
+                                    style: AppStyles.termsConditionText,
+                                  )),
+                            ],
+                          ),
+                          SizedBox(
+                            height: displayHeight(context) * 0.02,
+                          ),
+                          // InkWell(
+                          //   onTap: () {
+                          //     indexAdd.state = index + 1;
+                          //     coApplicationFormViewModel.addForm();
+                          //     formNotifierController.addFormData();
+                          //     // coAddressRadioViewModel
+                          //     //     .selectAddress(CoApplicantOptionRole.NON);
+                          //     if (kDebugMode) {
+                          //       print(coApplicationFormState.length);
+                          //     }
+                          //     if (kDebugMode) {
+                          //       print(coApplicationFormState.toList());
+                          //     }
+                          //     ref
+                          //         .read(pageViewModelProvider.notifier)
+                          //         .setTabIndex(0);
+                          //   },
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.end,
+                          //     children: [
+                          //       const Icon(
+                          //         Icons.add,
+                          //       ),
+                          //       SizedBox(
+                          //         width: displayWidth(context) * 0.04),
+                          //       const Text('Add Co-applicant')
+                          //     ],
+                          //   ),
+                          // ),
+                          SizedBox(
+                            height: displayHeight(context) * 0.02,
+                          ),
+                          coApplicationFormState[index].isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : AppButton(
+                                  textStyle:
+                                      const TextStyle(color: AppColors.white),
+                                  onTap: () {
+                                    //------------------FOR DEBUG----------------
+                                    // showBottomSheetIfYes(
+                                    //   context: context,
+                                    //   ref: ref,
+                                    // );
+                                    //-------------------------------------------------------
+                                    bool isValid = coApplicationFormViewModel
+                                        .validateCoApplicant(index);
+                                    if (isValid) {
+                                      coApplicationFormViewModel
+                                          .fetchAadhaarNumber(index,context)
+                                          .then(
+                                        (value) {
+                                          showBottomSheetIfYes(
+                                            context: context,
+                                            ref: ref,
+                                          );
+                                          ref.read(getOptCoApp.notifier).state =
+                                              value;
+                                        },
+                                      );
+                                    }
+                                  },
+                                  label: 'Get OTP',
+                                  width: displayWidth(context),
+                                ),
+
+                          SizedBox(
+                            height: displayHeight(context) * 0.01,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -477,124 +686,6 @@ class CoApplicantForm1 extends ConsumerWidget {
     );
   }
 
-  // Widget ifYesLinkedAadhaar(
-  //     {required WidgetRef ref,
-  //       required BuildContext context,
-  //       required AadhaarFormState formState,
-  //       required FormViewModel formViewModel,
-  //       required Map<String, bool> aadhaarFocusStates,
-  //       required AadhaarFocusViewModel aadhaarFocusViewModel,
-  //       required bool checkBoxTerms}) {
-  //   return Container(
-  //     padding: const EdgeInsets.only(left: 16, right: 16, top: 30, bottom: 16),
-  //     decoration: BoxDecoration(
-  //       border: Border.all(color: AppColors.boxBorderGray),
-  //       borderRadius: const BorderRadius.all(Radius.circular(10)),
-  //     ),
-  //     width: displayWidth(context),
-  //     child: Column(
-  //       children: [
-  //         // const Text('Aadhar Number'),
-  //         AppFloatTextField(
-  //           focusNode: aadhaarFocusViewModel.aadhaarFocusNode,
-  //           currentState: aadhaarFocusStates['aadhaarFocusNode'],
-  //           // controller: aadhaarController,
-  //           onChange: (value) {
-  //             formViewModel.updateAadhaar(value);
-  //           },
-  //           height: !formState.isAadhaarValid
-  //               ? displayHeight(context) * 0.09
-  //               : null,
-  //           inerHint: 'Enter Aadhaar Number',
-  //           errorText: "Aadhaar Number is a required field",
-  //           isError: !formState.isAadhaarValid,
-  //           textInputAction: TextInputAction.next,
-  //           // hint: 'Password',
-  //         ),
-  //         Row(
-  //           children: [
-  //             Checkbox(
-  //               side: const BorderSide(
-  //                   color: AppColors.boxBorderGray, width: 1.5),
-  //               // semanticLabel: 'jkdhsjk',
-  //               value: checkBoxTerms,
-  //               onChanged: (value) {
-  //                 if (value != null) {
-  //                   ref.read(checkBoxTermsConditionApplicant.notifier).state =
-  //                       value;
-  //                 }
-  //               },
-  //             ),
-  //             SizedBox(
-  //                 width: displayWidth(context) * 0.68,
-  //                 child: Text(
-  //                   'I have read the Terms and Conditions and give my consent for the same.',
-  //                   style: AppStyles.termsConditionText,
-  //                 )),
-  //           ],
-  //         ),
-  //         Align(
-  //           alignment: Alignment.centerRight,
-  //           child: TextButton(
-  //               onPressed: () {
-  //                 ref.read(getOpt.notifier).state = true;
-  //               },
-  //               child: const Text('Get OTP')),
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  Widget ifNoLinkedAadhaar(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              UploadBox(
-                height: displayHeight(context) * 0.15,
-                width: displayWidth(context) * 0.35,
-                color: AppColors.buttonBorderGray,
-                iconData: Icons.file_upload_outlined,
-                textColor: AppColors.titleGray,
-                subTextColor: AppColors.textDarkGray,
-                title: 'Max size: 10MB',
-                subTitle: 'Front Image',
-              ),
-              view(),
-              UploadBox(
-                height: displayHeight(context) * 0.15,
-                width: displayWidth(context) * 0.35,
-                color: AppColors.buttonBorderGray,
-                iconData: Icons.file_upload_outlined,
-                textColor: AppColors.titleGray,
-                subTextColor: AppColors.textDarkGray,
-                title: 'Max size: 10MB',
-                subTitle: 'Front Image',
-              ),
-            ],
-          ),
-        ),
-        SizedBox(
-          height: displayHeight(context) * 0.05,
-        ),
-        AppButton(
-          isFill: true,
-          bgColor: AppColors.primaryLight,
-          borderColor: AppColors.primary,
-          onTap: () {},
-          label: 'Confirm',
-          textStyle: AppStyles.smallTextStyleRich.copyWith(
-              fontSize: FontSize.fontSize16, fontWeight: FontWeight.w500),
-          width: displayWidth(context),
-          height: displayHeight(context) * 0.07,
-        )
-      ],
-    );
-  }
-
   Widget view() {
     return Column(
       children: [
@@ -615,6 +706,7 @@ class CoApplicantForm1 extends ConsumerWidget {
     required BuildContext context,
   }) {
     return showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -626,19 +718,40 @@ class CoApplicantForm1 extends ConsumerWidget {
     );
   }
 
-  Future<void> showBottomSheetIfNo({
-    required WidgetRef ref,
-    required BuildContext context,
-  }) {
-    return showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+// Future<void> showBottomSheetIfNo({
+//   required WidgetRef ref,
+//   required BuildContext context,
+// }) {
+//   return showModalBottomSheet(
+//     context: context,
+//     shape: const RoundedRectangleBorder(
+//       borderRadius: BorderRadius.only(
+//           topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+//     ),
+//     builder: (ctx) {
+//       return CoApplicationBottomSheet();
+//     },
+//   );
+// }
+
+  Widget commonText(
+      {required BuildContext context,
+      required String heading,
+      required String value}) {
+    return SizedBox(
+      width: displayWidth(context),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: displayWidth(context) * 0.30, child: Text(heading)),
+          SizedBox(
+              width: displayWidth(context) * 0.50,
+              child: Text(
+                value,
+                maxLines: 4,
+              ))
+        ],
       ),
-      builder: (ctx) {
-        return const CoApplicationPhotoBottomSheet();
-      },
     );
   }
 }

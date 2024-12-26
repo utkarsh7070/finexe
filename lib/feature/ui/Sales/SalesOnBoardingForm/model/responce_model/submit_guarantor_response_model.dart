@@ -78,7 +78,7 @@ class GuarantorItems {
   @JsonKey(name: "age")
   String age;
   @JsonKey(name: "mobileNo")
-  int mobileNo;
+  int? mobileNo;
   @JsonKey(name: "relationWithApplicant")
   String relationWithApplicant;
   @JsonKey(name: "status")

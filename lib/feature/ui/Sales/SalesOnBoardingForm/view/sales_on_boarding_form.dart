@@ -5,16 +5,15 @@ import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/namespase/display_size.dart';
 import '../view_model/sales_on_boarding_form.dart';
 import 'Sales_on_boarding_form/applicant_form/appliction_form.dart';
-import 'widget/stepper_content.dart';
 
 class SalesOnBoardingForm extends ConsumerWidget {
   const SalesOnBoardingForm({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
+    return const Scaffold(
       body: SafeArea(
-        child:ApplicationDetails()
+        child:ApplicationDetails({})
       ),
     );
   }

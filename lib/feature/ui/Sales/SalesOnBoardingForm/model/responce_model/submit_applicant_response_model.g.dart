@@ -40,7 +40,7 @@ ApplicantItems _$ApplicantItemsFromJson(Map<String, dynamic> json) =>
       motherName: json['motherName'] as String,
       spouseName: json['spouseName'] as String,
       gender: json['gender'] as String,
-      mobileNo: (json['mobileNo'] as num).toInt(),
+      mobileNo: (json['mobileNo'] as num?)?.toInt(),
       maritalStatus: json['maritalStatus'] as String,
       email: json['email'] as String,
       dob: json['dob'] as String,
@@ -60,7 +60,7 @@ ApplicantItems _$ApplicantItemsFromJson(Map<String, dynamic> json) =>
       id: json['_id'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
-      v: (json['__v'] as num).toInt(),
+      v: (json['__v'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$ApplicantItemsToJson(ApplicantItems instance) =>

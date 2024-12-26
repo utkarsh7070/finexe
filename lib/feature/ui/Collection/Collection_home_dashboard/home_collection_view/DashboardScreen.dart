@@ -1,379 +1,387 @@
-
-
-// import 'package:flutter/material.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import '../home_collection_model/UserProfile.dart';
-//
-// class DashboardScreen extends ConsumerWidget {
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     // Automatically trigger profile fetch when the widget is built
-//     ref.read(userProfileProvider.notifier).fetchUserProfile();
-//
-//     final userProfile = ref.watch(userProfileProvider);
-//
-//     return Scaffold(
-//       appBar: AppBar(
-//         leading: Icon(Icons.menu),
-//         title: Text("Ho Dashboard"),
-//         actions: [
-//           IconButton(
-//             icon: Icon(Icons.refresh),
-//             onPressed: () {
-//               ref.read(userProfileProvider.notifier).fetchUserProfile();
-//             },
-//           ),
-//           CircleAvatar(
-//             backgroundImage: NetworkImage("https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png"), // Replace with actual image URL
-//           ),
-//         ],
-//       ),
-//       body: userProfile == null
-//           ? Center(child: CircularProgressIndicator())
-//           : SingleChildScrollView(
-//         child: Column(
-//           children: [
-//             Card(
-//               elevation: 2,
-//               margin: EdgeInsets.all(16),
-//               child: Padding(
-//                 padding: const EdgeInsets.all(16.0),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.center,
-//                   children: [
-//                     CircleAvatar(
-//                       radius: 40,
-//                       backgroundImage: NetworkImage('https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png'), // Replace with actual image URL
-//                     ),
-//                     SizedBox(height: 10),
-//                     Text(
-//                       userProfile.name,
-//                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-//                     ),
-//                     Text(userProfile.email),
-//                     SizedBox(height: 10),
-//                     Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                       children: [
-//                         Text("Employee Unique Id:"),
-//                         Text(userProfile.employeeId),
-//                       ],
-//                     ),
-//                     Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                       children: [
-//                         Text("Mobile No:"),
-//                         Text(userProfile.mobileNo),
-//                       ],
-//                     ),
-//                     Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                       children: [
-//                         Text("Current Address:"),
-//                         Text(userProfile.address),
-//                       ],
-//                     ),
-//                     Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                       children: [
-//                         Text("Joining Date:"),
-//                         Text(userProfile.joiningDate),
-//                       ],
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//             // Visit status cards
-//             Card(
-//               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//               child: ListTile(
-//                 leading: Icon(Icons.person),
-//                 title: Text('0 Visit Accepted'),
-//               ),
-//             ),
-//             Card(
-//               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//               child: ListTile(
-//                 leading: Icon(Icons.person),
-//                 title: Text('0 Visit Pending'),
-//               ),
-//             ),
-//             Card(
-//               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//               child: ListTile(
-//                 leading: Icon(Icons.person),
-//                 title: Text('0 Visit Rejected'),
-//               ),
-//             ),
-//             Card(
-//               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//               child: ListTile(
-//                 leading: Icon(Icons.person),
-//                 title: Text('0 Collection Accepted'),
-//               ),
-//             ),
-//             Card(
-//               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//               child: ListTile(
-//                 leading: Icon(Icons.person),
-//                 title: Text('0 Collection Pending'),
-//               ),
-//             ),
-//             Card(
-//               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//               child: ListTile(
-//                 leading: Icon(Icons.person),
-//                 title: Text('0 Collection Rejected'),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
+import 'dart:async';
+import 'dart:convert';
+import 'package:finexe/feature/base/extentions/capital_letter.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
+import 'package:finexe/feature/base/utils/namespase/display_size.dart';
+import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/Widget/profile_update_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../home_collection_model/UserProfile.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:roam_flutter/roam_flutter.dart';
+import '../../../../base/api/api.dart';
+import '../../../../base/utils/widget/custom_snackbar.dart';
+import '../home_collection_viewmodel/fetchUserProfile.dart';
+import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
+import '../Widget/punct_in_out_action_dialog_content.dart';
+import 'dashboard_side_bar.dart';
 
-class DashboardScreen extends ConsumerWidget {
-
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); // Step 1: Define the GlobalKey
+class CollectionDashboardScreen extends ConsumerStatefulWidget {
+  const CollectionDashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Automatically trigger profile fetch when the widget is built
-    ref.read(userProfileProvider.notifier).fetchUserProfile();
+  _CollectionDashboardScreenState createState() => _CollectionDashboardScreenState();
+}
 
-    final userProfile = ref.watch(userProfileProvider);
+class _CollectionDashboardScreenState extends ConsumerState<CollectionDashboardScreen> {
+  // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late Timer trackingTimer;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(apiResponseProvider.notifier).fetchDashboardData().then((value) {
+        final data = ref.watch(apiResponseProvider);
+        print('${data.value?.name}');
+        if(data.value?.name != null){
+          // initialiseRoamSdk(data.value!.name);
+        }
+      },);
+    });
+  }
 
-    return Scaffold(
-      key: _scaffoldKey, // Step 2: Assign the scaffoldKey to the Scaffold
-      backgroundColor: AppColors.primary,
-      appBar: AppBar(
+//   Future<void> initialiseRoamSdk(String name) async {
+//     print("Attempting to initialize Roam SDK...");
+//     try {
+//       await requestLocationPermissions();
+//       print("Permissions granted, initializing Roam SDK...");
+//
+//       Roam.initialize(
+//         publishKey: '58f73be503e069888cf19289bf728c14c2e841c47e5842a1054f9e5f12f52583',
+//       );
+//       print("Roam SDK initialized."); // Check if this is reached
+//
+//       // Roam.getUser(userId:'672b16d23e8a8f5a915d743e', callBack: ({user}) {
+//       //   print('User name - $user');
+//       // });
+//       Roam.createUser(description:name,callBack: ({user}) {
+// // do something on create user
+//         print(user);
+//       });
+//
+//       Map<String, dynamic> fitnessTracking = {
+//         "timeInterval": 10
+//       };
+//       Roam.startTracking(trackingMode: "custom", customMethods: fitnessTracking);
+//       print("Custom tracking started with 10-second interval.");
+//       listenToLocationUpdates();
+//       trackingTimer = Timer(Duration(minutes: 15), () {
+//         Roam.stopTracking();
+//         print("Tracking stopped after 15 minutes.");
+//       });
+//
+//     } catch (e) {
+//       print("Failed to initialize Roam SDK: $e");
+//     }
+//   }
+//
+//   Future<void> listenToLocationUpdates() async {
+//     print("Setting location listener...");
+//     Roam.onLocation((location) {
+//       print("Received location from Roam SDK: ${jsonEncode(location)}");
+//       showCustomSnackBar(
+//           context, "Received location from Roam SDK: ${jsonEncode(location)}", Colors.green);
+//     });
+//     print("Location listener set.");
+//   }
+//
+//   Future<void> requestLocationPermissions() async {
+//     final locationWhenInUse = await Permission.locationWhenInUse.request();
+//     if (locationWhenInUse.isGranted) {
+//       final locationAlways = await Permission.locationAlways.request();
+//       if (!locationAlways.isGranted) {
+//         print("Location always permission not granted.");
+//       } else {
+//         print("Location permissions granted.");
+//         await getCurrentLocation();
+//       }
+//     } else {
+//       print("Location permission denied.");
+//     }
+//   }
+//
+//   Future<void> getCurrentLocation() async {
+//     Position position = await Geolocator.getCurrentPosition(
+//       desiredAccuracy: LocationAccuracy.high,
+//     );
+//     print("Initial location: ${position.latitude}, ${position.longitude}");
+//   }
 
-       /* leading: Icon(Icons.menu),*/
 
-        leading: IconButton(
-          onPressed: () {
-            // Handle the click action here
-            _scaffoldKey.currentState?.openDrawer(); // Open the end drawer
-          },
-          icon: Icon(Icons.menu), // Choose the appropriate icon
-          iconSize: 30, // Set the size of the icon
-          color: Colors.black, // Set the color of the icon
-        ),
 
-        title: Text("Collection Dashboard"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () {
-              ref.read(userProfileProvider.notifier).fetchUserProfile();
-            },
-          ),
-         /* CircleAvatar(
-            backgroundImage: NetworkImage("https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png"), // Replace with actual image URL
-          ),*/
-        ],
-      ),
+  // Step 1: Define the GlobalKey
 
-      drawer: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 20, 80, 20),
-        child: Drawer(
-          backgroundColor: AppColors.blueShadeColor,
-          child: ListView(
-           /* padding: EdgeInsets.zero,*/
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-            children: [
-              SizedBox(height: 10,),
+  @override
+  Widget build(BuildContext context) {
+    final isDialogOpen = ref.watch(dialogVisibilityProvider);
 
-             /* SizedBox(
-                height: 170,
-                child: Container(
-                  padding: EdgeInsets.all(30),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey), // Border color
-                    borderRadius: BorderRadius.circular(0), // Border radius
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/finexe_text_image.png'), // Replace with your image path
-                      fit: BoxFit.contain, // Adjust how the image is fit inside the container
-                    ),
-                  ),
-                ),
-              ),*/
+    void _toggleDialog() {
+      // Toggle dialog state
+      ref.read(dialogVisibilityProvider.notifier).state = !isDialogOpen;
+    }
 
-              SizedBox(
-                height: 100,
-                child: Container(
-                  padding: EdgeInsets.all(10), // Reduce padding to give the image more space
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.transparent), // Remove border or make it transparent
-                    borderRadius: BorderRadius.circular(0), // You can adjust the radius if needed
-                  ),
+    final data = ref.watch(apiResponseProvider);
+    final dataViewModel = ref.read(apiResponseProvider.notifier);
+    return data.when(
+      data: (data) {
+        return Scaffold(
+          drawer: const DashBoardSideBar(),
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            // automaticallyImplyLeading: true,
+            actions: [
+              GestureDetector(
+                  onTap: () {
+                    _showMyDialog(context, ref);
+                  },
                   child: Padding(
-                    padding: const EdgeInsets.all(10), // Add padding around the image for spacing
+                    padding: const EdgeInsets.only(right: 5.0),
                     child: Image.asset(
-                      'assets/images/finexe_text_image.png', // Your image path
-                      fit: BoxFit.contain, // Ensure the image is contained within the available space
+                      'assets/images/fingerprint.png',
+                      height: displayHeight(context) * 0.06,
+                      width: displayWidth(context) * 0.10,
                     ),
+                  )),
+              SizedBox(
+                width: displayWidth(context) * 0.05,
+              ),
+              GestureDetector(
+                onTap: () {
+                  ProfileUpdateDialog.profileUpdateDialog(context: context, userProfile: data);
+                  // ProfileUpdateContent(userProfile: data);
+                },
+                // _toggleDialog,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundImage: data.imageUrl != null
+                        ? NetworkImage('${Api.imageUrl}${data.imageUrl}')
+                        : const AssetImage('assets/images/prof.jpeg'),
+                    // Placeholder image
+                    onBackgroundImageError: (error, stackTrace) {
+                      // Set a default image if the API image fails to load
+                    },
                   ),
                 ),
               ),
-
-
-              ListTile(
-                contentPadding: EdgeInsets.fromLTRB(20, 30, 0, 10), // Adjust the horizontal padding as needed
-
-                title: Text('Menu', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,color: AppColors.primary),),
-                onTap: () {
-                  // Handle navigation to settings
-                },
-              ),
-
-              ListTile(
-                leading: Icon(Icons.home,color: AppColors.white,),
-                title: Text('Home',style: TextStyle(
-                  color: AppColors.white, // Change this to your desired color
-                ),),
-                onTap: () {
-                  // Handle navigation to settings
-                /*  Navigator.push(
-                      context, MaterialPageRoute(
-                      builder: (context) => PortfolioScreen()));*/
-                },
-              ),
-               Divider(
-                color: Colors.black38, // Set the color of the divider
-                height: 5, // Set the height of the divider
-                thickness: 2, // Set the thickness of the divider
-                indent: 20, // Set the indent (left padding) of the divider
-                endIndent: 20, // Set the end indent (right padding) of the divider
-              ),
-
-              ListTile(
-                leading: Icon(Icons.money,color: AppColors.white,),
-                title: Text('Collection',style: TextStyle(
-                  color: AppColors.white, // Change this to your desired color
-                ),),
-                onTap: () {
-                  // Handle navigation to about
-                 /* Navigator.push(
-                      context, MaterialPageRoute(
-                      builder: (context) => WithdrawalInterestPage()));*/
-                },
-              ),
-               Divider(
-                color: Colors.black38, // Set the color of the divider
-                height: 5, // Set the height of the divider
-                thickness: 2, // Set the thickness of the divider
-                indent: 20, // Set the indent (left padding) of the divider
-                endIndent: 20, // Set the end indent (right padding) of the divider
-              ),
-
-
-              ListTile(
-                leading: Icon(Icons.logout,color: AppColors.white,),
-                title: Text('Logout',style: TextStyle(
-                  color: AppColors.white, // Change this to your desired color
-                ),),
-                onTap: () {
-                  // Handle navigation to about
-                 // _logoutAndRedirectToLogin();
-                },
-              ),
-
             ],
+            flexibleSpace: Container(
+              color: AppColors.white,
+            ),
+            backgroundColor: AppColors.white,
           ),
-        ),
-      ),
-
-      body: userProfile == null
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-        child: Column(
-          children: [
-            // User profile card
-            Card(
-              elevation: 2,
-              margin: EdgeInsets.all(16),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
                   children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundImage: NetworkImage('https://miro.medium.com/v2/resize:fit:1400/format:webp/1*U4gZLnRtHEeJuc6tdVLwPw.png'), // Replace with actual image URL
+                    SizedBox(
+                      width: displayWidth(context) * 0.05,
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(
+                        height: displayHeight(context) * 0.08,
+                        width: displayWidth(context) * 0.1,
+                        child: const Image(
+                            image:
+                                AssetImage('assets/images/Morning.png'))),
+                    SizedBox(
+                      width: displayWidth(context) * 0.04,
+                    ),
                     Text(
-                      userProfile.name,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      dataViewModel.greeting(),
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff475467)),
+                    )
+                  ],
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding:
+                      EdgeInsets.only(left: displayWidth(context) * 0.05),
+                  child: Text(
+                      CaplitalizeSentence().capitalizeEachWord(data.name),
+                    textAlign: TextAlign.left,
+                    style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black),
+                  ),
+                ),
+                SizedBox(
+                  height: displayHeight(context) * 0.01,
+                ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: displayWidth(context) * 0.05,
                     ),
-                    Text(userProfile.email),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Employee Unique Id:"),
-                        Text(userProfile.employeeId),
-                      ],
+                    const Text(
+                      'Get Ready- ',
+                      style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xff0082C6)),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Mobile No:"),
-                        Text(userProfile.mobileNo),
-                      ],
+                    const Text(
+                      'You will do your best on today we will meet',
+                      style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xff475467)),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: displayHeight(context) * 0.03,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Image(
+                      image: const AssetImage(
+                        'assets/images/leftside.png',
+                      ),
+                      height: displayHeight(context) * 0.02,
+                      width: displayWidth(context) * 0.25,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Current Address:"),
-                        Text(userProfile.address),
-                      ],
+                    SizedBox(
+                      width: displayWidth(context) * 0.02,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Joining Date:"),
-                        Text(userProfile.joiningDate),
-                      ],
+                    const Text(
+                      'Visit Update’s',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          color: Color(0xff475467)),
+                    ),
+                    SizedBox(
+                      width: displayWidth(context) * 0.02,
+                    ),
+                    Image(
+                      image:
+                          const AssetImage('assets/images/rightside.png'),
+                      height: displayHeight(context) * 0.02,
+                      width: displayWidth(context) * 0.25,
                     ),
                   ],
                 ),
-              ),
+                rectBox(
+                    backImage: 'assets/images/backgreen.png',
+                    iconImage: 'assets/images/right.png',
+                    title: 'Visit Updated',
+                    stitle: 'Case ${data.visitAccepted} Now',
+                    context: context),
+                Row(
+                  children: [
+                    SquareBox(
+                        backImage: 'assets/images/square.png',
+                        iconImage: 'assets/images/watch.png',
+                        title: 'Visit pending',
+                        stitle: 'Case ${data.visitPendingForApproval} Now',
+                        context: context,
+                        titleColor: const Color(0xffFFA500),
+                        stitleColor: Colors.orange),
+                    SquareBox(
+                        backImage: 'assets/images/rejected.png',
+                        iconImage: 'assets/images/rejected_icon.png',
+                        title: 'Visit rejected',
+                        stitle: 'Case ${data.visitRejected} Now',
+                        context: context,
+                        titleColor: const Color(0xffEE6C52),
+                        stitleColor:
+                            const Color.fromARGB(255, 218, 96, 87)),
+                  ],
+                ),
+                SizedBox(
+                  height: displayHeight(context) * 0.02,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Image(
+                        image: const AssetImage(
+                          'assets/images/leftside.png',
+                        ),
+                        height: displayHeight(context) * 0.02,
+                        width: displayWidth(context) * 0.18,
+                      ),
+                      SizedBox(
+                        width: displayWidth(context) * 0.025,
+                      ),
+                      const Text(
+                        'Collection Update’s',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                            color: Color(0xff475467)),
+                      ),
+                      SizedBox(
+                        width: displayWidth(context) * 0.025,
+                      ),
+                      Image(
+                        image:
+                            const AssetImage('assets/images/rightside.png'),
+                        height: displayHeight(context) * 0.02,
+                        width: displayWidth(context) * 0.18,
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: rectBox(
+                      backImage: 'assets/images/rectgreen.png',
+                      iconImage: 'assets/images/rectgreen_icon.png',
+                      title: 'Collection Accepted',
+                      stitle: 'Case ${data.collectionAcceptAmount} Now',
+                      context: context),
+                ),
+                SizedBox(
+                  height: displayHeight(context) * 0.001,
+                ),
+                Row(
+                  children: [
+                    SquareBoxBottom(
+                        backImage: 'assets/images/tback.png',
+                        iconImage: 'assets/images/orange_dollar.png',
+                        title: 'Collection pending',
+                        stitle:
+                            'Case ${data.collectionEmiAmountPendingForApproval} Now',
+                        context: context,
+                        titleColor: const Color(0xffFFA500),
+                        stitleColor: Colors.orange),
+                    SquareBoxBottom(
+                        backImage: 'assets/images/pinkback.png',
+                        iconImage: 'assets/images/pink_dollar.png',
+                        title: 'Collection rejected',
+                        stitle: 'Case ${data.collectionRejectAmount} Now',
+                        context: context,
+                        titleColor: const Color(0xffEE6C52),
+                        stitleColor:
+                            const Color.fromARGB(255, 218, 96, 87)),
+                  ],
+                ),
+                SizedBox(
+                  height: displayHeight(context) * 0.1,
+                ),
+              ],
             ),
-
-            // GridView for six square cards
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GridView.count(
-                physics: NeverScrollableScrollPhysics(), // To prevent GridView from scrolling
-                shrinkWrap: true, // To fit content within the SingleChildScrollView
-                crossAxisCount: 2, // Two cards per row
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1, // To make the cards square
-                children: [
-                  buildCard(Icons.person, '100', 'Visits Accepted'),
-                  buildCard(Icons.person, '50', 'Visits Pending'),
-                  buildCard(Icons.person, '10', 'Visits Rejected'),
-                  buildCard(Icons.attach_money, '200', 'Collections Accepted'),
-                  buildCard(Icons.attach_money, '30', 'Collections Pending'),
-                  buildCard(Icons.attach_money, '5', 'Collections Rejected'),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 10),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
+      error: (error, stackTrace) {
+        return const Scaffold();
+      },
+      loading: () {
+        return const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        );
+      },
     );
   }
 
@@ -392,19 +400,205 @@ class DashboardScreen extends ConsumerWidget {
                 Icon(icon, size: 30),
                 Text(
                   amount,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               label,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _showMyDialog(BuildContext context, WidgetRef ref) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button to close dialog
+      builder: (BuildContext context) {
+        final checkPunchProvider = ref.watch(attendanceProvider);
+        return const AlertDialog(
+          title: Text('Punch out'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Are you sure you want to punch out.'),
+                // Text('Press the button below to close.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[PunchOutActionContent()],
+        );
+      },
+    );
+  }
+
+  Widget rectBox(
+      {required String backImage,
+      required String iconImage,
+      required String title,
+      required String stitle,
+      required BuildContext context}) {
+    return Stack(
+      children: [
+        Image(
+          // image: AssetImage('assets/images/rectgreen.png'),
+          image: AssetImage(backImage),
+          fit: BoxFit.fill,
+          height: displayHeight(context) * 0.2,
+          width: displayWidth(context),
+        ),
+        Positioned(
+          top: displayHeight(context) * 0.05,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: displayWidth(context) * 0.18,
+              ),
+              Image(
+                //  image: AssetImage('assets/images/rectgreen_icon.png'),
+                image: AssetImage(iconImage),
+                height: displayHeight(context) * 0.1,
+                width: displayWidth(context) * 0.15,
+              ),
+              SizedBox(
+                width: displayWidth(context) * 0.04,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title ?? 'Visit Updated',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: Color(0xff05BA65)),
+                  ),
+                  Text(
+                    stitle ?? 'Case 180+ Now ',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        // color: Color(0xff05BA65B2),
+                        color: Colors.green),
+                  )
+                ],
+              )
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget SquareBox({
+    required String backImage,
+    required String iconImage,
+    required String title,
+    required String stitle,
+    required BuildContext context,
+    required Color titleColor, // Default color for title
+    required Color stitleColor, // Default color for subtitle
+  }) {
+    return Stack(
+      children: [
+        Container(
+          child: Image(
+            image: AssetImage(backImage),
+            height: displayHeight(context) * 0.2,
+            width: displayWidth(context) * 0.5,
+            fit: BoxFit.cover,
+          ),
+        ),
+        Positioned(
+          top: displayHeight(context) * 0.03,
+          left: displayWidth(context) * 0.11,
+          child: Column(
+            children: [
+              Image(
+                image: AssetImage(iconImage),
+                height: displayHeight(context) * 0.1,
+                width: displayWidth(context) * 0.2,
+              ),
+              Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  color: titleColor,
+                ),
+              ),
+              Text(
+                stitle,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
+                  color: stitleColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget SquareBoxBottom({
+    required String backImage,
+    required String iconImage,
+    required String title,
+    required String stitle,
+    required BuildContext context,
+    required Color titleColor, // Default color for title
+    required Color stitleColor, // Default color for subtitle
+  }) {
+    return Stack(
+      children: [
+        Container(
+          child: Image(
+            image: AssetImage(backImage),
+            height: displayHeight(context) * 0.2,
+            width: displayWidth(context) * 0.5,
+            fit: BoxFit.cover,
+          ),
+        ),
+        Positioned(
+          top: displayHeight(context) * 0.03,
+          left: displayWidth(context) * 0.06,
+          child: Column(
+            children: [
+              Image(
+                image: AssetImage(iconImage),
+                height: displayHeight(context) * 0.1,
+                width: displayWidth(context) * 0.2,
+              ),
+              Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  color: titleColor,
+                ),
+              ),
+              Text(
+                stitle,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
+                  color: stitleColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

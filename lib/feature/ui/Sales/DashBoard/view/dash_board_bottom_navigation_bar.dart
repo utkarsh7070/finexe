@@ -15,18 +15,20 @@ class DashBoardBottomNavigationBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tabModel =
         ref.watch(tabViewModelProvider); // Get the selected tab index
-    const List<Widget> _icons = [
-      Icon(CupertinoIcons.bag),
-      Icon(CupertinoIcons.house_alt_fill),
-      Icon(CupertinoIcons.person),
+     List<Widget> _icons = [
+       const Icon(CupertinoIcons.house_alt_fill),
+      const Icon(CupertinoIcons.bag),
+       const Icon(CupertinoIcons.graph_square),
+      const Icon(CupertinoIcons.person),
+
     ];
 
-    final List<String> _labels = ['cases', 'Home', 'Profile'];
+    final List<String> _labels = ['Home','Cases','Lead', 'Profile'];
 
     return Container(
       height: displayHeight(context) * 0.12,
       width: displayWidth(context) * 0.30,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(11.8),
       child: Card(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(40))),
@@ -41,7 +43,6 @@ class DashBoardBottomNavigationBar extends ConsumerWidget {
             indicator: const UnderlineTabIndicator(
               borderSide: BorderSide.none,
             ),
-
             tabs: [
               for (int i = 0; i < _icons.length; i++)
                 _tabItem(_icons[i], _labels[i], context,
@@ -67,11 +68,11 @@ class DashBoardBottomNavigationBar extends ConsumerWidget {
               borderRadius: BorderRadius.circular(10),
               // color: Colors.black,
             ),
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.only(top: 10,right: 10,left: 10,bottom: 10),
       child: Column(
         children: [
           child,
-          Text(label, style: const TextStyle(fontSize: 9)),
+          Flexible(child: Text(label, style: const TextStyle(fontSize: 9))),
         ],
       ),
     );

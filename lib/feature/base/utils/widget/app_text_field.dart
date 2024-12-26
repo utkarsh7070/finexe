@@ -18,14 +18,18 @@ class AppTextField extends StatelessWidget {
   final bool obscureText;
   final VoidCallback? prefixOnTap;
   final double? height;
+  final ValueChanged<String>? onFiledSubmitted;
+  final int? maximumLines;
 
   const AppTextField(
       {super.key,
+        this.maximumLines,
         this.hint,
         this.obscureText = false,
         this.errorText,
         this.controller,
         this.suffixIcon,
+        this.onFiledSubmitted,
         required this.onChange,
         this.isError = false,
         this.suffixOnTap,
@@ -46,8 +50,9 @@ class AppTextField extends StatelessWidget {
       alignment: Alignment.center,
       child: Center(
         child: TextFormField(
+          maxLines: maximumLines,
           validator: onValidate,
-          autofocus: true,
+          // autofocus: true,
           obscureText: obscureText,
           onTap: onTap,
           onChanged: onChange,
@@ -55,6 +60,7 @@ class AppTextField extends StatelessWidget {
           cursorColor: Colors.blue,
           textInputAction: textInputAction,
           keyboardType: textInputType,
+          onFieldSubmitted: onFiledSubmitted,
           decoration: InputDecoration(
               floatingLabelBehavior:FloatingLabelBehavior.always,
               labelStyle:  TextStyle(color: isError!? Colors.red:null ),
