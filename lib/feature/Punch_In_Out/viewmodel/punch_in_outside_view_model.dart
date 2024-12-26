@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:flutter/Material.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../base/api/api.dart';
@@ -43,7 +44,9 @@ class PunchInOutSideViewModel {
 
   Future<bool> punchInOutSideRequest(String reasonForPunch, BuildContext context) async {
     try {
-      String? token = await SessionService.getToken();
+      // String? token = speciality.getToken();
+      String? token = speciality.getToken();
+
 
       final requestData = {
         "remark": reasonForPunch,

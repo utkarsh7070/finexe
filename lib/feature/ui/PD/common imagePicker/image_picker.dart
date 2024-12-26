@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
@@ -49,7 +50,7 @@ class _CommonImagePickerState extends State<CommonImagePicker> {
   }
 
   Future<void> uploadImage(String imagePath) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY"; // Replace with your token logic or pass it as a parameter

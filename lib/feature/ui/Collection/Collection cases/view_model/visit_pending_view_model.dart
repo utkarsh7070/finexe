@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:bson/bson.dart';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/collection_mode_response_model.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/get_mode_by_id_response_model.dart';
@@ -240,12 +241,11 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
       // longitude: data.longitude
     );
 
+
     print(requestModel);
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     try {
-
-
       final response = await dio.post(Api.visitFormSubmit,
           data: requestModel.toJson(),
           options: Options(headers: {"token": token}));
@@ -255,7 +255,6 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
         print(response.data);
       }
       if (response.statusCode == 200) {
-
         log('updated vist test');
         showCustomSnackBar(context, response.data['message'], Colors.green);
       } else {
@@ -651,7 +650,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     print('Update EMI Input -${requestModel.toJson()}');
 
 
-    String? token = await SessionService.getToken();
+    String? token =speciality.getToken();
     try{
       final response = await dio.post(Api.updateEmiSubmit,
           data: requestModel.toJson(),
@@ -745,10 +744,11 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       if (kDebugMode) {
         print('image url ${imageResponseModel.items.image}');
         print('image url1 ${response.data}');
-
-        imageApi = imageResponseModel.items.image;
-        print(imageApi);
       }
+
+       imageApi = imageResponseModel.items.image;
+        print(imageApi);
+
     } else {
       state = state.copyWith(isLoading: false);
       throw Exception('Failed to load data');
@@ -886,7 +886,7 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
       settlementForReason: state.reason,
     );
 
-    String? toke = await SessionService.getToken();
+    String? toke = speciality.getToken();
     /*final String token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
     */

@@ -165,7 +165,11 @@ packages:
       sha256: "28a712df2576b63c6c005c465989a348604960c0958d28be5303ba9baa841ac2"
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "8.9.3"
+=======
+    version: "8.9.2"
+>>>>>>> origin/To_merge
   cached_network_image:
     dependency: "direct main"
     description:
@@ -238,6 +242,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  connectivity_plus:
+    dependency: "direct main"
+    description:
+      name: connectivity_plus
+      sha256: e0817759ec6d2d8e57eb234e6e57d2173931367a865850c7acea40d4b4f9c27d
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.1"
+  connectivity_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: connectivity_plus_platform_interface
+      sha256: "42657c1715d48b167930d5f34d00222ac100475f73d10162ddf43e714932f204"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   convert:
     dependency: transitive
     description:
@@ -322,10 +342,17 @@ packages:
     dependency: transitive
     description:
       name: device_info_plus_platform_interface
+<<<<<<< HEAD
       sha256: "0b04e02b30791224b31969eb1b50d723498f402971bff3630bca2ba839bd1ed2"
       url: "https://pub.dev"
     source: hosted
     version: "7.0.2"
+=======
+      sha256: "282d3cf731045a2feb66abfe61bbc40870ae50a3ed10a4d3d217556c35c8c2ba"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.1"
+>>>>>>> origin/To_merge
   dio:
     dependency: "direct main"
     description:
@@ -410,10 +437,17 @@ packages:
     dependency: transitive
     description:
       name: file_selector_linux
+<<<<<<< HEAD
       sha256: "54cbbd957e1156d29548c7d9b9ec0c0ebb6de0a90452198683a7d23aed617a33"
       url: "https://pub.dev"
     source: hosted
     version: "0.9.3+2"
+=======
+      sha256: "712ce7fab537ba532c8febdb1a8f167b32441e74acd68c3ccb2e36dcb52c4ab2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.3"
+>>>>>>> origin/To_merge
   file_selector_macos:
     dependency: transitive
     description:
@@ -466,6 +500,7 @@ packages:
       sha256: "7befe2d3252728afb77aecaaea1dec88a89d35b9b1d2eea6d04479e8af9117b5"
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "4.5.2"
   flutter_avif:
     dependency: "direct main"
@@ -596,7 +631,131 @@ packages:
     source: hosted
     version: "1.1.4"
   flutter_hooks:
+=======
+    version: "4.5.0"
+  flutter_avif:
+>>>>>>> origin/To_merge
     dependency: "direct main"
+    description:
+      name: flutter_avif
+      sha256: "237aa771f19665ea92d78217aa944b7a57a5cb6f24406d6aa2ef87af07c218ba"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
+  flutter_avif_android:
+    dependency: transitive
+    description:
+      name: flutter_avif_android
+      sha256: b16ef529f6ddce3fcefaac3dc6b3fe5f2a2efdae6a6d2fd7f60429b5c4e53c4c
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
+  flutter_avif_ios:
+    dependency: transitive
+    description:
+      name: flutter_avif_ios
+      sha256: "499bddaef03e2d427c5a7ae0f61d2cb1bd7af81cae73c873e001e868528af91e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
+  flutter_avif_linux:
+    dependency: transitive
+    description:
+      name: flutter_avif_linux
+      sha256: "7ce20b35e2175b91cbaabbb7256b342db557bbc1eb02571d2ce73416870abca2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
+  flutter_avif_macos:
+    dependency: transitive
+    description:
+      name: flutter_avif_macos
+      sha256: c3932da883a557ded17d498fbcd76c6df9a0258cb7f10ff79f6d3b13abcdfc10
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
+  flutter_avif_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_avif_platform_interface
+      sha256: "7aa5858a7209c640200f1a9d4846f9ec8295f55c061fe9d992fb3ff4f74f7caf"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
+  flutter_avif_web:
+    dependency: transitive
+    description:
+      name: flutter_avif_web
+      sha256: b03a0c3e655efb5de29abaefff40ff0443e9e9baf489bf21f5c76efa4c6d875b
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
+  flutter_avif_windows:
+    dependency: transitive
+    description:
+      name: flutter_avif_windows
+      sha256: "350c622069a4d5c0ae8e130844f912f5b560269bd4f445384042a14418aee069"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
+  flutter_background_service:
+    dependency: "direct main"
+    description:
+      name: flutter_background_service
+      sha256: d32f078ec57647c9cfd6e1a8da9297f7d8f021d4dcc204a35aaad2cdbfe255f0
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.10"
+  flutter_background_service_android:
+    dependency: "direct main"
+    description:
+      name: flutter_background_service_android
+      sha256: "39da42dddf877beeef82bc2583130d8bedb4d0765e99ca9e7b4a32e8c6abd239"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.2.7"
+  flutter_background_service_ios:
+    dependency: "direct main"
+    description:
+      name: flutter_background_service_ios
+      sha256: "6037ffd45c4d019dab0975c7feb1d31012dd697e25edc05505a4a9b0c7dc9fba"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.3"
+  flutter_background_service_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_background_service_platform_interface
+      sha256: ca74aa95789a8304f4d3f57f07ba404faa86bed6e415f83e8edea6ad8b904a41
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.2"
+  flutter_cache_manager:
+    dependency: transitive
+    description:
+      name: flutter_cache_manager
+      sha256: "400b6592f16a4409a7f2bb929a9a7e38c72cceb8ffb99ee57bbf2cb2cecf8386"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.4.1"
+  flutter_downloader:
+    dependency: "direct main"
+    description:
+      name: flutter_downloader
+      sha256: b6da5495b6258aa7c243d0f0a5281e3430b385bccac11cc508f981e653b25aa6
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.11.8"
+  flutter_exit_app:
+    dependency: "direct main"
+    description:
+      name: flutter_exit_app
+      sha256: "34c2cc72a3681fa6f0439d97f408645497ac7e02219d8570997627b90f7e188d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.4"
+  flutter_hooks:
+    dependency: transitive
     description:
       name: flutter_hooks
       sha256: cde36b12f7188c85286fba9b38cc5a902e7279f36dd676967106c041dc9dde70
@@ -655,10 +814,17 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_launcher_icons
+<<<<<<< HEAD
       sha256: "31cd0885738e87c72d6f055564d37fabcdacee743b396b78c7636c169cac64f5"
       url: "https://pub.dev"
     source: hosted
     version: "0.14.2"
+=======
+      sha256: "619817c4b65b322b5104b6bb6dfe6cda62d9729bd7ad4303ecc8b4e690a67a77"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.14.1"
+>>>>>>> origin/To_merge
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -708,10 +874,17 @@ packages:
     dependency: transitive
     description:
       name: flutter_plugin_android_lifecycle
+<<<<<<< HEAD
       sha256: "615a505aef59b151b46bbeef55b36ce2b6ed299d160c51d84281946f0aa0ce0e"
       url: "https://pub.dev"
     source: hosted
     version: "2.0.24"
+=======
+      sha256: "9b78450b89f059e96c9ebb355fa6b3df1d6b330436e0b885fb49594c41721398"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.23"
+>>>>>>> origin/To_merge
   flutter_polyline_points:
     dependency: "direct main"
     description:
@@ -724,10 +897,17 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_riverpod
+<<<<<<< HEAD
       sha256: "9532ee6db4a943a1ed8383072a2e3eeda041db5657cdf6d2acecf3c21ecbe7e1"
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
+=======
+      sha256: "6eda4e247774474c715a0805a2fb8e3cd55fbae4ead641e063c95b4bd5f3b317"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.6.0"
+>>>>>>> origin/To_merge
   flutter_rust_bridge:
     dependency: transitive
     description:
@@ -902,10 +1082,17 @@ packages:
     dependency: "direct main"
     description:
       name: hooks_riverpod
+<<<<<<< HEAD
       sha256: "70bba33cfc5670c84b796e6929c54b8bc5be7d0fe15bb28c2560500b9ad06966"
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
+=======
+      sha256: "8010a5abaa625a98358d9bce14b56f63dacdb4ec8637544da3bfd0ae184a9ae6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.6.0"
+>>>>>>> origin/To_merge
   html:
     dependency: transitive
     description:
@@ -958,10 +1145,17 @@ packages:
     dependency: transitive
     description:
       name: image_picker_android
+<<<<<<< HEAD
       sha256: aa6f1280b670861ac45220cc95adc59bb6ae130259d36f980ccb62220dc5e59f
       url: "https://pub.dev"
     source: hosted
     version: "0.8.12+19"
+=======
+      sha256: d34e0d9e024e81321b2aeed7b202ec6181cc282e6a1c0c0b4e6ad07ef1065d82
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.8.12+16"
+>>>>>>> origin/To_merge
   image_picker_for_web:
     dependency: transitive
     description:
@@ -1094,10 +1288,17 @@ packages:
     dependency: transitive
     description:
       name: lottie
+<<<<<<< HEAD
       sha256: fa39707f36786707b01eca7626d2c16c32aa603b3f3a146518518458847dc127
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
+=======
+      sha256: "7afc60865a2429d994144f7d66ced2ae4305fe35d82890b8766e3359872d872c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.3"
+>>>>>>> origin/To_merge
   macros:
     dependency: transitive
     description:
@@ -1145,7 +1346,11 @@ packages:
       sha256: "0e78c8841c3a614452bef55aa17a18191067bd76c7a72d0e0ba656edbed8b1a8"
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "0.0.7"
+=======
+    version: "0.0.6"
+>>>>>>> origin/To_merge
   mongo_dart:
     dependency: "direct main"
     description:
@@ -1162,6 +1367,17 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.2"
+<<<<<<< HEAD
+=======
+  nm:
+    dependency: transitive
+    description:
+      name: nm
+      sha256: "2c9aae4127bdc8993206464fcc063611e0e36e72018696cd9631023a31b24254"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.0"
+>>>>>>> origin/To_merge
   octo_image:
     dependency: transitive
     description:
@@ -1249,7 +1465,11 @@ packages:
       sha256: "92d4488434b520a62570293fbd33bb556c7d49230791c1b4bbd973baf6d2dc67"
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "2.1.1"
+=======
+    version: "2.1.0"
+>>>>>>> origin/To_merge
   packages_extensions:
     dependency: transitive
     description:
@@ -1278,10 +1498,17 @@ packages:
     dependency: transitive
     description:
       name: path_provider_android
+<<<<<<< HEAD
       sha256: "4adf4fd5423ec60a29506c76581bc05854c55e3a0b72d35bb28d661c9686edf2"
       url: "https://pub.dev"
     source: hosted
     version: "2.2.15"
+=======
+      sha256: c464428172cb986b758c6d1724c603097febb8fb855aa265aeecc9280c294d4a
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.12"
+>>>>>>> origin/To_merge
   path_provider_foundation:
     dependency: transitive
     description:
@@ -1433,15 +1660,26 @@ packages:
       sha256: "81876843eb50dc2e1e5b151792c9a985c5ed2536914115ed04e9c8528f6647b0"
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "1.4.0"
+=======
+    version: "1.3.0"
+>>>>>>> origin/To_merge
   puppeteer:
     dependency: transitive
     description:
       name: puppeteer
+<<<<<<< HEAD
       sha256: "7a990c68d33882b642214c351f66492d9a738afa4226a098ab70642357337fa2"
       url: "https://pub.dev"
     source: hosted
     version: "3.16.0"
+=======
+      sha256: fc33b2a12731e0b9e16c40cd91ea2b6886bcc24037a435fceb59b786d4074f2b
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.15.0"
+>>>>>>> origin/To_merge
   rational:
     dependency: transitive
     description:
@@ -1462,18 +1700,32 @@ packages:
     dependency: "direct main"
     description:
       name: riverpod
+<<<<<<< HEAD
       sha256: "59062512288d3056b2321804332a13ffdd1bf16df70dcc8e506e411280a72959"
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
+=======
+      sha256: bd6e656a764e3d27f211975626e0c4f9b8d06ab16acf3c7ba7a8061e09744c75
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.6.0"
+>>>>>>> origin/To_merge
   roam_flutter:
     dependency: "direct main"
     description:
       name: roam_flutter
+<<<<<<< HEAD
       sha256: "782574f7d3462376e598d99c4a915af29a046070d56392a6588c5f0ee4989d10"
       url: "https://pub.dev"
     source: hosted
     version: "0.1.7"
+=======
+      sha256: "539aa4a11b9d50ab94921f192a1e49163e679f834eb2134ccfa78b7d932617fe"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.6"
+>>>>>>> origin/To_merge
   rxdart:
     dependency: transitive
     description:
@@ -1518,18 +1770,32 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_android
+<<<<<<< HEAD
       sha256: "02a7d8a9ef346c9af715811b01fbd8e27845ad2c41148eefd31321471b41863d"
       url: "https://pub.dev"
     source: hosted
     version: "2.4.0"
+=======
+      sha256: "3b9febd815c9ca29c9e3520d50ec32f49157711e143b7a4ca039eb87e8ade5ab"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.3"
+>>>>>>> origin/To_merge
   shared_preferences_foundation:
     dependency: transitive
     description:
       name: shared_preferences_foundation
+<<<<<<< HEAD
       sha256: "6a52cfcdaeac77cad8c97b539ff688ccfc458c007b4db12be584fbe5c0e49e03"
       url: "https://pub.dev"
     source: hosted
     version: "2.5.4"
+=======
+      sha256: "07e050c7cd39bad516f8d64c455f04508d09df104be326d8c02551590a0d513d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.3"
+>>>>>>> origin/To_merge
   shared_preferences_linux:
     dependency: transitive
     description:
@@ -1651,10 +1917,17 @@ packages:
     dependency: transitive
     description:
       name: sqflite
+<<<<<<< HEAD
       sha256: "2d7299468485dca85efeeadf5d38986909c5eb0cd71fd3db2c2f000e6c9454bb"
       url: "https://pub.dev"
     source: hosted
     version: "2.4.1"
+=======
+      sha256: "79a297dc3cc137e758c6a4baf83342b039e5a6d2436fcdf3f96a00adaaf2ad62"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.0"
+>>>>>>> origin/To_merge
   sqflite_android:
     dependency: transitive
     description:
@@ -1667,18 +1940,32 @@ packages:
     dependency: transitive
     description:
       name: sqflite_common
+<<<<<<< HEAD
       sha256: "761b9740ecbd4d3e66b8916d784e581861fd3c3553eda85e167bc49fdb68f709"
       url: "https://pub.dev"
     source: hosted
     version: "2.5.4+6"
+=======
+      sha256: "4468b24876d673418a7b7147e5a08a715b4998a7ae69227acafaab762e0e5490"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.4+5"
+>>>>>>> origin/To_merge
   sqflite_darwin:
     dependency: transitive
     description:
       name: sqflite_darwin
+<<<<<<< HEAD
       sha256: "96a698e2bc82bd770a4d6aab00b42396a7c63d9e33513a56945cbccb594c2474"
       url: "https://pub.dev"
     source: hosted
     version: "2.4.1"
+=======
+      sha256: "769733dddf94622d5541c73e4ddc6aa7b252d865285914b6fcd54a63c4b4f027"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.1-1"
+>>>>>>> origin/To_merge
   sqflite_platform_interface:
     dependency: transitive
     description:
@@ -1731,10 +2018,17 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_core
+<<<<<<< HEAD
       sha256: "325f519ce4ad8edd81811c21b853d72018529e353584490824da0555156ba076"
       url: "https://pub.dev"
     source: hosted
     version: "27.2.5"
+=======
+      sha256: bc86234c9a0a87b6c3288b9065175e74e9a73e22b2237989a8bbdeff0c8befd7
+      url: "https://pub.dev"
+    source: hosted
+    version: "27.1.55"
+>>>>>>> origin/To_merge
   syncfusion_flutter_datagrid:
     dependency: "direct main"
     description:
@@ -1742,23 +2036,41 @@ packages:
       sha256: "1ba098d01468ed9dd400bf69403eedfbbd3626dce675005697a2698834f05fde"
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "27.2.5"
+=======
+    version: "27.1.53"
+>>>>>>> origin/To_merge
   syncfusion_flutter_datepicker:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_datepicker
+<<<<<<< HEAD
       sha256: "2177e49eb8a1c0fce7081e40f5613c986d00e5e63cbeb98a6012f65ca156bfc7"
       url: "https://pub.dev"
     source: hosted
     version: "27.2.5"
+=======
+      sha256: "54fe7e7a660ecdf072cceec890425d7531b42f647245f9244565c61e96fbca4a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "27.1.55"
+>>>>>>> origin/To_merge
   syncfusion_flutter_gauges:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_gauges
+<<<<<<< HEAD
       sha256: "33072584fa476c9e617ef9f3b50fc62b1136d9817dcd35e1f5b3476391560ca8"
       url: "https://pub.dev"
     source: hosted
     version: "27.2.5"
+=======
+      sha256: "729d8b2a89884c74286d8a530de5b604aa12883243c232bf15681f50a648cb5d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "27.1.53"
+>>>>>>> origin/To_merge
   synchronized:
     dependency: transitive
     description:
@@ -1798,7 +2110,11 @@ packages:
       sha256: "62ee18aca144e4a9f29d212f5a4c6a053be252b895ab14b5821996cff4ed90fe"
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "1.0.2"
+=======
+    version: "1.0.1"
+>>>>>>> origin/To_merge
   tuple:
     dependency: transitive
     description:
@@ -1843,10 +2159,17 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_ios
+<<<<<<< HEAD
       sha256: "16a513b6c12bb419304e72ea0ae2ab4fed569920d1c7cb850263fe3acc824626"
       url: "https://pub.dev"
     source: hosted
     version: "6.3.2"
+=======
+      sha256: e43b677296fadce447e987a2f519dcf5f6d1e527dc35d01ffab4fff5b8a7063e
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.3.1"
+>>>>>>> origin/To_merge
   url_launcher_linux:
     dependency: transitive
     description:
@@ -1859,10 +2182,17 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_macos
+<<<<<<< HEAD
       sha256: "17ba2000b847f334f16626a574c702b196723af2a289e7a93ffcb79acff855c2"
       url: "https://pub.dev"
     source: hosted
     version: "3.2.2"
+=======
+      sha256: "769549c999acdb42b8bcfa7c43d72bf79a382ca7441ab18a808e101149daf672"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.1"
+>>>>>>> origin/To_merge
   url_launcher_platform_interface:
     dependency: transitive
     description:
@@ -1987,10 +2317,17 @@ packages:
     dependency: transitive
     description:
       name: win32
+<<<<<<< HEAD
       sha256: "8b338d4486ab3fbc0ba0db9f9b4f5239b6697fcee427939a40e720cbb9ee0a69"
       url: "https://pub.dev"
     source: hosted
     version: "5.9.0"
+=======
+      sha256: "2735daae5150e8b1dfeb3eb0544b4d3af0061e9e82cef063adcd583bdae4306a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.7.0"
+>>>>>>> origin/To_merge
   win32_registry:
     dependency: transitive
     description:

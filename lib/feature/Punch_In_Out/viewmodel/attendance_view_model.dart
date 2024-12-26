@@ -9,6 +9,7 @@ import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/service/socket_io_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -111,8 +112,10 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   }
 
   Future<void> onAddTask(BuildContext context) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
+    // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    // String? token = sharedPreferences.getString('token');
+    String? token =speciality.getToken();
+
     state = state.copyWith(isLoading: true);
     // state = const AsyncValue.loading();
     final headers = {"token": token};
@@ -222,16 +225,19 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   }
 
   Future<void> getToken() async {
-    SharedPreferences preferences = await SessionService.getSession();
-    final String? name = preferences.getString('email');
+    // SharedPreferences preferences = await SessionService.getSession();
+    // final String? name = preferences.getString('email');
+    final String? name = speciality.getUserEmail();
+
+
     if (kDebugMode) {
       print('set in pinchin screen name $name');
     }
 
-    storedToken = preferences.getString('token');
+    storedToken = speciality.getToken();
     // final name = preferences.getString('email');
     state = state.copyWith(isLoading: false);
-    state = state.copyWith(employeeName: preferences.getString('email'));
+    state = state.copyWith(employeeName: speciality.getUserEmail());
     log("storedToken: $storedToken");
   }
 
@@ -260,7 +266,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
           print(error);
         }
         throw Exception(error);
-        state = state.copyWith(isLoading: false);
+        // state = state.copyWith(isLoading: false);
         // DioExceptions.fromDioError(error,context);
       }
     }
@@ -382,12 +388,18 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 
 
   Future<void> clickPunch(BuildContext context) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    List<String>? role = preferences.getStringList('roleName');
-    final String? employeeID = preferences.getString('employeId');
-    final String? token = preferences.getString('token');
-   final String? roamId =  preferences.getString('roamId');
-    final String? trackingMode =  preferences.getString('trackingMode');
+    // SharedPreferences preferences = await SharedPreferences.getInstance();
+    
+  //   List<String>? role = preferences.getStringList('roleName');
+  //   final String? employeeID = preferences.getString('employeId');
+  //   final String? token = preferences.getString('token');
+  //  final String? roamId =  preferences.getString('roamId');
+  //   final String? trackingMode =  preferences.getString('trackingMode');
+    List<String>? role = speciality.getRole();
+    final String? employeeID = speciality.getEmployeId();
+    final String? token = speciality.getToken();
+   final String? roamId = speciality.getRoamId();
+    final String? trackingMode =  speciality.getTrackingMode();
 
     if (kDebugMode) {
       print(role?.first);
@@ -539,7 +551,6 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       var message = responseData['message'];
       // Punch punchInModel = PunchInModel.fromJson(response.data);
       if (response.statusCode == 200) {
-
         showCustomSnackBar(context, message, AppColors.green);
         Roam.stopTracking();
         // PunchInModel punchInModel = PunchInModel.fromJson(response.data);

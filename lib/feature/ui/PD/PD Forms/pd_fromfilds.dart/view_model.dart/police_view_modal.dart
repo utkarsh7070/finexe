@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import '../../../../../../../base/api/api.dart';
 // import '../../../../../../../base/api/dio.dart';
@@ -31,7 +32,7 @@ class PDPoliceModel extends StateNotifier<ApplicantState> {
       'pdType': pdType,
     };
 
-    final token = await SessionService.getToken();
+    final token = speciality.getToken();
     try {
       final response = await dio.post(Api.updatePdReport,
           data: payload, options: Options(headers: {"token": token}));
@@ -72,7 +73,7 @@ class PoliceFormDetailsProvider {
   final Dio _dio = Dio();
 
   Future<PoliceStation> fetchPoliceDetails(String customerId) async {
-    final token = await SessionService.getToken();
+    final token = speciality.getToken();
 
     try {
       final response = await _dio.get(

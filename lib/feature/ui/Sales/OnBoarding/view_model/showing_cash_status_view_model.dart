@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/payment_initiate_cashfree_response_model.dart';
 import 'package:flutter/Material.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -187,7 +189,7 @@ class ProcessStatusNotifier extends StateNotifier<AsyncValue<ProcessStatusRespon
   Future<void> fetchProcessStatus(String customerId) async {
     try {
       // Fetch the token (assuming you have a session service for this)
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
 
       // Make the API call using Dio
       final response = await _dio.get(
@@ -229,7 +231,11 @@ class ProcessStatusNotifier extends StateNotifier<AsyncValue<ProcessStatusRespon
   Future<void> fetchProcessStatus(String customerId) async {
     try {
       // Replace with your actual API call
+<<<<<<< HEAD
       String? token = await SessionService.getToken();
+=======
+      String? token = speciality.getToken();
+>>>>>>> origin/To_merge
       // Example using Dio
       final response = await _dio.get(Api.getCaseStatus,
           queryParameters: {'customerId': customerId},

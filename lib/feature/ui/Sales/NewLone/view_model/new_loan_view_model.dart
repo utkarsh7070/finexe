@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Sales/NewLone/model/submit_new_loan_response_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -254,7 +255,7 @@ class PhoneNumberState {
 //-------------------------------Api--getAllProduct-------------------------------------------------
 
 final fetchDataProvider = FutureProvider<List<Item>>((ref) async {
-  String? token = await SessionService.getToken();
+  String? token = speciality.getToken();
   final dio = ref.read(dioProvider);
   final response = await dio.get(
     Api.getAllProduct,

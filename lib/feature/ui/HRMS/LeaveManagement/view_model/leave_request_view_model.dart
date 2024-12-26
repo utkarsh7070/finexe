@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,7 +20,7 @@ class LeaveRequestViewModel {
 
   Future<void> submitLeaveRequest(LeaveRequestItem leadData, BuildContext context) async {
     try {
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
 
       print('Leave input ${leadData.toJson()}');
       final response = await _dio.post(

@@ -1,7 +1,8 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/Material.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:roam_flutter/roam_flutter.dart';
@@ -29,8 +30,11 @@ class HRMSDashBoardViewModel extends StateNotifier<bool> {
   final Dio dio;
 
   Future<bool?> onPunchOut(BuildContext context) async {
-    SharedPreferences sharedPreferences = await  SharedPreferences.getInstance();
-    final String? storedToken = sharedPreferences.getString('token');
+    // SharedPreferences sharedPreferences = await  SharedPreferences.getInstance();
+    // final String? storedToken = sharedPreferences.getString('token');
+    final String? storedToken = speciality.getToken();
+
+    
     Map<String, String> token = {"token": storedToken!};
     print(token.values);
     try {
@@ -96,7 +100,6 @@ class HRMSDashBoardViewModel extends StateNotifier<bool> {
 
 //...............
 
-
 class RoleListModel {
   final List<String> role;
   RoleListModel({required this.role});
@@ -109,16 +112,20 @@ class RoleListNotifier extends StateNotifier<RoleListModel> {
 
   // Initialize SharedPreferences and load roles
   Future<void> loadRoles() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String>? role = prefs.getStringList('roleName');
+    // final prefs = await SharedPreferences.getInstance();
+    // List<String>? role = prefs.getStringList('roleName');
+    List<String>? role = speciality.getRole();
+
+    speciality.getRole();
     state = RoleListModel(role: role ?? []);
     print('Roles loaded: ${state.role}'); // Debug log
   }
 
   // Update roles in SharedPreferences and state
   Future<void> updateRoles(List<String> newRoles) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('roleName', newRoles);
+    speciality.setRole(newRoles);
+    // final prefs = await SharedPreferences.getInstance();
+    // await prefs.setStringList('roleName', newRoles);
     state = RoleListModel(role: newRoles);
   }
 }

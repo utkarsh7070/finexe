@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart';
+import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -46,7 +47,15 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     //---------------------------------------------------------------------------------------
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(actions: [  Visibility(
+                                visible: checkPunchProvider.punchAllowed,
+                                child: IconButton(
+                                  onPressed: () {
+                                    LogOutDialog.logOutDialog(context: context);
+                                  },
+                                  icon: Icon(Icons.logout,color: AppColors.primary,),
+                                ),
+                              ),],),
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,

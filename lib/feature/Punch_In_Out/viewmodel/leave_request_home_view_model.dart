@@ -4,7 +4,8 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/Material.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../base/api/api.dart';
@@ -19,7 +20,11 @@ class LeaveRequestHomeViewModel {
 
   /*Future<void> submitLeaveHomeRequest(LeaveRequestItem leadData,BuildContext context) async {
     try {
+<<<<<<< HEAD
       String? token = await SessionService.getToken();
+=======
+      String? token = speciality.getToken();
+>>>>>>> origin/To_merge
       print('Leave Request token ${token}');
 
       print('Leave input leadData ${leadData.toJson()}');
@@ -59,7 +64,9 @@ class LeaveRequestHomeViewModel {
 
   Future<void> submitLeaveHomeRequest(LeaveRequestItem leadData, BuildContext context) async {
     try {
-      String? token = await SessionService.getToken();
+      // String? token = speciality.getToken();
+      String? token = speciality.getToken();
+
       print('Leave Request token: $token');
       print('Leave input leadData: ${leadData.toJson()}');
 

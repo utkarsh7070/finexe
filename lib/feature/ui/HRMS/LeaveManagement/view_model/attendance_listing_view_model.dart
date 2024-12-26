@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/api.dart';
 import '../../../../base/service/session_service.dart';
+import '../../../../base/utils/general/pref_utils.dart';
 import '../../../Collection/Collection_home_dashboard/home_collection_viewmodel/fetchUserProfile.dart';
 import '../model/attendance_listing_model.dart';
 
@@ -66,7 +67,7 @@ class AttendanceNotifier
     try {
       state = const AsyncValue.loading();
 
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
 
       // Check if monthController.text is empty (no month selected)
       if (monthController.text.isEmpty) {

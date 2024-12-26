@@ -1,7 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:flutter/Material.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -59,7 +64,6 @@ import '../../../base/utils/widget/custom_snackbar.dart';
 //   // Return true if token exists (logged in), false otherwise (not logged in)
 // });
 
-
 class SessionModel {
   final bool? token;
   final String? role;
@@ -78,7 +82,6 @@ class SessionModel {
 // final punchInRepositoryProvider = Provider.autoDispose<PunchInRepositoryImp>((ref) {
 //   return PunchInRepositoryImp(); // Provides instance of PunchInRepository
 // });
-
 
 Future<Position> getCurrentLocation() async {
   await Geolocator.requestPermission();

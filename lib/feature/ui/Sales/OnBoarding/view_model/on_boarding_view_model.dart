@@ -37,6 +37,7 @@
 // Define GridItem model
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/dio.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Sales/OnBoarding/model/get_all_cases_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -112,7 +113,7 @@ class DashboardShowViewModel extends ChangeNotifier {
 
   Future<void> fetchLeads(BuildContext context, WidgetRef ref) async {
     try {
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
       final response = await _dio.get(
         Api.salesDashboardData,
         options: Options(headers: {"token": token}),
@@ -261,7 +262,7 @@ class AllCases extends StateNotifier<CaseModel> {
       'status': 'cibilReject'
     };
     print('Params: $params');
-    // String? token = await SessionService.getToken();
+    // String? token = speciality.getToken();
     try {
       final response = await dio.get(Api.allCases,
           queryParameters: params, options: Options(headers: {'token': token}));
@@ -311,7 +312,7 @@ class AllCases extends StateNotifier<CaseModel> {
     };
     print('Params: $params');
 
-    // String? token = await SessionService.getToken();
+    // String? token = speciality.getToken();
     try {
       final response = await dio.get(Api.allCases,
           queryParameters: params, options: Options(headers: {'token': token}));
@@ -359,7 +360,7 @@ class AllCases extends StateNotifier<CaseModel> {
     };
     print('Params: $params');
 
-    // String? token = await SessionService.getToken();
+    // String? token = speciality.getToken();
     try {
       final response = await dio.get(Api.allCases,
           queryParameters: params, options: Options(headers: {'token': token}));
@@ -412,7 +413,7 @@ class CaseModel {
 //     // state=state.copyWith(isLoading: true);
 //     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 //     String? token = sharedPreferences.getString('token');
-//     // String? token = await SessionService.getToken();
+//     // String? token = speciality.getToken();
 //     try {
 //       final response = await dio.get(Api.allCases,
 //           options: Options(headers: {'token': token}));

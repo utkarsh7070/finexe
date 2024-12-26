@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/property_form_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -131,7 +132,7 @@ class PDSubmitPropertyForm extends StateNotifier<ApplicationState> {
       "houseInsidePhoto": houseInsidephotos?.toList() //houseInsidePhoto
     };
 
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
     try {
@@ -192,7 +193,7 @@ class PropertyFormDetails extends StateNotifier<List<ApplicationState>> {
   final Dio _dio = Dio();
 
   Future<PropertyItems> fetchPropertyformDetails(String custId) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY"; // Replace with a secure way of managing tokens
@@ -273,7 +274,7 @@ class PropertDynaicListingImgagesNotifier extends StateNotifier<List<File>> {
   }
 
   Future<String> uploadImage(String image) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
