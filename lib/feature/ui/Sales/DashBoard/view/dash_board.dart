@@ -1,9 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart';
-import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/ui/Sales/SalesProfile/view/sales_profile.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,11 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:roam_flutter/roam_flutter.dart';
 import '../../../../base/routes/routes.dart';
-import '../../../../base/utils/widget/custom_snackbar.dart';
 import '../../LeadGeneration/view/lead_dashboard_form.dart';
 import '../../OnBoarding/view/on_boarding_screen.dart';
 import '../../OnBoarding/view/sales_cases/sales_cases_screen.dart';
