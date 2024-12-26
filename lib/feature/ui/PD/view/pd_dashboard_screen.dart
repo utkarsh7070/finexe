@@ -7,7 +7,6 @@ import 'package:finexe/feature/ui/PD/pd_view_model/pd_dash_viewmodel.dart';
 import 'package:finexe/feature/ui/PD/view/pd_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../../base/api/api.dart';
 import '../../../base/utils/widget/app_button.dart';
@@ -38,10 +37,10 @@ class _PdScreenState extends ConsumerState<PdScreen> {
     final pdRequestList = ref.watch(fetchPdRequestListProvider);
     final pdRefuseList = ref.watch(fetchPdRefuseCasetProvider);
     final gridItems = ref.watch(griditemProvider);
-    var _scaffoldKey = GlobalKey<ScaffoldState>();
+    var scaffoldKey = GlobalKey<ScaffoldState>();
     // final pdITems = ref.watch(pdItemsProvider);
     return Scaffold(
-      key: _scaffoldKey,
+      key: scaffoldKey,
       drawer: const PdDrawer(),
       appBar: AppBar(
         // automaticallyImplyLeading: true,
@@ -93,7 +92,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                   cursorColor: Colors.blueGrey,
                   autoCorrect: false,
                   focusedBorderColor: Colors.blue,
-                  searchResultsBgColor: const Color(0xFAFAFA),
+                  searchResultsBgColor: const Color(0x00fafafa),
                   disabledBorderColor: Colors.cyan,
                   enabledBorderColor: Colors.black,
                   enabled: true,
@@ -119,13 +118,13 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                     // }
                   },
                   onSubmitted: (searchText, listOfResults) {
-                    print("Submitted: " + searchText);
+                    print("Submitted: $searchText");
                   },
                   onEditingProgress: (searchText, listOfResults) {
-                    print("TextEdited: " + searchText);
-                    print("LENGTH: " + listOfResults.length.toString());
+                    print("TextEdited: $searchText");
+                    print("LENGTH: ${listOfResults.length}");
                   },
-                  searchItems: []),
+                  searchItems: const []),
               constantSizedBox(context),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -298,8 +297,8 @@ class _PdScreenState extends ConsumerState<PdScreen> {
               pdRefuseList.when(
                 data: (refuseItemsByPD) {
                 return
-                  refuseItemsByPD.length==0?
-                  Text('No refused cases'):
+                  refuseItemsByPD.isEmpty?
+                  const Text('No refused cases'):
                   ListView.builder(
                   shrinkWrap:
                   true, // Allows ListView to take up only the required height

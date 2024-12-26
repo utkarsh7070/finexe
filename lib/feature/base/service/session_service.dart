@@ -44,6 +44,7 @@ class SessionService {
   }) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setString('paymentMode', paymentMode!);
+    return null;
   }
 
   // Method to retrieve the token

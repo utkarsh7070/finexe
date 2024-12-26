@@ -9,7 +9,6 @@ import 'package:flutter_cashfree_pg_sdk/utils/cfexceptions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../base/utils/widget/custom_snackbar.dart';
-import '../../SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/dialog/form_completed_dialog.dart';
 
 class CashfreePaymentState {
   final String status;

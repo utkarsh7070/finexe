@@ -1,20 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
-import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Punch_In_Out/model/check_attendance_responce_model.dart';
 import '../../../base/api/api.dart';
 import '../../../base/utils/namespase/app_constants.dart';
-import '../../../base/utils/widget/custom_snackbar.dart';
 
 // final sessionProvider = FutureProvider((ref) async {
 //   final _punchInRepository = ref.watch(punchInRepositoryProvider);
@@ -134,10 +130,10 @@ class ApiService{
   bool isUpdateRequired =  false;
 
   Future<SessionModel> fetchPosts(ref) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? tokens = prefs.getString('token');
+  
+    String? tokens = speciality.getToken();
     final dio = ref.watch(dioProvider);
-    List<String>? role = prefs.getStringList('roleName');
+    List<String>? role = speciality.getRole();
     final position = await getCurrentLocation();
     if (tokens != null) {
       Map<String, String> token = {"token": tokens};
@@ -149,19 +145,12 @@ class ApiService{
         Response response =
         await dio.get(Api.checkPunchIn,
             queryParameters: location, options: Options(headers: token));
-        print('response data////// ${response.data}');
+            if(kDebugMode){
 
-        if (response.statusCode == 200) {
-          if (response.data['subCode'] == 200) {
-// i got the data
-            print('data found use the data ');
-          }
-          else{
-            print('data not found print message from api ${response.data['message']}');
-          }
-        }else{
-          print('not connected with the server print the exception or somthing went wrong');
-        }
+            
+        print('response data////// ${response.data}');}
+
+     
 
         if(response.statusCode == 200) {
 
@@ -178,7 +167,7 @@ class ApiService{
           print(response.data);
 
           print(
-              'app server version- ${serverVersion} and App version-${AppConstants
+              'app server version- $serverVersion and App version-${AppConstants
                   .staticAppVersion}');
           isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
         }else {

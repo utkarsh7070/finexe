@@ -14,18 +14,18 @@ import '../Milk Form/milk_form.dart'; // Import the provider created above
 class IncomeDetailForm extends ConsumerWidget {
   // const IncomeDetailForm({super.key});
   final String customerId;
-  IncomeDetailForm({required this.customerId});
+  const IncomeDetailForm({super.key, required this.customerId});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final incomeState = ref.watch(incomeFormProvider);
     final incomeNotifier = ref.read(incomeFormProvider.notifier);
 
-    final SingleValueDropDownController _controller =
+    final SingleValueDropDownController controller =
         SingleValueDropDownController();
 
     // Set initial dropdown value
     if (incomeState.selectedIncomeSource != null) {
-      _controller.setDropDown(incomeState.selectedIncomeSource!);
+      controller.setDropDown(incomeState.selectedIncomeSource!);
     }
 
     return SingleChildScrollView(
@@ -45,10 +45,10 @@ class IncomeDetailForm extends ConsumerWidget {
                 SizedBox(
                   height: displayHeight(context) * 0.07,
                   child: DropDownTextField(
-                    controller: _controller,
+                    controller: controller,
                     clearOption: false,
                     enableSearch: false,
-                    dropDownList: [
+                    dropDownList: const [
                       DropDownValueModel(name: 'Select Type', value: '1'),
                       DropDownValueModel(
                           name: 'Agriculture Business Income', value: '2'),
@@ -56,13 +56,13 @@ class IncomeDetailForm extends ConsumerWidget {
                       DropDownValueModel(name: 'Salary Income', value: '4'),
                       DropDownValueModel(name: 'Others', value: '5'),
                     ],
-                    textFieldDecoration: InputDecoration(
-                      label: const Text('Income Source Type'),
-                      enabledBorder: const OutlineInputBorder(
+                    textFieldDecoration: const InputDecoration(
+                      label: Text('Income Source Type'),
+                      enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: AppColors.gray, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),
-                      border: const OutlineInputBorder(
+                      border: OutlineInputBorder(
                         borderSide: BorderSide(color: AppColors.gray, width: 2),
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),

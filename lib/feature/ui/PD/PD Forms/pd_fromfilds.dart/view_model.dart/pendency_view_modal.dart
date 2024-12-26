@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import '../../../../../../../base/api/dio.dart';
@@ -34,7 +33,7 @@ class PendencyApiService {
         options: Options(headers: {"token": token}),
       );
 
-      print('Response model: ${model}');
+      print('Response model: $model');
 
       if (response.statusCode == 200) {
 

@@ -3,7 +3,6 @@ import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view_model.dart/bankdetails_view_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,7 +11,7 @@ final isExpbankProvider = StateProvider<bool>((ref) => false);
 
 class BankDetailsForm extends ConsumerStatefulWidget {
   final String customerId;
-  BankDetailsForm({required this.customerId});
+  const BankDetailsForm({super.key, required this.customerId});
 
   @override
   ConsumerState<BankDetailsForm> createState() => _BankDetailsFormState();
@@ -50,7 +49,7 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
   Widget build(BuildContext context) {
     final bankDetails = ref.watch(bankdetailsDetailsProvider(widget.customerId));
     final appState = ref.watch(pdsubmitbankdetailsProvider);
-    final _isExpanded = ref.watch(isExpbankProvider);
+    final isExpanded = ref.watch(isExpbankProvider);
 
     return  ExpansionTile(
           childrenPadding: const EdgeInsets.only(left: 16, bottom: 10,right: 15),
@@ -64,7 +63,7 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
               ref.refresh(bankdetailsDetailsProvider(widget.customerId));
             }
           },
-          initiallyExpanded: _isExpanded,
+          initiallyExpanded: isExpanded,
           title: const Text('Bank Details'),
           children: <Widget>[
             bankDetails.when(
@@ -102,7 +101,7 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
                             //       .checkUsername(value.toString());
                             // },
                             onValidate: (value) {
-                              print('Co - Applicant Type: ${value}');
+                              print('Co - Applicant Type: $value');
                               if (value!.trim().isEmpty) {
                                 return "This is a required field";
                               }
@@ -276,7 +275,7 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
                                     'loading'), // Key for progress indicator
                               ),
                             )
-                                : Text(
+                                : const Text(
                               'Next',
                               style: TextStyle(color: Colors.white),
                             ),

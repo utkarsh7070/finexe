@@ -48,7 +48,7 @@ class TravelExpenseModel {
       'purposeOfTravel': purposeOfTravel,
       'travelAlongWith': travelAlongWith,
       'travelMode': travelMode,
-      'expenses': expenses!.map((e) => e.toJson()).toList(),
+      'expenses': expenses.map((e) => e.toJson()).toList(),
     };
   }
 }

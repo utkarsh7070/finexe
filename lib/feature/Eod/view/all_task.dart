@@ -1,7 +1,6 @@
 import 'package:finexe/feature/Eod/view_model/bodlist_viewmodel.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -15,11 +14,11 @@ class GetAllTask extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("All task"),
+        title: const Text("All task"),
         centerTitle: true,
       ),
       body: state.isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Container(
@@ -44,7 +43,7 @@ class GetAllTask extends ConsumerWidget {
                                   color: AppColors.boxBagGray,
                                   child: Container(
                                     decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
+                                        borderRadius: const BorderRadius.all(
                                             Radius.circular(10)),
                                         border: Border.all(
                                             color: AppColors.boxBorderGray)),
@@ -101,10 +100,10 @@ class GetAllTask extends ConsumerWidget {
                                         state.bodFilterList[index].endDate != ''
                                             ? employeeDetailsText(
                                                 context,
-                                                data: ' ${formattedDate}',
+                                                data: ' $formattedDate',
                                                 heading: 'Date',
                                               )
-                                            : SizedBox(),
+                                            : const SizedBox(),
                                         SizedBox(
                                           height: MediaQuery.of(context)
                                                   .size

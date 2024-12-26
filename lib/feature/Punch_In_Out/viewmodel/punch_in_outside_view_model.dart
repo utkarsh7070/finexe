@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../base/api/api.dart';
 import '../../base/routes/routes.dart';
-import '../../base/service/session_service.dart';
 import '../../base/utils/widget/custom_snackbar.dart';
 
 final punchInOutSideViewModelProvider = StateProvider.autoDispose((ref) {
@@ -75,7 +74,7 @@ class PunchInOutSideViewModel {
   Future<void> navigateBasedOnRole(String role, BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? roles = prefs.getStringList('roleName');
-    print('Punch In Out Side roles-${roles} ');
+    print('Punch In Out Side roles-$roles ');
 
     if (roles != null) {
       if (roles.contains('admin')) {

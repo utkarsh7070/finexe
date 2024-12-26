@@ -18,11 +18,11 @@ import '../pd_view_model/pd_form_viewmodel.dart';
 class PdFormScreen extends ConsumerWidget {
   // const PdFormScreen({super.key});
   final String customerId;
-  PdFormScreen({required this.customerId});
+  const PdFormScreen({super.key, required this.customerId});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    print('customerId in PdFormScreen:: ${customerId}');
+    print('customerId in PdFormScreen:: $customerId');
 
     final selectedSegment =
         ref.watch(segmentProvider); // Watch the selected segment
@@ -44,7 +44,7 @@ class PdFormScreen extends ConsumerWidget {
         child: Column(
           children: [
             Container(
-              margin: EdgeInsets.only(right: 20, left: 20),
+              margin: const EdgeInsets.only(right: 20, left: 20),
               child: AdvancedSearch(
                   // data: ,
                   maxElementsToDisplay: 10,
@@ -58,7 +58,7 @@ class PdFormScreen extends ConsumerWidget {
                   cursorColor: Colors.blueGrey,
                   autoCorrect: false,
                   focusedBorderColor: Colors.blue,
-                  searchResultsBgColor: const Color(0xFAFAFA),
+                  searchResultsBgColor: const Color(0x00fafafa),
                   disabledBorderColor: Colors.cyan,
                   enabledBorderColor: Colors.black,
                   enabled: true,
@@ -84,13 +84,13 @@ class PdFormScreen extends ConsumerWidget {
                     }
                   },
                   onSubmitted: (searchText, listOfResults) {
-                    print("Submitted: " + searchText);
+                    print("Submitted: $searchText");
                   },
                   onEditingProgress: (searchText, listOfResults) {
-                    print("TextEdited: " + searchText);
-                    print("LENGTH: " + listOfResults.length.toString());
+                    print("TextEdited: $searchText");
+                    print("LENGTH: ${listOfResults.length}");
                   },
-                  searchItems: []),
+                  searchItems: const []),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),

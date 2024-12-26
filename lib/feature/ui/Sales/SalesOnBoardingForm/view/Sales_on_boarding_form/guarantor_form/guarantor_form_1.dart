@@ -2,21 +2,17 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../../base/routes/routes.dart';
 import '../../../../../../base/service/session_service.dart';
 import '../../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../../base/utils/namespase/display_size.dart';
-import '../../../../../../base/utils/namespase/font_size.dart';
 import '../../../../../../base/utils/widget/app_button.dart';
 import '../../../../../../base/utils/widget/app_text_filed_login.dart';
-import '../../../../../../base/utils/widget/custom_snackbar.dart';
 import '../../../../../../base/utils/widget/upload_box.dart';
 import '../../../../NewLone/view_model/new_loan_view_model.dart';
 import '../../../view_model/guarantor_form_view_model.dart';
 import 'bottom_sheet/bottom_sheet_if_no.dart';
 import 'bottom_sheet/guarantor_bottom_sheet.dart';
-import 'dialog/QR_dialog.dart';
 import 'dialog/form_completed_dialog.dart';
 
 class GuarantorDetails extends ConsumerStatefulWidget {

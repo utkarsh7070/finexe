@@ -14,7 +14,7 @@ import 'other_view_model.dart';
 class Others extends ConsumerStatefulWidget {
   // const Others({super.key});
   final String customerId;
-  Others({required this.customerId});
+  const Others({super.key, required this.customerId});
   @override
   ConsumerState<Others> createState() => _OthersState();
 }
@@ -55,7 +55,7 @@ class _OthersState extends ConsumerState<Others> {
     // final imageNotifier = ref.read(otherImageUploadProvider.notifier);
     final viewModel = ref.read(otherDetailsFormViewModelProvider);
     final fetchAsyncValue = ref.watch(salaryDetailsProvider(widget.customerId));
-    print("other for get ${fetchAsyncValue}");
+    print("other for get $fetchAsyncValue");
     final imageNotifier = ref.read(imageUploadProvider.notifier);
 
     return fetchAsyncValue.when(
@@ -229,7 +229,7 @@ class _OthersState extends ConsumerState<Others> {
                       await viewModel.submitOtherDetailsForm(formData, context,widget.customerId);
 
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           backgroundColor: Colors.green,
                           content: Text(
                             'Other Income Details submitted successfully!',
@@ -240,7 +240,7 @@ class _OthersState extends ConsumerState<Others> {
                     } else {
                       // Validation failed
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           backgroundColor: Colors.red,
                           content: Text(
                             'Please fill all required fields!',
@@ -250,7 +250,7 @@ class _OthersState extends ConsumerState<Others> {
                       );
                     }
                   },
-                  child: Text(
+                  child: const Text(
                     'Next',
                     style: TextStyle(color: Colors.white),
                   ),
@@ -261,7 +261,7 @@ class _OthersState extends ConsumerState<Others> {
         );
       },
       loading: () =>
-          Center(child: CircularProgressIndicator()), // Show loading indicator
+          const Center(child: CircularProgressIndicator()), // Show loading indicator
       error: (error, stack) => Center(child: Text('Error: $error')), // Sh
     );
   }

@@ -22,7 +22,6 @@ import 'package:http/http.dart' as http;
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
 import '../../../../base/api/dio_exception.dart';
-import '../../../../base/service/session_service.dart';
 import '../model/visit_closure_submit_request_model.dart';
 import '../model/get_visit_pending_response_data.dart';
 import '../model/visit_pending_items_model.dart';
@@ -691,7 +690,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       }
     }catch(e){
       showCustomSnackBar(context, 'Something went wrong', Colors.red);
-      throw e;
+      rethrow;
     }finally{
       state = state.copyWith(isButtonVissible: false);
       state = state.copyWith(isLoading: false);
@@ -735,7 +734,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final response = await dio.post(Api.uploadImageCollection,
         data: formData, options: Options(headers: {"token": token}));
     if (response.statusCode == 200) {
-      print('image url response ${response}');
+      print('image url response $response');
       VisitUpdateUploadImageResponseModel imageResponseModel =
           VisitUpdateUploadImageResponseModel.fromJson(response.data);
       state = state.copyWith(isLoading: false);

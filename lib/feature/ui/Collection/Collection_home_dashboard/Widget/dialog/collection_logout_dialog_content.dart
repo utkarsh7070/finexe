@@ -1,10 +1,8 @@
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../base/routes/routes.dart';
-import '../../../../../base/service/session_service.dart';
 import '../../../../../base/utils/namespase/app_colors.dart';
 import '../../../Collection cases/view_model/visit_pending_view_model.dart';
 import '../../home_collection_viewmodel/fetchUserProfile.dart';

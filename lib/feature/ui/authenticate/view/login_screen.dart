@@ -12,11 +12,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../base/routes/routes.dart';
-import '../../../base/service/socket_io_service.dart';
 import '../../../base/utils/namespase/display_size.dart';
 import '../../../base/utils/widget/app_text_field.dart';
-import '../../../base/utils/widget/app_text_filed_login.dart';
 import '../view_model/login_view_model.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:app_settings/app_settings.dart';
@@ -61,7 +58,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    log('isLoggedIn: ' + isLoggedIn.toString());
+    log('isLoggedIn: $isLoggedIn');
     final isChecked = ref.watch(isRememberMeCheckedProvider);
     final checkUsernameValidation = ref.read(userValidationProvider.notifier);
     final checkPassValidation = ref.read(passwordValidationProvider.notifier);
@@ -73,7 +70,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final vendorState = ref.watch(selectVendorProvider);
     final vendorStateViewModel = ref.read(selectVendorProvider.notifier);
 
-    log('loginState.isLoading:: ' + loginState.isLoading.toString());
+    log('loginState.isLoading:: ${loginState.isLoading}');
 
     return SafeArea(
       child: Scaffold(
@@ -258,8 +255,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           onChanged: (value) {
                             print(vendorState);
                             // Update the state using the provider
-                            if(value!=null)
-                            vendorStateViewModel.state = value;
+                            if(value!=null) {
+                              vendorStateViewModel.state = value;
+                            }
                             // selectedValue = vendorState? '' : 'vendor';
                             // print('selectedValue:: $selectedValue');
                           },
@@ -417,31 +415,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final AndroidDeviceInfo androidInfo = await info.androidInfo;
 
       // Handle null safety for androidInfo fields
-      final String? releaseVersion = androidInfo.version.release;
-      if (releaseVersion != null) {
-        final int androidVersion = int.parse(releaseVersion);
+      final String releaseVersion = androidInfo.version.release;
+      final int androidVersion = int.parse(releaseVersion);
 
-        if (androidVersion >= 13) {
-          return await Permission.camera.status.isDenied ||
-              await Permission.locationWhenInUse.status.isDenied ||
-              await Permission.microphone.status.isDenied ||
-              await Permission.videos.status.isDenied ||
-              await Permission.photos.status.isDenied ||
-              await Permission.notification.status.isDenied||
-              await Permission.systemAlertWindow.status.isDenied;
-        } else {
-          return await Permission.camera.status.isDenied ||
-              await Permission.locationWhenInUse.status.isDenied ||
-              await Permission.microphone.status.isDenied ||
-              await Permission.storage.status.isDenied ||
-              await Permission.notification.status.isDenied||
-              await Permission.systemAlertWindow.status.isDenied;
-        }
+      if (androidVersion >= 13) {
+        return await Permission.camera.status.isDenied ||
+            await Permission.locationWhenInUse.status.isDenied ||
+            await Permission.microphone.status.isDenied ||
+            await Permission.videos.status.isDenied ||
+            await Permission.photos.status.isDenied ||
+            await Permission.notification.status.isDenied||
+            await Permission.systemAlertWindow.status.isDenied;
       } else {
-        debugPrint('Release version is null');
-        return false; // Handle the case where release version is null
+        return await Permission.camera.status.isDenied ||
+            await Permission.locationWhenInUse.status.isDenied ||
+            await Permission.microphone.status.isDenied ||
+            await Permission.storage.status.isDenied ||
+            await Permission.notification.status.isDenied||
+            await Permission.systemAlertWindow.status.isDenied;
       }
-    } else {
+        } else {
       // log();
       return await Permission.camera.status.isDenied ||
           await Permission.locationWhenInUse.status.isDenied ||

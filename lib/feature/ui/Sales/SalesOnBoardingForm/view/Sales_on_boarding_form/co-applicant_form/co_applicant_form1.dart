@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
-import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/guarantor_form_1.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +13,6 @@ import '../../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../../../../base/utils/widget/upload_box.dart';
 import '../../../view_model/co_applicant_form_view_model.dart';
 import 'bottom_sheet/co_applicant_bottom_sheet.dart';
-import 'bottom_sheet/submit_co_applicant_form.dart';
 
 class CoApplicantForm1 extends ConsumerWidget {
   const CoApplicantForm1({super.key});
@@ -478,7 +476,7 @@ class CoApplicantForm1 extends ConsumerWidget {
                                       : AppStyles.subHeading,
                               label: const Text(
                                 'Kyc Document',
-                                style: const TextStyle(
+                                style: TextStyle(
                                     color: AppColors.boxBorderGray),
                               ),
 

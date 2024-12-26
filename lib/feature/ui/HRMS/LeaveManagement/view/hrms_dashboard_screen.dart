@@ -9,7 +9,6 @@ import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/namespase/app_style.dart';
 import '../../../Collection/Collection_home_dashboard/Widget/punct_in_out_action_dialog_content.dart';
 import '../../../Sales/SalesProfile/view_model/login_user_view_model.dart';
-import '../view_model/attendance_listing_view_model.dart';
 import '../view_model/hrms_dashboard_view_model.dart';
 import 'action_button.dart';
 import 'attendance_details_screen.dart';
@@ -217,25 +216,17 @@ class HRMSDashboardScreen extends ConsumerWidget {
                             onPressed: () {
                               userProfileAsync.when(
                                 data: (userProfile) {
-                                  final String? employeeId = userProfile
+                                  final String employeeId = userProfile
                                       .employeeId; // Ensure this field exists in your model
-                                  if (employeeId != null) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            AttendanceDetailsScreen(
-                                                employeeId: employeeId),
-                                      ),
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content:
-                                          Text('Employee ID not available')),
-                                    );
-                                  }
-                                },
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          AttendanceDetailsScreen(
+                                              employeeId: employeeId),
+                                    ),
+                                  );
+                                                                },
                                 loading: () {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
@@ -303,9 +294,9 @@ class HRMSDashboardScreen extends ConsumerWidget {
                                 onPressed: () {
                                   LogOutDialog.logOutDialog(context: context);
                                 },
-                                icon: Icon(Icons.logout,color: AppColors.primary,),
+                                icon: const Icon(Icons.logout,color: AppColors.primary,),
                               ),
-                              Text('Logout')
+                              const Text('Logout')
                             ],
                           ),
                         ],

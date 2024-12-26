@@ -12,6 +12,8 @@ import '../AddBOD_dialogue/AddBOD_dialogue/view/add_bod._dialogue.dart';
 
 
 class BODScreen extends ConsumerWidget {
+  const BODScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(eodControllerProvider);
@@ -20,11 +22,11 @@ class BODScreen extends ConsumerWidget {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text("BOD Tasks"),
+        title: const Text("BOD Tasks"),
         centerTitle: true,
       ),
       body: state.isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
@@ -280,7 +282,7 @@ class BODScreen extends ConsumerWidget {
             children: [
               detailsText(context,
                   heading: 'Task ', data: state.bodList[index].task),
-              Divider(
+              const Divider(
                 thickness: 1,
                 color: AppColors.gray,
               ),

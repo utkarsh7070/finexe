@@ -1,15 +1,12 @@
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../base/routes/routes.dart';
 import '../../../../base/utils/namespase/display_size.dart';
 import '../../../Collection/Collection_home_dashboard/Widget/dialog/collection_logout_dialog.dart';
-import '../../../Collection/Collection_home_dashboard/home_collection_view/DashboardScreen.dart';
 import '../../../HRMS/LeaveManagement/view/hrms_dashboard_screen.dart';
 import '../../OnBoarding/view_model/on_boarding_view_model.dart';
-import '../view_model/dashboard_view_model.dart';
 
 class DrawerScreen extends ConsumerWidget {
   const DrawerScreen({super.key});
@@ -145,7 +142,7 @@ class DrawerScreen extends ConsumerWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>  HRMSDashboardScreen(),
+                          builder: (context) =>  const HRMSDashboardScreen(),
                         ),
                       );
                     },

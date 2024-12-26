@@ -5,8 +5,7 @@ class CustomSnackBar extends StatelessWidget {
   final Color snackColor;
 
   const CustomSnackBar(
-      {Key? key, required this.message, required this.snackColor})
-      : super(key: key);
+      {super.key, required this.message, required this.snackColor});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +45,7 @@ void showCustomSnackBar(
   );
 
   // Insert the overlay entry
-  overlay?.insert(overlayEntry);
+  overlay.insert(overlayEntry);
 
   // Remove the overlay after a duration
   Future.delayed(const Duration(seconds: 3), () {

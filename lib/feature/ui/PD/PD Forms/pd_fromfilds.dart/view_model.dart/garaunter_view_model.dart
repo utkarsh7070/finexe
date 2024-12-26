@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/model/Submit%20Data%20Models/gauranter_model.dart';
@@ -10,7 +8,6 @@ import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/model/Submit%2
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/gauranter_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class PDGauranterViewModel extends StateNotifier<AppState> {
   final Dio dio;
@@ -75,11 +72,11 @@ class PDGauranterViewModel extends StateNotifier<AppState> {
       final response = await dio.post(Api.updatePdReport,
           data: payload, options: Options(headers: {"token": token}));
       print(response.data);
-      print('Payload: ${payload}');
+      print('Payload: $payload');
       if (response.statusCode == 200) {
         Guarantor gauranter = Guarantor.fromJson(response.data);
         print('guarantor form submitted: $response');
-        print('guarantor-- ${gauranter}');
+        print('guarantor-- $gauranter');
         state = state.copyWith(isLoading: false);
         return true;
       } else {

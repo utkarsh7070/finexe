@@ -4,14 +4,12 @@ import 'dart:io';
 
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Sales/LeadGeneration/model/get_all_branch_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
-import '../../../../base/service/session_service.dart';
 import '../../../../base/utils/widget/custom_snackbar.dart';
 import '../../NewLone/model/get_All_Product_model.dart';
 import '../model/lead_generation_model.dart';
@@ -99,7 +97,7 @@ class LeadGenerationViewModel {
       );
 
       var responseData = response.data;
-      print('Lead Generation response: ${responseData}');
+      print('Lead Generation response: $responseData');
       var message = responseData['message'];
       // print('message: ${message}');
 
@@ -138,7 +136,7 @@ final fetchAllBranchProvider = FutureProvider.autoDispose<List<Branch>>((ref) as
   print(response.statusCode);*/
 
   var responseData = response.data;
-  print('fetch pan father response: ${responseData}');
+  print('fetch pan father response: $responseData');
   var message = responseData['message'];
   // print('message: ${message}');
 

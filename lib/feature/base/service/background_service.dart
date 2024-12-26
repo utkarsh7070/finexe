@@ -95,7 +95,6 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 //   });
 // }}
 
-
 class BackgroundService {
   static AppLifecycleState? states;
   // static IO.Socket? socket;
@@ -110,12 +109,12 @@ class BackgroundService {
       'my_foreground', // id
       'MY FOREGROUND SERVICE', // title
       description:
-      'This channel is used for important notifications.', // description
+          'This channel is used for important notifications.', // description
       importance: Importance.low, // importance must be at low or higher level
     );
 
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+        FlutterLocalNotificationsPlugin();
     if (Platform.isIOS || Platform.isAndroid) {
       await flutterLocalNotificationsPlugin.initialize(
         // onDidReceiveNotificationResponse: (details) async {
@@ -177,17 +176,17 @@ class BackgroundService {
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-        IOSFlutterLocalNotificationsPlugin>()
+            IOSFlutterLocalNotificationsPlugin>()
         ?.requestPermissions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+          alert: true,
+          badge: true,
+          sound: true,
+        );
 
     await service.configure(
         iosConfiguration: IosConfiguration(
@@ -213,7 +212,7 @@ class BackgroundService {
     mService = service;
 
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+        FlutterLocalNotificationsPlugin();
     // Only available for flutter 3.0.0 and later
     DartPluginRegistrant.ensureInitialized();
 //---------------------------------------
@@ -237,7 +236,7 @@ class BackgroundService {
 
     // Initialize Socket.IO connection
     // initializeSocket();
-    IO.Socket socket=IO.io(
+    IO.Socket socket = IO.io(
       Api.baseUrl, // Replace with your server URL
       IO.OptionBuilder()
           .setTransports(['websocket']) // Specify transport protocol
@@ -268,27 +267,43 @@ class BackgroundService {
         // ignore: unrelated_type_equality_checks
         if (await service.isForegroundService()) {
           if (kDebugMode) {
-            print('isForegroundService');
+            print('isForegroundService >>>>>');
           }
-          // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-          // String? userId = sharedPreferences.getString('employeId');
-          String? userId = speciality.getEmployeId();
+          SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+          String? userId = sharedPreferences.getString('employeId');
+          // String? userId = speciality.getEmployeId();
+        
 
           //-------------------start tracking ---------------------------------
           // startTracking(userId!);
-          if (socket != null && socket.connected) {
-            print('socket is connected and start tracking');
+          if (socket.connected) {
+             if (kDebugMode) {
+            print('socket is connected and start tracking');}
             // await Geolocator.requestPermission();
             Geolocator.getPositionStream(
-                locationSettings: const LocationSettings(
-                    accuracy: LocationAccuracy.high, distanceFilter: 1))
+                    locationSettings: const LocationSettings(
+                        accuracy: LocationAccuracy.high, distanceFilter: 1))
                 .listen((Position position) {
-              print("Sending Location: ${position.latitude}, ${position.longitude}");
-              socket.emit('send_location', {
+              print(
+                  "Sending Location: ${position.latitude}, ${position.longitude}");
+              // Conditionally include userId in the emitted data
+              Map<String, dynamic> locationData = {
                 'lat': position.latitude,
                 'long': position.longitude,
-                'userId': userId
-              });
+              };
+
+   
+              if (userId != null) {
+                locationData['userId'] = userId;
+              }
+
+             
+              socket.emit('send_location', locationData);
+              // socket.emit('send_location', {
+              //   'lat': position.latitude,
+              //   'long': position.longitude,
+              //   'userId': userId
+              // });
             });
           } else {
             print("Socket not initialized or not connected");
@@ -382,15 +397,12 @@ class BackgroundService {
     }
   }
 
-
-
   @pragma('vm:entry-point')
   static Future<bool> onIosBackground(ServiceInstance service) async {
     WidgetsFlutterBinding.ensureInitialized();
     DartPluginRegistrant.ensureInitialized();
     return true;
   }
-
 
 // @pragma('vm:entry-point')
 // void notificationTapBackground(NotificationResponse notificationResponse) {
@@ -451,7 +463,6 @@ class BackgroundService {
     //   print("Socket not initialized or not connected");
     // }
   }
-
 }
 
 enum SwitchService { stop, start }

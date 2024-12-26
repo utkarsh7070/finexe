@@ -1,7 +1,6 @@
 import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PdDrawer extends StatelessWidget {
@@ -13,7 +12,7 @@ class PdDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          UserAccountsDrawerHeader(
+          const UserAccountsDrawerHeader(
             accountName: Text(
               'Mohit Verma',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -42,8 +41,8 @@ class PdDrawer extends StatelessWidget {
           //   height: displayHeight(context) * 0.2,
           // ),
           ListTile(
-            leading: Icon(Icons.chat_outlined),
-            title: Text('PD Reporting'),
+            leading: const Icon(Icons.chat_outlined),
+            title: const Text('PD Reporting'),
             onTap: () {
               Navigator.pushNamed(context, '/home');
             },
@@ -57,7 +56,7 @@ class PdDrawer extends StatelessWidget {
 
                 GestureDetector(
                   onTap: () {},
-                  child: Text('Refused'),
+                  child: const Text('Refused'),
                 ),
                 SizedBox(
                   height: displayHeight(context) * 0.02,
@@ -67,7 +66,7 @@ class PdDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.pushNamed(context, AppRoutes.bodscreen);
                   },
-                  child: Text('BOD List'),
+                  child: const Text('BOD List'),
                 ),
                 SizedBox(
                   height: displayHeight(context) * 0.02,
@@ -76,7 +75,7 @@ class PdDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.pushNamed(context, AppRoutes.eodscreen);
                   },
-                  child: Text('EOD List'),
+                  child: const Text('EOD List'),
                 ),
                 SizedBox(
                   height: displayHeight(context) * 0.02,
@@ -85,7 +84,7 @@ class PdDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.pushNamed(context, AppRoutes.getalltask);
                   },
-                  child: Text('All Task'),
+                  child: const Text('All Task'),
                 ),
                 SizedBox(
                   height: displayHeight(context) * 0.02,
@@ -95,7 +94,7 @@ class PdDrawer extends StatelessWidget {
                     // Navigator.pushNamed(context, AppRoutes.pdformscreen);
                     LogOutDialog.logOutDialog(context: context);
                   },
-                  child: Text('logout'),
+                  child: const Text('logout'),
                 ),
                 SizedBox(
                   height: displayHeight(context) * 0.02,

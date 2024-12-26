@@ -13,17 +13,17 @@ class AssetFormModel {
     subCode = json['subCode'];
     message = json['message'];
     error = json['error'];
-    items = json['items'] != null ? new Items.fromJson(json['items']) : null;
+    items = json['items'] != null ? Items.fromJson(json['items']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['subCode'] = this.subCode;
-    data['message'] = this.message;
-    data['error'] = this.error;
-    if (this.items != null) {
-      data['items'] = this.items!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['subCode'] = subCode;
+    data['message'] = message;
+    data['error'] = error;
+    if (items != null) {
+      data['items'] = items!.toJson();
     }
     return data;
   }
@@ -40,24 +40,24 @@ class Items {
   Items.fromJson(Map<String, dynamic> json) {
     customerId = json['customerId'];
     pdType = json['pdType'];
-    total = json['total'] != null ? new Total.fromJson(json['total']) : null;
+    total = json['total'] != null ? Total.fromJson(json['total']) : null;
     if (json['assetDetails'] != null) {
       assetDetails = <AssetDetails>[];
       json['assetDetails'].forEach((v) {
-        assetDetails!.add(new AssetDetails.fromJson(v));
+        assetDetails!.add(AssetDetails.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['customerId'] = this.customerId;
-    data['pdType'] = this.pdType;
-    if (this.total != null) {
-      data['total'] = this.total!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['customerId'] = customerId;
+    data['pdType'] = pdType;
+    if (total != null) {
+      data['total'] = total!.toJson();
     }
-    if (this.assetDetails != null) {
-      data['assetDetails'] = this.assetDetails!.map((v) => v.toJson()).toList();
+    if (assetDetails != null) {
+      data['assetDetails'] = assetDetails!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -75,9 +75,9 @@ class Total {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['totalPurchaseValue'] = this.totalPurchaseValue;
-    data['totalMarketValue'] = this.totalMarketValue;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['totalPurchaseValue'] = totalPurchaseValue;
+    data['totalMarketValue'] = totalMarketValue;
     return data;
   }
 }
@@ -98,10 +98,10 @@ class AssetDetails {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['name'] = this.name;
-    data['purchaseValue'] = this.purchaseValue;
-    data['marketValue'] = this.marketValue;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
+    data['purchaseValue'] = purchaseValue;
+    data['marketValue'] = marketValue;
     // data['_id'] = this.sId;
     return data;
   }

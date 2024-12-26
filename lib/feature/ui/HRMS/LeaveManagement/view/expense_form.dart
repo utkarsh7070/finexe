@@ -10,7 +10,7 @@ import '../../../../base/utils/widget/dropdown_style.dart';
 import '../view_model/expense_form_view_model.dart';
 
 class ExpenseForm extends ConsumerStatefulWidget {
-  ExpenseForm({Key? key}) : super(key: key);
+  const ExpenseForm({super.key});
 
   @override
   _ExpenseFormState createState() => _ExpenseFormState();
@@ -145,7 +145,7 @@ class _ExpenseFormState extends ConsumerState<ExpenseForm> {
                         error: (error, _) => const Text('Failed to load Report Manager'),
                       ),
 
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
 
                 TextFormField(
                   readOnly: true,
@@ -311,7 +311,7 @@ class _ExpenseFormState extends ConsumerState<ExpenseForm> {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
           //  borderSide: const BorderSide(color: Colors.grey),
-            borderSide: BorderSide(
+            borderSide: const BorderSide(
               color: Colors.grey,
               width: 0.5,
             ),

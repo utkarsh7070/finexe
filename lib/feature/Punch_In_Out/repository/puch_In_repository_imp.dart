@@ -6,7 +6,6 @@ import 'package:finexe/feature/base/extentions/dio_extension.dart';
 
 // import 'package:finexe_attendance/feature/attendance/model/response_model.dart';
 import 'package:flutter/foundation.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 
 // import '../../constant/api/api.dart';
@@ -104,7 +103,7 @@ class PunchInRepositoryImp extends PunchInRepository {
     try {
       Response response = await dio.get(Api.checkPunchIn,
           queryParameters: queryParam, options: Options(headers: token));
-      log('queryParam: ' + queryParam.toString());
+      log('queryParam: $queryParam');
       log('checkPunchIn api: ${Api.checkPunchIn.toString()}');
 
       if (kDebugMode) {

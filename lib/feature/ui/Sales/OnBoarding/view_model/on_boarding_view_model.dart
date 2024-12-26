@@ -43,7 +43,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/api.dart';
-import '../../../../base/service/session_service.dart';
 
 class GridItem {
   final String icon;
@@ -224,7 +223,7 @@ class AllCases extends StateNotifier<CaseModel> {
 
       // https://stageapi.fincooper.in/v1/calculator/getCustomer?status=salesToCibil&employeeRole=sales&page=1&limit=10&search=
 
-      print('All cases response ${response}');
+      print('All cases response $response');
 
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
@@ -267,7 +266,7 @@ class AllCases extends StateNotifier<CaseModel> {
       final response = await dio.get(Api.allCases,
           queryParameters: params, options: Options(headers: {'token': token}));
 
-      print('cibilReject cases response ${response}');
+      print('cibilReject cases response $response');
 
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
@@ -317,7 +316,7 @@ class AllCases extends StateNotifier<CaseModel> {
       final response = await dio.get(Api.allCases,
           queryParameters: params, options: Options(headers: {'token': token}));
 
-      print('cibilOk cases response ${response}');
+      print('cibilOk cases response $response');
 
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
@@ -365,7 +364,7 @@ class AllCases extends StateNotifier<CaseModel> {
       final response = await dio.get(Api.allCases,
           queryParameters: params, options: Options(headers: {'token': token}));
 
-      print('cibilPending cases response ${response}');
+      print('cibilPending cases response $response');
 
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
@@ -496,7 +495,7 @@ final paginatedProvider = StateNotifierProvider<PaginationNotifier<String>,
     PaginatedDataState<String>>(
   (ref) => PaginationNotifier<String>((page) async {
     // Simulating an API call
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     if (page > 5) return []; // No more data after page 5
     return List.generate(10, (index) => 'Item ${index + 1 + (page - 1) * 10}');
   }),

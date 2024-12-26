@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/property_form_model.dart';
@@ -141,7 +140,7 @@ class PDSubmitPropertyForm extends StateNotifier<ApplicationState> {
       print(token);
       print(payload);
       print(response.data);
-      print('Payload: ${payload}');
+      print('Payload: $payload');
 
       if (response.statusCode == 200) {
         print('property_colateralform submitted: ${response.data}');
@@ -212,33 +211,29 @@ class PropertyFormDetails extends StateNotifier<List<ApplicationState>> {
         final propertyDetails = PropertyItems.fromJson(responseData['items']);
         print('Response Data???: $responseData');
 
-        if (propertyDetails != null) {
-          print('selfiWithCustomer:: ${propertyDetails.selfiWithCustomer}');
+        print('selfiWithCustomer:: ${propertyDetails.selfiWithCustomer}');
 
-          state = [
-            ApplicationState(
-                title: 'Selfie With Customer',
-                url: propertyDetails.selfiWithCustomer),
-            ApplicationState(
-                title: 'Photo with latlong',
-                url: propertyDetails.photoWithLatLong),
-            ApplicationState(title: 'Front Image', url: propertyDetails.front),
-            ApplicationState(
-                title: 'Main Road Image', url: propertyDetails.mainRoad),
-            ApplicationState(title: 'Left Side', url: propertyDetails.leftSide),
-            ApplicationState(
-                title: 'Right Side', url: propertyDetails.rightSide),
-            ApplicationState(
-                title: 'Approach Road', url: propertyDetails.approachRoad),
-            ApplicationState(
-                title: 'Interior Road', url: propertyDetails.interiorRoad),
-          ];
+        state = [
+          ApplicationState(
+              title: 'Selfie With Customer',
+              url: propertyDetails.selfiWithCustomer),
+          ApplicationState(
+              title: 'Photo with latlong',
+              url: propertyDetails.photoWithLatLong),
+          ApplicationState(title: 'Front Image', url: propertyDetails.front),
+          ApplicationState(
+              title: 'Main Road Image', url: propertyDetails.mainRoad),
+          ApplicationState(title: 'Left Side', url: propertyDetails.leftSide),
+          ApplicationState(
+              title: 'Right Side', url: propertyDetails.rightSide),
+          ApplicationState(
+              title: 'Approach Road', url: propertyDetails.approachRoad),
+          ApplicationState(
+              title: 'Interior Road', url: propertyDetails.interiorRoad),
+        ];
 
-          return propertyDetails;
-        } else {
-          throw Exception("propertyDetails not found in the response");
-        }
-      } else {
+        return propertyDetails;
+            } else {
         throw Exception(
             "Failed to load propertyDetails: ${response.statusCode}");
       }
@@ -464,10 +459,6 @@ class PhotoWithLatLong extends StateNotifier<ApplicationState> {
     String? token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
 
-    if (token == null) {
-      throw Exception('Token is missing. Please log in again.');
-    }
-
     var formData = FormData.fromMap({
       'image': await MultipartFile.fromFile(imagePath,
           filename: imagePath.split('/').last),
@@ -584,10 +575,6 @@ class LeftSideImage extends StateNotifier<XFile?> {
     String? token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
 
-    if (token == null) {
-      throw Exception('Token is missing. Please log in again.');
-    }
-
     // state = state.copyWith(isLoading: true);
 
     var formData = FormData.fromMap({
@@ -649,10 +636,6 @@ class RightSideImage extends StateNotifier<XFile?> {
     String? token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
 
-    if (token == null) {
-      throw Exception('Token is missing. Please log in again.');
-    }
-
     // state = state.copyWith(isLoading: true);
 
     var formData = FormData.fromMap({
@@ -713,10 +696,6 @@ class ApproachRoadImage extends StateNotifier<XFile?> {
   Future<String> uploadImage(String image) async {
     String? token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
-
-    if (token == null) {
-      throw Exception('Token is missing. Please log in again.');
-    }
 
     // state = state.copyWith(isLoading: true);
 

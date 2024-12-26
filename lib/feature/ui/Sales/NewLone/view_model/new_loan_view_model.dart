@@ -62,7 +62,7 @@ class NewLoanViewModel extends StateNotifier<PhoneNumberState> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final token = sharedPreferences.getString('token');
     if (kDebugMode) {
-      print('product ${id}');
+      print('product $id');
     }
     print('loanAmount ${state.loanAmount}');
     print('emi ${state.emi}');

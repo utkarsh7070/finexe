@@ -28,7 +28,7 @@ class Travelform extends ConsumerWidget {
       data: (data) {
         return Scaffold(
           bottomSheet: Padding(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: Row(
               children: [
                 Expanded(
@@ -51,12 +51,12 @@ class Travelform extends ConsumerWidget {
             ),
           ),
           appBar: AppBar(
-            title: Text("Add Travel Expenses"),
+            title: const Text("Add Travel Expenses"),
             centerTitle: true,
             flexibleSpace: Container(
               color: Colors.white,
             ),
-            titleTextStyle: TextStyle(
+            titleTextStyle: const TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 18,
               color: AppColors.black,
@@ -65,13 +65,13 @@ class Travelform extends ConsumerWidget {
           body: Padding(
             padding: const EdgeInsets.only(left: 16.0,right:10.0 ),
             child: SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
+              physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                  const Text(
                     'Travel Expense form',
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 17, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
@@ -139,7 +139,7 @@ class Travelform extends ConsumerWidget {
                       floatingLabelStyle: AppStyles.subHeading,
                       label: const Text(
                         'Travel Along With',
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 14, color: AppColors.buttonBorderGray),
                       ),
                       enabledBorder: const OutlineInputBorder(
@@ -170,7 +170,7 @@ class Travelform extends ConsumerWidget {
                     // listSpace: 20,
                     listPadding: ListPadding(top: 20),
                     enableSearch: false,
-                    dropDownList: [
+                    dropDownList: const [
                       DropDownValueModel(name: 'vipul', value: 'x')
                     ],
                     listTextStyle: const TextStyle(color: AppColors.primary),
@@ -183,7 +183,7 @@ class Travelform extends ConsumerWidget {
                       floatingLabelStyle: AppStyles.subHeading,
                       label: const Text(
                         'Travel Mode',
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 14, color: AppColors.buttonBorderGray),
                       ),
                       enabledBorder: const OutlineInputBorder(
@@ -269,7 +269,7 @@ class Travelform extends ConsumerWidget {
                                         AppStyles.subHeading,
                                         label: const Text(
                                           'Expense Type',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                               fontSize: 14,
                                               color:
                                               AppColors.buttonBorderGray),
@@ -315,7 +315,7 @@ class Travelform extends ConsumerWidget {
                                   children: [expensedetail
                                       .expenses[index].receiptUrl!=''?
                                   Container(
-                                      padding: EdgeInsets.all(5),
+                                      padding: const EdgeInsets.all(5),
                                       height: displayHeight(context) * 0.15,
                                       width: displayWidth(context) * 0.35,
                                       decoration: const BoxDecoration(

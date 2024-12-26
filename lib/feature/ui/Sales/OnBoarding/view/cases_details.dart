@@ -1,10 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../base/service/session_service.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/namespase/display_size.dart';
 import '../../SalesOnBoardingForm/view/Sales_on_boarding_form/applicant_form/appliction_form.dart';
@@ -25,7 +22,7 @@ class CasesDetails extends ConsumerStatefulWidget {
   ConsumerState<CasesDetails> createState() => _CasesDetailsState();
   final String customerId;
   final String customerName;
-  CasesDetails({required this.customerId, required this.customerName});
+  const CasesDetails({super.key, required this.customerId, required this.customerName});
 }
 
 class _CasesDetailsState extends ConsumerState<CasesDetails> {
@@ -68,7 +65,7 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.customerName, style: TextStyle(color: Colors.white)),
+        title: Text(widget.customerName, style: const TextStyle(color: Colors.white)),
         backgroundColor: AppColors.primary,
         centerTitle: true,
         leading: IconButton(
@@ -94,7 +91,7 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
           child: processStatus.when(
             data: (data) {
               if (data == null) {
-                return Center(child: Text('No data available'));
+                return const Center(child: Text('No data available'));
               }
 
               // Map sections with their corresponding data
@@ -196,19 +193,19 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
                 // Navigate to Screen 1 if applicationStatus is pending
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ApplicationDetails({})),
+                  MaterialPageRoute(builder: (context) => const ApplicationDetails({})),
                 );
               } else if (sectionData.isCoApplicationPending()) {
                 // Navigate to Screen 2 if coApplicationStatus is pending
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CoApplicantScreen()),
+                  MaterialPageRoute(builder: (context) => const CoApplicantScreen()),
                 );
               } else if (sectionData.isGuarantorPending()) {
                 // Navigate to Screen 3 if guarantorStatus is pending
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => GuarantorDetails()),
+                  MaterialPageRoute(builder: (context) => const GuarantorDetails()),
                 );
               } else if (sectionData.isPaymentPending()) {
 

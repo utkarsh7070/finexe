@@ -12,7 +12,6 @@ import 'package:intl/intl.dart';
 
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
-import '../../../../base/service/session_service.dart';
 import '../model/all_employee_list_model.dart';
 import '../model/expense_image_upload_model.dart';
 
@@ -195,9 +194,9 @@ final fetchAllManagerProvider = FutureProvider.family.autoDispose<List<Reporting
       , validateStatus: (status) => true,),);
 
   var responseData = response.data;
-  print('fetch Reporting Manager response: ${responseData}');
+  print('fetch Reporting Manager response: $responseData');
   var message = responseData['message'];
-   print('message: ${message}');
+   print('message: $message');
 
   try {
     if (response.statusCode == 200 && responseData['status'] == true) {
@@ -232,9 +231,9 @@ final fetchAllEmployeeProvider = FutureProvider.family.autoDispose<List<Employee
       , validateStatus: (status) => true,),);
 
   var responseData = response.data;
-  print('fetch Employee list response: ${responseData}');
+  print('fetch Employee list response: $responseData');
   var message = responseData['message'];
-  print('message: ${message}');
+  print('message: $message');
 
   try {
     if (response.statusCode == 200 && responseData['status'] == true) {

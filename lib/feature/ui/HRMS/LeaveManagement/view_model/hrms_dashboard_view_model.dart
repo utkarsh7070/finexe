@@ -3,12 +3,9 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:roam_flutter/roam_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../Punch_In_Out/model/check_attendance_responce_model.dart';
 import '../../../../Punch_In_Out/repository/puch_In_repository_imp.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../../../../base/api/dio.dart';

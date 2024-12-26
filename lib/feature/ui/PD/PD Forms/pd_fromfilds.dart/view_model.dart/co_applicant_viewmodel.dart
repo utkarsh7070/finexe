@@ -1,16 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
-import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
-import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
-import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/model/Submit%20Data%20Models/coapplicant_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/coapplicant_model.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 
 final pdCoapplicantViewModelProvider =
     StateNotifierProvider<PDCOApplicantViewModel, ApplicantState>((ref) {
@@ -64,11 +58,11 @@ class PDCOApplicantViewModel extends StateNotifier<ApplicantState> {
       final response = await dio.post(Api.updatePdReport,
           data: payload, options: Options(headers: {"token": token}));
       print(response.data);
-      print('Payload: ${payload}');
+      print('Payload: $payload');
       if (response.statusCode == 200) {
         CoApplicant coApplicant = CoApplicant.fromJson(response.data);
         print('CO--Applicant form submitted: $response');
-        print('coApplicant-- ${coApplicant}');
+        print('coApplicant-- $coApplicant');
         state = state.copyWith(isLoading: false);
         return true;
       } else {

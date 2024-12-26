@@ -78,7 +78,7 @@ class _PdCompletedScreen extends ConsumerState<PdCompletedScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting &&
               _data.isEmpty) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
@@ -87,7 +87,7 @@ class _PdCompletedScreen extends ConsumerState<PdCompletedScreen> {
                 Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
-                    physics: AlwaysScrollableScrollPhysics(),
+                    physics: const AlwaysScrollableScrollPhysics(),
                     scrollDirection: Axis.vertical,
                     itemCount: _data.length,
                     itemBuilder: (context, index) {
@@ -126,7 +126,7 @@ class _PdCompletedScreen extends ConsumerState<PdCompletedScreen> {
                   padding: EdgeInsets.only(
                       left: displayWidth(context) * 0.05,
                       top: displayHeight(context) * 0.01),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       color: AppColors.primary,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(12),

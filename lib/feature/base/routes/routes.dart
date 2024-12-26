@@ -210,7 +210,7 @@ class AppRoutes {
       case saleGuarantorForm3:
         return MaterialPageRoute(builder: (_) => const GuarantorForm3());
       case saleReferenceForm:
-        return MaterialPageRoute(builder: (_) => ReferenceDetails());
+        return MaterialPageRoute(builder: (_) => const ReferenceDetails());
       case newLone:
         return PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
@@ -273,7 +273,7 @@ class AppRoutes {
       case eodscreen:
         return MaterialPageRoute(builder: (_) => const EODScreenAdd());
       case bodscreen:
-        return MaterialPageRoute(builder: (_) => BODScreen());
+        return MaterialPageRoute(builder: (_) => const BODScreen());
       case getalltask:
         return MaterialPageRoute(builder: (_) => const GetAllTask());
       case pdpending:
@@ -289,7 +289,7 @@ class AppRoutes {
       case pdapprove:
         return MaterialPageRoute(builder: (_) => const PdApprovedScreen());
         case hrms:
-        return MaterialPageRoute(builder: (_) =>  HRMSDashboardScreen());
+        return MaterialPageRoute(builder: (_) =>  const HRMSDashboardScreen());
 
       default:
         return MaterialPageRoute(

@@ -1,6 +1,4 @@
-import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_form1.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../../base/routes/routes.dart';
@@ -211,7 +209,7 @@ class ApplicantForm2 extends ConsumerWidget {
                           SizedBox(
                             height: displayHeight(context) * 0.02,
                           ),
-                          Text('Same as permanent address'),
+                          const Text('Same as permanent address'),
                           Row(
                             children: [
                               SizedBox(

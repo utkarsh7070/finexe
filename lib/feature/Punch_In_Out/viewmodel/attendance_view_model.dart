@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/Punch_In_Out/model/check_attendance_responce_model.dart';
@@ -7,16 +6,12 @@ import 'package:finexe/feature/Punch_In_Out/repository/puch_In_repository_imp.da
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
-import 'package:finexe/feature/base/service/socket_io_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:roam_flutter/roam_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/model/add_task_request_model.dart';
 import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/model/add_task_response_model.dart';
@@ -165,7 +160,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
         //     "Error ${response.statusCode}: ${response.data}",
         //     StackTrace.current);
       }
-    } catch (error, stackTrace) {
+    } catch (error) {
       DioExceptions.fromDioError(error as DioException, context);
       // state = AsyncValue.error(error, stackTrace);
       print("Exception occurred: ${error.toString()}");

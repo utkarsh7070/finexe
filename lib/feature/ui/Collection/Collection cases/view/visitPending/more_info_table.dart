@@ -11,7 +11,7 @@ class CommonPaginatedDataGrid<T> extends StatelessWidget {
   final DataGridRowAdapter Function(DataGridRow row) buildRowAdapter; // Function to build row adapter
   final List<int> availableRowsPerPage; // Options for rows per page
 
-  CommonPaginatedDataGrid({
+  const CommonPaginatedDataGrid({super.key, 
     required this.data,
     required this.columns,
     required this.pageSize,
@@ -22,7 +22,7 @@ class CommonPaginatedDataGrid<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _dataSource = _CommonDataGridSource(
+    final dataSource = _CommonDataGridSource(
       data: data,
       buildRows: buildRows,
       buildRowAdapter: buildRowAdapter,
@@ -33,7 +33,7 @@ class CommonPaginatedDataGrid<T> extends StatelessWidget {
       children: [
         Expanded(
           child: SfDataGrid(
-            source: _dataSource,
+            source: dataSource,
             columns: columns,
           ),
         ),
@@ -46,13 +46,13 @@ class CommonPaginatedDataGrid<T> extends StatelessWidget {
             ),
 
           child: SfDataPager(
-            delegate: _dataSource,
+            delegate: dataSource,
             pageCount: (data.length / pageSize).ceil().toDouble(),
             availableRowsPerPage: availableRowsPerPage,
             // pageSize: pageSize,
             onRowsPerPageChanged: (int? rowsPerPage) {
               if (rowsPerPage != null) {
-                _dataSource.updatePageSize(rowsPerPage);
+                dataSource.updatePageSize(rowsPerPage);
               }
             },
           ),

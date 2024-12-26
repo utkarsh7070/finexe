@@ -1,14 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
-import 'package:finexe/feature/base/utils/widget/app_text_filed_login.dart';
 import 'package:finexe/feature/ui/PD/Model/pd_pending_response_model.dart';
 import 'package:finexe/feature/ui/PD/pd_view_model/pd_pending_viewmodel.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -83,7 +80,7 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting &&
                   _data.isEmpty) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
@@ -91,8 +88,8 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
                   onRefresh: _fetchInitialData,
                   child: Column(
                     children: [
-                      _data.length==0?
-                          Text('No Data avaialable'):
+                      _data.isEmpty?
+                          const Text('No Data avaialable'):
                       Expanded(
                         child: ListView.builder(
                           controller: _scrollController,

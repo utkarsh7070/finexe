@@ -1,7 +1,6 @@
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../view_model/dashboard_view_model.dart';
@@ -15,7 +14,7 @@ class DashBoardBottomNavigationBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tabModel =
         ref.watch(tabViewModelProvider); // Get the selected tab index
-     List<Widget> _icons = [
+     List<Widget> icons = [
        const Icon(CupertinoIcons.house_alt_fill),
       const Icon(CupertinoIcons.bag),
        const Icon(CupertinoIcons.graph_square),
@@ -23,7 +22,7 @@ class DashBoardBottomNavigationBar extends ConsumerWidget {
 
     ];
 
-    final List<String> _labels = ['Home','Cases','Lead', 'Profile'];
+    final List<String> labels = ['Home','Cases','Lead', 'Profile'];
 
     return Container(
       height: displayHeight(context) * 0.12,
@@ -44,8 +43,8 @@ class DashBoardBottomNavigationBar extends ConsumerWidget {
               borderSide: BorderSide.none,
             ),
             tabs: [
-              for (int i = 0; i < _icons.length; i++)
-                _tabItem(_icons[i], _labels[i], context,
+              for (int i = 0; i < icons.length; i++)
+                _tabItem(icons[i], labels[i], context,
                     isSelected: i == tabModel.selectedIndex),
             ],
           ),

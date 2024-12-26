@@ -13,8 +13,7 @@ import '../view_model/branch_request_view_model.dart';
 import 'CustomerSelectorDroper/customlist_drop_drown.dart';
 
 class BranchRequestForm extends ConsumerStatefulWidget {
-  const BranchRequestForm({Key? key})
-      : super(key: key); // Removed const keyword here
+  const BranchRequestForm({super.key}); // Removed const keyword here
   @override
   ConsumerState<BranchRequestForm> createState() => _BranchRequestFormState(index: 0);
 }
@@ -30,7 +29,7 @@ class _BranchRequestFormState extends ConsumerState<BranchRequestForm> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Branch Request Form",style: TextStyle(
+        title: const Text("Branch Request Form",style: TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: 18,
           color: AppColors.black,
@@ -91,7 +90,7 @@ class _BranchRequestFormState extends ConsumerState<BranchRequestForm> {
                   textInputType: TextInputType.name,
                 ),
                 const SizedBox(height: 16),
-                 Icon(Icons.my_location),
+                 const Icon(Icons.my_location),
 
                 // ----------- Owner ------
                 const SizedBox(height: 16),

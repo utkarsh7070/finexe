@@ -1,5 +1,4 @@
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_pending_items_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'update_visit_dialog_content.dart';
 

@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 class ConnectivityBuilder extends StatefulWidget {
   final Widget Function(BuildContext context, List<ConnectivityResult> result)
       builder;
-  const ConnectivityBuilder({Key? key, required this.builder})
-      : super(key: key);
+  const ConnectivityBuilder({super.key, required this.builder});
 
   @override
   State<ConnectivityBuilder> createState() => _ConnectivityBuilderState();

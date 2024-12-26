@@ -1,19 +1,12 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dio/dio.dart';
-import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/internetConnection/connection_overlay.dart';
 import 'package:finexe/feature/base/internetConnection/connectivity.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
-import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
-import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
-import 'package:finexe/feature/ui/Sales/OnBoarding/view_model/on_boarding_view_model.dart';
 import 'package:finexe/feature/ui/Splash/view_model/splash_vew_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -71,7 +64,7 @@ class SplashScreen extends ConsumerWidget {
                     List<String>? roles = prefs.getStringList('roleName');
                         if (kDebugMode) {
                     print(
-                        'isLoggedIn.role- ${isLoggedIn.role} and roles-${roles} ');}
+                        'isLoggedIn.role- ${isLoggedIn.role} and roles-$roles ');}
 
                     if (roles != null) {
                       if (roles.contains('admin')) {
@@ -260,7 +253,7 @@ class SplashScreen extends ConsumerWidget {
                     : 0,
                 duration: const Duration(milliseconds: 100),
                 curve: Curves.easeInOut,
-                child: NoConnectionOverlay(),
+                child: const NoConnectionOverlay(),
               ))
       ]);
     });
@@ -285,22 +278,20 @@ class SplashScreen extends ConsumerWidget {
             child: TextButton(
               onPressed: () async {
                 // SplashViewModel.downloadApk(apkUrl,context);
-                if (apkUrl != null) {
-                  try {
-                    final Uri url = Uri.parse(apkUrl);
-                    await launchUrl(url, mode: LaunchMode.externalApplication)
-                        .then(
-                      (value) {
-                        Navigator.pop(context);
-                      },
-                    );
-                  } catch (e) {
-                    throw Exception(e);
-                  }
-                  // _downloadFile(context,state.apkUrl!,'');
-                  // downloadApk(state.apkUrl!);
+                try {
+                  final Uri url = Uri.parse(apkUrl);
+                  await launchUrl(url, mode: LaunchMode.externalApplication)
+                      .then(
+                    (value) {
+                      Navigator.pop(context);
+                    },
+                  );
+                } catch (e) {
+                  throw Exception(e);
                 }
-              },
+                // _downloadFile(context,state.apkUrl!,'');
+                // downloadApk(state.apkUrl!);
+                            },
               child: const Text("Download"),
             ),
           ),

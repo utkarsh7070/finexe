@@ -1,12 +1,7 @@
-import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
-import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
-import 'package:finexe/feature/base/utils/namespase/display_size.dart';
-import 'package:finexe/feature/base/utils/widget/upload_box.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/property_form_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view/co-applicant_form.dart';
@@ -29,7 +24,7 @@ final isExpPropertyCollProvider = StateProvider<bool>((ref) => false);
 class Propertycollateral extends ConsumerStatefulWidget {
   // const Propertycollateral({super.key});
   final String customerId;
-  Propertycollateral({required this.customerId});
+  const Propertycollateral({super.key, required this.customerId});
   @override
   ConsumerState<Propertycollateral> createState() => _PropertycollateralState();
 }
@@ -268,7 +263,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
     //frontImageProvider
     final otherPhotos = ref.watch(photoWithLatLongProvider);
 
-    final _isExpanded = ref.watch(isExpPropertyCollProvider);
+    final isExpanded = ref.watch(isExpPropertyCollProvider);
     final imageNotifier = ref.read(otherPhototsimageUploadProvider.notifier);
 
     final appState = ref.watch(pdsubmitpropertyFormProvider);
@@ -284,7 +279,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
               ref.refresh(propertyFormDitailsProvider(widget.customerId));
             }
           },
-          initiallyExpanded: _isExpanded,
+          initiallyExpanded: isExpanded,
           children: <Widget>[
             propertyForm.when(
                 data: (propertyFormData) {
@@ -425,7 +420,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Business and Banking Information',
+                        const Text('Business and Banking Information',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -513,7 +508,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
 
                         //   location details
                         sizedBoxWithContext(context, 0.03),
-                        Text('Location Details',
+                        const Text('Location Details',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -631,7 +626,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
 
                         // Property Boundaries
                         sizedBoxWithContext(context, 0.03),
-                        Text('Property Boundaries',
+                        const Text('Property Boundaries',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -719,7 +714,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
 
                         // Property Documentation
                         sizedBoxWithContext(context, 0.03),
-                        Text('Property Documentation',
+                        const Text('Property Documentation',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -791,7 +786,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
 
                         // Property Coordination & features
                         sizedBoxWithContext(context, 0.03),
-                        Text('Property Coordination & features',
+                        const Text('Property Coordination & features',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -879,7 +874,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                         // ),
                         // Surrounding Area & Transport
                         sizedBoxWithContext(context, 0.03),
-                        Text('Surrounding Area & Transport',
+                        const Text('Surrounding Area & Transport',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -907,7 +902,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           padding: const EdgeInsets.only(right: 18),
                           child: CustomDropDownTextField(
                             labelText: 'Select Status of the land/flat',
-                            items: [
+                            items: const [
                               DropDownValueModel(name: 'Owned', value: 'Owned'),
                               DropDownValueModel(name: 'Rented', value: 'Rented'),
                               DropDownValueModel(name: 'Leased', value: 'Leased'),
@@ -966,7 +961,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           child: CustomDropDownTextField(
                             controller: localityClass,
                             labelText: 'Locality class',
-                            items: [
+                            items: const [
                               DropDownValueModel(name: 'Rural', value: '1'),
                               DropDownValueModel(name: 'Urban', value: '2'),
                               DropDownValueModel(name: 'Semi Urban', value: '3'),
@@ -980,7 +975,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           child: CustomDropDownTextField(
                             controller: typeOfPropertyPaper,
                             labelText: 'Type of property paper',
-                            items: [
+                            items: const [
                               DropDownValueModel(name: 'Patta', value: 'Patta'),
                               DropDownValueModel(name: 'Registry', value: 'Registry'),
                               DropDownValueModel(name: 'Co-ownership', value: 'Co-ownership'),
@@ -1007,7 +1002,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
 
                         // Property Status
                         sizedBoxWithContext(context, 0.03),
-                        Text('Property Status',
+                        const Text('Property Status',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -1069,7 +1064,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           child: CustomDropDownTextField(
                             controller: actualUsageoFProperty,
                             labelText: 'Actual usage of property',
-                            items: [
+                            items: const [
                               DropDownValueModel(name: 'Residential', value: 'Residential'),
                               DropDownValueModel(name: 'Commercial', value: 'Commercial'),
                               DropDownValueModel(name: 'Agriculture', value: 'Agriculture'),
@@ -1083,7 +1078,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                         // Structural Details
 
                         sizedBoxWithContext(context, 0.03),
-                        Text('Structural Details',
+                        const Text('Structural Details',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -1094,7 +1089,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           child: CustomDropDownTextField(
                             controller: localityClass,
                             labelText: 'Type of structure',
-                            items: [
+                            items: const [
                               DropDownValueModel(name: 'RCC', value: 'RCC'),
                               DropDownValueModel(name: 'Teen set', value: 'Teen set'),
                               DropDownValueModel(name: 'Kacca', value: 'Kacca'),
@@ -1157,7 +1152,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           child: CustomDropDownTextField(
                             controller: propertyDetailForm_structureOccupancy,
                             labelText: 'Type of structure',
-                            items: [
+                            items: const [
                               DropDownValueModel(name: 'Occupied', value: 'Occupied'),
                               DropDownValueModel(name: 'Un Occupied', value: 'Un Occupied'),
                               // DropDownValueModel(name: 'Kacca', value: 'Kacca'),
@@ -1170,7 +1165,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
 
                         //Area Development & Maintenance
                         sizedBoxWithContext(context, 0.03),
-                        Text('Area Development & Maintenance',
+                        const Text('Area Development & Maintenance',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -1265,7 +1260,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
 
                         //Valuation & Construction
                         sizedBoxWithContext(context, 0.03),
-                        Text('Valuation & Construction',
+                        const Text('Valuation & Construction',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -1292,7 +1287,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           padding: const EdgeInsets.only(right: 18),
                           child: CustomDropDownTextField(
                             labelText: 'Construction Type',
-                            items: [
+                            items: const [
                               DropDownValueModel(name: 'Kachha', value: 'Kachha'),
                               DropDownValueModel(name: 'Pakka', value: 'Pakka'),
                               DropDownValueModel(name: 'RCC', value: 'RCC'),
@@ -1345,7 +1340,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           padding: const EdgeInsets.only(right: 18),
                           child: CustomDropDownTextField(
                             labelText: 'Development of surrounding area',
-                            items: [
+                            items: const [
                               DropDownValueModel(name: '10-20%', value: '10-20%'),
                               DropDownValueModel(name: '20-30%', value: '20-30%'),
                               DropDownValueModel(name: '30-40%', value: '30-40%'),
@@ -1361,14 +1356,14 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                         ),
                         //Customer Documentation
                         sizedBoxWithContext(context, 0.03),
-                        Text('Customer Documentation',
+                        const Text('Customer Documentation',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFF475467))),
                         sizedBoxWithContext(context, 0.03),
 
-                        Text('SELFI WITH CUSTOMER'),
+                        const Text('SELFI WITH CUSTOMER'),
                         CommonImagePicker(
                           applicantImage: propertyFormData.selfiWithCustomer ?? '',
                           onImageUploaded: (imageUrl) {
@@ -1382,7 +1377,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           },
                         ),
                         sizedBoxWithContext(context, 0.03),
-                        Text('PHOTO WITH LAT LONG'),
+                        const Text('PHOTO WITH LAT LONG'),
                         CommonImagePicker(
                           applicantImage: propertyFormData.photoWithLatLong ?? '',
                           onImageUploaded: (imageUrl) {
@@ -1396,7 +1391,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           },
                         ),
                         sizedBoxWithContext(context, 0.03),
-                        Text('FRONT'),
+                        const Text('FRONT'),
                         CommonImagePicker(
                           applicantImage: propertyFormData.front ?? '',
                           onImageUploaded: (imageUrl) {
@@ -1410,7 +1405,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           },
                         ),
                         sizedBoxWithContext(context, 0.03),
-                        Text('LEFT SIDE'),
+                        const Text('LEFT SIDE'),
                         CommonImagePicker(
                           applicantImage: propertyFormData.leftSide ?? '',
                           onImageUploaded: (imageUrl) {
@@ -1424,7 +1419,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           },
                         ),
                         sizedBoxWithContext(context, 0.03),
-                        Text('RIGHT SIDE'),
+                        const Text('RIGHT SIDE'),
                         CommonImagePicker(
                           applicantImage: propertyFormData.rightSide ?? '',
                           onImageUploaded: (imageUrl) {
@@ -1438,7 +1433,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           },
                         ),
                         sizedBoxWithContext(context, 0.03),
-                        Text('APPROACH ROAD'),
+                        const Text('APPROACH ROAD'),
                         CommonImagePicker(
                           applicantImage: propertyFormData.approachRoad ?? '',
                           onImageUploaded: (imageUrl) {
@@ -1452,7 +1447,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           },
                         ),
                         sizedBoxWithContext(context, 0.03),
-                        Text('MAIN SIDE'),
+                        const Text('MAIN SIDE'),
                         CommonImagePicker(
                           applicantImage: propertyFormData.mainRoad ?? '',
                           onImageUploaded: (imageUrl) {
@@ -1466,7 +1461,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           },
                         ),
                         sizedBoxWithContext(context, 0.03),
-                        Text('INTERIOR SIDE'),
+                        const Text('INTERIOR SIDE'),
                         CommonImagePicker(
                           applicantImage: propertyFormData.interiorRoad ?? '',
                           onImageUploaded: (imageUrl) {
@@ -1480,7 +1475,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           },
                         ),
                         sizedBoxWithContext(context, 0.03),
-                        Text('OTHER PHOTOS'),
+                        const Text('OTHER PHOTOS'),
                         // ...propertyFormData.propertyOtherPhotos!
                         //     .asMap()
                         //     .entries
@@ -1582,7 +1577,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           },
                         ),
                         constSizedbox(context),
-                        Text('HOUSE INSIDE PHOTOS'),
+                        const Text('HOUSE INSIDE PHOTOS'),
 
                         ImageListWidget(
                           imageUrls: propertyFormData.houseInsidePhoto ?? [],
@@ -1781,7 +1776,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                                 .then((value) {
                               if (value) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                     backgroundColor: Colors.green,
                                     content: Text(
                                       'Changes saved succesfully',
@@ -1792,7 +1787,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                                 );
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                     backgroundColor: Colors.red,
                                     content: Text(
                                       'Form not saved please try again',
@@ -1824,7 +1819,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
               //  error: (error, stackTrace) => Center(child: Text('Error: $error')),
               error: (error, stackTrace) {
                 print('Error fetching Colaterall: $error');
-                return Center(child: Text('faild to get data please try again'));
+                return const Center(child: Text('faild to get data please try again'));
               },
             )
 

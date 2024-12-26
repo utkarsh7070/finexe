@@ -9,7 +9,7 @@ import '../model/leave_request_model.dart';
 import '../view_model/leave_request_view_model.dart';
 
 class LeaveRequestForm extends ConsumerStatefulWidget {
-  const LeaveRequestForm({Key? key}) : super(key: key);
+  const LeaveRequestForm({super.key});
 
   @override
   ConsumerState<LeaveRequestForm> createState() => _LeaveRequestFormState();
@@ -62,7 +62,7 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please fill all fields")),
+        const SnackBar(content: Text("Please fill all fields")),
       );
     }
   }
@@ -88,7 +88,7 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
           key: _formKey,
           child: Column(
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 readOnly: true,
                 decoration: customInputDecoration(

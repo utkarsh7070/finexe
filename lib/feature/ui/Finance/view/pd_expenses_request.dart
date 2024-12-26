@@ -5,14 +5,11 @@ import 'package:intl/intl.dart';
 import '../../../base/utils/namespase/display_size.dart';
 import '../../../base/utils/widget/app_button.dart';
 import '../../../base/utils/widget/app_text_filed_login.dart';
-import '../../Collection/Collection cases/view_model/visit_pending_view_model.dart';
-import '../../Collection/Collection cases/view_model/visit_pending_view_model.dart';
 import '../view_model/pd_expenses_view-model.dart';
 import 'CustomerSelectorDroper/customlist_drop_drown.dart';
 
 class PdExpensesRequestForm extends ConsumerStatefulWidget {
-  const PdExpensesRequestForm({Key? key})
-      : super(key: key); // Removed const keyword here
+  const PdExpensesRequestForm({super.key}); // Removed const keyword here
   @override
   ConsumerState<PdExpensesRequestForm> createState() => _PdExpensesRequestFormState(index: 0);
 }
@@ -72,8 +69,8 @@ class _PdExpensesRequestFormState extends ConsumerState<PdExpensesRequestForm> {
                             errorText: "Date To Receive/Revisit Date is a required field",
                             // isError: !entry.isRentDateValid,
                             controller: TextEditingController(
-                              text: entry.dateOfVisit != null && entry.dateOfVisit!.isNotEmpty
-                                  ? DateFormat('yyyy-MM-dd').format(DateTime.parse(entry.dateOfVisit!))
+                              text: entry.dateOfVisit.isNotEmpty
+                                  ? DateFormat('yyyy-MM-dd').format(DateTime.parse(entry.dateOfVisit))
                                   : '',
                             ),
                             onTap: () async {
@@ -139,9 +136,9 @@ class _PdExpensesRequestFormState extends ConsumerState<PdExpensesRequestForm> {
                               onTap: () {
                                 fromStateViewModel.removeExpenseEntry(index);
                               },
-                              child: Row(
+                              child: const Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
-                                children: const [
+                                children: [
                                   Icon(Icons.remove),
                                   SizedBox(width: 8),
                                   Text('Remove Form Entry'),

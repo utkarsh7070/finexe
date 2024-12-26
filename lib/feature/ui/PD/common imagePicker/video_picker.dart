@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
@@ -6,13 +5,10 @@ import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/base/utils/widget/upload_box.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../../base/service/session_service.dart';
 
 class CommonVideoPicker extends StatefulWidget {
   final String
@@ -21,11 +17,11 @@ class CommonVideoPicker extends StatefulWidget {
       onImageUploaded; // Callback to pass uploaded image URL // getting url from uploadimage api
 
   const CommonVideoPicker({
-    Key? key,
+    super.key,
     // this.applicantImage,
     required this.gettingVideoUrlFromServer,
     required this.onImageUploaded,
-  }) : super(key: key);
+  });
 
   @override
   _CommonVideoPickerState createState() => _CommonVideoPickerState();
@@ -155,7 +151,7 @@ class _CommonVideoPickerState extends State<CommonVideoPicker> {
   @override
   Widget build(BuildContext context) {
     return _isLoading
-        ? Container(
+        ? SizedBox(
             height: displayHeight(context) * 0.16,
             width: displayWidth(context) * 0.91,
 
@@ -210,7 +206,7 @@ class _CommonVideoPickerState extends State<CommonVideoPicker> {
                                 : SizedBox(
                                     height: displayHeight(context) * 0.16,
                                     width: displayWidth(context) * 0.91,
-                                    child: Center(
+                                    child: const Center(
                                         child: CircularProgressIndicator()))),
                   ),
                   Positioned(
@@ -299,7 +295,7 @@ class _CommonVideoPickerState extends State<CommonVideoPicker> {
                       },
                       child: Container(
                         alignment: Alignment.center,
-                        padding: EdgeInsets.all(14),
+                        padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.grey.withOpacity(

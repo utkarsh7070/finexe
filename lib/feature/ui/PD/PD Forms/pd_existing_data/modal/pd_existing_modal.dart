@@ -375,15 +375,15 @@ class CibilDetails {
           : 'N/A',
       applicantCibilDetail: (json['applicantCibilDetail'] as List?)
           ?.map((item) => CibilDetail.fromJson(item))
-          ?.toList() ??
+          .toList() ??
           [],
       coApplicantCibilDetail: (json['coApplicantCibilDetail'] as List?)
           ?.map((item) => CibilDetail.fromJson(item))
-          ?.toList() ??
+          .toList() ??
           [],
       guarantorCibilDetail: (json['guarantorCibilDetail'] as List?)
           ?.map((item) => CibilDetail.fromJson(item))
-          ?.toList() ??
+          .toList() ??
           [],
     );
   }

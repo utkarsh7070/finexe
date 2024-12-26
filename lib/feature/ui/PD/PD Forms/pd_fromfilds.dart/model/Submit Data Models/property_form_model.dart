@@ -14,18 +14,18 @@ class PropertyFormModel {
     message = json['message'];
     error = json['error'];
     items = json['items'] != null
-        ? new PropertyItems.fromJson(json['items'])
+        ? PropertyItems.fromJson(json['items'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['subCode'] = this.subCode;
-    data['message'] = this.message;
-    data['error'] = this.error;
-    if (this.items != null) {
-      data['items'] = this.items!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['subCode'] = subCode;
+    data['message'] = message;
+    data['error'] = error;
+    if (items != null) {
+      data['items'] = items!.toJson();
     }
     return data;
   }
@@ -67,7 +67,7 @@ class PropertyItems {
     rightSide = json['rightSide'];
     selfiWithCustomer = json['selfiWithCustomer'];
     property = json['property'] != null
-        ? new Property.fromJson(json['property'])
+        ? Property.fromJson(json['property'])
         : null;
     propertyOtherPhotos = (json['propertyOtherPhotos'] as List?)
             ?.map((item) => item.toString())
@@ -80,20 +80,20 @@ class PropertyItems {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['approachRoad'] = this.approachRoad;
-    data['front'] = this.front;
-    data['interiorRoad'] = this.interiorRoad;
-    data['leftSide'] = this.leftSide;
-    data['mainRoad'] = this.mainRoad;
-    data['photoWithLatLong'] = this.photoWithLatLong;
-    data['rightSide'] = this.rightSide;
-    data['selfiWithCustomer'] = this.selfiWithCustomer;
-    data['propertyOtherPhotos'] = this.propertyOtherPhotos;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['approachRoad'] = approachRoad;
+    data['front'] = front;
+    data['interiorRoad'] = interiorRoad;
+    data['leftSide'] = leftSide;
+    data['mainRoad'] = mainRoad;
+    data['photoWithLatLong'] = photoWithLatLong;
+    data['rightSide'] = rightSide;
+    data['selfiWithCustomer'] = selfiWithCustomer;
+    data['propertyOtherPhotos'] = propertyOtherPhotos;
 
-    data['houseInsidePhoto'] = this.houseInsidePhoto;
-    if (this.property != null) {
-      data['property'] = this.property!.toJson();
+    data['houseInsidePhoto'] = houseInsidePhoto;
+    if (property != null) {
+      data['property'] = property!.toJson();
     }
     return data;
   }
@@ -159,10 +159,10 @@ class Property {
 
   Property.fromJson(Map<String, dynamic> json) {
     collateralsDetails = json['collateralsDetails'] != null
-        ? new CollateralsDetails.fromJson(json['collateralsDetails'])
+        ? CollateralsDetails.fromJson(json['collateralsDetails'])
         : null;
     accommodationDetails = json['accommodationDetails'] != null
-        ? new AccommodationDetails.fromJson(json['accommodationDetails'])
+        ? AccommodationDetails.fromJson(json['accommodationDetails'])
         : null;
     propertyOwnerName = json['propertyOwnerName'];
     relationWithApplicant = json['relationWithApplicant'];
@@ -196,38 +196,38 @@ class Property {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.collateralsDetails != null) {
-      data['collateralsDetails'] = this.collateralsDetails!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (collateralsDetails != null) {
+      data['collateralsDetails'] = collateralsDetails!.toJson();
     }
-    if (this.accommodationDetails != null) {
-      data['accommodationDetails'] = this.accommodationDetails!.toJson();
+    if (accommodationDetails != null) {
+      data['accommodationDetails'] = accommodationDetails!.toJson();
     }
-    data['propertyOwnerName'] = this.propertyOwnerName;
-    data['relationWithApplicant'] = this.relationWithApplicant;
-    data['villageName'] = this.villageName;
-    data['gramPanchayat'] = this.gramPanchayat;
-    data['patwariHalkaNo'] = this.patwariHalkaNo;
-    data['state'] = this.state;
-    data['district'] = this.district;
-    data['tehsil'] = this.tehsil;
-    data['houseNo'] = this.houseNo;
-    data['wardNo'] = this.wardNo;
-    data['surveyNo'] = this.surveyNo;
-    data['TotalBuilUpArea'] = this.totalBuilUpArea;
-    data['qualityOfConstruction'] = this.qualityOfConstruction;
-    data['ageOfProperty'] = this.ageOfProperty;
-    data['MaintenanceOfTheProperty'] = this.maintenanceOfTheProperty;
-    data['ProjectedLifeYear'] = this.projectedLifeYear;
-    data['typeOfContruction'] = this.typeOfContruction;
-    data['landRatePerSQFT'] = this.landRatePerSQFT;
-    data['totalConstruction'] = this.totalConstruction;
-    data['fatherName'] = this.fatherName;
-    data['latitudeOfTheProrty'] = this.latitudeOfTheProrty;
-    data['longitudeOfTheProrty'] = this.longitudeOfTheProrty;
-    data['doorsAndWindowsAreAvailable'] = this.doorsAndWindowsAreAvailable;
-    data['kitchenAndLatBathAvailable'] = this.kitchenAndLatBathAvailable;
-    data['assetSeenAtResidence'] = this.assetSeenAtResidence;
+    data['propertyOwnerName'] = propertyOwnerName;
+    data['relationWithApplicant'] = relationWithApplicant;
+    data['villageName'] = villageName;
+    data['gramPanchayat'] = gramPanchayat;
+    data['patwariHalkaNo'] = patwariHalkaNo;
+    data['state'] = state;
+    data['district'] = district;
+    data['tehsil'] = tehsil;
+    data['houseNo'] = houseNo;
+    data['wardNo'] = wardNo;
+    data['surveyNo'] = surveyNo;
+    data['TotalBuilUpArea'] = totalBuilUpArea;
+    data['qualityOfConstruction'] = qualityOfConstruction;
+    data['ageOfProperty'] = ageOfProperty;
+    data['MaintenanceOfTheProperty'] = maintenanceOfTheProperty;
+    data['ProjectedLifeYear'] = projectedLifeYear;
+    data['typeOfContruction'] = typeOfContruction;
+    data['landRatePerSQFT'] = landRatePerSQFT;
+    data['totalConstruction'] = totalConstruction;
+    data['fatherName'] = fatherName;
+    data['latitudeOfTheProrty'] = latitudeOfTheProrty;
+    data['longitudeOfTheProrty'] = longitudeOfTheProrty;
+    data['doorsAndWindowsAreAvailable'] = doorsAndWindowsAreAvailable;
+    data['kitchenAndLatBathAvailable'] = kitchenAndLatBathAvailable;
+    data['assetSeenAtResidence'] = assetSeenAtResidence;
     return data;
   }
 }
@@ -288,23 +288,23 @@ class CollateralsDetails {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['nameOfTheDocumentHolder'] = this.nameOfTheDocumentHolder;
-    data['documentsProvided'] = this.documentsProvided;
-    data['propertyAddress'] = this.propertyAddress;
-    data['landmark'] = this.landmark;
-    data['locationZone'] = this.locationZone;
-    data['availabilityOfLocalTransport'] = this.availabilityOfLocalTransport;
-    data['classOfLocality'] = this.classOfLocality;
-    data['typeOfLocality'] = this.typeOfLocality;
-    data['asPerSite'] = this.asPerSite;
-    data['boundariesMatching'] = this.boundariesMatching;
-    data['statusOfTheLandFlat'] = this.statusOfTheLandFlat;
-    data['typeOfProperty'] = this.typeOfProperty;
-    data['boundariesEast'] = this.boundariesEast;
-    data['boundariesWest'] = this.boundariesWest;
-    data['boundariesNorth'] = this.boundariesNorth;
-    data['boundariesSouth'] = this.boundariesSouth;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['nameOfTheDocumentHolder'] = nameOfTheDocumentHolder;
+    data['documentsProvided'] = documentsProvided;
+    data['propertyAddress'] = propertyAddress;
+    data['landmark'] = landmark;
+    data['locationZone'] = locationZone;
+    data['availabilityOfLocalTransport'] = availabilityOfLocalTransport;
+    data['classOfLocality'] = classOfLocality;
+    data['typeOfLocality'] = typeOfLocality;
+    data['asPerSite'] = asPerSite;
+    data['boundariesMatching'] = boundariesMatching;
+    data['statusOfTheLandFlat'] = statusOfTheLandFlat;
+    data['typeOfProperty'] = typeOfProperty;
+    data['boundariesEast'] = boundariesEast;
+    data['boundariesWest'] = boundariesWest;
+    data['boundariesNorth'] = boundariesNorth;
+    data['boundariesSouth'] = boundariesSouth;
     return data;
   }
 }
@@ -344,16 +344,16 @@ class AccommodationDetails {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['groundFloor'] = this.groundFloor;
-    data['firstFloor'] = this.firstFloor;
-    data['actualUsageOfProperty'] = this.actualUsageOfProperty;
-    data['typeOfStructure'] = this.typeOfStructure;
-    data['locationOfPlot'] = this.locationOfPlot;
-    data['builtUpAreaSft'] = this.builtUpAreaSft;
-    data['occupancy'] = this.occupancy;
-    data['electricityAndGasConnection'] = this.electricityAndGasConnection;
-    data['developmentOfSurroundingArea'] = this.developmentOfSurroundingArea;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['groundFloor'] = groundFloor;
+    data['firstFloor'] = firstFloor;
+    data['actualUsageOfProperty'] = actualUsageOfProperty;
+    data['typeOfStructure'] = typeOfStructure;
+    data['locationOfPlot'] = locationOfPlot;
+    data['builtUpAreaSft'] = builtUpAreaSft;
+    data['occupancy'] = occupancy;
+    data['electricityAndGasConnection'] = electricityAndGasConnection;
+    data['developmentOfSurroundingArea'] = developmentOfSurroundingArea;
     return data;
   }
 }

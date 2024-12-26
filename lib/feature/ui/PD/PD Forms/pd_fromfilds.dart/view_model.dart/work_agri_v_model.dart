@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/agri_work_images_model.dart';
@@ -58,7 +57,7 @@ class PDAgriAndWorkImagePRovdier extends StateNotifier<AppState> {
       final response = await dio.post(Api.updatePdReport,
           data: payload, options: Options(headers: {"token": token}));
       print(response.data);
-      print('Payload: ${payload}');
+      print('Payload: $payload');
       if (response.statusCode == 200) {
         // BankDetail bankDetailsRespone = BankDetail.fromJson(response.data);
         print('work agri images form submitted: $response');
@@ -139,13 +138,9 @@ class AgriANdWorkFormDetailProvider {
         // Parse the response into the GetApplicantDetailsModel
         final details = AgriWorkItems.fromJson(responseData['items']);
         // print('object')
-        if (details != null) {
-          print('AgriWorkItems:: ${details.latLongPhoto}');
-          return details;
-        } else {
-          throw Exception("AgriWorkItems details not found in the response");
-        }
-      } else {
+        print('AgriWorkItems:: ${details.latLongPhoto}');
+        return details;
+            } else {
         throw Exception(
             "Failed to load AgriWorkItems data: ${response.statusCode}");
       }

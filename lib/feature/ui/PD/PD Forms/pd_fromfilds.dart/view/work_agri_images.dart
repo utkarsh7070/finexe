@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:finexe/feature/base/api/api.dart';
@@ -20,7 +19,7 @@ final isExpWorkAgriDetailProvider = StateProvider<bool>((ref) => false);
 class WorkAndAgriCultureImages extends ConsumerStatefulWidget {
   // const WorkAndAgriCultureImages({super.key});
   final String customerId;
-  WorkAndAgriCultureImages({required this.customerId});
+  const WorkAndAgriCultureImages({super.key, required this.customerId});
   @override
   ConsumerState<WorkAndAgriCultureImages> createState() =>
       _WorkAndAgriCultureImagesState();
@@ -42,12 +41,12 @@ class _WorkAndAgriCultureImagesState
     // final images = ref.watch(workagriimageUploadProvider);
     final appState = ref.watch(pdsubmitWorkAndAgriImages);
 
-    final _isExpanded = ref.watch(isExpWorkAgriDetailProvider);
+    final isExpanded = ref.watch(isExpWorkAgriDetailProvider);
     final getAgriFormData = ref.watch(getWorkAndImagesProvider(widget.customerId));
     final imageNotifier = ref.read(workagriimageUploadProvider.notifier);
 
     return  ExpansionTile(
-          title: Text('Work and Agriculture Images'),
+          title: const Text('Work and Agriculture Images'),
           onExpansionChanged: (expanded) {
             ref.read(isExpWorkAgriDetailProvider.notifier).state = expanded;
             if (expanded) {
@@ -55,7 +54,7 @@ class _WorkAndAgriCultureImagesState
               ref.refresh(getWorkAndImagesProvider(widget.customerId));
             }
           },
-          initiallyExpanded: _isExpanded,
+          initiallyExpanded: isExpanded,
           children: [
             getAgriFormData.when(
                 data: (agriAndWorkImages) {
@@ -67,7 +66,7 @@ class _WorkAndAgriCultureImagesState
                       children: [
 
                         constSizedbox(context),
-                        Text('Landmark Photo'),
+                        const Text('Landmark Photo'),
                         CommonImagePicker(
                           applicantImage: agriAndWorkImages.landmarkPhoto ?? '',
                           onImageUploaded: (imageUrl) {
@@ -81,7 +80,7 @@ class _WorkAndAgriCultureImagesState
                           },
                         ),
                         constSizedbox(context),
-                        Text('Lat Long Photo'),
+                        const Text('Lat Long Photo'),
                         CommonImagePicker(
                           applicantImage: agriAndWorkImages.latLongPhoto ?? '',
                           onImageUploaded: (imageUrl) {
@@ -100,26 +99,25 @@ class _WorkAndAgriCultureImagesState
                           style: AppStyles.blackText16,
                         ),
                         constSizedbox(context),
-                        Text('East Boundary'),
+                        const Text('East Boundary'),
                         if (agriAndWorkImages.fourBoundaryPhotos != null &&
-                            agriAndWorkImages.fourBoundaryPhotos!.length > 0)
-                          if (agriAndWorkImages.fourBoundaryPhotos![0] != null)
-                            CommonImagePicker(
-                              applicantImage:
-                              agriAndWorkImages.fourBoundaryPhotos![0],
-                              onImageUploaded: (imageUrl) {
-                                setState(() {
-                                  agriAndWorkImages.fourBoundaryPhotos![0].isNotEmpty
-                                      ? agriAndWorkImages.fourBoundaryPhotos![0] =
-                                      imageUrl
-                                      : // Update the image URL
-                                  eastImageUrl = imageUrl;
-                                  print('eastImageUrl:: $eastImageUrl');
-                                });
-                              },
-                            ),
+                            agriAndWorkImages.fourBoundaryPhotos!.isNotEmpty)
+                          CommonImagePicker(
+                            applicantImage:
+                            agriAndWorkImages.fourBoundaryPhotos![0],
+                            onImageUploaded: (imageUrl) {
+                              setState(() {
+                                agriAndWorkImages.fourBoundaryPhotos![0].isNotEmpty
+                                    ? agriAndWorkImages.fourBoundaryPhotos![0] =
+                                    imageUrl
+                                    : // Update the image URL
+                                eastImageUrl = imageUrl;
+                                print('eastImageUrl:: $eastImageUrl');
+                              });
+                            },
+                          ),
                         constSizedbox(context),
-                        Text('West Boundary'),
+                        const Text('West Boundary'),
                         if (agriAndWorkImages.fourBoundaryPhotos != null &&
                             agriAndWorkImages.fourBoundaryPhotos!.length > 1)
                           CommonImagePicker(
@@ -136,7 +134,7 @@ class _WorkAndAgriCultureImagesState
                             },
                           ),
                         constSizedbox(context),
-                        Text('North Boundary'),
+                        const Text('North Boundary'),
                         if (agriAndWorkImages.fourBoundaryPhotos != null &&
                             agriAndWorkImages.fourBoundaryPhotos!.length > 2)
                           CommonImagePicker(
@@ -153,7 +151,7 @@ class _WorkAndAgriCultureImagesState
                             },
                           ),
                         constSizedbox(context),
-                        Text('South Boundary'),
+                        const Text('South Boundary'),
                         if (agriAndWorkImages.fourBoundaryPhotos != null &&
                             agriAndWorkImages.fourBoundaryPhotos!.length > 3)
                           CommonImagePicker(
@@ -170,7 +168,7 @@ class _WorkAndAgriCultureImagesState
                             },
                           ),
                         constSizedbox(context),
-                        Text('Work Photos'),
+                        const Text('Work Photos'),
                         // if(agriAndWorkImages.workPhotos!=null)
                         // ListView.builder(
                         //   shrinkWrap: true,
@@ -216,12 +214,12 @@ class _WorkAndAgriCultureImagesState
                                     imageUrl:
                                     //  workPhotosList.length == 0
                                     //     ? '${Api.baseUrl}${agriAndWorkImages.workPhotos![index]}':
-                                    '${Api.baseUrl}${image}',
+                                    '${Api.baseUrl}$image',
                                     height: displayHeight(context) * 0.16,
                                     width: displayWidth(context) * 0.91,
                                     fit: BoxFit.cover,
                                     placeholder: (context, url) =>
-                                        Center(child: CircularProgressIndicator()),
+                                        const Center(child: CircularProgressIndicator()),
                                     errorWidget: (context, url, error) => Image.asset(
                                       'assets/images/no_internet.jpg',
                                       height: 150,
@@ -252,7 +250,7 @@ class _WorkAndAgriCultureImagesState
                               ),
                             ],
                           );
-                        }).toList(),
+                        }),
 
 
 
@@ -313,7 +311,7 @@ class _WorkAndAgriCultureImagesState
                           ),
                         ),
                         constSizedbox(context),
-                        Text('Upload 360° Home Video'),
+                        const Text('Upload 360° Home Video'),
                         CommonVideoPicker(
                           gettingVideoUrlFromServer:
                           agriAndWorkImages.videoUpload ?? '',
@@ -412,7 +410,7 @@ class _WorkAndAgriCultureImagesState
                                   'loading'), // Key for progress indicator
                             ),
                           )
-                              : Text(
+                              : const Text(
                             'Next',
                             style: TextStyle(color: Colors.white),
                           ),
@@ -425,7 +423,7 @@ class _WorkAndAgriCultureImagesState
               // error: (error, stackTrace) => Center(child: Text('Error: $error')),
               error: (error, stackTrace) {
                 print('Error: $error');
-                return Center(child: Text('faild to get data please check network'));
+                return const Center(child: Text('faild to get data please check network'));
               },
             )
 

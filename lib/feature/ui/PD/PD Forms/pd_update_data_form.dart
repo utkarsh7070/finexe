@@ -15,7 +15,6 @@
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view/total_income_form.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view/work_agri_images.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view_model.dart/co_applicant_viewmodel.dart';
-import 'package:finexe/feature/ui/PD/PD%20Forms/pd_existing_data/view_modal/pd_existing_view_modal.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/Income%20Details/view/main_income_details_fomr/new_income_form.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/applicant_detail.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/assets_form.dart';
@@ -31,7 +30,6 @@ import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/refrence_
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/samagra_details_form.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/total_income_form.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/work_agri_images.dart';
-import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view_model.dart/co_applicant_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -39,10 +37,10 @@ class UpdateDataDorm extends ConsumerWidget {
   // const UpdateDataDorm({super.key});
   final String customerId;
 
-  UpdateDataDorm({required this.customerId});
+  const UpdateDataDorm({super.key, required this.customerId});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print('customerId in UpdateDataDorm:: ${customerId}');
+    print('customerId in UpdateDataDorm:: $customerId');
     // final coApplicantsAsync = ref.watch(coAppl);
     return SingleChildScrollView(
       child:

@@ -1,9 +1,7 @@
-import 'dart:ui';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../model/Submit Data Models/asset_detail_model.dart';
@@ -14,7 +12,7 @@ final isAssetProvider = StateProvider<bool>((ref) => false);
 
 class PdAssetsForm extends ConsumerStatefulWidget {
   final String customerId;
-  const PdAssetsForm({required this.customerId});
+  const PdAssetsForm({super.key, required this.customerId});
 
   @override
   ConsumerState<PdAssetsForm> createState() => _PdAssetsFormState();
@@ -59,7 +57,7 @@ class _PdAssetsFormState extends ConsumerState<PdAssetsForm> {
   Widget build(BuildContext context) {
     final appState = ref.watch(pdassetDetailsiewModelProvider);
     //getAssetDetailFromProvider
-    final _isExpanded = ref.watch(isAssetProvider);
+    final isExpanded = ref.watch(isAssetProvider);
 
     final getAssetData = ref.watch(getAssetDetailFromProvider(widget.customerId));
 
@@ -74,7 +72,7 @@ class _PdAssetsFormState extends ConsumerState<PdAssetsForm> {
                ref.refresh(getAssetDetailFromProvider(widget.customerId));
              }
            },
-           initiallyExpanded: _isExpanded,
+           initiallyExpanded: isExpanded,
           children: [
             getAssetData.when(
                 data: (geetingAssetData) {
@@ -167,12 +165,12 @@ class _PdAssetsFormState extends ConsumerState<PdAssetsForm> {
                                       memberControllers.removeAt(i);
                                     });
                                   },
-                                  icon: Icon(Icons.remove_circle_outline,
+                                  icon: const Icon(Icons.remove_circle_outline,
                                       color: Colors.red),
                                 ),
                               ],
                             )
-                                : SizedBox.shrink()
+                                : const SizedBox.shrink()
                           ],
 
                           Container(

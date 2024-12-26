@@ -2,11 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/Material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/api.dart';
-import '../../../../base/service/session_service.dart';
 import '../../../../base/utils/general/pref_utils.dart';
-import '../../../Collection/Collection_home_dashboard/home_collection_viewmodel/fetchUserProfile.dart';
 import '../model/attendance_listing_model.dart';
 
 

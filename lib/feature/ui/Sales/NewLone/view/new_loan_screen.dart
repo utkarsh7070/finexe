@@ -1,14 +1,11 @@
-import 'dart:math';
 
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/namespase/app_style.dart';
@@ -98,7 +95,7 @@ class NewLoanScreen extends ConsumerWidget {
                         );
 
                         final int division = (item.loanAmount.max?.toDouble()??0/5).toInt();
-                        print('division ${division}');
+                        print('division $division');
 
                         return Wrap(
                           crossAxisAlignment: WrapCrossAlignment.center,
@@ -522,7 +519,7 @@ class NewLoanScreen extends ConsumerWidget {
         children: [
           RichText(
             text: TextSpan(
-              text: '${emi}',
+              text: '$emi',
               style: AppStyles.buttonLightTextStyle
                   .copyWith(fontSize: FontSize.fontSizeL),
               children: <TextSpan>[

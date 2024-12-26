@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:finexe/feature/base/utils/widget/upload_box.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../../../base/utils/namespase/app_style.dart';
@@ -23,10 +22,10 @@ class GuarantorPhotoBottomSheet extends ConsumerWidget {
     // final selectedValue = ref.watch(applicantRoleProvider);
     final index = ref.watch(listIndex);
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Text('Upload Aadhar Image'),
+          const Text('Upload Aadhar Image'),
           SizedBox(
             height: displayHeight(context) * 0.04,
           ),

@@ -3,7 +3,6 @@ import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 import 'package:finexe/feature/ui/PD/dialog/CustomPopup.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,7 +13,7 @@ final isExpPendencyRlProvider = StateProvider<bool>((ref) => false);
 class PendencyReject extends ConsumerStatefulWidget {
   // const PendencyReject({super.key});
   final String customerId;
-  PendencyReject({required this.customerId});
+  const PendencyReject({super.key, required this.customerId});
   @override
   ConsumerState<PendencyReject> createState() => _PendencyRejectState();
 }
@@ -46,7 +45,7 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
   Widget build(BuildContext context) {
     final pendencyDetailsState =
         ref.watch(getPendencyDetailsProvider(widget.customerId));
-    final _isExpanded =
+    final isExpanded =
     ref.watch(isExpPendencyRlProvider);
 
     return ExpansionTile(
@@ -61,7 +60,7 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
               ref.refresh(getPendencyDetailsProvider(widget.customerId));
             }
           },
-          initiallyExpanded: _isExpanded,
+          initiallyExpanded: isExpanded,
           children: <Widget>[
             pendencyDetailsState.when(
                 data: (pendencyData) {
@@ -139,7 +138,7 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                                 'This will mark the entry as \n rejected. Are you sure you want to proceed?',
                                 imagePath: 'assets/images/confirmComplete.png',
                                 buttonName: 'Set as Complete',
-                                buttonColor: Color(0xFFEE6C52),
+                                buttonColor: const Color(0xFFEE6C52),
                                 rejectText: 'No, I Don\'t',
                                 rejectTextColor: Colors.grey,
                                 onReject: () {
@@ -235,8 +234,8 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
                           child: Center(
                             child: Text(
                               'Or',
@@ -264,7 +263,7 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                                     'This will mark the entry as \n rejected. Are you sure you want to proceed?',
                                     imagePath: 'assets/images/confirmpending.png',
                                     buttonName: 'Yes i Do',
-                                    buttonColor: Color(0xFFEE6C52),
+                                    buttonColor: const Color(0xFFEE6C52),
                                     rejectText: "Reject",
                                     rejectTextColor: Colors.grey,
                                     onReject: () {
@@ -309,7 +308,7 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                               ),
                             ),
                             Container(
-                              margin: EdgeInsets.only(right: 10),
+                              margin: const EdgeInsets.only(right: 10),
                               width: displayWidth(context) * 0.42,
                               height: displayHeight(context) * 0.065,
                               child: ElevatedButton(
@@ -321,7 +320,7 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                                     'This will mark the entry as \n rejected. Are you sure you want to proceed?',
                                     imagePath: 'assets/images/confirmReject.png',
                                     buttonName: 'No, I Don\'t',
-                                    buttonColor: Color(0xFFEE6C52),
+                                    buttonColor: const Color(0xFFEE6C52),
                                     rejectText: "Reject",
                                     rejectTextColor: Colors.grey,
                                     onReject: () {

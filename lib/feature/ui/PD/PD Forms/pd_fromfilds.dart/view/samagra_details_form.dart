@@ -5,10 +5,8 @@ import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
-import 'package:finexe/feature/base/utils/widget/app_button.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/samagra_details_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,7 +20,7 @@ final isExpSamagraDetailProvider = StateProvider<bool>((ref) => false);
 class SamagraDetailsForm extends ConsumerStatefulWidget {
   // const SamagraDetailsForm({super.key});
   final String customerId;
-  SamagraDetailsForm({required this.customerId});
+  const SamagraDetailsForm({super.key, required this.customerId});
   @override
   _SamagraDetailsFormState createState() => _SamagraDetailsFormState();
 }
@@ -74,14 +72,14 @@ class _SamagraDetailsFormState extends ConsumerState<SamagraDetailsForm> {
     print('sssmIDimageUrl: $sssmIDimageUrl');
     final sssmidimage = ref.watch(sssMidimageProvider);
 
-    final _isExpanded = ref.watch(isExpSamagraDetailProvider);
+    final isExpanded = ref.watch(isExpSamagraDetailProvider);
     final gasPhtotoImage = ref.watch(gasDiaryPhotoProvider);
     final getSamagraFormDetails = ref.watch(samagraDetailDetailsProvider(widget.customerId));
 
     // final isUploading = ref.watch(uploadImageProvider).isLoading;
 
     return ExpansionTile(
-          title: Text('Samagra Detail’s'),
+          title: const Text('Samagra Detail’s'),
           onExpansionChanged: (expanded) {
             ref.read(isExpSamagraDetailProvider.notifier).state = expanded;
             if (expanded) {
@@ -89,7 +87,7 @@ class _SamagraDetailsFormState extends ConsumerState<SamagraDetailsForm> {
               ref.refresh(samagraDetailDetailsProvider(widget.customerId));
             }
           },
-          initiallyExpanded: _isExpanded,
+          initiallyExpanded: isExpanded,
           children: [
             getSamagraFormDetails.when(
                 data: (samagradata) {
@@ -154,7 +152,7 @@ class _SamagraDetailsFormState extends ConsumerState<SamagraDetailsForm> {
                             constSizedbox(context),
                             
 
-                            Text('sssMid Photo'),
+                            const Text('sssMid Photo'),
                             CommonImagePicker(
                               applicantImage: samagradata.sSSMPhoto ?? '',
                               onImageUploaded: (imageUrl) {
@@ -168,7 +166,7 @@ class _SamagraDetailsFormState extends ConsumerState<SamagraDetailsForm> {
                               },
                             ),
                             constSizedbox(context),
-                            Text('gasDiary Photo'),
+                            const Text('gasDiary Photo'),
 
                             samagradata.gasDiaryPhoto!.isEmpty &&
                                 gasDiaryImageUrl.isEmpty
@@ -189,7 +187,7 @@ class _SamagraDetailsFormState extends ConsumerState<SamagraDetailsForm> {
 
                                       //  paymentViewModel.updateTransactionImage(imagePath!);
 
-                                      print('imagepath ${imagePathsecond}');
+                                      print('imagepath $imagePathsecond');
                                       ref
                                           .read(gasDiaryPhotoProvider.notifier)
                                           .uploadImage(
@@ -312,7 +310,7 @@ class _SamagraDetailsFormState extends ConsumerState<SamagraDetailsForm> {
                             constSizedbox(context),
                             Container(
                               alignment: Alignment.centerLeft,
-                              child: Text(
+                              child: const Text(
                                 'Family Member',
                                 textAlign: TextAlign.left,
                               ),
@@ -389,13 +387,13 @@ class _SamagraDetailsFormState extends ConsumerState<SamagraDetailsForm> {
                                               familyMembers.removeAt(index);
                                             });
                                           },
-                                          icon: Icon(
+                                          icon: const Icon(
                                               Icons.remove_circle_outline,
                                               color: Colors.red),
                                         ),
                                       ],
                                     )
-                                        : SizedBox.shrink()
+                                        : const SizedBox.shrink()
                                   ],
                                 );
                               },
@@ -465,9 +463,9 @@ class _SamagraDetailsFormState extends ConsumerState<SamagraDetailsForm> {
                                     );
                                   }).toList();
                                   // Log Family Members
-                                  familyMemberList.forEach((member) {
+                                  for (var member in familyMemberList) {
                                     print('Family Member: ${member.toJson()}');
-                                  });
+                                  }
                                   print(
                                       'familyMemberList:: ${familyMemberList.length}');
 
@@ -509,7 +507,7 @@ class _SamagraDetailsFormState extends ConsumerState<SamagraDetailsForm> {
               // error: (error, stackTrace) => Center(child: Text('Error: $error')),
               error: (error, stackTrace) {
                 print('Error: $error');
-                return Center(child: Text('faild to get data please check network'));
+                return const Center(child: Text('faild to get data please check network'));
               },
             )
 

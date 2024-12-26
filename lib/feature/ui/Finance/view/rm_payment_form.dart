@@ -10,8 +10,7 @@ import 'CustomerSelectorDroper/custom_radioButton_screen.dart';
 import 'CustomerSelectorDroper/customlist_drop_drown.dart';
 
 class RmPaymentForm extends ConsumerStatefulWidget {
-  const RmPaymentForm({Key? key})
-      : super(key: key); // Removed const keyword here
+  const RmPaymentForm({super.key}); // Removed const keyword here
   @override
   ConsumerState<RmPaymentForm> createState() => _RmPaymentFormState(index: 0);
 }
@@ -30,12 +29,12 @@ class _RmPaymentFormState extends ConsumerState<RmPaymentForm> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("RM Payment Form"),
+        title: const Text("RM Payment Form"),
         centerTitle: true,
         flexibleSpace: Container(
           color: Colors.white,
         ),
-        titleTextStyle: TextStyle(
+        titleTextStyle: const TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: 18,
           color: AppColors.black,
@@ -52,7 +51,7 @@ class _RmPaymentFormState extends ConsumerState<RmPaymentForm> {
                 // Claim Type Radio Buttons
                 CustomRadioButtonScreen(
                   heading: 'Claim Type',
-                  options: ['Adjust Against Advance', 'Claim', 'Reimbursement'],
+                  options: const ['Adjust Against Advance', 'Claim', 'Reimbursement'],
                   onSelect: (selectedOption) {
                     loanViewModel.selectedClaimTypeController(selectedOption);
                   },
@@ -171,9 +170,9 @@ class _RmPaymentFormState extends ConsumerState<RmPaymentForm> {
                             onTap: () {
                               loanFromStateViewModel.removeItem(form.id);
                             },
-                            child: Row(
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.end,
-                              children: const [
+                              children: [
                                 Icon(Icons.remove),
                                 SizedBox(width: 8),
                                 Text('Remove Form Entry'),

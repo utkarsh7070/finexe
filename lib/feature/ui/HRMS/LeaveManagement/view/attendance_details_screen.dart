@@ -3,22 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:finexe/feature/base/internetConnection/connection_overlay.dart';
-import 'package:finexe/feature/base/internetConnection/connectivity.dart';
-import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
+
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/widget/dropdown_style.dart';
 import '../model/attendance_listing_model.dart';
 import '../view_model/attendance_listing_view_model.dart';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import '../../../../base/utils/namespase/app_colors.dart';
-import '../../../../base/utils/widget/dropdown_style.dart';
-import '../model/attendance_listing_model.dart';
-import '../view_model/attendance_listing_view_model.dart';
+
 
 class AttendanceDetailsScreen extends ConsumerStatefulWidget {
   // const AttendanceDetailsScreen({Key? key}) : super(key: key);

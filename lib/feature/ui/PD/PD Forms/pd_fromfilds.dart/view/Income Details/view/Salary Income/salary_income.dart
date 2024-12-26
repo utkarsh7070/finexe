@@ -21,7 +21,7 @@ import 'salary_model/salary_income_model.dart';
 class Salaryincomedetail extends ConsumerStatefulWidget {
   // const Salaryincomedetail({super.key});
   final String customerId;
-  Salaryincomedetail({required this.customerId});
+  const Salaryincomedetail({super.key, required this.customerId});
   @override
   ConsumerState<Salaryincomedetail> createState() => _SalaryIncomeFormState();
 }
@@ -64,11 +64,11 @@ class _SalaryIncomeFormState extends ConsumerState<Salaryincomedetail> {
     final fetchAsyncValue = ref.watch(salaryDetailsProvider(widget.customerId));
     final imageNotifier = ref.read(threemonthsimageUploadProvider.notifier);
 
-    print("output for get ${fetchAsyncValue}");
+    print("output for get $fetchAsyncValue");
 
     return fetchAsyncValue.when(
       loading: () =>
-          Center(child: CircularProgressIndicator()), // Show loading indicator
+          const Center(child: CircularProgressIndicator()), // Show loading indicator
       error: (error, stack) =>
           Center(child: Text('Error: $error')), // Show error message
       data: (salaryDetails) {
