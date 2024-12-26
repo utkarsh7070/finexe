@@ -1,6 +1,5 @@
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
-import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextFormField extends StatelessWidget {
@@ -105,7 +104,7 @@ class CustomTextFormField extends StatelessWidget {
                 child: Icon(suffixIcon, color: Colors.grey),
               )
             : null,
-        contentPadding: EdgeInsets.symmetric(
+        contentPadding: const EdgeInsets.symmetric(
             vertical: 12.0, horizontal: 10.0), // Add this property
         enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: AppColors.gray, width: 1),

@@ -13,8 +13,8 @@ class ProfileUpdateDialog {
       builder: (BuildContext context) {
         return Dialog(
             insetAnimationCurve: Easing.linear,
-            insetAnimationDuration: Duration(milliseconds: 1000),
-            insetPadding: EdgeInsets.all(20),
+            insetAnimationDuration: const Duration(milliseconds: 1000),
+            insetPadding: const EdgeInsets.all(20),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(25),
             ),

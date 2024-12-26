@@ -46,6 +46,7 @@ NewLoanItem _$NewLoanItemFromJson(Map<String, dynamic> json) => NewLoanItem(
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       v: (json['__v'] as num).toInt(),
+      PaymentGateway: json['PaymentGateway'] as String,
     );
 
 Map<String, dynamic> _$NewLoanItemToJson(NewLoanItem instance) =>
@@ -69,4 +70,5 @@ Map<String, dynamic> _$NewLoanItemToJson(NewLoanItem instance) =>
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
       '__v': instance.v,
+      'PaymentGateway': instance.PaymentGateway,
     };

@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
@@ -13,7 +12,6 @@ import 'package:finexe/feature/ui/PD/Common%20Widgets/simple_dropdown.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/Income%20Details/view/Agriculutre/view_model/agri_view_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view/Income%20Details/view/Agriculutre/view_model/agri_view_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_update_data/view/Income%20Details/view/Agriculutre/view_model/agri_view_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,7 +26,7 @@ import 'agri_mode/agriculture_income_form_model.dart';
 class AgricultureIncomeDetail extends ConsumerStatefulWidget {
   // const AgricultureIncomeDetail({super.key});
   final String customerId;
-  AgricultureIncomeDetail({required this.customerId});
+  const AgricultureIncomeDetail({super.key, required this.customerId});
   @override
   _AgricultureIncomeDetailState createState() =>
       _AgricultureIncomeDetailState();
@@ -402,12 +400,8 @@ class _AgricultureIncomeDetailState
                                         onPressed: () {
                                           print("Upload Image button clicked");
                                         },
-                                        child: const Text(
-                                          "Upload Document",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: Color(0xff0082c6),
+                                          backgroundColor: const Color(0xff0082c6),
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 14),
                                           shape: RoundedRectangleBorder(
@@ -415,12 +409,16 @@ class _AgricultureIncomeDetailState
                                                 BorderRadius.circular(12),
                                           ),
                                         ),
+                                        child: const Text(
+                                          "Upload Document",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                                       ),
                                       InkWell(
                                         onTap: () {
                                           print("Upload Image button clicked");
                                         },
-                                        child: Text(
+                                        child: const Text(
                                           "Preview Document Image",
                                           style: TextStyle(
                                               color: Colors.blue,
@@ -598,7 +596,7 @@ class _AgricultureIncomeDetailState
                     Padding(
                       padding: const EdgeInsets.only(right: 18),
                       child: CustomDropDownTextField(
-                        items: [
+                        items: const [
                           DropDownValueModel(name: "Rainfed", value: "Rainfed"),
                           DropDownValueModel(
                               name: "Tubewell", value: "Tubewell"),
@@ -622,7 +620,7 @@ class _AgricultureIncomeDetailState
                     Padding(
                       padding: const EdgeInsets.only(right: 18),
                       child: CustomDropDownTextField(
-                        items: [
+                        items: const [
                           DropDownValueModel(name: "Yes", value: "Yes"),
                           DropDownValueModel(name: "No", value: "No"),
                         ],
@@ -688,7 +686,7 @@ class _AgricultureIncomeDetailState
                     Padding(
                       padding: const EdgeInsets.only(right: 18),
                       child: CustomDropdownWithCross(
-                        items: [
+                        items: const [
                           "Wheat",
                           "Corn",
                           "Soybean",
@@ -758,8 +756,8 @@ class _AgricultureIncomeDetailState
                       ),
                     ),
 
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
                       child: Text(
                         'Land Book Image',
                         style: TextStyle(
@@ -789,12 +787,12 @@ class _AgricultureIncomeDetailState
                                 imageUrl:
                                     //  workPhotosList.length == 0
                                     //     ? '${Api.baseUrl}${agriAndWorkImages.workPhotos![index]}':
-                                    '${Api.baseUrl}${image}',
+                                    '${Api.baseUrl}$image',
                                 height: displayHeight(context) * 0.16,
                                 width: displayWidth(context) * 0.91,
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) =>
-                                    Center(child: CircularProgressIndicator()),
+                                    const Center(child: CircularProgressIndicator()),
                                 errorWidget: (context, url, error) =>
                                     Image.asset(
                                   'assets/images/no_internet.jpg',
@@ -827,7 +825,7 @@ class _AgricultureIncomeDetailState
                           ),
                         ],
                       );
-                    }).toList(),
+                    }),
                     // Container for uploading new images
                     constSizedbox(context),
                     GestureDetector(

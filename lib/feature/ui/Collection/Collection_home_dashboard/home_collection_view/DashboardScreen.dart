@@ -1,16 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:finexe/feature/base/extentions/capital_letter.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/Widget/profile_update_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:roam_flutter/roam_flutter.dart';
 import '../../../../base/api/api.dart';
-import '../../../../base/utils/widget/custom_snackbar.dart';
 import '../home_collection_viewmodel/fetchUserProfile.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../Widget/punct_in_out_action_dialog_content.dart';
@@ -115,7 +110,7 @@ class _CollectionDashboardScreenState extends ConsumerState<CollectionDashboardS
   Widget build(BuildContext context) {
     final isDialogOpen = ref.watch(dialogVisibilityProvider);
 
-    void _toggleDialog() {
+    void toggleDialog() {
       // Toggle dialog state
       ref.read(dialogVisibilityProvider.notifier).state = !isDialogOpen;
     }

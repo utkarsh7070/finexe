@@ -5,8 +5,7 @@ class CustomSnackBar extends StatelessWidget {
   final Color snackColor;
 
   const CustomSnackBar(
-      {Key? key, required this.message, required this.snackColor})
-      : super(key: key);
+      {super.key, required this.message, required this.snackColor});
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +45,31 @@ void showCustomSnackBar(
   );
 
   // Insert the overlay entry
-  overlay?.insert(overlayEntry);
+  overlay.insert(overlayEntry);
 
   // Remove the overlay after a duration
   Future.delayed(const Duration(seconds: 3), () {
     overlayEntry.remove();
   });
 }
+
+
+
+// Global key to access ScaffoldMessenger from anywhere in the app
+
+// class CustomSnackBar2 {
+//   // Method to show the SnackBar without needing context as a parameter
+//   static void show(String message,{Color snackColor = Colors.black87}) {
+//     // Use the global ScaffoldMessengerKey to show the SnackBar
+//     scaffoldMessengerKey.currentContext(
+     
+//       SnackBar(
+        
+//         content: Text(message),
+//         backgroundColor: snackColor,
+//         duration: Duration(seconds: 3),
+//       ),
+//     );
+//   }
+// }
+

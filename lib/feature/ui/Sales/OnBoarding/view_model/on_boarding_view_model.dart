@@ -37,12 +37,12 @@
 // Define GridItem model
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/dio.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Sales/OnBoarding/model/get_all_cases_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/api.dart';
-import '../../../../base/service/session_service.dart';
 
 class GridItem {
   final String icon;
@@ -112,7 +112,7 @@ class DashboardShowViewModel extends ChangeNotifier {
 
   Future<void> fetchLeads(BuildContext context, WidgetRef ref) async {
     try {
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
       final response = await _dio.get(
         Api.salesDashboardData,
         options: Options(headers: {"token": token}),
@@ -223,7 +223,7 @@ class AllCases extends StateNotifier<CaseModel> {
 
       // https://stageapi.fincooper.in/v1/calculator/getCustomer?status=salesToCibil&employeeRole=sales&page=1&limit=10&search=
 
-      print('All cases response ${response}');
+      print('All cases response $response');
 
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
@@ -261,12 +261,12 @@ class AllCases extends StateNotifier<CaseModel> {
       'status': 'cibilReject'
     };
     print('Params: $params');
-    // String? token = await SessionService.getToken();
+    // String? token = speciality.getToken();
     try {
       final response = await dio.get(Api.allCases,
           queryParameters: params, options: Options(headers: {'token': token}));
 
-      print('cibilReject cases response ${response}');
+      print('cibilReject cases response $response');
 
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
@@ -311,12 +311,12 @@ class AllCases extends StateNotifier<CaseModel> {
     };
     print('Params: $params');
 
-    // String? token = await SessionService.getToken();
+    // String? token = speciality.getToken();
     try {
       final response = await dio.get(Api.allCases,
           queryParameters: params, options: Options(headers: {'token': token}));
 
-      print('cibilOk cases response ${response}');
+      print('cibilOk cases response $response');
 
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
@@ -359,12 +359,12 @@ class AllCases extends StateNotifier<CaseModel> {
     };
     print('Params: $params');
 
-    // String? token = await SessionService.getToken();
+    // String? token = speciality.getToken();
     try {
       final response = await dio.get(Api.allCases,
           queryParameters: params, options: Options(headers: {'token': token}));
 
-      print('cibilPending cases response ${response}');
+      print('cibilPending cases response $response');
 
       GetAllCasesResponseModel responseModel =
           GetAllCasesResponseModel.fromJson(response.data);
@@ -412,7 +412,7 @@ class CaseModel {
 //     // state=state.copyWith(isLoading: true);
 //     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 //     String? token = sharedPreferences.getString('token');
-//     // String? token = await SessionService.getToken();
+//     // String? token = speciality.getToken();
 //     try {
 //       final response = await dio.get(Api.allCases,
 //           options: Options(headers: {'token': token}));
@@ -495,7 +495,7 @@ final paginatedProvider = StateNotifierProvider<PaginationNotifier<String>,
     PaginatedDataState<String>>(
   (ref) => PaginationNotifier<String>((page) async {
     // Simulating an API call
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     if (page > 5) return []; // No more data after page 5
     return List.generate(10, (index) => 'Item ${index + 1 + (page - 1) * 10}');
   }),

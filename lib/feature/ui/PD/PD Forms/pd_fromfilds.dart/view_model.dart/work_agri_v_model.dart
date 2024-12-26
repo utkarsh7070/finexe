@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/agri_work_images_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/bank_detail_form_model.dart';
@@ -49,7 +49,7 @@ class PDAgriAndWorkImagePRovdier extends StateNotifier<AppState> {
       "workPhotos": workPhoto?.toList(), //houseInsidePhoto
     };
 
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2OWY5MDVjNmEzMGY4OTExMzQwN2EzZSIsInJvbGVOYW1lIjpbImNyZWRpdFBkIl0sImlhdCI6MTczMzU3ODg1MH0.eEhMeH02cPzPw3gyNttXMrkC1l2yVZALYKdYGvXj0oA";
     //vendor // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
@@ -57,7 +57,7 @@ class PDAgriAndWorkImagePRovdier extends StateNotifier<AppState> {
       final response = await dio.post(Api.updatePdReport,
           data: payload, options: Options(headers: {"token": token}));
       print(response.data);
-      print('Payload: ${payload}');
+      print('Payload: $payload');
       if (response.statusCode == 200) {
         // BankDetail bankDetailsRespone = BankDetail.fromJson(response.data);
         print('work agri images form submitted: $response');
@@ -120,7 +120,7 @@ class AgriANdWorkFormDetailProvider {
   final Dio _dio = Dio();
 
   Future<AgriWorkItems> fetchDetails(String customerId) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY"; // Replace with a secure way of managing tokens
@@ -138,13 +138,9 @@ class AgriANdWorkFormDetailProvider {
         // Parse the response into the GetApplicantDetailsModel
         final details = AgriWorkItems.fromJson(responseData['items']);
         // print('object')
-        if (details != null) {
-          print('AgriWorkItems:: ${details.latLongPhoto}');
-          return details;
-        } else {
-          throw Exception("AgriWorkItems details not found in the response");
-        }
-      } else {
+        print('AgriWorkItems:: ${details.latLongPhoto}');
+        return details;
+            } else {
         throw Exception(
             "Failed to load AgriWorkItems data: ${response.statusCode}");
       }
@@ -176,7 +172,7 @@ class AgriImageUploadNotifier extends StateNotifier<List<File>> {
   }
 
   Future<String> uploadImage(String image) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";

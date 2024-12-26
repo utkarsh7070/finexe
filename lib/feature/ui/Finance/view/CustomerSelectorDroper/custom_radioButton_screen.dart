@@ -5,7 +5,7 @@ class CustomRadioButtonScreen extends StatefulWidget {
   final List<String> options;
   final Function(String) onSelect; // Callback to pass selected value
 
-  CustomRadioButtonScreen({
+  const CustomRadioButtonScreen({super.key, 
     required this.heading,
     required this.options,
     required this.onSelect,
@@ -27,9 +27,9 @@ class _CustomRadioButtonScreenState extends State<CustomRadioButtonScreen> {
         // Custom Heading
         Text(
           widget.heading,
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
         ),
-        SizedBox(height: 13),
+        const SizedBox(height: 13),
 
         // Radio buttons
         Wrap(

@@ -4,7 +4,7 @@ import 'package:photo_view/photo_view.dart';
 class ZoomableImageWidget extends StatefulWidget {
   String? ImageUrl;
 
-  ZoomableImageWidget({required this.ImageUrl});
+  ZoomableImageWidget({super.key, required this.ImageUrl});
 
   @override
   _ZoomableImageWidgetState createState() => _ZoomableImageWidgetState();

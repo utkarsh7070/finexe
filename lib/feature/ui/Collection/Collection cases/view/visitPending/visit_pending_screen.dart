@@ -1,14 +1,9 @@
-import 'package:advanced_search/advanced_search.dart';
 import 'package:finexe/feature/base/extentions/capital_letter.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../base/utils/namespase/app_colors.dart';
 import '../../../widget/Visit Pending Dialogs/clouser_dialog/clouser_dialog.dart';
@@ -92,6 +87,7 @@ class VisitPendingScreen extends ConsumerWidget {
                 // SizedBox(
                 //   height: displayHeight(context) * 0.03,
                 // ),
+
                 Expanded(
                   child: SizedBox(
                     height: displayHeight(context),

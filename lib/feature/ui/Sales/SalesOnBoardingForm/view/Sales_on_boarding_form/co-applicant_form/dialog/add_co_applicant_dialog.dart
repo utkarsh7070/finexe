@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../../../base/utils/namespase/display_size.dart';
 import 'add_co_applicant_dialog_content.dart';
 
@@ -16,7 +15,7 @@ class ConfirmBackDialog{
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10))),
           actions: const [AddCoApplicantDialog()],
-          content: Container(
+          content: SizedBox(
             height: displayHeight(context) * 0.17,
             child: Column(
               children: [

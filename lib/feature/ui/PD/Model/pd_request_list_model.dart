@@ -16,19 +16,19 @@ class PDRequestListModel {
     if (json['items'] != null) {
       items = <PDReqItems>[];
       json['items'].forEach((v) {
-        items!.add(new PDReqItems.fromJson(v));
+        items!.add(PDReqItems.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['subCode'] = this.subCode;
-    data['message'] = this.message;
-    data['error'] = this.error;
-    if (this.items != null) {
-      data['items'] = this.items!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['subCode'] = subCode;
+    data['message'] = message;
+    data['error'] = error;
+    if (items != null) {
+      data['items'] = items!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -83,10 +83,10 @@ class PDReqItems {
     statusByCreditPd = json['statusByCreditPd'];
     remarkByCreditPd = json['remarkByCreditPd'];
     branchDetails = json['branchDetails'] != null
-        ? new BranchDetails.fromJson(json['branchDetails'])
+        ? BranchDetails.fromJson(json['branchDetails'])
         : null;
     applicantDetails = json['applicantDetails'] != null
-        ? new ApplicantDetails.fromJson(json['applicantDetails'])
+        ? ApplicantDetails.fromJson(json['applicantDetails'])
         : null;
     customerFinId = json['customerFinId'];
     customerName = json['customerName'];
@@ -97,28 +97,28 @@ class PDReqItems {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['customerId'] = this.customerId;
-    data['externalVendorId'] = this.externalVendorId;
-    data['partnerNameId'] = this.partnerNameId;
-    data['creditPdId'] = this.creditPdId;
-    data['remarkForCreditPd'] = this.remarkForCreditPd;
-    data['pdfCreateByCreditPd'] = this.pdfCreateByCreditPd;
-    data['statusByCreditPd'] = this.statusByCreditPd;
-    data['remarkByCreditPd'] = this.remarkByCreditPd;
-    if (this.branchDetails != null) {
-      data['branchDetails'] = this.branchDetails!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['_id'] = sId;
+    data['customerId'] = customerId;
+    data['externalVendorId'] = externalVendorId;
+    data['partnerNameId'] = partnerNameId;
+    data['creditPdId'] = creditPdId;
+    data['remarkForCreditPd'] = remarkForCreditPd;
+    data['pdfCreateByCreditPd'] = pdfCreateByCreditPd;
+    data['statusByCreditPd'] = statusByCreditPd;
+    data['remarkByCreditPd'] = remarkByCreditPd;
+    if (branchDetails != null) {
+      data['branchDetails'] = branchDetails!.toJson();
     }
-    if (this.applicantDetails != null) {
-      data['applicantDetails'] = this.applicantDetails!.toJson();
+    if (applicantDetails != null) {
+      data['applicantDetails'] = applicantDetails!.toJson();
     }
-    data['customerFinId'] = this.customerFinId;
-    data['customerName'] = this.customerName;
-    data['customerMobileNo'] = this.customerMobileNo;
-    data['customerFatherName'] = this.customerFatherName;
-    data['customerPhoto'] = this.customerPhoto;
-    data['customerAddress'] = this.customerAddress;
+    data['customerFinId'] = customerFinId;
+    data['customerName'] = customerName;
+    data['customerMobileNo'] = customerMobileNo;
+    data['customerFatherName'] = customerFatherName;
+    data['customerPhoto'] = customerPhoto;
+    data['customerAddress'] = customerAddress;
     return data;
   }
 }
@@ -135,9 +135,9 @@ class BranchDetails {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['name'] = this.name;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['_id'] = sId;
+    data['name'] = name;
     return data;
   }
 }
@@ -156,10 +156,10 @@ class ApplicantDetails {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['fullName'] = this.fullName;
-    data['email'] = this.email;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['_id'] = sId;
+    data['fullName'] = fullName;
+    data['email'] = email;
     return data;
   }
 }

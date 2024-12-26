@@ -1,13 +1,8 @@
-import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
-import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
-import 'package:finexe/feature/base/utils/widget/app_text_filed_login.dart';
-import 'package:finexe/feature/base/utils/widget/upload_box.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/simple_dropdown.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/coapplicant_model.dart';
@@ -15,7 +10,6 @@ import 'package:finexe/feature/ui/PD/Common%20Widgets/simple_dropdown.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view_model.dart/co_applicant_viewmodel.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view_model.dart/garaunter_view_model.dart';
 // import 'package:finexe/feature/ui/PD/view/common%20imagePicker/image_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -29,7 +23,7 @@ class CoApplicantForm extends ConsumerStatefulWidget {
 
   // const CoApplicantForm({super.key,});
   final String customerId;
-  CoApplicantForm({required this.customerId});
+  const CoApplicantForm({super.key, required this.customerId});
 
   @override
   _CoApplicantFormState createState() => _CoApplicantFormState();
@@ -195,7 +189,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
               ),
               constSizedbox(context),
 
-              Text(
+              const Text(
                 'CoApplicant Image',
                 // textAlign: TextAlign.left,
               ),
@@ -217,7 +211,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
               CustomDropDownTextField(
                 labelText: 'Applicant Type',
                 controller: coaaplicantform1_applicantTypeController,
-                items: [
+                items: const [
                   DropDownValueModel(name: "Individual", value: "Individual"),
                   DropDownValueModel(
                       name: "Non Individual", value: "Non Individual"),
@@ -230,7 +224,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
               CustomDropDownTextField(
                 labelText: 'Business Type',
                 controller: coaaplicantform1_businessTypeController,
-                items: [
+                items: const [
                   DropDownValueModel(
                       name: "Self Employed Proffessional",
                       value: "Self Employed Proffessional"),
@@ -372,7 +366,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
               CustomDropDownTextField(
                 labelText: 'Residence Type',
                 controller: coaaplicantform1_residenceTypeController,
-                items: [
+                items: const [
                   DropDownValueModel(name: "Owned", value: "Owned"),
                   DropDownValueModel(name: "Rented", value: "Rented"),
                   DropDownValueModel(name: "Leased", value: "Leased"),
@@ -470,7 +464,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
                               ValueKey('loading'), // Key for progress indicator
                         ),
                       )
-                    : Text(
+                    : const Text(
                         'Next',
                         style: TextStyle(color: Colors.white),
                       ),
@@ -483,12 +477,12 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
       loading: () {
         // print('Data fetched: ${coapplicantDetails.value!.coApplicant![0].coApplicantType}');
 
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       },
       // error: (error, stackTrace) => Center(child: Text('Error: $error')),
       error: (error, stackTrace) {
         print('Error: $error');
-        return Center(child: Text('faild to get data please check network'));
+        return const Center(child: Text('faild to get data please check network'));
       },
     );
   }

@@ -181,7 +181,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
       final response = await dio.post(Api.aadhaarNumber,
           data: aadhaarNumberRequestModel.toJson());
       var responseData = response.data;
-      print('Login response: ${responseData}');
+      print('Login response: $responseData');
       var message = responseData['message'];
       print(message);
       if (response.statusCode == 400) {
@@ -338,7 +338,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
             panFather: responseModel?.items.msg?.data?.fatherName);
       }
     } on DioException catch (error) {
-      DioExceptions.fromDioError(error as DioException, context);
+      DioExceptions.fromDioError(error, context);
       state = state.copyWith(isLoading: false);
       throw Exception(error);
       // throw Exception(error);

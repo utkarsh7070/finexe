@@ -1,9 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/refrence_form_model.dart';
-import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/referance/referance_details.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/Submit Data Models/refrence_form_model.dart';
@@ -28,7 +27,7 @@ class PDRefrenceDetails extends StateNotifier<ApplicationState> {
       'pdType': pdType,
     };
 
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
     try {
@@ -37,7 +36,7 @@ class PDRefrenceDetails extends StateNotifier<ApplicationState> {
       print(token);
       print(payload);
       print(response.data);
-      print('Payload: ${payload}');
+      print('Payload: $payload');
 
       if (response.statusCode == 200) {
         print('refrence form submitted: ${response.data}');
@@ -101,7 +100,7 @@ class RefFormDetailProvider {
   final Dio _dio = Dio();
 
   Future<RefrenceDetailModel> fetchRefDetails(String custId) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY"; // Replace with a secure way of managing tokens
@@ -119,13 +118,9 @@ class RefFormDetailProvider {
         // Parse the response into the GetApplicantDetailsModel
         final refernceFormData = RefrenceDetailModel.fromJson(responseData);
 
-        if (refernceFormData != null) {
-          print('refernceFormData:: ${refernceFormData}');
-          return refernceFormData;
-        } else {
-          throw Exception("refernceFormData details not found in the response");
-        }
-      } else {
+        print('refernceFormData:: $refernceFormData');
+        return refernceFormData;
+            } else {
         throw Exception(
             "Failed to load refernceFormData data: ${response.statusCode}");
       }

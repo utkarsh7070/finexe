@@ -12,7 +12,7 @@ import '../model/lead_generation_model.dart';
 import '../view_model/lead_generation_viewmodel.dart';
 
 class LeadGenerationForm extends ConsumerStatefulWidget {
-  LeadGenerationForm({Key? key}) : super(key: key);
+  const LeadGenerationForm({super.key});
 
   @override
   _LeadGenerationFormState createState() => _LeadGenerationFormState();

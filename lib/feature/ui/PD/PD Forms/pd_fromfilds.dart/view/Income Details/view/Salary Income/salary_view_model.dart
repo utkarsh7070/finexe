@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/Income%20Details/view/Salary%20Income/salary_model/salary_income_model.dart';
@@ -62,7 +62,7 @@ class SalaryDetailsFormViewModel {
         'customerId': '66f53ffbd7011eb65160f292',
         'pdType': 'creditPd',
       };
-      final token = await SessionService.getToken();
+      final token = speciality.getToken();
 
       final response = await _dio.post(
         Api.updatePdReport, // Replace with your API endpoint
@@ -93,7 +93,7 @@ class SalaryApiService {
   final Dio _dio = Dio();
 
   Future<SalaryDetailsData> fetchSalaryDetails(String custId) async {
-    final token = await SessionService.getToken();
+    final token = speciality.getToken();
 
     try {
       // Make the API request
@@ -162,7 +162,7 @@ class AnimalImageUploadNotifier extends StateNotifier<List<File>> {
   }
 
   Future<String> uploadImage(String image) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";

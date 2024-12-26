@@ -3,19 +3,17 @@ import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 import 'package:flutter/Material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/Submit Data Models/cibil_form_model.dart';
 import '../view_model.dart/cibil_vmodel.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CibilDetailsForm extends ConsumerStatefulWidget {
   final String customerId;
 
-  CibilDetailsForm({required this.customerId});
+  const CibilDetailsForm({super.key, required this.customerId});
 
   @override
   _CibilDetailsFormState createState() => _CibilDetailsFormState();
@@ -50,10 +48,10 @@ class _CibilDetailsFormState extends ConsumerState<CibilDetailsForm> {
     //pdCibilSubmitProvider
     final cibileData = ref.watch(cibilDetailsProvider(widget.customerId));
 
-    final _appSate = ref.watch(pdCibilSubmitProvider);
+    final appSate = ref.watch(pdCibilSubmitProvider);
 
     return ExpansionTile(
-      title: Text('Cibil Detail’s'),
+      title: const Text('Cibil Detail’s'),
       onExpansionChanged: (expanded) {
         ref.read(isExpandedProvider.notifier).state = expanded;
         if (expanded) {
@@ -166,7 +164,7 @@ class _CibilDetailsFormState extends ConsumerState<CibilDetailsForm> {
                           );
                         }
                       },
-                      child: _appSate.isLoading == true
+                      child: appSate.isLoading == true
                           ? const SizedBox(
                         width: 24, // Specify the width
                         height: 24, // Specify the height

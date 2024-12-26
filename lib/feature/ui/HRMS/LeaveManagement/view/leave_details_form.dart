@@ -1,6 +1,5 @@
 
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -13,7 +12,7 @@ import 'leave_request_form.dart';
 
 
 class LeaveRequestScreen extends ConsumerStatefulWidget {
-  const LeaveRequestScreen({Key? key}) : super(key: key);
+  const LeaveRequestScreen({super.key});
 
   @override
   ConsumerState<LeaveRequestScreen> createState() => _LeaveRequestScreenState();
@@ -55,7 +54,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
           final leaveRequests = leaveData["leaveRequests"] as List<LeaveRequestModel>;
           return Column(
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               // Counters at the top
               _buildCounters(
                 totalLeave: counters.totalLeave,
@@ -63,7 +62,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                 totalReject: counters.totalReject,
               ),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               // Header Row
               _buildHeader(),
 
@@ -89,7 +88,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
           // Add leave request functionality
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) =>  LeaveRequestForm()),
+            MaterialPageRoute(builder: (context) =>  const LeaveRequestForm()),
           ).then((refreshNeeded) {
             // Check if refresh is needed
             if (refreshNeeded == true) {
@@ -147,8 +146,8 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       color: Colors.grey[200],
-      child: Row(
-        children: const [
+      child: const Row(
+        children: [
           Expanded(child: Text("FromDt", style: TextStyle(fontWeight: FontWeight.bold))),
           Expanded(child: Text("EndDt", style: TextStyle(fontWeight: FontWeight.bold))),
           Expanded(child: Text("Status", style: TextStyle(fontWeight: FontWeight.bold))),

@@ -1,6 +1,4 @@
-import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
-import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,10 +13,10 @@ FutureProvider<List<DropDownValueModel>>((ref) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String? token = sharedPreferences.getString('token');
   return [
-    DropDownValueModel(name: 'Food', value: 'a'),
-    DropDownValueModel(name: 'Lodging', value: 'b'),
-    DropDownValueModel(name: 'Toll', value: 'c'),
-    DropDownValueModel(name: 'Others', value: 'd')
+    const DropDownValueModel(name: 'Food', value: 'a'),
+    const DropDownValueModel(name: 'Lodging', value: 'b'),
+    const DropDownValueModel(name: 'Toll', value: 'c'),
+    const DropDownValueModel(name: 'Others', value: 'd')
   ];
   // final response = await dio.get(Api.getAllModeOfCollection,
   //     options: Options(headers: {"token": token}));

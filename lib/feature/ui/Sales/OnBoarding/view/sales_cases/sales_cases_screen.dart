@@ -1,10 +1,8 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:finexe/feature/base/extentions/capital_letter.dart';
-import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -370,7 +368,7 @@ class _SalesCasesScreen extends ConsumerState<SalesCasesScreen> {
               child: Center(child: CircularProgressIndicator()),
             )
                 : data.listData.isEmpty
-                ? Expanded(
+                ? const Expanded(
               child: Center(
                 child: Text(
                   'No cases available.',

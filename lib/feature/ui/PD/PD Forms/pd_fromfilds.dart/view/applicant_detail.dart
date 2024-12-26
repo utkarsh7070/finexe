@@ -71,7 +71,7 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
 
   @override
   Widget build(BuildContext context) {
-    final _isExpanded = ref.watch(isAppExpandedProvider);
+    final isExpanded = ref.watch(isAppExpandedProvider);
     final applicantDetails = ref.watch(applicationDetailsProvider(widget.customerId));
     final appState = ref.watch(pdapplicantViewModelProvider);
     // final applicantImage = ref.watch(applicantImageProvider);
@@ -92,7 +92,7 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                 ref.refresh(applicationDetailsProvider(widget.customerId));
               }
             },
-            initiallyExpanded: _isExpanded,
+            initiallyExpanded: isExpanded,
             children: <Widget>[
               applicantDetails.when(
 
@@ -396,10 +396,10 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                         CustomDropDownTextField(
                           labelText: 'Residence Type',
                           controller: residenceTypeController,
-                          items: [
-                            const DropDownValueModel(name: "Owned", value: "Owned"),
-                            const DropDownValueModel(name: "Rented", value: "Rented"),
-                            const DropDownValueModel(name: "Leased", value: "Leased"),
+                          items: const [
+                            DropDownValueModel(name: "Owned", value: "Owned"),
+                            DropDownValueModel(name: "Rented", value: "Rented"),
+                            DropDownValueModel(name: "Leased", value: "Leased"),
                           ],
                         ),
                         constSizedbox(context),

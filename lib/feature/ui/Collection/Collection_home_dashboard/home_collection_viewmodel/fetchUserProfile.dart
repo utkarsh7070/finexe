@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:finexe/feature/base/api/dio.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/update_password_request_model.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/update_password_responsemodel.dart';
-import 'package:finexe/feature/ui/authenticate/view_model/login_view_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,11 +13,9 @@ import 'package:roam_flutter/roam_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio_exception.dart';
-import '../../../../base/service/session_service.dart';
 import '../../../../base/utils/widget/custom_snackbar.dart';
 
 import '../home_collection_model/user_profile_model.dart';
-import '../home_collection_model/user_profile_response_model.dart';
 
 
 class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
@@ -48,7 +45,7 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
 
   Future<void> fetchDashboardData() async {
     if (_isInitialized) return;
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
     try {
       final response = await dio.get(Api.getAllocationDashboard,
           options: Options(headers: {"token": token}));

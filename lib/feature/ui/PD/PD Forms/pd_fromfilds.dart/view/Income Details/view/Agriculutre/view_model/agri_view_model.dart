@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view/Income%20Details/view/Agriculutre/agri_mode/agriculture_income_form_model.dart';
@@ -62,7 +62,7 @@ class ImageUploadNotifier extends StateNotifier<List<File>> {
   }
 
   Future<String> uploadImage(String image) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
@@ -133,7 +133,7 @@ class AgricultureBusinessForm {
         'pdType': 'creditPd',
       };
 
-      final token = await SessionService.getToken();
+      final token = speciality.getToken();
       // Update this with a dynamic token retrieval process
 
       final response = await _dio.post(
@@ -243,7 +243,7 @@ class ApiOtherService {
   final Dio _dio = Dio();
 
   Future<OtherDropData> fetchOtherData(String customerId) async {
-    final token = await SessionService.getToken();
+    final token = speciality.getToken();
 
     try {
       final response = await _dio.get(

@@ -9,6 +9,7 @@ class MyApp extends HookWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    
     return MaterialApp(
       initialRoute: AppRoutes.splash, // Define initial route
       onGenerateRoute: AppRoutes.generateRoute,

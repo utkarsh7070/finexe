@@ -453,7 +453,7 @@ Map<String, dynamic> _$IncomeSourceToJson(IncomeSource instance) =>
 AgricultureBusiness _$AgricultureBusinessFromJson(Map<String, dynamic> json) =>
     AgricultureBusiness(
       haveYouFaced: json['haveYouFaced'] as String?,
-      nameOfAgriOwner: (json['nameOfAgriOwner'] as List<String>?)
+      nameOfAgriOwner: (json['nameOfAgriOwner'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
       relationOfApplicant: json['relationOfApplicant'] as String?,
@@ -468,7 +468,7 @@ AgricultureBusiness _$AgricultureBusinessFromJson(Map<String, dynamic> json) =>
       agriculturePhotos: (json['agriculturePhotos'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
-      whichCropIsPlanted: (json['whichCropIsPlanted'] as List<String>?)
+      whichCropIsPlanted: (json['whichCropIsPlanted'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
       agriDoingFromNoOfYears: json['agriDoingFromNoOfYears'] as String?,

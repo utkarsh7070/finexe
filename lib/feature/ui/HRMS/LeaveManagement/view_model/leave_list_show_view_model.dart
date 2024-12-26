@@ -1,10 +1,10 @@
 
 
 import 'package:dio/dio.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../base/api/api.dart';
-import '../../../../base/service/session_service.dart';
 import '../model/leave_listing_model.dart';
 
 
@@ -18,7 +18,7 @@ class LeaveRequestDetailsViewModel {
 
   Future<Map<String, dynamic>> fetchLeaveRequests() async {
     try {
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
 
       final response = await _dio.get( Api.getLeaveDetails,
         options: Options(headers: {"token": token}),); // Replace with your endpoint.

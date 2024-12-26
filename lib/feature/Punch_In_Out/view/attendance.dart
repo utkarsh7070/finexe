@@ -1,12 +1,9 @@
-import 'dart:developer';
 import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart';
+import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:one_clock/one_clock.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../base/routes/routes.dart';
-import '../../base/service/socket_io_service.dart';
 import '../../base/utils/namespase/app_colors.dart';
 import '../../base/utils/widget/custom_text_form.dart';
 import '../../ui/HRMS/LeaveManagement/model/leave_request_model.dart';
@@ -46,7 +43,15 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     //---------------------------------------------------------------------------------------
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(actions: [  Visibility(
+                                visible: checkPunchProvider.punchAllowed,
+                                child: IconButton(
+                                  onPressed: () {
+                                    LogOutDialog.logOutDialog(context: context);
+                                  },
+                                  icon: const Icon(Icons.logout,color: AppColors.primary,),
+                                ),
+                              ),],),
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
@@ -147,7 +152,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                   .text
                                   .trim()
                                   .toString();
-                              print('reasonForLeave ${reasonForLeave}');
+                              print('reasonForLeave $reasonForLeave');
                               if (reasonForLeave.isNotEmpty) {
                                 final DateTime currentDate = DateTime.now();
                                 final String formattedStartDate =
@@ -158,7 +163,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                         .format(currentDate);
 
                                 print(
-                                    'formattedStartDate-${formattedStartDate} & formattedEndDate- ${formattedEndDate}');
+                                    'formattedStartDate-$formattedStartDate & formattedEndDate- $formattedEndDate');
 
                                 final leadData = LeaveRequestItem(
                                   startDate: formattedStartDate,
@@ -252,7 +257,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.11,
                     decoration: const BoxDecoration(
-                        gradient: const LinearGradient(
+                        gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [

@@ -1,6 +1,5 @@
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -58,7 +57,7 @@ class MapContent extends ConsumerWidget{
   void _getDirections(
       {required WidgetRef ref, required LatLng origin, required LatLng destination}) async {
     final directions = await ref.read(directionsProvider(destination).future);
-    print("directions ${directions}");
+    print("directions $directions");
     if (directions.isNotEmpty) {
       final polyline =
       Polyline(

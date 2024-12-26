@@ -3,7 +3,6 @@ import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_update_data/model/Submit%20Data%20Models/total_income_modal.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,7 +13,7 @@ final isExpTotalIncomeProvider = StateProvider<bool>((ref) => false);
 class TotalIncomeDetailsForm extends ConsumerStatefulWidget {
   // const TotalIncomeDetailsForm({super.key});
   final String customerId;
-  TotalIncomeDetailsForm({required this.customerId});
+  const TotalIncomeDetailsForm({super.key, required this.customerId});
   @override
   _TotalIncomeDetailsFormState createState() => _TotalIncomeDetailsFormState();
 }
@@ -46,7 +45,7 @@ class _TotalIncomeDetailsFormState
   Widget build(BuildContext context) {
     //isExpTotalIncomeProvider
     final appState = ref.watch(pdIncomeDetailsProvider);
-    final _isExpanded = ref.watch(isExpTotalIncomeProvider);
+    final isExpanded = ref.watch(isExpTotalIncomeProvider);
 
     final incomeDetails = ref.watch(totalIncomeDetailsProvider(widget.customerId));
     // print('appState:: ${incomeDetails}');
@@ -64,7 +63,7 @@ class _TotalIncomeDetailsFormState
               ref.refresh(totalIncomeDetailsProvider(widget.customerId));
             }
           },
-          initiallyExpanded: _isExpanded,
+          initiallyExpanded: isExpanded,
           children: <Widget>[
             incomeDetails.when(
                 data: (incomeData) {

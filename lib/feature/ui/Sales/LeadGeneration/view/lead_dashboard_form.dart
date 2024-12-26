@@ -10,8 +10,6 @@ import '../model/lead_rejected_model_data.dart';
 import '../view_model/lead_showing_view_model.dart';
 import 'lead_generation_form.dart';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LeadListScreen extends ConsumerStatefulWidget {
   const LeadListScreen({super.key});
@@ -82,7 +80,7 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
                     Navigator.of(context)
                         .push(MaterialPageRoute(
                             builder: (context) =>
-                                LeadGenerationForm())) // Replace with your second page widget
+                                const LeadGenerationForm())) // Replace with your second page widget
                         .then((refreshNeeded) {
                       // Check if refresh is needed
                       if (refreshNeeded == true) {
@@ -105,7 +103,7 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Created"),
+                      const Text("Created"),
                       Radio<int>(
                         value: 0,
                         groupValue: selectedStatus,
@@ -115,7 +113,7 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
                           });
                         },
                       ),
-                      Text("Assigned"),
+                      const Text("Assigned"),
                       Radio<int>(
                         value: 1,
                         groupValue: selectedStatus,
@@ -125,7 +123,7 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
                           });
                         },
                       ),
-                      Text("Rejected"),
+                      const Text("Rejected"),
                       Radio<int>(
                         value: 2,
                         groupValue: selectedStatus,
@@ -137,7 +135,7 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
                   // Use leadViewModel.when outside of Row
                   leadViewModel.when(
@@ -190,7 +188,7 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
                     color: Colors.blue),
               ),
               const SizedBox(height: 5),
-              Text("Remark: N/A"),
+              const Text("Remark: N/A"),
               // Replace "N/A" with actual remark data if available.
               const SizedBox(height: 20),
               const Text(
@@ -199,7 +197,7 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
               ),
               const SizedBox(height: 10),
 
-              Container(
+              SizedBox(
                 height: 250,
                 width: double.infinity,
                 child: item.selfieWithCustomer != null && item.selfieWithCustomer!.isNotEmpty
@@ -243,7 +241,7 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
                     color: Colors.blue),
               ),
               const SizedBox(height: 5),
-              Text("Remark: N/A"),
+              const Text("Remark: N/A"),
               // Replace "N/A" with actual remark data if available.
               const SizedBox(height: 20),
               const Text(
@@ -252,7 +250,7 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
               ),
               const SizedBox(height: 10),
               // Placeholder for image; replace with actual image loading logic if available.
-              Container(
+              SizedBox(
                 height: 250,
                 width: double.infinity,
                 child: item.selfieWithCustomer != null && item.selfieWithCustomer!.isNotEmpty
@@ -296,7 +294,7 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
                     color: Colors.blue),
               ),
               const SizedBox(height: 5),
-              Text("Remark: N/A"),
+              const Text("Remark: N/A"),
               // Replace "N/A" with actual remark data if available.
               const SizedBox(height: 20),
               const Text(
@@ -305,7 +303,7 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
               ),
               const SizedBox(height: 10),
               // Placeholder for image; replace with actual image loading logic if available.
-              Container(
+              SizedBox(
                 height: 250,
                 width: double.infinity,
                 child: item.selfieWithCustomer != null && item.selfieWithCustomer!.isNotEmpty
@@ -479,7 +477,7 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       padding: EdgeInsets.zero,
-                                      minimumSize: Size(70, 30),
+                                      minimumSize: const Size(70, 30),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
                                       ),
@@ -488,7 +486,7 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
                                       // Navigate to detailed view
                                       showCustomerDetailsDialog(context, item);
                                     },
-                                    child: Icon(
+                                    child: const Icon(
                                       Icons.remove_red_eye,
                                       size: 20, // Adjust icon size to fit the button
                                       color: Colors.white,

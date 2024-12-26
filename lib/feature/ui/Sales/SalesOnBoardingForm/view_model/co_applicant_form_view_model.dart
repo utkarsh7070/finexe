@@ -4,7 +4,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/api/api.dart';
-import 'package:finexe/feature/ui/Sales/NewLone/view_model/new_loan_view_model.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/responce_model/pan_response_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +14,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/dio.dart';
 import '../../../../base/api/dio_exception.dart';
-import '../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/request_model/aadhaar_number_request_model.dart';
 import '../model/request_model/aadhaar_otp_request_model.dart';
 import '../model/request_model/pan_request_model.dart';
@@ -362,9 +360,9 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
           data: aadhaarOtpResquestModel.toJson());
 
       var responseData = response.data;
-      print('fetch pan father response: ${responseData}');
+      print('fetch pan father response: $responseData');
       var message = responseData['message'];
-      print('message - ${message}');
+      print('message - $message');
 
       if(response.statusCode == 400){
         DioExceptions.fromDioError(responseData as DioException, context);
@@ -483,14 +481,14 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
 
     final response = await dio.post(Api.submitCoApplicantForm,
         data: dioFormData, options: Options(headers: {'token': token}));
-    print('Co applicant submit response - ${response}');
+    print('Co applicant submit response - $response');
    // print(response.statusMessage);
   //  print(response.statusCode);
 
     var responseData = response.data;
-    print('fetch pan father response: ${responseData}');
+    print('fetch pan father response: $responseData');
     var message = responseData['message'];
-    print('message - ${message}');
+    print('message - $message');
 
     if(response.statusCode == 400){
       DioExceptions.fromDioError(responseData as DioException, context);
@@ -572,9 +570,9 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
       }
 
       var responseData = response.data;
-      print('fetch pan father response: ${responseData}');
+      print('fetch pan father response: $responseData');
       var message = responseData['message'];
-      print('message - ${message}');
+      print('message - $message');
 
       if(response.statusCode == 400){
         DioExceptions.fromDioError(responseData as DioException, context);
@@ -596,7 +594,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         for (final todo in state)
           if (todo.id == index) todo.copyWith(isLoading: false) else todo
       ];
-      DioExceptions.fromDioError(error as DioException, context);
+      DioExceptions.fromDioError(error, context);
       throw Exception(error);
       // throw Exception(error);
     }
@@ -609,17 +607,17 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
     }
     final panRequestModel = PanRequestModel(
         docType: 523, panNumber: state[index].pan, transId: "111XXXXX",formName: "coApplicant");
-    print('pan panRequestModel ${panRequestModel}');
+    print('pan panRequestModel $panRequestModel');
     try {
       final response =
           await dio.post(Api.panVerify, data: panRequestModel.toJson());
 
-      print('pan verify respons ${response}');
+      print('pan verify respons $response');
 
       var responseData = response.data;
-      print('fetch pan father response: ${responseData}');
+      print('fetch pan father response: $responseData');
       var message = responseData['message'];
-      print('message - ${message}');
+      print('message - $message');
 
       if(response.statusCode == 400){
         DioExceptions.fromDioError(responseData as DioException, context);
@@ -713,7 +711,7 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
             state = [
               for (final todo in state)
                 if (todo.id == index)
-                  todo.copyWith(applicantPhotoFilePath: pickedImage?.path)
+                  todo.copyWith(applicantPhotoFilePath: pickedImage.path)
                 else
                   todo
             ];
@@ -2092,7 +2090,7 @@ class KycFormState {
         isAadhaarValid: isAadhaarValid ?? this.isAadhaarValid,
         aadhaar: aadhaar ?? this.aadhaar,
 
-        isCoApplicantContact: isCoApplicantContact ?? this.isCoApplicantContact,
+        isCoApplicantContact: isCoApplicantContact ?? isCoApplicantContact,
         coApplicantContact: coApplicantContact ?? this.coApplicantContact,
 
 

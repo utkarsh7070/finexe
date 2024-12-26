@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../../base/routes/routes.dart';
@@ -8,7 +7,6 @@ import '../../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../../base/utils/namespase/display_size.dart';
 import '../../../../../../base/utils/widget/app_button.dart';
 import '../../../../../../base/utils/widget/app_text_filed_login.dart';
-import '../../../view_model/application_form_view_model.dart';
 import '../../../view_model/co_applicant_form_view_model.dart';
 import 'co_applicant_form1.dart';
 
@@ -221,7 +219,7 @@ class CoApplicantForm2 extends ConsumerWidget {
                           SizedBox(
                             height: displayHeight(context) * 0.02,
                           ),
-                          Text('Same as permanent address'),
+                          const Text('Same as permanent address'),
                           Row(
                             children: [
                               SizedBox(
@@ -445,13 +443,13 @@ class CoApplicantForm2 extends ConsumerWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.add,
                                 ),
                                 SizedBox(
                                   width: displayWidth(context) * 0.01,
                                 ),
-                                Text('Add more co-applicant')
+                                const Text('Add more co-applicant')
                               ],
                             ),
                           ),

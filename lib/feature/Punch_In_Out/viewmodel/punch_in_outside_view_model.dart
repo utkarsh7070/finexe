@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:flutter/Material.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../base/api/api.dart';
 import '../../base/routes/routes.dart';
-import '../../base/service/session_service.dart';
 import '../../base/utils/widget/custom_snackbar.dart';
 
 final punchInOutSideViewModelProvider = StateProvider.autoDispose((ref) {
@@ -43,7 +43,9 @@ class PunchInOutSideViewModel {
 
   Future<bool> punchInOutSideRequest(String reasonForPunch, BuildContext context) async {
     try {
-      String? token = await SessionService.getToken();
+      // String? token = speciality.getToken();
+      String? token = speciality.getToken();
+
 
       final requestData = {
         "remark": reasonForPunch,
@@ -69,8 +71,74 @@ class PunchInOutSideViewModel {
     }
   }
 
-  void navigateBasedOnRole(String role, BuildContext context) {
-    switch (role) {
+  Future<void> navigateBasedOnRole(String role, BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? roles = prefs.getStringList('roleName');
+    print('Punch In Out Side roles-$roles ');
+
+    if (roles != null) {
+      if (roles.contains('admin')) {
+        log("Navigating to admin dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.dashBoard, // Admin dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } else if (roles.contains('sales')) {
+        log("Navigating to sales dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.dashBoard, // Sales dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } else if (roles.contains('collection')) {
+        log("Navigating to collection dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.collectionHome, // Collection dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } else if (roles.contains('salesAndCollection')) {
+        log("Navigating to sales and collection dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.dashBoard, // Sales and Collection dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } else if (roles.contains('salesPdAndCollection')) {
+        log("Navigating to sales PD and collection dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.dashBoard, // Sales PD and Collection dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } else if (roles.contains('cibil')) {
+        log("Navigating to CIBIL dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.dashBoard, // CIBIL dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } else {
+        // Default role navigation
+        log('No matching role found, navigating to HRMS');
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.hrms, // Default route
+              (route) => false, // Remove all previous routes
+        );
+      }
+    } else {
+      // Handle the case where roles are null
+      log('No roles found, navigating to HRMS');
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.hrms, // Default route
+            (route) => false, // Remove all previous routes
+      );
+    }
+
+    /*switch (role) {
       case 'admin':
         log("Navigating to admin dashboard");
         Navigator.pushNamedAndRemoveUntil(
@@ -128,7 +196,7 @@ class PunchInOutSideViewModel {
               (route) => false, // Remove all previous routes
         );
         break;
-    }
+    }*/
   }
 
   // Future<void> initialiseRoamSdk(BuildContext context,String name) async {

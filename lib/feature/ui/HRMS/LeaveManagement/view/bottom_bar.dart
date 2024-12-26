@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../base/utils/namespase/app_colors.dart';
-import '../../../Sales/SalesProfile/model/login_user_profile.dart';
 
 class BottomBar extends StatelessWidget {
   // final LoginUserProfile employee;
@@ -10,8 +9,7 @@ class BottomBar extends StatelessWidget {
   final String punchOutTime;
 
   // BottomBar({Key? key, required this.employee}) : super(key: key);
-  const BottomBar({Key? key, required this.punchInTime, required this.punchOutTime})
-      : super(key: key);
+  const BottomBar({super.key, required this.punchInTime, required this.punchOutTime});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +20,7 @@ class BottomBar extends StatelessWidget {
         DateFormat format = DateFormat("yyyy-MM-dd'T'hh:mm:ss a");
         DateTime dateTime = format.parse(time);// Handle empty strings
         // final parsedTime = DateTime.parse(time);
-        print('parse time ${dateTime}');
+        print('parse time $dateTime');
         return DateFormat.jm()
             .format(dateTime); // Format as 09:30 AM/PM
       } catch (e) {

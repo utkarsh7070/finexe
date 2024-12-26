@@ -2,10 +2,8 @@ import 'dart:async';
 import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/ui/Sales/SalesProfile/view/sales_profile.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../base/routes/routes.dart';
 import '../../LeadGeneration/view/lead_dashboard_form.dart';
@@ -16,7 +14,7 @@ import 'dash_board_bottom_navigation_bar.dart';
 import 'dashboard_drawer.dart';
 
 class MyDashBoardWidget extends ConsumerStatefulWidget {
-  const MyDashBoardWidget({Key? key}) : super(key: key);
+  const MyDashBoardWidget({super.key});
 
   @override
   _DashBoardScreen createState() => _DashBoardScreen();
@@ -154,10 +152,10 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
           drawer:  const DrawerScreen(),
           body: IndexedStack(
             index: tabViewModel.selectedIndex,
-            children: <Widget>[
-              const OnBoardingScreen(),
-              const SalesCasesScreen(),
-              const LeadListScreen(),
+            children: const <Widget>[
+              OnBoardingScreen(),
+              SalesCasesScreen(),
+              LeadListScreen(),
               SalesProfile(),
 
             ],

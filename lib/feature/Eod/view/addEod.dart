@@ -14,11 +14,11 @@ class EODScreenAdd extends ConsumerWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("Update BOD Task"),
+          title: const Text("Update BOD Task"),
           centerTitle: true,
         ),
         body: state.isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : Column(
                 children: [
                   SizedBox(

@@ -9,8 +9,7 @@ import '../view_model/stamp_request_view_model.dart';
 import 'CustomerSelectorDroper/customlist_drop_drown.dart';
 
 class StampRequestForm extends ConsumerStatefulWidget {
-  const StampRequestForm({Key? key})
-      : super(key: key); // Removed const keyword here
+  const StampRequestForm({super.key}); // Removed const keyword here
   @override
   ConsumerState<StampRequestForm> createState() => _StampRequestFormState(index: 0);
 }
@@ -26,12 +25,12 @@ class _StampRequestFormState extends ConsumerState<StampRequestForm> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Stamp Request Form"),
+        title: const Text("Stamp Request Form"),
         centerTitle: true,
         flexibleSpace: Container(
           color: Colors.white,
         ),
-        titleTextStyle: TextStyle(
+        titleTextStyle: const TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: 18,
           color: AppColors.black,

@@ -1,6 +1,7 @@
 // user_profile_view_model.dart
 import 'dart:async';
 
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/model/hrmsUserProfile.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
@@ -11,10 +12,6 @@ import '../../../../Punch_In_Out/model/check_attendance_responce_model.dart';
 import '../../../../Punch_In_Out/repository/puch_In_repository_imp.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../../../../base/api/api.dart';
-import '../../../../base/api/dio_exception.dart';
-import '../../../../base/service/session_service.dart';
-import '../../../Collection/Collection_home_dashboard/home_collection_viewmodel/fetchUserProfile.dart';
-import '../model/login_user_profile.dart';
 
 /*final loginUserProfileProvider = StateNotifierProvider<UserProfileNotifier, AsyncValue<LoginUserProfile>>((ref) {
   return UserProfileNotifier();
@@ -25,7 +22,11 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<LoginUserProfile>> {
 
   Future<void> fetchLoginUserProfile() async {
     try {
+<<<<<<< HEAD
       String? token = await SessionService.getToken();
+=======
+      String? token = speciality.getToken();
+>>>>>>> origin/To_merge
       final response = await Dio().get(
         Api.getEmployeeDetails,
         options: Options(headers: {"token": token}),
@@ -91,7 +92,7 @@ Future<List<String>> checkPunchStatus(PunchInRepositoryImp punch) async {
   print(position.longitude);
   // log('stored token:: ' + tokens.toString());
   // log('stored role:: ' + role!.first??'');
-  if (position != null && tokens != null) {
+  if (tokens != null) {
     Map<String, String> token = {"token": tokens};
     Map<String, double> location = {
       "latitude": position.latitude,
@@ -106,7 +107,7 @@ Future<List<String>> checkPunchStatus(PunchInRepositoryImp punch) async {
         checkAttendanceResponse.items.punchOutTime.toString()
       ];
       return responseData;
-    } on DioException catch (error) {
+    } on DioException {
       // DioExceptions.fromDioError(error, context);
     }
   }
@@ -115,12 +116,12 @@ Future<List<String>> checkPunchStatus(PunchInRepositoryImp punch) async {
 
 final loginUserProfileProvider =
     FutureProvider.autoDispose<HRMSUserProfile>((ref) async {
-  final _punchInRepository = ref.watch(punchInRepositoryProvider);
-  List<String> punchTime = await checkPunchStatus(_punchInRepository);
+  final punchInRepository = ref.watch(punchInRepositoryProvider);
+  List<String> punchTime = await checkPunchStatus(punchInRepository);
 
   try {
     // Fetch the token
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // Make the API call
     final response = await Dio().get(
@@ -154,6 +155,6 @@ final loginUserProfileProvider =
   } catch (error) {
     // Log the error for debugging
     print('Error: $error');
-    throw error; // The FutureProvider will handle this as an AsyncError
+    rethrow; // The FutureProvider will handle this as an AsyncError
   }
 });

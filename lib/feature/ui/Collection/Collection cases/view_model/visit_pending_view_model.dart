@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:bson/bson.dart';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/collection_mode_response_model.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/get_mode_by_id_response_model.dart';
@@ -21,7 +22,6 @@ import 'package:http/http.dart' as http;
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
 import '../../../../base/api/dio_exception.dart';
-import '../../../../base/service/session_service.dart';
 import '../model/visit_closure_submit_request_model.dart';
 import '../model/get_visit_pending_response_data.dart';
 import '../model/visit_pending_items_model.dart';
@@ -209,9 +209,18 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
   }
 
   Future<void> visitFormSubmit(
+
       {required ItemsDetails datas, required BuildContext context}) async {
+
+    if(state.isLoading==true){
+      return;
+    }
     state = state.copyWith(isButtonVissible: true);
+    state = state.copyWith(isLoading: true);
+
     print('image of uploaded $imageApi');
+
+
     final strDate = DateFormat('dd/MM/yyyy').parse(state.date);
     final date = DateFormat('yyyy-MM-dd').format(strDate);
     final requestModel = VisitUpdateSubmitRequestModel(
@@ -233,7 +242,7 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
 
 
     print(requestModel);
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     try {
       final response = await dio.post(Api.visitFormSubmit,
@@ -245,7 +254,6 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
         print(response.data);
       }
       if (response.statusCode == 200) {
-        state = state.copyWith(isButtonVissible: false);
         log('updated vist test');
         showCustomSnackBar(context, response.data['message'], Colors.green);
       } else {
@@ -254,22 +262,13 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
       }
     } catch (e) {
       DioExceptions.fromDioError(e as DioException, context);
+      showCustomSnackBar(context, 'something went wrong', Colors.red);
     }
-    // position.when(
-    //   data: (data) async {
-    //     print(data);
-    //
-    //
-    //   },
-    //   error: (error, stackTrace) {
-    //     if (kDebugMode) {
-    //       print(error);
-    //     }
-    //     DioExceptions.fromDioError(error as DioException, context);
-    //     return false;
-    //   },
-    //   loading: () {},
-    // );
+    finally {
+      state = state.copyWith(isButtonVissible: false);
+      state = state.copyWith(isLoading: false);
+    }
+
   }
 
   void updatePhotoValue(context) {
@@ -539,8 +538,10 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     // }
   }
 
-  Future<void> updateEmiSubmitButton(
-      {required ItemsDetails detail,
+  /*Future<void> updateEmiSubmitButton(
+
+      {
+        required ItemsDetails detail,
       required BuildContext context,
       required WidgetRef ref}) async {
     state = state.copyWith(isButtonVissible: true);
@@ -604,6 +605,97 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       throw Exception('Failed to load data');
       // return false;
     }
+  }*/
+
+  Future<void> updateEmiSubmitButton(
+      {required ItemsDetails detail,
+        required BuildContext context,
+        required WidgetRef ref}) async {
+    state = state.copyWith(isButtonVissible: true);
+    if(state.isLoading ==true){
+
+        print(
+            'Second time click ');
+      return;
+    }
+    state = state.copyWith(isLoading: true);
+    if (kDebugMode) {
+      print(
+          'Ld o:-${detail.ld}, customerName:- ${detail.customerName}, mobile:- ${detail.mobile}, commonId:- ${state.commonId}, image:- ${state.transactionImage}');
+    }
+
+
+    ObjectId? result1 = parseObjectId(state.commonId);
+
+
+    UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
+        fatherName: detail.fatherName ?? '',
+        ld: detail.ld ?? '',
+        collectedBy: '',
+        customerName: detail.customerName ?? '',
+        mobileNo: int.parse(detail.mobile ?? ''),
+        receivedAmount: int.parse(state.emiAmount),
+        transactionId: state.transactionId,
+        transactionImage: state.transactionImage,
+        modeOfCollectionId: state.modeOfCollectionId,
+        commonId: result1,
+        bankName: state.bankName,
+        customerEmail: state.receipt,
+        emiReceivedDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        remarkByCollection: state.remark,
+        partner: detail.partner!);
+
+
+    print('Update EMI Input -${requestModel.toJson()}');
+
+
+    String? token =speciality.getToken();
+    try{
+      final response = await dio.post(Api.updateEmiSubmit,
+          data: requestModel.toJson(),
+          options: Options(
+            headers: {"token": token},
+            validateStatus: (status) => true,
+          ));
+      if (kDebugMode) {
+        print(response.statusMessage);
+        print(response.statusCode);
+      }
+
+
+      var responseData = response.data;
+      print('Emi Paid response: $responseData');
+      var message = responseData['message'];
+
+
+      if (response.statusCode == 200 || responseData['status'] == true) {
+        showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
+        updatePhotoValue(context);
+
+
+        ref.refresh(fetchVisitPendingDataProvider);
+        ref.invalidate(updateEmiViewModelProvider);
+
+
+        if (kDebugMode) {
+          print('EmiUpdateResponse ${response.data}');
+        }
+      } else if (response.statusCode == 400 || responseData['status'] == false) {
+// isLoading = false;
+        showCustomSnackBar(context, message, Colors.red);
+        print('Emi paid message ${response.statusMessage}');
+      } else {
+        throw Exception('Failed to load data');
+// return false;
+      }
+    }catch(e){
+      showCustomSnackBar(context, 'Something went wrong', Colors.red);
+      rethrow;
+    }finally{
+      state = state.copyWith(isButtonVissible: false);
+      state = state.copyWith(isLoading: false);
+    }
+
   }
 
   Future<XFile?> clickPhoto() async {
@@ -642,7 +734,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final response = await dio.post(Api.uploadImageCollection,
         data: formData, options: Options(headers: {"token": token}));
     if (response.statusCode == 200) {
-      print('image url response ${response}');
+      print('image url response $response');
       VisitUpdateUploadImageResponseModel imageResponseModel =
           VisitUpdateUploadImageResponseModel.fromJson(response.data);
       state = state.copyWith(isLoading: false);
@@ -651,10 +743,11 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       if (kDebugMode) {
         print('image url ${imageResponseModel.items.image}');
         print('image url1 ${response.data}');
-
-        imageApi = imageResponseModel.items.image;
-        print(imageApi);
       }
+
+       imageApi = imageResponseModel.items.image;
+        print(imageApi);
+
     } else {
       state = state.copyWith(isLoading: false);
       throw Exception('Failed to load data');
@@ -792,7 +885,7 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
       settlementForReason: state.reason,
     );
 
-    String? toke = await SessionService.getToken();
+    String? toke = speciality.getToken();
     /*final String token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
     */

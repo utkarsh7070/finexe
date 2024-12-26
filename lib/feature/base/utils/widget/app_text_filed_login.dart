@@ -114,7 +114,7 @@ class AppFloatTextField extends StatelessWidget {
                   child: Icon(suffixIcon, color: Colors.grey),
                 )
               : null,
-          contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),  // Add this property
+          contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),  // Add this property
           enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: AppColors.gray, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(10))),

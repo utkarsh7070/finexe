@@ -5,7 +5,6 @@ import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/ui/authenticate/model/login_request_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -118,7 +117,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
           if (state.value!.checkPunch) {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             List<String>? roles = prefs.getStringList('roleName');
-            print('Login screen roles-${roles} ');
+            print('Login screen roles-$roles ');
 
             if (roles != null) {
               if (roles.contains('admin')) {
@@ -277,7 +276,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
       await dio.post(Api.login, data: loginRequestModel.toJson());
 
       var responseData = response.data;
-      print('Login response: ${responseData}');
+      print('Login response: $responseData');
       var message = responseData['message'];
 
       if (response.statusCode == 200) {
@@ -352,7 +351,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
 
 class DataModel {
   final String loginStatus;
-  // final String role;
+ // final String role;
   final List<String> role;
   final bool checkPunch;
   final bool allowed;
@@ -447,23 +446,21 @@ Future<Position> _getCurrentLocation() async {
 }
 
 Future<PunchModel> punchStatusFunction(
-    _punchInRepository, String token, BuildContext context) async {
+    punchInRepository, String token, BuildContext context) async {
   log('stored token:: $token');
   Position position = await _getCurrentLocation();
-  if (position != null && token != null) {
-    Map<String, String> tokens = {"token": token};
-    Map<String, double> location = {
-      "latitude": position.latitude,
-      "longitude": position.longitude,
-    };
-    try {
-      Response response = await _punchInRepository.checkPunch(location, tokens);
-      var checkAttendanceResponse =
-      CheckAttendanceResponseModel.fromJson(response.data);
-      return PunchModel(punchIn: checkAttendanceResponse.items.punchIn,allowed: checkAttendanceResponse.items.allowed);
-    } on DioException catch (error) {
-      DioExceptions.fromDioError(error, context);
-    }
+  Map<String, String> tokens = {"token": token};
+  Map<String, double> location = {
+    "latitude": position.latitude,
+    "longitude": position.longitude,
+  };
+  try {
+    Response response = await punchInRepository.checkPunch(location, tokens);
+    var checkAttendanceResponse =
+    CheckAttendanceResponseModel.fromJson(response.data);
+    return PunchModel(punchIn: checkAttendanceResponse.items.punchIn,allowed: checkAttendanceResponse.items.allowed);
+  } on DioException catch (error) {
+    DioExceptions.fromDioError(error, context);
   }
   return PunchModel(allowed: false,punchIn: false);
   // SesstionModel(

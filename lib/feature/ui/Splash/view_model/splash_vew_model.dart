@@ -1,6 +1,12 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/dio.dart';
+
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,30 +62,24 @@ import '../../../base/utils/namespase/app_constants.dart';
 //   // Return true if token exists (logged in), false otherwise (not logged in)
 // });
 
-
 class SessionModel {
   final bool? token;
   final String? role;
   final bool? puntchStatus;
   final String? apkUrl;
   final bool? isUpdateRequired;
+ // final List<String>?allRoleName;
+
 
   SessionModel(
-      {this.token = false, this.role = '', this.puntchStatus = false,this.apkUrl='', this.isUpdateRequired= false});
-//   SessionModel copyWith({
-//      bool? token;
-//      String? role;
-//      bool? puntchStatus;
-//     final String? apkUrl;
-//     final bool isUpdateRequired;
-// })
+      {/*this.allRoleName,*/this.token = false, this.role = '', this.puntchStatus = false,this.apkUrl='', this.isUpdateRequired= false});
+
 
 }
 
 // final punchInRepositoryProvider = Provider.autoDispose<PunchInRepositoryImp>((ref) {
 //   return PunchInRepositoryImp(); // Provides instance of PunchInRepository
 // });
-
 
 Future<Position> getCurrentLocation() async {
   await Geolocator.requestPermission();
@@ -131,11 +131,11 @@ class ApiService{
   String? apkUrl;
   bool isUpdateRequired =  false;
 
-  Future<SessionModel> fetchPosts( ref) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? tokens = prefs.getString('token');
+  Future<SessionModel> fetchPosts(ref) async {
+  
+    String? tokens = speciality.getToken();
     final dio = ref.watch(dioProvider);
-    List<String>? role = prefs.getStringList('roleName');
+    List<String>? role = speciality.getRole();
     final position = await getCurrentLocation();
     if (tokens != null) {
       Map<String, String> token = {"token": tokens};
@@ -147,27 +147,57 @@ class ApiService{
         Response response =
         await dio.get(Api.checkPunchIn,
             queryParameters: location, options: Options(headers: token));
-        print(response.data);
-        var checkAttendanceResponse =
-        CheckAttendanceResponseModel.fromJson(response.data);
-        print(response.data);
-        punchStatus = checkAttendanceResponse.items.punchIn;
-        final versionResponse = await dio.get(Api.getVersion);
-        final data = versionResponse.data['items'];
-        final serverVersion = data['version'];
-        apkUrl = data['apkUrl'];
-        print(response.data);
+            if(kDebugMode){
 
-        print('app server version- ${serverVersion} and App version-${AppConstants.staticAppVersion}');
-        isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
+            
+        print('response data////// ${response.data}');}
 
-      } on DioException catch (error) {
-        throw Exception(error);
-        // DioExceptions.fromDioError(error,context);
+     
+
+        if(response.statusCode == 200) {
+
+          var checkAttendanceResponse =
+          CheckAttendanceResponseModel.fromJson(response.data);
+          print(response.data);
+
+          punchStatus = checkAttendanceResponse.items.punchIn;
+
+          final versionResponse = await dio.get(Api.getVersion);
+          final data = versionResponse.data['items'];
+          final serverVersion = data['version'];
+          apkUrl = data['apkUrl'];
+          print(response.data);
+
+          print(
+              'app server version- $serverVersion and App version-${AppConstants
+                  .staticAppVersion}');
+          isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
+        }else {
+          throw Exception('Failed to load data');
+        }
+
+      } catch (e) {
+        if (e is DioException) {
+          if (e.response?.statusCode == 400) {
+            // Handle 400 response
+            final errorMessage = e.response?.data['message'] ?? 'Bad Request';
+            print("400 Error: $errorMessage");
+            showCustomSnackBar(ref, errorMessage, Colors.red);
+
+          } else {
+            // Handle other Dio errors
+            print("DioError: ${e.message}");
+            showCustomSnackBar(ref, "Something went wrong. Please try again.", Colors.red);
+          }
+        } else {
+          // Handle non-Dio errors
+          print("Error submitting form: $e");
+          showCustomSnackBar(ref, "An unexpected error occurred.", Colors.red);
+        }
       }
     }
     return SessionModel(
-        token: tokens != null, role: role?.first, puntchStatus: punchStatus,apkUrl: apkUrl,isUpdateRequired: isUpdateRequired);
+        /*allRoleName:role,*/token: tokens != null, role: role?.first, puntchStatus: punchStatus,apkUrl: apkUrl,isUpdateRequired: isUpdateRequired);
   }
 
   // Future<void> downloadAndInstallApk(String apkUrl) async {

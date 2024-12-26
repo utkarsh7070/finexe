@@ -13,6 +13,8 @@ import '../../../../base/dialog/logout_dialog.dart';
 import '../../../../base/utils/namespase/app_colors.dart'; // Make sure to import the intl package for date formatting
 
 class SalesProfile extends ConsumerStatefulWidget {
+  const SalesProfile({super.key});
+
   @override
   _SalesProfileState createState() => _SalesProfileState();
 }
@@ -35,13 +37,13 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
     final userProfileAsync = ref.watch(loginUserProfileProvider);
     final checkpunchProvider = ref.watch(attendanceProvider);
 
-    print('user profile data ${userProfileAsync}');
+    print('user profile data $userProfileAsync');
 
 
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Profile'),
+        title: const Text('User Profile'),
         centerTitle: true, // This centers the title
       ),
       body: userProfileAsync.when(
@@ -90,7 +92,7 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
                               children: [
                                 Text(
                                   userProfile.fullName,
-                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                                   textAlign: TextAlign.center, // Center the name
                                 ),
                                 Text(
@@ -120,7 +122,7 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('Mobile Number:', style: TextStyle(fontWeight: FontWeight.bold)),
+                              const Text('Mobile Number:', style: TextStyle(fontWeight: FontWeight.bold)),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(userProfile.mobileNo.toString(), textAlign: TextAlign.right),
@@ -133,7 +135,7 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('Joining Date:', style: TextStyle(fontWeight: FontWeight.bold)),
+                              const Text('Joining Date:', style: TextStyle(fontWeight: FontWeight.bold)),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(joiningDate, textAlign: TextAlign.right),
@@ -146,7 +148,7 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('Date of Birth:', style: TextStyle(fontWeight: FontWeight.bold)),
+                              const Text('Date of Birth:', style: TextStyle(fontWeight: FontWeight.bold)),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(dateOfBirth, textAlign: TextAlign.right),
@@ -159,7 +161,7 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('Employee Unique ID:', style: TextStyle(fontWeight: FontWeight.bold)),
+                              const Text('Employee Unique ID:', style: TextStyle(fontWeight: FontWeight.bold)),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(userProfile.employeUniqueId, textAlign: TextAlign.right),
@@ -175,23 +177,23 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
                   child: Center(
                 child: Column(
                   children: [
-                    SizedBox(height: 30),
-                    Container(
+                    const SizedBox(height: 30),
+                    SizedBox(
                       width: 250,
                       child: ElevatedButton(
                         onPressed: () {
                           LogOutDialog.logOutDialog(context: context);
                         },
-                        child: Text(
+                        child: const Text(
                           'Logout',
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
-                    Container(
+                    SizedBox(
                       width: 250,
                       child: ElevatedButton(
                         onPressed: () {
@@ -209,7 +211,7 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
                                   color: Colors.white,
                                 ),
                               )
-                            : Text(
+                            : const Text(
                                 'PuchOut',
                                 style: TextStyle(color: Colors.white),
                               ),
@@ -223,8 +225,8 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
             ),
           );
         },
-        loading: () => Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Failed to load user profile')),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => const Center(child: Text('Failed to load user profile')),
       ),
     );
 

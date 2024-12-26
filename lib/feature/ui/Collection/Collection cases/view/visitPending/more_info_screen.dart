@@ -5,9 +5,7 @@ import 'package:finexe/feature/base/extentions/capital_letter.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/VisitItemClosureModelData.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,7 +25,7 @@ class CollectionMoreInfoScreen extends ConsumerStatefulWidget {
   _MoreInfoScreen createState() => _MoreInfoScreen();
 
   final int index;
-  CollectionMoreInfoScreen({required int this.index});
+  const CollectionMoreInfoScreen({super.key, required this.index});
 
 }
 class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with SingleTickerProviderStateMixin {
@@ -92,7 +90,7 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
           return ItemsDetails.fromJson(map);
         }).toList();
 
-        final safeIndex = widget.index != null && widget.index < listOfLists.length ? widget.index : 0;
+        final safeIndex = widget.index < listOfLists.length ? widget.index : 0;
         ItemsDetails item = listOfLists[safeIndex];
 
         // Extract the LD number from the item

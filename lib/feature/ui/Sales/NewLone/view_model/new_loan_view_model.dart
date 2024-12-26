@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Sales/NewLone/model/submit_new_loan_response_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +62,7 @@ class NewLoanViewModel extends StateNotifier<PhoneNumberState> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final token = sharedPreferences.getString('token');
     if (kDebugMode) {
-      print('product ${id}');
+      print('product $id');
     }
     print('loanAmount ${state.loanAmount}');
     print('emi ${state.emi}');
@@ -88,6 +89,8 @@ class NewLoanViewModel extends StateNotifier<PhoneNumberState> {
           SubmitNewLoanResponseModel.fromJson(response.data);
       SessionService.customerIdSave(
           customerId: submitNewLoanResponseModel.items.id);
+      SessionService.paymentMode(
+          paymentMode: submitNewLoanResponseModel.items.PaymentGateway);
       return true;
     } else {
       throw Exception('Failed to load data');
@@ -252,7 +255,7 @@ class PhoneNumberState {
 //-------------------------------Api--getAllProduct-------------------------------------------------
 
 final fetchDataProvider = FutureProvider<List<Item>>((ref) async {
-  String? token = await SessionService.getToken();
+  String? token = speciality.getToken();
   final dio = ref.read(dioProvider);
   final response = await dio.get(
     Api.getAllProduct,

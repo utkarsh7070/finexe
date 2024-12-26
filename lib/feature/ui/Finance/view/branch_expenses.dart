@@ -9,8 +9,7 @@ import 'CustomerSelectorDroper/custom_radioButton_screen.dart';
 import 'CustomerSelectorDroper/customlist_drop_drown.dart';
 
 class BranchExpensesForm extends ConsumerStatefulWidget {
-  const BranchExpensesForm({Key? key})
-      : super(key: key); // Removed const keyword here
+  const BranchExpensesForm({super.key}); // Removed const keyword here
   @override
   ConsumerState<BranchExpensesForm> createState() => _BranchExpensesFormState(index: 0);
 }
@@ -49,7 +48,7 @@ class _BranchExpensesFormState extends ConsumerState<BranchExpensesForm> {
                     // Claim Type Radio Button
                     CustomRadioButtonScreen(
                       heading: 'Pay Mode',
-                      options: ['Advance', 'Claim', 'To Pay'],
+                      options: const ['Advance', 'Claim', 'To Pay'],
                       onSelect: (selectedOption) {
                         fromStateViewModel.updateClaimType(index, selectedOption);
                       },
@@ -93,9 +92,9 @@ class _BranchExpensesFormState extends ConsumerState<BranchExpensesForm> {
                         onTap: () {
                           fromStateViewModel.removeExpenseEntry(index);
                         },
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.end,
-                          children: const [
+                          children: [
                             Icon(Icons.remove),
                             SizedBox(width: 8),
                             Text('Remove Form Entry'),

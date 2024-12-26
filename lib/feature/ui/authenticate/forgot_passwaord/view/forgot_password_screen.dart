@@ -1,12 +1,9 @@
-import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
 import 'package:finexe/feature/base/utils/widget/app_text_filed_login.dart';
-import 'package:finexe/feature/base/utils/widget/upload_box.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ForgotPasswordScreen extends ConsumerWidget {
