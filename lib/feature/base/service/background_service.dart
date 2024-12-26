@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:finexe/feature/base/service/socket_io_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -278,8 +279,10 @@ class BackgroundService {
           if (kDebugMode) {
             print('isForegroundService');
           }
-          SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-          String? userId = sharedPreferences.getString('employeId');
+          // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+          // String? userId = sharedPreferences.getString('employeId');
+          String? userId = speciality.getEmployeId();
+
           //-------------------start tracking ---------------------------------
           // startTracking(userId!);
           if (socket != null && socket.connected) {

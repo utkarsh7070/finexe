@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
@@ -74,7 +75,7 @@ class PDApplicantViewModel extends StateNotifier<ApplicantState> {
       'applicantImage': applicantdImage
     };
 
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
     print('stored token:: $token');
@@ -142,7 +143,7 @@ class ApplicantState {
 }
 // final loanDetailsProvider = FutureProvider.autoDispose
 //     .family<LoanDetails, String>((ref, customerId) async {
-//   final token = await SessionService.getToken();
+//   final token = speciality.getToken();
 //   final viewModel = LoanDetailsProvider();
 //   return await viewModel.fetchLoanDetails(token, customerId);
 // });
@@ -156,7 +157,7 @@ class ApplicationFormDetailsProvider {
   final Dio _dio = Dio();
 
   Future<ApplicantItems> fetchApplicationDetails(String customerId) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY"; // Replace with a secure way of managing tokens
@@ -217,7 +218,7 @@ class ApplicantImageNotifier extends StateNotifier<XFile?> {
   }
 
   Future<String> uploadImage(String image, BuildContext context) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";

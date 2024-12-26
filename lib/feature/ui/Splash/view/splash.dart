@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dio/dio.dart';
+import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/internetConnection/connection_overlay.dart';
 import 'package:finexe/feature/base/internetConnection/connectivity.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
+import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Sales/OnBoarding/view_model/on_boarding_view_model.dart';
 import 'package:finexe/feature/ui/Splash/view_model/splash_vew_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,6 +23,7 @@ class SplashScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+     
   
 
     bool isOffline = false;
@@ -27,14 +32,15 @@ class SplashScreen extends ConsumerWidget {
     return ConnectivityBuilder(builder: (_, conectivityresult) {
       isOffline = conectivityresult.contains(ConnectivityResult.none);
       if (isOffline==false) {
-        //  ref.read(contextProvider.notifier).state = context;
+       
         final asyncValue = ref.watch(splashViewModelProvider);
         final splashViewModel = ref.read(splashViewModelProvider.notifier);
         final downloaded = ref.watch(downloadProvider);
-        log('asyncValue on splash: ${asyncValue.toString()}');
-
+            if (kDebugMode) {
+        log('asyncValue on splash: ${asyncValue.toString()}');}
         asyncValue.when(
             data: (isLoggedIn) {
+              
               if (kDebugMode) {
                 print('punch status :- ${isLoggedIn.puntchStatus}');
                 print('token :- ${isLoggedIn.token}');
@@ -63,8 +69,9 @@ class SplashScreen extends ConsumerWidget {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     List<String>? roles = prefs.getStringList('roleName');
+                        if (kDebugMode) {
                     print(
-                        'isLoggedIn.role- ${isLoggedIn.role} and roles-${roles} ');
+                        'isLoggedIn.role- ${isLoggedIn.role} and roles-${roles} ');}
 
                     if (roles != null) {
                       if (roles.contains('admin')) {
@@ -213,7 +220,13 @@ class SplashScreen extends ConsumerWidget {
                 ),
               );
             },
-            error: (error, stack) => Center(child: Text('Error: $error')),
+            error: (error, stack) {
+              print('error>>>>???? $error');
+              // DioExceptions.fromDioError( error   , context);
+              return Scaffold(
+                body:Text('error $error') ,
+              );
+            } ,
             loading: () => Container(
                   color: Colors.white,
                   child: Center(

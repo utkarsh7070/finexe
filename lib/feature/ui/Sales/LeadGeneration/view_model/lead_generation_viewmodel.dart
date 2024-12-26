@@ -2,6 +2,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Sales/LeadGeneration/model/get_all_branch_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class LeadGenerationViewModel {
   ];
 
   final fetchDataProvider = FutureProvider.autoDispose<List<Item>>((ref) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
     final dio = ref.read(dioProvider);
     final response = await dio.get(Api.getAllProduct,options: Options(headers: {"token": token}),);
     print(response.statusMessage);
@@ -56,7 +57,7 @@ class LeadGenerationViewModel {
 
   Future<String?> uploadImage(File image) async {
     try {
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
 
       final formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(image.path),
@@ -87,7 +88,7 @@ class LeadGenerationViewModel {
   }
 
   Future<void> leadFormSubmit(LeadGenerationModel leadData, BuildContext context) async {
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
       print('lead input ${leadData.toJson()}');
 
       final response = await _dio.post(
@@ -127,7 +128,7 @@ class LeadGenerationViewModel {
 }
 
 final fetchAllBranchProvider = FutureProvider.autoDispose<List<Branch>>((ref) async {
-  String? token = await SessionService.getToken();
+  String? token = speciality.getToken();
   final dio = ref.read(dioProvider);
   final response = await dio.get(Api.getAllBranch,
     options: Options(headers: {"token": token}

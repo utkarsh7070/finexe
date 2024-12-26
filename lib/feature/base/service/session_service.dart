@@ -1,3 +1,4 @@
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SessionService {
@@ -10,23 +11,26 @@ class SessionService {
       String? trakingMode,
       List<String>? role}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setString('token', accessToken!);
-    preferences.setString('employeId', employeeId!);
-    preferences.setString('name', name ?? '');
-    preferences.setString('email', email ?? '');
-    preferences.setString('roamId', romId ?? '');
-    preferences.setString('trackingMode', trakingMode ?? '');
-    preferences.setStringList('roleName', role ?? []);
+
+    speciality.setToken( accessToken!);
+    speciality.setAllEmployeeData(email:email??'',employeeId: employeeId??'',name:  name ?? '',roamId: romId ?? '',trakingMode: trakingMode ?? '');
+    // preferences.setString('employeId', employeeId!);
+    // preferences.setString('name', name ?? '');
+    // preferences.setString('email', email ?? '');
+    // preferences.setString('roamId', romId ?? '');
+    // preferences.setString('trackingMode', trakingMode ?? '');
+    speciality.setRole(role);
+    // preferences.setStringList('roleName', role ?? []);
 
     print(
-        'session values ${preferences.getString('token')}  ${preferences.getString('employeId')}   ${preferences.getString('name')}   ${preferences.getString('email')}  ${preferences.getStringList('roleName')}');
+        'session values ${speciality.getToken()}  ${preferences.getString('employeId')}   ${preferences.getString('name')}   ${preferences.getString('email')}  ${preferences.getStringList('roleName')}');
   }
 
-// Method to retrieve the token
-  static Future<String?> getToken() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.getString('token');
-  }
+// // Method to retrieve the token
+//   static Future<String?> getToken() async {
+//     SharedPreferences preferences = await SharedPreferences.getInstance();
+//     return preferences.getString('token');
+//   }
 
   static Future<void> customerIdSave({
     String? customerId,
@@ -47,15 +51,15 @@ class SessionService {
     preferences.setBool('punchStatus', punchStatus!);
   }
 
-  static Future<SharedPreferences> getSession() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences;
-  }
+  // static Future<SharedPreferences> getSession() async {
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
+  //   return preferences;
+  // }
 
-  static Future<bool> deleteSession() async {
-    SharedPreferences preferences = await getSession();
-// await preferences.remove('token');
-    await preferences.clear();
-    return true;
-  }
+//   static Future<bool> deleteSession() async {
+//     SharedPreferences preferences = await getSession();
+// // await preferences.remove('token');
+//     await preferences.clear();
+//     return true;
+//   }
 }

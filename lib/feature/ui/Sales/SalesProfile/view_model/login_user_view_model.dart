@@ -1,6 +1,7 @@
 // user_profile_view_model.dart
 import 'dart:async';
 
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/model/hrmsUserProfile.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
@@ -25,7 +26,7 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<LoginUserProfile>> {
 
   Future<void> fetchLoginUserProfile() async {
     try {
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
       final response = await Dio().get(
         Api.getEmployeeDetails,
         options: Options(headers: {"token": token}),
@@ -120,7 +121,7 @@ final loginUserProfileProvider =
 
   try {
     // Fetch the token
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // Make the API call
     final response = await Dio().get(

@@ -53,3 +53,24 @@ void showCustomSnackBar(
     overlayEntry.remove();
   });
 }
+
+
+
+// Global key to access ScaffoldMessenger from anywhere in the app
+
+// class CustomSnackBar2 {
+//   // Method to show the SnackBar without needing context as a parameter
+//   static void show(String message,{Color snackColor = Colors.black87}) {
+//     // Use the global ScaffoldMessengerKey to show the SnackBar
+//     scaffoldMessengerKey.currentContext(
+     
+//       SnackBar(
+        
+//         content: Text(message),
+//         backgroundColor: snackColor,
+//         duration: Duration(seconds: 3),
+//       ),
+//     );
+//   }
+// }
+

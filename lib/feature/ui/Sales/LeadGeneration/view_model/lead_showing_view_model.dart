@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod/src/framework.dart';
@@ -14,7 +15,7 @@ import '../model/lead_rejected_model_data.dart';
 
 
 final leadShowViewModelProvider = FutureProvider.autoDispose<List<dynamic>>((ref) async {
-  String? token = await SessionService.getToken();
+  String? token = speciality.getToken();
   final dio = ref.watch(dioProvider);
   /* final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
@@ -39,7 +40,7 @@ final leadShowViewModelProvider = FutureProvider.autoDispose<List<dynamic>>((ref
 
 
 final leadAssignedProvider = FutureProvider.autoDispose<List<dynamic>>((ref) async {
-  String? token = await SessionService.getToken();
+  String? token = speciality.getToken();
   final dio = ref.watch(dioProvider);
   /* final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
@@ -64,7 +65,7 @@ final leadAssignedProvider = FutureProvider.autoDispose<List<dynamic>>((ref) asy
 
 
 final leadRejectedProvider = FutureProvider.autoDispose<List<dynamic>>((ref) async {
-  String? token = await SessionService.getToken();
+  String? token = speciality.getToken();
   final dio = ref.watch(dioProvider);
   /* final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
@@ -98,7 +99,7 @@ class LeadShowViewModel extends ChangeNotifier {
 
   Future<void> fetchLeads(BuildContext context) async {
     try {
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
       final Map<String, String> queryParam = {"status": "pending", "role": "generate"};
       final response = await _dio.get(
         Api.leadShowPendingList,

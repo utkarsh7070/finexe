@@ -2,6 +2,7 @@
 
 
 import 'package:dio/dio.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../base/api/api.dart';
@@ -16,7 +17,9 @@ import '../model/VisitItemNoticeModelData.dart';
 
 
 final fetchVisitDetailsProvider = FutureProvider.autoDispose.family<List<VisitItemDetail>,String>((ref,ldNumber) async {
-  String? token = await SessionService.getToken();
+  // String? token = speciality.getToken();
+  String? token = speciality.getToken();
+
   final dio = ref.watch(dioProvider);
  /* final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
@@ -41,7 +44,7 @@ final fetchVisitDetailsProvider = FutureProvider.autoDispose.family<List<VisitIt
 
 final fetchVisitCollectionProvider = FutureProvider.autoDispose.family<List<VisitItemCollection>,String>((ref,ldNumber) async {
 final dio = ref.watch(dioProvider);
-  String? token = await SessionService.getToken();
+  String? token = speciality.getToken();
   /*final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
 */
@@ -65,7 +68,7 @@ final dio = ref.watch(dioProvider);
 
 
 final fetchVisitCallingProvider = FutureProvider.autoDispose.family<List<VisitItemCalling>,String>((ref,ldNumber) async {
-  String? token = await SessionService.getToken();
+  String? token = speciality.getToken();
   final dio = ref.watch(dioProvider);
   /*final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
@@ -88,7 +91,7 @@ final fetchVisitCallingProvider = FutureProvider.autoDispose.family<List<VisitIt
 });
 
 final fetchVisitClosureProvider = FutureProvider.autoDispose.family<List<VisitItemClosure>,String>((ref,ldNumber) async {
-  String? token = await SessionService.getToken();
+  String? token = speciality.getToken();
   final dio = ref.watch(dioProvider);
   /*final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
@@ -117,7 +120,7 @@ final fetchVisitClosureProvider = FutureProvider.autoDispose.family<List<VisitIt
 final fetchVisitNoticeProvider = FutureProvider.autoDispose.family<List<VisitItemNotice>,String>((ref,ldNumber) async {
 
   print('this is notice');
-  String? token = await SessionService.getToken();
+  String? token = speciality.getToken();
   final dio = ref.watch(dioProvider);
   /*final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";

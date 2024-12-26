@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import '../../../../../../../base/api/dio.dart';
 // import '../../../../../../../base/service/session_service.dart';
@@ -23,7 +24,7 @@ class PendencyApiService {
   PendencyApiService(this._dio);
 
   Future<Response> postPendencyDetails(PendencyDetailsFormModel model) async {
-    final token = await SessionService.getToken();
+    final token = speciality.getToken();
 
     try {
       // Perform the POST request
@@ -78,7 +79,7 @@ class PendencyApiServiceGet {
   PendencyApiServiceGet(this._dio);
 
   Future<PendencyDetailsFormModel> getPendencyDetails(String customerId) async {
-    final token = await SessionService.getToken();
+    final token = speciality.getToken();
 
     try {
       final response = await _dio.get(

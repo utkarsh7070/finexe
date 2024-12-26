@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:bson/bson.dart';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/collection_mode_response_model.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/get_mode_by_id_response_model.dart';
@@ -233,7 +234,7 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
 
 
     print(requestModel);
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     try {
       final response = await dio.post(Api.visitFormSubmit,
@@ -570,7 +571,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
 
     print('Update EMI Input -${requestModel.toJson()}');
 
-    String? token = await SessionService.getToken();
+    String? token =speciality.getToken();
     final response = await dio.post(Api.updateEmiSubmit,
         data: requestModel.toJson(),
         options: Options(
@@ -792,7 +793,7 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
       settlementForReason: state.reason,
     );
 
-    String? toke = await SessionService.getToken();
+    String? toke = speciality.getToken();
     /*final String token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
     */

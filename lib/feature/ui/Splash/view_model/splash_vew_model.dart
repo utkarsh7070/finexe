@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/dio.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -60,26 +63,25 @@ import '../../../base/utils/namespase/app_constants.dart';
 //   // Return true if token exists (logged in), false otherwise (not logged in)
 // });
 
-
 class SessionModel {
   final bool? token;
   final String? role;
   final bool? puntchStatus;
   final String? apkUrl;
   final bool? isUpdateRequired;
- // final List<String>?allRoleName;
-
+  // final List<String>?allRoleName;
 
   SessionModel(
-      {/*this.allRoleName,*/this.token = false, this.role = '', this.puntchStatus = false,this.apkUrl='', this.isUpdateRequired= false});
-
-
+      {/*this.allRoleName,*/ this.token = false,
+      this.role = '',
+      this.puntchStatus = false,
+      this.apkUrl = '',
+      this.isUpdateRequired = false});
 }
 
 // final punchInRepositoryProvider = Provider.autoDispose<PunchInRepositoryImp>((ref) {
 //   return PunchInRepositoryImp(); // Provides instance of PunchInRepository
 // });
-
 
 Future<Position> getCurrentLocation() async {
   await Geolocator.requestPermission();
@@ -92,11 +94,10 @@ Future<Position> getCurrentLocation() async {
 
 // .................Version Api.............
 
-final splashViewModelProvider = AsyncNotifierProvider<SplashViewModel, SessionModel>(() {
+final splashViewModelProvider =
+    AsyncNotifierProvider<SplashViewModel, SessionModel>(() {
   return SplashViewModel();
 });
-
-
 
 // class VersionCheckState {
 //   final String? apkUrl;
@@ -106,89 +107,111 @@ final splashViewModelProvider = AsyncNotifierProvider<SplashViewModel, SessionMo
 //   VersionCheckState({this.apkUrl, required this.isUpdateRequired});
 // }
 
-class SplashViewModel extends AsyncNotifier<SessionModel>   {
+class SplashViewModel extends AsyncNotifier<SessionModel> {
   // SplashViewModel() : super(const AsyncValue.loading());
   final ApiService _apiService = ApiService();
 
   @override
   FutureOr<SessionModel> build() {
-   
+    
     return _apiService.fetchPosts(ref);
-  //  return _apiService.fetchPosts(  ref);
+    //  return _apiService.fetchPosts(  ref);
   }
   // void downloadApk(String apkUrl,context){
   //   _apiService.downloadAndInstallApk(apkUrl);
   // }
-
 }
 
-final downloadProvider =  StateProvider.autoDispose<String>((ref) {
-  return '';
-},);
+final downloadProvider = StateProvider.autoDispose<String>(
+  (ref) {
+    return '';
+  },
+);
 
-class ApiService{
+class ApiService {
   ApiService();
   // static const platform = MethodChannel('apk_channel');
   // final PunchInRepositoryImp repositoryImp = PunchInRepositoryImp();
   // final Dio _dio = Dio();
   bool? punchStatus;
   String? apkUrl;
-  bool isUpdateRequired =  false;
+  bool isUpdateRequired = false;
 
-  Future<SessionModel> fetchPosts( ref) async {
-  
+  Future<SessionModel> fetchPosts(ref) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? tokens = prefs.getString('token');
-      print('>>>>>>>>>>>>$tokens');
-         var connectivityResult = await Connectivity().checkConnectivity();
- 
+
+    // String? tokens = prefs.getString('token');
+    String? tokens= speciality.getToken();
+    print('>>>>>>>>>>>>$tokens');
+    var connectivityResult = await Connectivity().checkConnectivity();
+
     if (connectivityResult.contains(ConnectivityResult.none)) {
-     
-      return SessionModel();
+       throw Exception('no internet');
       // throw Exception('No internet connection');
-    }else{ 
-
+    } else {
       final dio = ref.watch(dioProvider);
-    List<String>? role = prefs.getStringList('roleName');
-    final position = await getCurrentLocation();
-    if (tokens != null) {
-      Map<String, String> token = {"token": tokens};
-      Map<String, double> location = {
-        "latitude": position.latitude,
-        "longitude": position.longitude,
-      };
-       print('>>>>location>>>>>>>>$location');
-      try {
+      //  List<String>? role = prefs.getStringList('roleName');
 
+      List<String>? role = speciality.getRole();
+      final position = await getCurrentLocation();
+      if (tokens != null) {
+        Map<String, String> token = {"token": tokens};
+        Map<String, double> location = {
+          "latitude": position.latitude,
+          "longitude": position.longitude,
+        };
+        print('>>>>location>>>>>>>>$location');
+        try {
+          Response response = await dio.get(Api.checkPunchIn,
+              queryParameters: location, options: Options(headers: token));
+          print('response data $response');
 
-        Response response =
-        await dio.get(Api.checkPunchIn,
-            queryParameters: location, options: Options(headers: token));
-        print('response$response');
-        var checkAttendanceResponse =
-        CheckAttendanceResponseModel.fromJson(response.data);
-        print(response.data);
-        punchStatus = checkAttendanceResponse.items.punchIn;
-        final versionResponse = await dio.get(Api.getVersion);
-        final data = versionResponse.data['items'];
-        final serverVersion = data['version'];
-        apkUrl = data['apkUrl'];
-        print(response.data);
+          // if (response.statusCode == 200) {
+          //   if (response.data['subCode'] == 200) {
+          //     // i got the data
+          //     print('data found  use the data ');
+          //   }
+          //   else{
+          //     print('data not found print message from api ${response.data['message']}');
+          //   }
+          // }else{
+          //   print('not connected with the server print the exception or somthing went wrong');
+          // }
 
-        print('app server version- ${serverVersion} and App version-${AppConstants.staticAppVersion}');
-        // isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
+          var checkAttendanceResponse =
+              CheckAttendanceResponseModel.fromJson(response.data);
+          print(response.data);
+          punchStatus = checkAttendanceResponse.items.punchIn;
+          final versionResponse = await dio.get(Api.getVersion);
+          final data = versionResponse.data['items'];
+          final serverVersion = data['version'];
+          apkUrl = data['apkUrl'];
+          print(response.data);
 
-      } on DioException catch (error) {
-      
-       
-        throw Exception(error);
-        // DioExceptions.fromDioError(error,context);
+          print(
+              'app server version- ${serverVersion} and App version-${AppConstants.staticAppVersion}');
+          return SessionModel(
+              /*allRoleName:role,*/ token:true,
+              role: role?.first,
+              puntchStatus: punchStatus,
+              apkUrl: apkUrl,
+              isUpdateRequired: isUpdateRequired);
+          // isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
+        }  catch (error) {
+         throw Exception(error);
+          // DioExceptions.fromDioError(error,context);
+        }
       }
+      else{
+         return SessionModel(
+          /*allRoleName:role,*/ token: tokens != null,
+          role: role?.first,
+          puntchStatus: punchStatus,
+          apkUrl: apkUrl,
+          isUpdateRequired: isUpdateRequired);
+      }
+     
     }
-    return SessionModel(
-        /*allRoleName:role,*/token: tokens != null, role: role?.first, puntchStatus: punchStatus,apkUrl: apkUrl,isUpdateRequired: isUpdateRequired);
-    }
-    
   }
 
   // Future<void> downloadAndInstallApk(String apkUrl) async {
@@ -260,5 +283,3 @@ class ApiService{
 // final isDialogVisible = StateProvider<bool>((ref) {
 //   return false;
 // },);
-
-

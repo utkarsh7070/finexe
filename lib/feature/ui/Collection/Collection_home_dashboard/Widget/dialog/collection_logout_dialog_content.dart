@@ -1,3 +1,4 @@
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,7 +33,8 @@ return  SizedBox(
           onPressed: () {
             ref.read(apiResponseProvider.notifier).clearData();
             ref.invalidate(fetchVisitPendingDataProvider);
-            SessionService.deleteSession();
+            speciality.clearPreferencesData();
+            // SessionService.deleteSession();
             Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) =>false,);
             ref.invalidate(apiResponseProvider);
           },

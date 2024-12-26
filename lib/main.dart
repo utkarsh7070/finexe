@@ -9,10 +9,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:roam_flutter/roam_flutter.dart';
 
 import 'feature/app/app.dart';
+import 'feature/base/utils/general/pref_utils.dart';
 
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+   await speciality.init();
    // SocketService().connectSocket();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

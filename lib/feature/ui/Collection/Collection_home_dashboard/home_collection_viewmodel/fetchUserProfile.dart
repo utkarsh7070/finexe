@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:finexe/feature/base/api/dio.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/update_password_request_model.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/update_password_responsemodel.dart';
 import 'package:finexe/feature/ui/authenticate/view_model/login_view_model.dart';
@@ -48,7 +49,7 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
 
   Future<void> fetchDashboardData() async {
     if (_isInitialized) return;
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
     try {
       final response = await dio.get(Api.getAllocationDashboard,
           options: Options(headers: {"token": token}));
