@@ -1,8 +1,10 @@
+import 'package:advanced_search/advanced_search.dart';
 import 'package:finexe/feature/base/extentions/capital_letter.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../base/utils/namespase/app_colors.dart';
@@ -15,17 +17,27 @@ import '../../view_model/visit_pending_view_model.dart';
 import 'more_info_screen.dart';
 
 class VisitPendingScreen extends ConsumerWidget {
+
   const VisitPendingScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final data = ref.watch(fetchVisitPendingDataProvider);
+     final searchResults = ref.watch(searchResultsProvider);
+
+
+
     return data.when(
       data: (data) {
         List<ItemsDetails> listOfLists = data.map((map) {
           return ItemsDetails.fromJson(map);
         }).toList();
-        // print(sea?rchList);
+     
+        
+      
+         List<String> searchItems = listOfLists
+            .map((item) => item.customerName ?? '')
+            .toList();
         return Container(
           padding: const EdgeInsets.only(left: 16, right: 16),
           height: displayHeight(context),
@@ -36,66 +48,89 @@ class VisitPendingScreen extends ConsumerWidget {
             visible: listOfLists.isNotEmpty,
             child: Column(
               children: [
-                // AdvancedSearch(
-                //   // data: ,
-                //   maxElementsToDisplay: 10,
-                //   singleItemHeight: 50,
-                //   borderColor: Colors.grey,
-                //   minLettersForSearch: 0,
-                //   selectedTextColor: const Color(0xFF3363D9),
-                //   fontSize: 14,
-                //   borderRadius: 12.0,
-                //   hintText: 'Search Me',
-                //   cursorColor: Colors.blueGrey,
-                //   autoCorrect: false,
-                //   focusedBorderColor: Colors.blue,
-                //   searchResultsBgColor: const Color(0xFAFAFA),
-                //   disabledBorderColor: Colors.cyan,
-                //   enabledBorderColor: Colors.black,
-                //   enabled: true,
-                //   caseSensitive: false,
-                //   inputTextFieldBgColor: Colors.white10,
-                //   clearSearchEnabled: true,
-                //   itemsShownAtStart: 10,
-                //   searchMode: SearchMode.CONTAINS,
-                //   showListOfResults: true,
-                //   unSelectedTextColor: Colors.black54,
-                //   verticalPadding: 10,
-                //   horizontalPadding: 10,
-                //   hideHintOnTextInputFocus: true,
-                //   hintTextColor: Colors.grey,
-                //   onItemTap: (index, value) {
-                //     if (kDebugMode) {
-                //       print("selected item index is $index");
-                //     }
-                //   },
-                //   onSearchClear: () {
-                //     if (kDebugMode) {
-                //       print("Cleared Search");
-                //     }
-                //   },
-                //   onSubmitted: (searchText, listOfResults) {
-                //     print("Submitted: " + searchText);
-                //   },
-                //   onEditingProgress: (searchText, listOfResults) {
-                //     print("TextEdited: " + searchText);
-                //     print("LENGTH: " + listOfResults.length.toString());
-                //   },
-                //
-                //   searchItems:[]
-                // ),
-                // SizedBox(
-                //   height: displayHeight(context) * 0.03,
-                // ),
+                SizedBox(height: displayHeight(context)*0.01,)
+               , AdvancedSearch(
+
+                  // data: ,
+                  maxElementsToDisplay: 0,
+                  singleItemHeight: 50,
+                  borderColor: Colors.grey,
+                  minLettersForSearch: 0,
+                  selectedTextColor: const Color(0xFF3363D9),
+                  fontSize: 14,
+                  borderRadius: 12.0,
+                  hintText: 'Search here',
+                  cursorColor: Colors.blueGrey,
+                  autoCorrect: false,
+                  focusedBorderColor: Colors.blue,
+                  searchResultsBgColor: const Color(0xFAFAFA),
+                  disabledBorderColor: Colors.cyan,
+                  enabledBorderColor: Colors.black,
+                  enabled: true,
+                  caseSensitive: false,
+                  inputTextFieldBgColor: Colors.white10,
+                  clearSearchEnabled: true,
+                  itemsShownAtStart: 1,
+                  searchMode: SearchMode.CONTAINS,
+                  showListOfResults: true,
+                  unSelectedTextColor: Colors.black54,
+                  verticalPadding: 10,
+                  horizontalPadding: 10,
+                  hideHintOnTextInputFocus: true,
+                  hintTextColor: Colors.grey,
+
+                  onItemTap: (index, value) {
+                    if (kDebugMode) {
+                      print("selected item index is $index");
+                    }
+                  },
+                  onSearchClear: () {
+                    FocusManager.instance.primaryFocus!.unfocus();
+                    if (kDebugMode) {
+                      print("Cleared Search");
+                    }
+                  },
+               onSubmitted: (searchText, listOfResults) {
+                 
+                    List<String> filteredNames = searchItems
+                        .where((name) =>
+                            name.toLowerCase().contains(searchText.toLowerCase()))
+                        .toList();
+
+                    // Map filtered names back to full ItemsDetails objects
+                    final filteredResults = listOfLists.where((item) {
+                      return filteredNames.contains(item.customerName);
+                    }).toList();
+
+                    ref.read(searchResultsProvider.notifier).state = filteredResults;
+                  },
+                  onEditingProgress: (searchText, listOfResults) {
+                  
+                    List<String> filteredNames = searchItems
+                        .where((name) =>
+                            name.toLowerCase().contains(searchText.toLowerCase()))
+                        .toList();
+
+                    final filteredResults = listOfLists.where((item) {
+                      return filteredNames.contains(item.customerName);
+                    }).toList();
+
+                    ref.read(searchResultsProvider.notifier).state = filteredResults;
+                  },
+                  searchItems: searchItems,
+                ),
+                SizedBox(
+                  height: displayHeight(context) * 0.03,
+                ),
 
                 Expanded(
                   child: SizedBox(
                     height: displayHeight(context),
                     width: displayWidth(context),
                     child: ListView.builder(
-                      itemCount: data.length,
+                     itemCount: searchResults.length, // Use filtered results
                       itemBuilder: (context, index) {
-                        final item = listOfLists[index];
+                        final item = searchResults[index];
                         // List<String> valueList = item.values.toList();
 
                         return Card(
