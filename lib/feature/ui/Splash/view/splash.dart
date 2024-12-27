@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:finexe/feature/base/internetConnection/connection_overlay.dart';
 import 'package:finexe/feature/base/internetConnection/connectivity.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
+import 'package:finexe/feature/ui/Sales/OnBoarding/view_model/on_boarding_view_model.dart';
 import 'package:finexe/feature/ui/Splash/view_model/splash_vew_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class SplashScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
      
   
 
@@ -57,6 +59,7 @@ class SplashScreen extends ConsumerWidget {
                       context,
                       AppRoutes.attendance,
                       (route) => false,
+
                     );
                   } else {
                     SharedPreferences prefs =
@@ -133,26 +136,32 @@ class SplashScreen extends ConsumerWidget {
 
                     /* switch (isLoggedIn.role) {
                   case 'admin':
+
                     log("Navigating to admin dashboard");
                     Navigator.pushNamedAndRemoveUntil(
                       context,
                       AppRoutes.dashBoard, // Admin dashboard route
+
                       (route) => false, // Remove all previous routes
                     );
                     break;
                   case 'sales':
+
                     log("Navigating to sales dashboard");
                     Navigator.pushNamedAndRemoveUntil(
                       context,
                       AppRoutes.dashBoard, // Sales dashboard route
+
                       (route) => false, // Remove all previous routes
                     );
                     break;
                   case 'collection':
+
                     log("Navigating to collection dashboard");
                     Navigator.pushNamedAndRemoveUntil(
                       context,
                       AppRoutes.collectionHome, // Collection dashboard route
+
                       (route) => false, // Remove all previous routes
                     );
                     break;
@@ -193,13 +202,17 @@ class SplashScreen extends ConsumerWidget {
                 }*/
                   }
                 } else {
+
+                  
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     AppRoutes.login, // Collection dashboard route
                     (route) => false, // Remove all previous routes
                   );
                 }
+
               });
+
 
               // Future.microtask(() {});
 
@@ -257,13 +270,14 @@ class SplashScreen extends ConsumerWidget {
               ))
       ]);
     });
+
   }
 
   Future<void> downloadDialog(
       {required BuildContext context,
-      required String downloaded,
-      required String apkUrl,
-      required SplashViewModel SplashViewModel}) {
+        required String downloaded,
+        required String apkUrl,
+        required SplashViewModel SplashViewModel}) {
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -299,4 +313,5 @@ class SplashScreen extends ConsumerWidget {
       ),
     );
   }
+
 }
