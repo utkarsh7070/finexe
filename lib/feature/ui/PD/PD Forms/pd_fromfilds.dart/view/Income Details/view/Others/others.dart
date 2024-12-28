@@ -1,12 +1,9 @@
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_update_data/view/Income%20Details/view/Others/other_model/other_income_model.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view/Income%20Details/view/Others/other_model/other_income_model.dart';
-// import 'package:finexe/feature/ui/PD/view/common%20imagePicker/dynamic_listing_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// import '../../../../../../../../Common Widgets/common_textfield.dart';
 import '../../../../../../common imagePicker/dynamic_listing_images.dart';
 import 'other_model/other_income_model.dart';
 import 'other_view_model.dart';
@@ -14,7 +11,7 @@ import 'other_view_model.dart';
 class Others extends ConsumerStatefulWidget {
   // const Others({super.key});
   final String customerId;
-  const Others({super.key, required this.customerId});
+  Others({required this.customerId});
   @override
   ConsumerState<Others> createState() => _OthersState();
 }
@@ -55,18 +52,24 @@ class _OthersState extends ConsumerState<Others> {
     // final imageNotifier = ref.read(otherImageUploadProvider.notifier);
     final viewModel = ref.read(otherDetailsFormViewModelProvider);
     final fetchAsyncValue = ref.watch(salaryDetailsProvider(widget.customerId));
-    print("other for get $fetchAsyncValue");
+    print("other for get ${fetchAsyncValue}");
     final imageNotifier = ref.read(imageUploadProvider.notifier);
 
     return fetchAsyncValue.when(
       data: (otherData) {
         if (otherNatureBusiness.text.isEmpty) {
-          otherNatureBusiness.text = otherData.natureOfBusiness ?? '';
-          otherDescBusiness.text = otherData.discriptionOfBusiness ?? '';
-          otherBusinessSince.text = otherData.bussinessFromSinceYear ?? '';
-          otherMonthlyIncome.text = otherData.monthlyIncome
-              .toStringAsFixed(2); // Rounds to 2 decimal places
-          otherYearlyIncome.text = otherData.yearlyIncome.toStringAsFixed(2);
+          otherNatureBusiness.text = otherData?.items?.data.natureOfBusiness ?? '';
+          otherDescBusiness.text = otherData?.items?.data.discriptionOfBusiness ?? '';
+          otherBusinessSince.text = otherData?.items?.data.bussinessFromSinceYear ?? '';
+          if(otherData?.items?.data.monthlyIncome !=null ){
+            otherMonthlyIncome.text = otherData!.items!.data.monthlyIncome
+                .toStringAsFixed(2); // Rounds to 2 decimal places
+          }
+          if(otherData?.items?.data.yearlyIncome !=null ){
+            otherYearlyIncome.text = otherData!.items!.data.yearlyIncome
+                .toStringAsFixed(2); // Rounds to 2 decimal places
+          }
+          // otherYearlyIncome.text = otherData.yearlyIncome.toStringAsFixed(2);
         }
         return SingleChildScrollView(
           child: Form(
@@ -172,10 +175,11 @@ class _OthersState extends ConsumerState<Others> {
 
                 Text('Business Images', style: AppStyles.blackText16),
                 ImageListWidget(
-                  imageUrls: otherData.incomeOtherImages,
+                  imageUrls: otherData?.items?.data.incomeOtherImages?? [''],
                   onRemove: (index) {
                     setState(() {
-                      otherData.incomeOtherImages.removeAt(index);
+
+                      otherData?.items?.data.incomeOtherImages.removeAt(index);
                     });
                   },
                   onAddImage: () async {
@@ -191,11 +195,11 @@ class _OthersState extends ConsumerState<Others> {
                             setState(() {
                               // print('workphotoUrl: $value');
                               // workPhotosList.add(value);
-                              otherData.incomeOtherImages.add(value);
+                              otherData?.items?.data.incomeOtherImages.add(value);
                               // print(
                               //     'workPhotosList url length:: ${workPhotosList.length}');
                               print(
-                                  'otherData.incomeOtherImages:: ${otherData.incomeOtherImages.length}');
+                                  'otherData.incomeOtherImages:: ${otherData?.items?.data.incomeOtherImages.length}');
                             });
                           },
                         );
@@ -223,24 +227,16 @@ class _OthersState extends ConsumerState<Others> {
                               // incomeOtherImages: [
                               //   "/uploads/default_milk_photo.png"
                               // ],
-                              incomeOtherImages: otherData.incomeOtherImages));
+                              incomeOtherImages: otherData?.items?.data.incomeOtherImages?? ['']));
 
                       // Submit the data
                       await viewModel.submitOtherDetailsForm(formData, context,widget.customerId);
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          backgroundColor: Colors.green,
-                          content: Text(
-                            'Other Income Details submitted successfully!',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      );
+
                     } else {
                       // Validation failed
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           backgroundColor: Colors.red,
                           content: Text(
                             'Please fill all required fields!',
@@ -250,8 +246,8 @@ class _OthersState extends ConsumerState<Others> {
                       );
                     }
                   },
-                  child: const Text(
-                    'Next',
+                  child: Text(
+                    'Save Form',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -261,7 +257,7 @@ class _OthersState extends ConsumerState<Others> {
         );
       },
       loading: () =>
-          const Center(child: CircularProgressIndicator()), // Show loading indicator
+          Center(child: CircularProgressIndicator()), // Show loading indicator
       error: (error, stack) => Center(child: Text('Error: $error')), // Sh
     );
   }

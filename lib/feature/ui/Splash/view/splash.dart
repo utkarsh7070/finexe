@@ -84,7 +84,15 @@ class SplashScreen extends ConsumerWidget {
                           AppRoutes.dashBoard, // Sales dashboard route
                           (route) => false, // Remove all previous routes
                         );
-                      } else if (roles.contains('collection')) {
+                      }  else if (roles.contains('creditPd')) {
+                log("Navigating to pd dashboard");
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.pdscreen, // CIBIL dashboard route
+                      (route) => false, // Remove all previous routes
+                );
+              } 
+                      else if (roles.contains('collection')) {
                         log("Navigating to collection dashboard");
                         Navigator.pushNamedAndRemoveUntil(
                           context,

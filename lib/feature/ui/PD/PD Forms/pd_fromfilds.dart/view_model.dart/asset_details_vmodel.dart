@@ -1,10 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
+import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/model/Submit%20Data%20Models/asset_detail_model.dart';
+import 'package:flutter/Material.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/asset_detail_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../../base/api/dio_exception.dart';
 
 class PDAssetDetails extends StateNotifier<ApplicationState> {
   final Dio dio;
@@ -17,9 +22,14 @@ class PDAssetDetails extends StateNotifier<ApplicationState> {
     required List<AssetDetails> assetDetailList,
     required double totalMarketV,
     required double totalPurchaseV,
+    required BuildContext context
   }) async {
-    state = state.copyWith(isLoading: true);
 
+    state = state.copyWith(isLoading: true);
+    // if(state.isLoading==true){
+    //   print('click second time');
+    //   return false;
+    // }
     // Add customerId and pdType to the payload
     final payload = {
       'assetDetails': assetDetailList.toList(),
@@ -40,7 +50,7 @@ class PDAssetDetails extends StateNotifier<ApplicationState> {
       print(token);
       print(payload);
       print(response.data);
-      print('Payload: $payload');
+      print('Payload: ${payload}');
 
       if (response.statusCode == 200) {
         // AssetDetails assetDetails =
@@ -57,10 +67,14 @@ class PDAssetDetails extends StateNotifier<ApplicationState> {
         print('Error while submitting applicant form');
         return false;
       }
-    } catch (e) {
+    }
+    catch (error) {
+      print(error);
       state = state.copyWith(isLoading: false);
-      print('Exception: $e');
-      // throw Exception(e);
+      DioExceptions.fromDioError(error as DioException, context);
+      // Handle exceptions and set state to error
+      // state = AsyncValue.error(error, stackTrace);
+      print('response.data.message ${error}');
       return false;
     }
   }
@@ -100,7 +114,7 @@ class ApplicationState {
 }
 
 final getAssetDetailFromProvider =
-    FutureProvider.autoDispose.family<AssetFormModel,String>((ref,customerId) async {
+    FutureProvider.autoDispose.family<AssetFormModel?,String>((ref,customerId) async {
   final viewModel = AssetFormDetailProvider();
   return await viewModel.fetchAssetDetails(customerId);
 });
@@ -108,13 +122,10 @@ final getAssetDetailFromProvider =
 
 class AssetFormDetailProvider {
   final Dio _dio = Dio();
-
-  Future<AssetFormModel> fetchAssetDetails(String customerId) async {
+  Future<AssetFormModel?> fetchAssetDetails(String customerId) async {
     String? token = speciality.getToken();
-
-    // String? token =
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY"; // Replace with a secure way of managing tokens
-    print('url: ${Api.getpdformdata}66f53ffbd7011eb65160f292');
+    // final details = AssetFormModel.fromJson(responseData);
+    AssetFormModel details= AssetFormModel();
 
     try {
       final response = await _dio.get(
@@ -125,22 +136,27 @@ class AssetFormDetailProvider {
       if (response.statusCode == 200 && response.data != null) {
         final Map<String, dynamic> responseData = response.data;
 
-        // Parse the response into the GetApplicantDetailsModel
-        final details = AssetFormModel.fromJson(responseData);
-
+         details = AssetFormModel.fromJson(responseData);
         if (details.items?.assetDetails != null) {
-          // print('');
           return details;
         } else {
-          throw Exception("PDAssetDetails not found in the response");
+          // throw Exception("Asset details not found in the response.");
+          print('Asset details not found in the response.');
+          // return details;
+          return details;
         }
-      } else {
-        throw Exception(
-            "Failed to load PDAssetDetails data: ${response.statusCode}");
       }
-    } catch (e) {
-      print("Error fetching PDAssetDetails : $e");
-      throw Exception("Error fetching PDAssetDetails data: $e");
+
+    }
+    catch (e) {
+      if (e is DioException && e.response?.statusCode == 404) {
+        // throw Exception("Resource not found. statusCode == 404", );
+        print('Resource not found. statusCode == 404');
+      }
+      print("Error fetching Asset Details: $e");
+      // throw Exception("An error occurred: ${e.toString()}");
+      print('details:: ${details.items?.assetDetails}');
+      return details;
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/ui/PD/pd_view_model/pd_filled_form_viewmodel.dart';
@@ -5,6 +6,7 @@ import 'package:finexe/feature/ui/PD/pd_view_model/pd_filled_form_viewmodel.dart
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_existing_data/view_modal/pd_existing_view_modal.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_existing_data/modal/pd_existing_modal.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_existing_data/view_modal/pd_existing_view_modal.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,7 +16,7 @@ import '../view_modal/pd_existing_view_modal.dart';
 class PdFilledForm extends ConsumerWidget {
   final String customerId;
 
-  const PdFilledForm({super.key, required this.customerId});
+  PdFilledForm({required this.customerId});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     print('customerId in PdFilledForm:: $customerId');
@@ -51,7 +53,7 @@ class PdFilledForm extends ConsumerWidget {
             primary: true,
             shrinkWrap: false,
             scrollDirection: Axis.vertical,
-            physics: const AlwaysScrollableScrollPhysics(),
+            physics: AlwaysScrollableScrollPhysics(),
             itemCount: customerState.filteredSections.length,
             itemBuilder: (context, index) {
               return _buildSectionWidget(
@@ -82,40 +84,40 @@ class PdFilledForm extends ConsumerWidget {
   ) {
     final sectionWidgets = {
       "Loan Detail's": loanDetailsAsync.when(
-        data: (details) => _buildLoanDetails(context, details),
+        data: (details) => _buildLoanDetails(context, details,),
         loading: () =>
-            const SizedBox.shrink(), // Don't show loading inside each section
+            SizedBox.shrink(), // Don't show loading inside each section
         error: (err, stack) => Text('Error: $err'),
       ),
       "Application Detail's": applicationDetails.when(
         data: (details) => _buildApplicationDetails(context, details),
-        loading: () => const SizedBox.shrink(),
+        loading: () => SizedBox.shrink(),
         error: (err, stack) => Text('Error: $err'),
       ),
       "Co - Application Detail's 01": coApplicants.when(
         data: (details) => details.isNotEmpty
             ? _buildCoApplicationDetails01(
                 context, details[0], "Co - Applicant Details 01")
-            : const Text("No Co-Applicant Details 01"),
-        loading: () => const SizedBox.shrink(),
+            : Text("No Co-Applicant Details 01"),
+        loading: () => SizedBox.shrink(),
         error: (err, stack) => Text('Error: $err'),
       ),
       "Co - Application Detail's 02": coApplicants.when(
         data: (details) => details.length > 1
             ? _buildCoApplicationDetails02(
                 context, details[1], "Co - Applicant Details 02")
-            : const Text("No Co-Applicant Details 02"),
-        loading: () => const SizedBox.shrink(),
+            : Text("No Co-Applicant Details 02"),
+        loading: () => SizedBox.shrink(),
         error: (err, stack) => Text('Error: $err'),
       ),
-      "Guarantor Detail's": guarantorDetails.when(
-        data: (details) => _buildGuarantorDetails(context, details),
-        loading: () => const SizedBox.shrink(),
-        error: (err, stack) => Text('Error: $err'),
-      ),
+      // "Guarantor Detail's": guarantorDetails.when(
+      //   data: (details) => _buildGuarantorDetails(context, details),
+      //   loading: () => SizedBox.shrink(),
+      //   error: (err, stack) => Text('Error: $err'),
+      // ),
       "Cibil Detail's": cibilDetails.when(
         data: (details) => _buildCibilDetails(context, details),
-        loading: () => const SizedBox.shrink(),
+        loading: () => SizedBox.shrink(),
         error: (err, stack) => Text('Error: $err'),
       ),
     };
@@ -152,7 +154,7 @@ class PdFilledForm extends ConsumerWidget {
         ),
         Container(
           height: 1,
-          color: const Color(0xFF0082C6),
+          color: Color(0xFF0082C6),
           width: MediaQuery.of(context).size.width * 0.9,
         ),
       ],
@@ -161,6 +163,8 @@ class PdFilledForm extends ConsumerWidget {
 
   Widget _buildApplicationDetails(
       BuildContext context, ApplicationDetails details) {
+    //${Api.baseUrl}${widget.applicantImage}
+    print('${details.applicantPhotos.isNotEmpty == true ? '${Api.imageUrl}${details.applicantPhotos[0]}' : 'https://picsum.photos/id/237/200/300'}');
     return ExpansionTile(
       shape: const BeveledRectangleBorder(side: BorderSide.none),
       title: Text(
@@ -175,7 +179,7 @@ class PdFilledForm extends ConsumerWidget {
             children: [
               _rowImage(context,
                   imageUrl:
-                      details.applicantPhotos.isNotEmpty == true ? '${Api.imageUrl}${details.applicantPhotos[0]}' : 'https://picsum.photos/id/237/200/300',
+                      '${details.applicantPhotos.isNotEmpty == true ? '${Api.imageUrl}${details.applicantPhotos[0]}' : 'https://picsum.photos/id/237/200/300'}',
                   text: 'Applicant Photos'),
               _textData(context,
                   text1: 'Applicant Name', text2: details.applicantName),
@@ -228,7 +232,7 @@ class PdFilledForm extends ConsumerWidget {
         ),
         Container(
           height: 1, // The height of the border
-          color: const Color(0xFF0082C6),
+          color: Color(0xFF0082C6),
           width: MediaQuery.of(context).size.width *
               0.9, // Width of the bottom border
         )
@@ -254,7 +258,7 @@ class PdFilledForm extends ConsumerWidget {
               _rowImage(
                 context,
                 imageUrl:
-                    details.coApplicantPhoto?.isNotEmpty == true ? '${Api.imageUrl}${details.coApplicantPhoto}' : 'https://picsum.photos/id/237/200/300',
+                    '${details.coApplicantPhoto?.isNotEmpty == true ? '${Api.imageUrl}${details.coApplicantPhoto}' : 'https://picsum.photos/id/237/200/300'}',
                 text: 'Co - Applicant Photos',
               ),
               _textData(context,
@@ -327,7 +331,7 @@ class PdFilledForm extends ConsumerWidget {
               _rowImage(
                 context,
                 imageUrl:
-                    details.coApplicantPhoto?.isNotEmpty == true ? '${Api.imageUrl}${details.coApplicantPhoto}' : 'https://picsum.photos/id/237/200/300',
+                    '${details.coApplicantPhoto?.isNotEmpty == true ? '${Api.imageUrl}${details.coApplicantPhoto}' : 'https://picsum.photos/id/237/200/300'}',
                 text: 'Co - Applicant Photos',
               ),
               _textData(context,
@@ -388,71 +392,78 @@ class PdFilledForm extends ConsumerWidget {
       shape: const BeveledRectangleBorder(side: BorderSide.none),
       title: Text("Guarantor Details", style: AppStyles.TitleStyle),
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _rowImage(
-                context,
-                imageUrl: guarantorDetails.guarantorPhoto.isNotEmpty
-                    ? '${Api.imageUrl}${guarantorDetails.guarantorPhoto}'
-                    : 'https://picsum.photos/id/237/200/300',
-                text: 'Guarantor Photos',
-              ),
-              _textData(context,
-                  text1: 'Type', text2: guarantorDetails.docType),
-              _textData(context,
-                  text1: 'Name', text2: guarantorDetails.fullName),
-              _textData(context,
-                  text1: 'APL Father/Spouse Name',
-                  text2: guarantorDetails.fatherName),
-              _textData(context,
-                  text1: 'APL Mother Name', text2: guarantorDetails.motherName),
-              _textData(context,
-                  text1: 'Relationship',
-                  text2: guarantorDetails.relationWithApplicant),
-              _textData(context, text1: 'Age', text2: guarantorDetails.age),
-              _textData(context,
-                  text1: 'Gender', text2: guarantorDetails.gender),
-              _textData(context, text1: 'Email', text2: guarantorDetails.email),
-              _textData(context,
-                  text1: 'Marital Status',
-                  text2: guarantorDetails.maritalStatus),
-              _textData(context,
-                  text1: 'Education', text2: guarantorDetails.education),
-              _textData(context, text1: 'Caste', text2: guarantorDetails.caste),
-              _textData(context,
-                  text1: 'Aadhar No.', text2: guarantorDetails.aadharNo),
-              _textData(context,
-                  text1: 'PAN No.', text2: guarantorDetails.docNo),
-              _textData(context,
-                  text1: 'Document Type', text2: guarantorDetails.docType),
-              _textData(context,
-                  text1: 'Document No.', text2: guarantorDetails.docNo),
-              _photoGrid(
-                title: "Upload Photos",
-                imageUrls: [
-                  guarantorDetails
-                          .guarantorKycUpload.aadharFrontImage.isNotEmpty
-                      ? '${Api.imageUrl}${guarantorDetails.guarantorKycUpload.aadharFrontImage}'
-                      : '',
-                  guarantorDetails.guarantorKycUpload.aadharBackImage.isNotEmpty
-                      ? '${Api.imageUrl}${guarantorDetails.guarantorKycUpload.aadharBackImage}'
-                      : '',
-                  guarantorDetails.guarantorKycUpload.docImage.isNotEmpty
-                      ? '${Api.imageUrl}${guarantorDetails.guarantorKycUpload.docImage}'
-                      : '',
-                ],
-              ),
-            ],
-          ),
-        ),
-        Container(
-          height: 1,
-          color: const Color(0xFF0082C6),
-          width: MediaQuery.of(context).size.width * 0.9,
-        ),
+        guarantorDetails==null ?
+       Column(
+         children: [
+           
+           Padding(
+             padding: const EdgeInsets.all(8.0),
+             child: Column(
+               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+               children: [
+                 _rowImage(
+                   context,
+                   imageUrl: guarantorDetails.guarantorPhoto.isNotEmpty
+                       ? '${Api.imageUrl}${guarantorDetails.guarantorPhoto}'
+                       : 'https://picsum.photos/id/237/200/300',
+                   text: 'Guarantor Photos',
+                 ),
+                 _textData(context,
+                     text1: 'Type', text2: guarantorDetails.docType),
+                 _textData(context,
+                     text1: 'Name', text2: guarantorDetails.fullName),
+                 _textData(context,
+                     text1: 'APL Father/Spouse Name',
+                     text2: guarantorDetails.fatherName),
+                 _textData(context,
+                     text1: 'APL Mother Name', text2: guarantorDetails.motherName),
+                 _textData(context,
+                     text1: 'Relationship',
+                     text2: guarantorDetails.relationWithApplicant),
+                 _textData(context, text1: 'Age', text2: guarantorDetails.age),
+                 _textData(context,
+                     text1: 'Gender', text2: guarantorDetails.gender),
+                 _textData(context, text1: 'Email', text2: guarantorDetails.email),
+                 _textData(context,
+                     text1: 'Marital Status',
+                     text2: guarantorDetails.maritalStatus),
+                 _textData(context,
+                     text1: 'Education', text2: guarantorDetails.education),
+                 _textData(context, text1: 'Caste', text2: guarantorDetails.caste),
+                 _textData(context,
+                     text1: 'Aadhar No.', text2: guarantorDetails.aadharNo),
+                 _textData(context,
+                     text1: 'PAN No.', text2: guarantorDetails.docNo),
+                 _textData(context,
+                     text1: 'Document Type', text2: guarantorDetails.docType),
+                 _textData(context,
+                     text1: 'Document No.', text2: guarantorDetails.docNo),
+                 _photoGrid(
+                   title: "Upload Photos",
+                   imageUrls: [
+                     guarantorDetails
+                         .guarantorKycUpload.aadharFrontImage.isNotEmpty
+                         ? '${Api.imageUrl}${guarantorDetails.guarantorKycUpload.aadharFrontImage}'
+                         : '',
+                     guarantorDetails.guarantorKycUpload.aadharBackImage.isNotEmpty
+                         ? '${Api.imageUrl}${guarantorDetails.guarantorKycUpload.aadharBackImage}'
+                         : '',
+                     guarantorDetails.guarantorKycUpload.docImage.isNotEmpty
+                         ? '${Api.imageUrl}${guarantorDetails.guarantorKycUpload.docImage}'
+                         : '',
+                   ],
+                 ),
+               ],
+             ),
+           ),
+           Container(
+             height: 1,
+             color: Color(0xFF0082C6),
+             width: MediaQuery.of(context).size.width * 0.9,
+           ),
+         ],
+       ):
+            Text('No data found')
       ],
     );
   }
@@ -476,7 +487,7 @@ class PdFilledForm extends ConsumerWidget {
                 context,
                 text1: 'Applicant CIBIL SCORE',
                 text2:
-                    cibilDetails.applicantCibilScore.toString() ?? 'N/A',
+                    '${cibilDetails.applicantCibilScore.toString() ?? 'N/A'}',
               ),
 
               const SizedBox(
@@ -489,7 +500,7 @@ class PdFilledForm extends ConsumerWidget {
                     ? 0
                     : MediaQuery.of(context).size.height * 0.36,
                 child: ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
+                  physics: AlwaysScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   itemCount: cibilDetails.applicantCibilDetail.length,
@@ -505,11 +516,12 @@ class PdFilledForm extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(
                               8.0), // Optional: rounded corners
                           boxShadow: [
+
                             BoxShadow(
                               color: Colors.white70
                                   .withOpacity(0.3), // Shadow color and opacity
                               blurRadius: 6, // Shadow blur effect
-                              offset: const Offset(0, 3), // Position of shadow
+                              offset: Offset(0, 3), // Position of shadow
                             ),
                           ],
                         ),
@@ -518,6 +530,7 @@ class PdFilledForm extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Text('data'),
                             _textData(context,
                                 text1: 'Loan Type',
                                 text2: detail.loanType ?? 'N/A'),
@@ -549,7 +562,7 @@ class PdFilledForm extends ConsumerWidget {
                 context,
                 text1: 'Co-Applicant CIBIL SCORE',
                 text2:
-                    cibilDetails.coApplicantCibilScore.toString() ?? 'N/A',
+                    '${cibilDetails.coApplicantCibilScore.toString() ?? 'N/A'}',
               ),
               const SizedBox(
                 height: 20,
@@ -561,7 +574,7 @@ class PdFilledForm extends ConsumerWidget {
                     ? 0 // Set height to 0 if the list is empty
                     : MediaQuery.of(context).size.height * 0.36,
                 child: ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
+                  physics: AlwaysScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   itemCount: cibilDetails.coApplicantCibilDetail.length,
@@ -581,7 +594,7 @@ class PdFilledForm extends ConsumerWidget {
                               color: Colors.white70
                                   .withOpacity(0.3), // Shadow color and opacity
                               blurRadius: 6, // Shadow blur effect
-                              offset: const Offset(0, 3), // Position of shadow
+                              offset: Offset(0, 3), // Position of shadow
                             ),
                           ],
                         ),
@@ -618,7 +631,7 @@ class PdFilledForm extends ConsumerWidget {
                 context,
                 text1: 'Guarantor CIBIL SCORE',
                 text2:
-                    cibilDetails.guarantorCibilScore.toString() ?? 'N/A',
+                    '${cibilDetails.guarantorCibilScore.toString() ?? 'N/A'}',
               ),
               const SizedBox(
                 height: 20,
@@ -630,7 +643,7 @@ class PdFilledForm extends ConsumerWidget {
                     ? 0
                     : MediaQuery.of(context).size.height * 0.36,
                 child: ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
+                  physics: AlwaysScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   itemCount: cibilDetails.guarantorCibilDetail.length,
@@ -650,7 +663,7 @@ class PdFilledForm extends ConsumerWidget {
                               color: Colors.white70
                                   .withOpacity(0.3), // Shadow color and opacity
                               blurRadius: 6, // Shadow blur effect
-                              offset: const Offset(0, 3), // Position of shadow
+                              offset: Offset(0, 3), // Position of shadow
                             ),
                           ],
                         ),
@@ -689,7 +702,7 @@ class PdFilledForm extends ConsumerWidget {
         ),
         Container(
           height: 1,
-          color: const Color(0xFF0082C6),
+          color: Color(0xFF0082C6),
           width: MediaQuery.of(context).size.width * 0.9,
         ),
       ],
@@ -706,7 +719,7 @@ class PdFilledForm extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(text1,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF475467),
@@ -715,7 +728,7 @@ class PdFilledForm extends ConsumerWidget {
             width: MediaQuery.of(context).size.width * 0.30,
             child: Text(
               text2,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF101828),
@@ -791,8 +804,8 @@ class PdFilledForm extends ConsumerWidget {
         ),
         GridView.builder(
           shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          physics: NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4, // Adjust the number of images per row
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
@@ -805,7 +818,7 @@ class PdFilledForm extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(
                       vertical: 8.0, horizontal: 8.0),
                   child: ClipRRect(
-                    borderRadius: const BorderRadius.all(
+                    borderRadius: BorderRadius.all(
                         Radius.circular(12)), // Set the border radius here
                     child: Image.network(
                       imageUrls[index],
@@ -830,11 +843,11 @@ class PdFilledForm extends ConsumerWidget {
 }
 
 extension AppStyles on TextStyle {
-  static TextStyle TitleStyle = const TextStyle(
+  static TextStyle TitleStyle = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w500,
   );
-  static TextStyle ItemStyle = const TextStyle(
+  static TextStyle ItemStyle = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
   );

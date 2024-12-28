@@ -1,10 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../model/Submit Data Models/total_income_modal.dart';
+import '../../../../../base/api/dio_exception.dart';
+import '../model/Submit Data Models/total_income_modal.dart';import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+
 
 // import '../../../../../../../base/api/dio.dart';
 // import '../../../../../../../base/service/session_service.dart';
@@ -26,6 +29,7 @@ class PDIncomeDetailsModel extends StateNotifier<ApplicantState> {
     required String customerId,
     required String pdType,
     required TotalIncomeDetails incomeDetails,
+    required BuildContext context,
   }) async {
     state = state.copyWith(isLoading: true);
 
@@ -35,6 +39,10 @@ class PDIncomeDetailsModel extends StateNotifier<ApplicantState> {
       'pdType': pdType,
     };
     final token = speciality.getToken();
+    // if(state.isLoading==true){
+    //   print('click second time');
+    //   return false;
+    // }
     try {
       final response = await dio.post(
         Api.updatePdReport,
@@ -51,10 +59,15 @@ class PDIncomeDetailsModel extends StateNotifier<ApplicantState> {
         print('Error while submitting income details');
         return false;
       }
-    } catch (e) {
+    }
+    catch (error) {
+      print(error);
       state = state.copyWith(isLoading: false);
-      print('Exception: $e');
-      throw Exception(e);
+      DioExceptions.fromDioError(error as DioException, context);
+      // Handle exceptions and set state to error
+      // state = AsyncValue.error(error, stackTrace);
+      print('response.data.message ${error}');
+      return false;
     }
   }
 }
@@ -62,7 +75,7 @@ class PDIncomeDetailsModel extends StateNotifier<ApplicantState> {
 // ---------------- GET: Fetch Income
 
 final totalIncomeDetailsProvider =
-    FutureProvider.autoDispose.family<TotalIncomeDetails,String>((ref,customerId) async {
+    FutureProvider.autoDispose.family<TotalIncomeDetailsModel,String>((ref,customerId) async {
   // Directly create an instance of TotalIncomeApi
   final viewModel = TotalIncomeApi(Dio()); // Inject Dio directly here
   // Fetch the income details
@@ -74,9 +87,9 @@ class TotalIncomeApi {
 
   TotalIncomeApi(this._dio);
 
-  Future<TotalIncomeDetails> fetchIncomeDetails(String customerId) async {
+  Future<TotalIncomeDetailsModel> fetchIncomeDetails(String customerId) async {
     final token = speciality.getToken();
-
+    TotalIncomeDetailsModel details = TotalIncomeDetailsModel();
     try {
       final response = await _dio.get(
         '${Api.getpdformdata}$customerId',
@@ -91,10 +104,10 @@ class TotalIncomeApi {
 
         // Parse the data and return the correct model
         if (data != null && data['totalIncomeDetails'] != null) {
-          final details = TotalIncomeDetailsModel.fromJson(data);
+           details = TotalIncomeDetailsModel.fromJson(data);
           if (details.totalIncomeDetails != null) {
             return details
-                .totalIncomeDetails!; // Return the TotalIncomeDetails directly
+                ; // Return the TotalIncomeDetails directly
           } else {
             throw Exception("Income details are missing in the response.");
           }
@@ -108,7 +121,8 @@ class TotalIncomeApi {
       }
     } catch (e) {
       print("Error fetching income details: $e");
-      throw Exception("Error fetching income details: $e");
+      // throw Exception("Error fetching income details: $e");
+      return details;
     }
   }
 }

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class speciality {
-  static SharedPreferences? _sharedPreferences;
+  static SharedPreferences? _sharedPreferences ;
 
   speciality() {
     SharedPreferences.getInstance().then((value) {

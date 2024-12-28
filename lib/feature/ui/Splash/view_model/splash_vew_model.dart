@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Punch_In_Out/model/check_attendance_responce_model.dart';
@@ -139,7 +140,7 @@ class ApiService {
     String? tokens = speciality.getToken();
 
     // Check location only if necessary
-    Future<Position> positionFuture = getCurrentLocation();
+    Future<Position> positionFuture =  getCurrentLocation();
 
     // Fetch role and token from prefs
 
@@ -147,20 +148,23 @@ class ApiService {
     var versionFuture = fetchVersion();
     Position position = await positionFuture;
     var versionData = await versionFuture;
-
-    if (tokens != null) {
-      final dio = ref.watch(dioProvider);
-
-      Map<String, String> token = {"token": tokens};
+      
       Map<String, double> location = {
         "latitude": position.latitude,
         "longitude": position.longitude,
       };
+      print('users current location ${location.toString()} ');
+
+    if (tokens != null) {
+      final dio = ref.watch(dioProvider);
+
+    Map<String, String> token = {"token": tokens};
       try {
         Response response = await dio.get(Api.checkPunchIn,
             queryParameters: location, options: Options(headers: token));
+
         if (kDebugMode) {
-          print('response data////// ${response.data}');
+          print('response data////// ${response}');
         }
 
         if (response.statusCode == 200) {
@@ -184,17 +188,19 @@ class ApiService {
             // Handle 400 response
             final errorMessage = e.response?.data['message'] ?? 'Bad Request';
             print("400 Error: $errorMessage");
-            showCustomSnackBar(ref, errorMessage, Colors.red);
+            Fluttertoast.showToast(msg: errorMessage.toString());
+            // showCustomSnackBar(ref, errorMessage, Colors.red);
           } else {
             // Handle other Dio errors
-            print("DioError: ${e.message}");
-            showCustomSnackBar(
-                ref, "Something went wrong. Please try again.", Colors.red);
+            // print("DioError: ${e.message}");
+            Fluttertoast.showToast(msg: 'Somthing went wrong');
+            // showCustomSnackBar(
+            //     ref, "Something went wrong. Please try again.", Colors.red);
           }
         } else {
           // Handle non-Dio errors
           print("Error submitting form: $e");
-          showCustomSnackBar(ref, "An unexpected error occurred.", Colors.red);
+          Fluttertoast.showToast(msg: e.toString());
         }
       }
     }

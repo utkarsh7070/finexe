@@ -110,17 +110,17 @@ class PDCoApplicantSubmitFormModel {
     subCode = json['subCode'];
     message = json['message'];
     error = json['error'];
-    items = json['items'] != null ? CoItems.fromJson(json['items']) : null;
+    items = json['items'] != null ? new CoItems.fromJson(json['items']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = status;
-    data['subCode'] = subCode;
-    data['message'] = message;
-    data['error'] = error;
-    if (items != null) {
-      data['items'] = items!.toJson();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['subCode'] = this.subCode;
+    data['message'] = this.message;
+    data['error'] = this.error;
+    if (this.items != null) {
+      data['items'] = this.items!.toJson();
     }
     return data;
   }
@@ -147,24 +147,27 @@ class CoItems {
     customerId = json['customerId'];
     pdId = json['pdId'];
     pdType = json['pdType'];
-    coApplicantImage = json['coApplicantImage'].cast<String>();
+    coApplicantImage = json['coApplicantImage'] != null
+        ? List<String>.from(json['coApplicantImage'])
+        : [];
+
     if (json['co_Applicant'] != null) {
       coApplicant = <CoApplicant>[];
       json['co_Applicant'].forEach((v) {
-        coApplicant!.add(CoApplicant.fromJson(v));
+        coApplicant!.add(new CoApplicant.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['_id'] = sId;
-    data['customerId'] = customerId;
-    data['pdId'] = pdId;
-    data['pdType'] = pdType;
-    data['coApplicantImage'] = coApplicantImage;
-    if (coApplicant != null) {
-      data['co_Applicant'] = coApplicant!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['customerId'] = this.customerId;
+    data['pdId'] = this.pdId;
+    data['pdType'] = this.pdType;
+    data['coApplicantImage'] = coApplicantImage ?? [];
+    if (this.coApplicant != null) {
+      data['co_Applicant'] = this.coApplicant!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -229,24 +232,24 @@ class CoApplicant {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['coApplicantType'] = coApplicantType;
-    data['businessType'] = businessType;
-    data['occupation'] = occupation;
-    data['DOB'] = dOB;
-    data['emailId'] = emailId;
-    data['houseLandMark'] = houseLandMark;
-    data['alternateMobileNo'] = alternateMobileNo;
-    data['noOfyearsAtCurrentAddress'] = noOfyearsAtCurrentAddress;
-    data['gender'] = gender;
-    data['religion'] = religion;
-    data['nationality'] = nationality;
-    data['category'] = category;
-    data['caste'] = caste;
-    data['maritalStatus'] = maritalStatus;
-    data['educationalDetails'] = educationalDetails;
-    data['residenceType'] = residenceType;
-    data['_id'] = sId;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['coApplicantType'] = this.coApplicantType;
+    data['businessType'] = this.businessType;
+    data['occupation'] = this.occupation;
+    data['DOB'] = this.dOB;
+    data['emailId'] = this.emailId;
+    data['houseLandMark'] = this.houseLandMark;
+    data['alternateMobileNo'] = this.alternateMobileNo;
+    data['noOfyearsAtCurrentAddress'] = this.noOfyearsAtCurrentAddress;
+    data['gender'] = this.gender;
+    data['religion'] = this.religion;
+    data['nationality'] = this.nationality;
+    data['category'] = this.category;
+    data['caste'] = this.caste;
+    data['maritalStatus'] = this.maritalStatus;
+    data['educationalDetails'] = this.educationalDetails;
+    data['residenceType'] = this.residenceType;
+    data['_id'] = this.sId;
     return data;
   }
 }

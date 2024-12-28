@@ -23,7 +23,7 @@ import '../model/response_model.dart';
 class AttendanceState {
   final String employeeName;
   final bool isLoading;
-  final bool punchAllowed;
+  final bool? punchAllowed;
   final bool punchStatus;
   final Position? currentPosition;
   final String? distanceMessage;
@@ -36,7 +36,7 @@ class AttendanceState {
   AttendanceState(
       {this.taskTitle = '',
         this.taskDescription = '',
-        this.punchAllowed = false,
+        this.punchAllowed ,
         this.employeeName = '',
         this.isLoading = false,
         this.punchStatus = false,
@@ -470,6 +470,15 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.dashBoard, // Collection dashboard route
+                    (route) => false, // Remove all previous routes
+              );
+              
+              break;
+                case 'creditPd':
+              log("Navigating to collection dashboard");
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.pdscreen, // Collection dashboard route
                     (route) => false, // Remove all previous routes
               );
               break;

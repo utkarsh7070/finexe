@@ -1,12 +1,9 @@
-import 'package:advanced_search/advanced_search.dart';
+
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_existing_data/view/pd_existing_data_form.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_update_data_form.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_existing_data/view/pd_existing_data_form.dart';
-//
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_update_data_form.dart';
 import 'package:flutter/Material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -15,18 +12,36 @@ import '../pd_view_model/pd_form_viewmodel.dart';
 
 // import '../../pd_view_model/pd_form_viewmodel.dart';
 
-class PdFormScreen extends ConsumerWidget {
-  // const PdFormScreen({super.key});
+class PdFormScreen extends ConsumerStatefulWidget {
   final String customerId;
-  const PdFormScreen({super.key, required this.customerId});
+  const PdFormScreen({Key? key, required this.customerId}) : super(key: key);
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PdFormScreen> createState() => _PdFormScreenState();
+}
 
-    print('customerId in PdFormScreen:: $customerId');
+class _PdFormScreenState extends ConsumerState<PdFormScreen> {
 
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Reset the selectedSegment to 1 when the screen is initialized
+    final segmentNotifier = ref.read(segmentProvider.notifier);
+    segmentNotifier.updateSegment(1);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    print('customerId in PdFormScreen:: ${widget.customerId}');
     final selectedSegment =
         ref.watch(segmentProvider); // Watch the selected segment
     final segmentNotifier = ref.read(segmentProvider.notifier);
+    print('selectedSegment:: $selectedSegment');
+    // Reset the state to default
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -43,55 +58,7 @@ class PdFormScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              margin: const EdgeInsets.only(right: 20, left: 20),
-              child: AdvancedSearch(
-                  // data: ,
-                  maxElementsToDisplay: 10,
-                  singleItemHeight: 50,
-                  borderColor: Colors.grey,
-                  minLettersForSearch: 0,
-                  selectedTextColor: const Color(0xFF3363D9),
-                  fontSize: 14,
-                  borderRadius: 12.0,
-                  hintText: 'Search Me',
-                  cursorColor: Colors.blueGrey,
-                  autoCorrect: false,
-                  focusedBorderColor: Colors.blue,
-                  searchResultsBgColor: const Color(0x00fafafa),
-                  disabledBorderColor: Colors.cyan,
-                  enabledBorderColor: Colors.black,
-                  enabled: true,
-                  caseSensitive: false,
-                  inputTextFieldBgColor: Colors.white10,
-                  clearSearchEnabled: true,
-                  itemsShownAtStart: 10,
-                  searchMode: SearchMode.CONTAINS,
-                  showListOfResults: true,
-                  unSelectedTextColor: Colors.black54,
-                  verticalPadding: 10,
-                  horizontalPadding: 10,
-                  hideHintOnTextInputFocus: true,
-                  hintTextColor: Colors.grey,
-                  onItemTap: (index, value) {
-                    if (kDebugMode) {
-                      print("selected item index is $index");
-                    }
-                  },
-                  onSearchClear: () {
-                    if (kDebugMode) {
-                      print("Cleared Search");
-                    }
-                  },
-                  onSubmitted: (searchText, listOfResults) {
-                    print("Submitted: $searchText");
-                  },
-                  onEditingProgress: (searchText, listOfResults) {
-                    print("TextEdited: $searchText");
-                    print("LENGTH: ${listOfResults.length}");
-                  },
-                  searchItems: const []),
-            ),
+
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: CustomSlidingSegmentedControl(
@@ -131,8 +98,8 @@ class PdFormScreen extends ConsumerWidget {
             // const SizedBox(height: 10),
             Expanded(
               child: selectedSegment == 1
-                  ? PdFilledForm(customerId: customerId) // Show Existing Data
-                  : UpdateDataDorm(customerId: customerId), // Show Update Data
+                  ? PdFilledForm(customerId: widget.customerId) // Show Existing Data
+                  : UpdateDataDorm(customerId: widget.customerId), // Show Update Data
             ),
           ],
         ),

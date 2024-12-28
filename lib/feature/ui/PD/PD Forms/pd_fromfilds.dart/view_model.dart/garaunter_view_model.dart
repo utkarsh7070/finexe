@@ -1,13 +1,20 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/model/Submit%20Data%20Models/gauranter_model.dart';
+import 'package:flutter/cupertino.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/applicant_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/gauranter_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+
+
+import '../../../../../base/api/dio_exception.dart';
 
 class PDGauranterViewModel extends StateNotifier<AppState> {
   final Dio dio;
@@ -17,6 +24,7 @@ class PDGauranterViewModel extends StateNotifier<AppState> {
   Future<bool> submitpdGarunterForm({
     required String customerId,
     required String pdType,
+    required BuildContext context,
     String? gauranterImg,
     String? coapplicantType,
     String? businessType,
@@ -37,7 +45,10 @@ class PDGauranterViewModel extends StateNotifier<AppState> {
     String? residenceType,
   }) async {
     state = state.copyWith(isLoading: true);
-
+    // if(state.isLoading==true){
+    //   print('click second time');
+    //   return false;
+    // }
     final coapplicantdata = Guarantor(
       guarantorType: coapplicantType,
       businessType: businessType,
@@ -72,11 +83,11 @@ class PDGauranterViewModel extends StateNotifier<AppState> {
       final response = await dio.post(Api.updatePdReport,
           data: payload, options: Options(headers: {"token": token}));
       print(response.data);
-      print('Payload: $payload');
+      print('Payload: ${payload}');
       if (response.statusCode == 200) {
         Guarantor gauranter = Guarantor.fromJson(response.data);
         print('guarantor form submitted: $response');
-        print('guarantor-- $gauranter');
+        print('guarantor-- ${gauranter}');
         state = state.copyWith(isLoading: false);
         return true;
       } else {
@@ -84,9 +95,12 @@ class PDGauranterViewModel extends StateNotifier<AppState> {
         print('Error while submitting guarantor form');
         return false;
       }
-    } catch (e) {
+    }
+    catch (e) {
       state = state.copyWith(isLoading: false);
       print('Exception submitting guarantor form: $e');
+      DioExceptions.fromDioError(e as DioException, context);
+
       // throw Exception(e);
       return false;
     }
@@ -128,7 +142,7 @@ class AppState {
 
 //(***************************************************************************)
 final gauranterrDetailsProvider =
-    FutureProvider.autoDispose.family<GauranterItems,String>((ref,customerId) async {
+    FutureProvider.autoDispose.family<GauranterFormModel?,String>((ref,customerId) async {
   final viewModel = GauranterrFormDetailsProvider();
   return await viewModel.fetchGauranterrDetails(customerId);
 });
@@ -136,9 +150,9 @@ final gauranterrDetailsProvider =
 class GauranterrFormDetailsProvider {
   final Dio _dio = Dio();
 
-  Future<GauranterItems> fetchGauranterrDetails(String customerid) async {
+  Future<GauranterFormModel?> fetchGauranterrDetails(String customerid) async {
     String? token = speciality.getToken();
-
+    GauranterFormModel details = GauranterFormModel();
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY"; // Replace with a secure way of managing tokens
     print('url: ${Api.getpdformdata}$customerid');
@@ -156,17 +170,21 @@ class GauranterrFormDetailsProvider {
         final details = GauranterFormModel.fromJson(responseData);
 
         if (details.items?.guarantor != null) {
-          return details.items!;
+          return details;
         } else {
-          throw Exception("guarantor details not found in the response");
+          // throw Exception("guarantor details not found in the response");
+          print('guarantor details not found in the response');
         }
       } else {
-        throw Exception(
-            "Failed to load application data: ${response.statusCode}");
+        // throw Exception(
+        //     "Failed to load application data: ${response.statusCode}");
+        print('guarantor details not found in the response');
+
       }
     } catch (e) {
       print("Error fetching applicant details: $e");
-      throw Exception("Error fetching application data: $e");
+      // throw Exception("Error fetching application data: $e");
+      return details;
     }
   }
 }

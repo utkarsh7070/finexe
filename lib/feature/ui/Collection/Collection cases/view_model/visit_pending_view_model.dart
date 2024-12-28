@@ -580,7 +580,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
 
     print('Update EMI Input -${requestModel.toJson()}');
 
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
     final response = await dio.post(Api.updateEmiSubmit,
         data: requestModel.toJson(),
         options: Options(

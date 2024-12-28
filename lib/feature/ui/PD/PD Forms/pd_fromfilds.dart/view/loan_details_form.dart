@@ -7,9 +7,11 @@ import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_update_data/view_model.dart/loan_detail_view_modal.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view_model.dart/loan_detail_view_modal.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/Submit Data Models/loan_detail_modal.dart';
 import '../view_model.dart/loan_detail_view_modal.dart';
 final isExpLoanDetailProvider = StateProvider<bool>((ref) => false);
@@ -17,7 +19,7 @@ final isExpLoanDetailProvider = StateProvider<bool>((ref) => false);
 class LoanDetailsForm extends ConsumerStatefulWidget {
   // const LoanDetailsForm({super.key});
   final String customerId;
-  const LoanDetailsForm({super.key, required this.customerId});
+  LoanDetailsForm({required this.customerId});
 
   @override
   _LoanDetailsFormState createState() => _LoanDetailsFormState();
@@ -62,7 +64,7 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
   Widget build(BuildContext context) {
     final appState = ref.watch(pdLoanDetailsProvider);
 
-    final isExpanded = ref.watch(isExpLoanDetailProvider);
+    final _isExpanded = ref.watch(isExpLoanDetailProvider);
     final getLoandata = ref.watch(loanDetailsGetProvider(widget.customerId));
 
     return  ExpansionTile(
@@ -78,23 +80,23 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
               ref.refresh(loanDetailsGetProvider(widget.customerId));
             }
           },
-          initiallyExpanded: isExpanded,
+          initiallyExpanded: _isExpanded,
           children: <Widget>[
             getLoandata.when(
                 data: (loanData) {
                   if (LoanDetailsForm_customerDetailsController.text.isEmpty) {
                     LoanDetailsForm_approveAmountController.text =
-                        loanData.approvedAmount?.toString() ?? '';
-                    LoanDetailsForm_roiController.text = loanData.roi?.toString() ?? '';
+                        loanData?.approvedAmount?.toString() ?? '';
+                    LoanDetailsForm_roiController.text = loanData?.roi?.toString() ?? '';
                     LoanDetailsForm_tenureController.text =
-                        loanData.tenure?.toString() ?? '';
-                    LoanDetailsForm_emiController.text = loanData.emi?.toString() ?? '';
+                        loanData?.tenure?.toString() ?? '';
+                    LoanDetailsForm_emiController.text = loanData?.emi?.toString() ?? '';
                     LoanDetailsForm_customerDetailsController.text =
-                        loanData.demandLoanAmountByCustomer ?? '';
+                        loanData?.demandLoanAmountByCustomer ?? '';
                     LoanDetailsForm_finaldecisionController.text =
-                        loanData.finalDecision?.toString() ?? '';
+                        loanData?.finalDecision?.toString() ?? '';
                     LoanDetailsForm_endUseofloanController.text =
-                        loanData.endUseOfLoan ?? '';
+                        loanData?.endUseOfLoan ?? '';
                   }
                   return   Form(
                       key: _formKey,
@@ -102,7 +104,7 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
                         children: [
                           Container(
                             alignment: Alignment.centerLeft,
-                            child: const Text(
+                            child: Text(
                               'Location Details',
                               textAlign: TextAlign.left,
                             ),
@@ -161,7 +163,7 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
                           constSizedbox(context),
                           Container(
                             alignment: Alignment.centerLeft,
-                            child: const Text(
+                            child: Text(
                               'Location Details',
                               textAlign: TextAlign.left,
                             ),
@@ -216,7 +218,7 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
                           constSizedbox(context),
                           Container(
                             alignment: Alignment.centerLeft,
-                            child: const Text(
+                            child: Text(
                               'Decision & Purpose',
                               textAlign: TextAlign.left,
                             ),
@@ -286,33 +288,16 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
                                     .submitLoanDetails(
                                   customerId:  widget.customerId,
                                   pdType: 'creditPd',
-                                  loanDetails: loanDetails,
+                                  loanDetails: loanDetails, context: context,
                                 )
                                     .then(
                                       (value) {
                                     if (value == true) {
                                       // Show success message
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: AppColors.green,
-                                          content: Text(
-                                            'Form submitted successfully!',
-                                            style: AppStyles.whiteText16,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      // Show success message
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: AppColors.green,
-                                          content: Text(
-                                            'Faild to submit the form please try again',
-                                            style: AppStyles.whiteText16,
-                                          ),
-                                        ),
-                                      );
+                                      showCustomSnackBar(
+                                          context,'Form Saved successfully!', Colors.green);
                                     }
+
                                   },
                                 );
                               } else {
@@ -340,7 +325,7 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
                               ),
                             )
                                 : Text(
-                              'Next',
+                              'Save Form',
                               style: AppStyles.whiteText16,
                             ),
                           )

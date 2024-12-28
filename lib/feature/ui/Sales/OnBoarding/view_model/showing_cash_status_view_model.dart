@@ -231,7 +231,7 @@ class ProcessStatusNotifier extends StateNotifier<AsyncValue<ProcessStatusRespon
     try {
       // Replace with your actual API call
 <<<<<<< HEAD
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
 =======
       String? token = speciality.getToken();
 >>>>>>> origin/To_merge

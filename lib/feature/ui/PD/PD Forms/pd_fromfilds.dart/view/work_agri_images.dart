@@ -1,3 +1,4 @@
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:finexe/feature/base/api/api.dart';
@@ -19,7 +20,7 @@ final isExpWorkAgriDetailProvider = StateProvider<bool>((ref) => false);
 class WorkAndAgriCultureImages extends ConsumerStatefulWidget {
   // const WorkAndAgriCultureImages({super.key});
   final String customerId;
-  const WorkAndAgriCultureImages({super.key, required this.customerId});
+  WorkAndAgriCultureImages({required this.customerId});
   @override
   ConsumerState<WorkAndAgriCultureImages> createState() =>
       _WorkAndAgriCultureImagesState();
@@ -41,12 +42,13 @@ class _WorkAndAgriCultureImagesState
     // final images = ref.watch(workagriimageUploadProvider);
     final appState = ref.watch(pdsubmitWorkAndAgriImages);
 
-    final isExpanded = ref.watch(isExpWorkAgriDetailProvider);
+    final _isExpanded = ref.watch(isExpWorkAgriDetailProvider);
     final getAgriFormData = ref.watch(getWorkAndImagesProvider(widget.customerId));
     final imageNotifier = ref.read(workagriimageUploadProvider.notifier);
+    // final indexzProvider = ref.watch(imageProvbider);
 
-    return  ExpansionTile(
-          title: const Text('Work and Agriculture Images'),
+    return ExpansionTile(
+          title: Text('Work and Agriculture Images'),
           onExpansionChanged: (expanded) {
             ref.read(isExpWorkAgriDetailProvider.notifier).state = expanded;
             if (expanded) {
@@ -54,10 +56,11 @@ class _WorkAndAgriCultureImagesState
               ref.refresh(getWorkAndImagesProvider(widget.customerId));
             }
           },
-          initiallyExpanded: isExpanded,
+          initiallyExpanded: _isExpanded,
           children: [
             getAgriFormData.when(
                 data: (agriAndWorkImages) {
+
                   print(
                       'agriAndWorkImages.videoUpload :: ${agriAndWorkImages.videoUpload}');
                   return  Padding(
@@ -66,7 +69,7 @@ class _WorkAndAgriCultureImagesState
                       children: [
 
                         constSizedbox(context),
-                        const Text('Landmark Photo'),
+                        Text('Landmark Photo'),
                         CommonImagePicker(
                           applicantImage: agriAndWorkImages.landmarkPhoto ?? '',
                           onImageUploaded: (imageUrl) {
@@ -80,7 +83,7 @@ class _WorkAndAgriCultureImagesState
                           },
                         ),
                         constSizedbox(context),
-                        const Text('Lat Long Photo'),
+                        Text('Lat Long Photo'),
                         CommonImagePicker(
                           applicantImage: agriAndWorkImages.latLongPhoto ?? '',
                           onImageUploaded: (imageUrl) {
@@ -99,76 +102,121 @@ class _WorkAndAgriCultureImagesState
                           style: AppStyles.blackText16,
                         ),
                         constSizedbox(context),
-                        const Text('East Boundary'),
-                        if (agriAndWorkImages.fourBoundaryPhotos != null &&
-                            agriAndWorkImages.fourBoundaryPhotos!.isNotEmpty)
-                          CommonImagePicker(
-                            applicantImage:
-                            agriAndWorkImages.fourBoundaryPhotos![0],
-                            onImageUploaded: (imageUrl) {
-                              setState(() {
-                                agriAndWorkImages.fourBoundaryPhotos![0].isNotEmpty
-                                    ? agriAndWorkImages.fourBoundaryPhotos![0] =
-                                    imageUrl
-                                    : // Update the image URL
-                                eastImageUrl = imageUrl;
-                                print('eastImageUrl:: $eastImageUrl');
-                              });
-                            },
-                          ),
+                        ...agriAndWorkImages.fourBoundaryPhotos!.asMap().entries.map((entry) {
+                          final int index = entry.key;
+                          final String image = entry.value;
+                          print(
+                              'fourBoundaryPhotos from server:: ${agriAndWorkImages.fourBoundaryPhotos!.length}');
+                          print('image:: $image');
+                          return Column(
+                            children: [
+                              constSizedbox(context),
+                              // if(index==0)
+                              // Text('East'),
+                              // if(index==1)
+                              //   Text('West'),
+                              // if(index==2)
+                              //   Text('North'),
+                              // if(index==3)
+                              //   Text('South'),
+                              Stack(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 15, top: 12),
+
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                        //  workPhotosList.length == 0
+                                        //     ? '${Api.baseUrl}${agriAndWorkImages.workPhotos![index]}':
+                                        '${Api.baseUrl}${image}',
+                                        height: displayHeight(context) * 0.16,
+                                        width: displayWidth(context) * 0.91,
+                                        fit: BoxFit.contain,
+                                        placeholder: (context, url) =>
+                                            Center(child: CircularProgressIndicator()),
+                                        errorWidget: (context, url, error) => Image.asset(
+                                          'assets/images/no_internet.jpg',
+                                          height: 150,
+                                          width: double.infinity,
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: 10,
+                                    top: 0,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          agriAndWorkImages.fourBoundaryPhotos!.removeAt(index);
+                                          print(
+                                              'fourBoundaryPhotos:: ${agriAndWorkImages.fourBoundaryPhotos!.length}');
+                                        });
+                                      },
+                                      child: Image.asset(
+                                        'assets/images/remove.png',
+                                        height: 25,
+                                        width: 25,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        }).toList(),
                         constSizedbox(context),
-                        const Text('West Boundary'),
-                        if (agriAndWorkImages.fourBoundaryPhotos != null &&
-                            agriAndWorkImages.fourBoundaryPhotos!.length > 1)
-                          CommonImagePicker(
-                            applicantImage: agriAndWorkImages.fourBoundaryPhotos![1],
-                            onImageUploaded: (imageUrl) {
-                              setState(() {
-                                agriAndWorkImages.fourBoundaryPhotos![1].isNotEmpty
-                                    ? agriAndWorkImages.fourBoundaryPhotos![1] =
-                                    imageUrl
-                                    : // Update the image URL
-                                westImageUrl = imageUrl;
-                                print('westImageUrl:: $westImageUrl');
-                              });
-                            },
+                        agriAndWorkImages.fourBoundaryPhotos!.length > 3 ?
+                            SizedBox.shrink():
+                        GestureDetector(
+                          // onTap: () => imageNotifier.pickImage(),
+                          onTap: () {
+                            imageNotifier.pickImage().then(
+                                  (value) {
+                                imageNotifier.uploadImage(value).then(
+                                      (value) {
+                                    setState(() {
+                                      // print('workphotoUrl: $value');
+                                      // workPhotosList.add(value);
+                                      print('urlofimage of boundardries:: $value');
+                                      agriAndWorkImages.fourBoundaryPhotos?.add(value);
+                                      // print(
+                                      //     'workPhotosList url length:: ${workPhotosList.length}');
+                                      print(
+                                          'fourBoundaryPhotos:: ${agriAndWorkImages.fourBoundaryPhotos?.length}');
+                                    });
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          child:  Padding(
+                            padding: const EdgeInsets.only(right: 15),
+                            child: UploadBox(
+                              isImage: true,
+                              height: displayHeight(context) * 0.16,
+                              width: displayWidth(context) * 0.91,
+                              color: AppColors.buttonBorderGray,
+                              iconData: Icons.file_upload_outlined,
+                              textColor: AppColors.gray5,
+                              subTextColor: AppColors.primary,
+                              title: 'Support: JPG, PNG',
+                              subTitle: 'Click Image',
+                            ),
                           ),
+                        ),
+
+
+
                         constSizedbox(context),
-                        const Text('North Boundary'),
-                        if (agriAndWorkImages.fourBoundaryPhotos != null &&
-                            agriAndWorkImages.fourBoundaryPhotos!.length > 2)
-                          CommonImagePicker(
-                            applicantImage: agriAndWorkImages.fourBoundaryPhotos![2],
-                            onImageUploaded: (imageUrl) {
-                              setState(() {
-                                agriAndWorkImages.fourBoundaryPhotos![2].isNotEmpty
-                                    ? agriAndWorkImages.fourBoundaryPhotos![2] =
-                                    imageUrl
-                                    : // Update the image URL
-                                northImageUrl = imageUrl;
-                                print('northImageUrl:: $northImageUrl');
-                              });
-                            },
-                          ),
                         constSizedbox(context),
-                        const Text('South Boundary'),
-                        if (agriAndWorkImages.fourBoundaryPhotos != null &&
-                            agriAndWorkImages.fourBoundaryPhotos!.length > 3)
-                          CommonImagePicker(
-                            applicantImage: agriAndWorkImages.fourBoundaryPhotos![3],
-                            onImageUploaded: (imageUrl) {
-                              setState(() {
-                                agriAndWorkImages.fourBoundaryPhotos![3].isNotEmpty
-                                    ? agriAndWorkImages.fourBoundaryPhotos![3] =
-                                    imageUrl
-                                    : // Update the image URL
-                                southImageUrl = imageUrl;
-                                print('southImageUrl:: $southImageUrl');
-                              });
-                            },
-                          ),
-                        constSizedbox(context),
-                        const Text('Work Photos'),
+
+                        Text('Work Photos',style: AppStyles.blackText16,),
                         // if(agriAndWorkImages.workPhotos!=null)
                         // ListView.builder(
                         //   shrinkWrap: true,
@@ -214,12 +262,12 @@ class _WorkAndAgriCultureImagesState
                                     imageUrl:
                                     //  workPhotosList.length == 0
                                     //     ? '${Api.baseUrl}${agriAndWorkImages.workPhotos![index]}':
-                                    '${Api.baseUrl}$image',
+                                    '${Api.baseUrl}${image}',
                                     height: displayHeight(context) * 0.16,
                                     width: displayWidth(context) * 0.91,
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.contain,
                                     placeholder: (context, url) =>
-                                        const Center(child: CircularProgressIndicator()),
+                                        Center(child: CircularProgressIndicator()),
                                     errorWidget: (context, url, error) => Image.asset(
                                       'assets/images/no_internet.jpg',
                                       height: 150,
@@ -250,10 +298,7 @@ class _WorkAndAgriCultureImagesState
                               ),
                             ],
                           );
-                        }),
-
-
-
+                        }).toList(),
 
                         constSizedbox(context),
                         GestureDetector(
@@ -277,24 +322,6 @@ class _WorkAndAgriCultureImagesState
                               },
                             );
                           },
-                          // child: Container(
-                          //   height: MediaQuery.of(context).size.height * 0.2,
-                          //   width: MediaQuery.of(context).size.width * 0.8,
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(12),
-                          //     border: Border.all(
-                          //       color: Colors.grey,
-                          //       width: 1,
-                          //     ),
-                          //   ),
-                          //   child: Column(
-                          //     mainAxisAlignment: MainAxisAlignment.center,
-                          //     children: const [
-                          //       Icon(Icons.upload),
-                          //       Text('Drop your file here'),
-                          //     ],
-                          //   ),
-                          // ),
                           child:  Padding(
                             padding: const EdgeInsets.only(right: 15),
                             child: UploadBox(
@@ -311,7 +338,7 @@ class _WorkAndAgriCultureImagesState
                           ),
                         ),
                         constSizedbox(context),
-                        const Text('Upload 360° Home Video'),
+                        Text('Upload 360° Home Video'),
                         CommonVideoPicker(
                           gettingVideoUrlFromServer:
                           agriAndWorkImages.videoUpload ?? '',
@@ -352,18 +379,19 @@ class _WorkAndAgriCultureImagesState
                                 .submitpdBankDetailsForm(
                                 customerId: widget.customerId,
                                 pdType: 'creditPd',
-                                eastBoundaryImage: eastImageUrl ??
-                                    agriAndWorkImages.fourBoundaryPhotos![0]
-                                        .toString(),
-                                westBoundaryImage: westImageUrl ??
-                                    agriAndWorkImages.fourBoundaryPhotos![1]
-                                        .toString(),
-                                northBoundaryImage: northImageUrl ??
-                                    agriAndWorkImages.fourBoundaryPhotos![2]
-                                        .toString(),
-                                southBoundaryImage: southImageUrl ??
-                                    agriAndWorkImages.fourBoundaryPhotos![3]
-                                        .toString(),
+                                // eastBoundaryImage: eastImageUrl ??
+                                //     agriAndWorkImages.fourBoundaryPhotos![0]
+                                //         .toString(),
+                                // westBoundaryImage: westImageUrl ??
+                                //     agriAndWorkImages.fourBoundaryPhotos![1]
+                                //         .toString(),
+                                // northBoundaryImage: northImageUrl ??
+                                //     agriAndWorkImages.fourBoundaryPhotos![2]
+                                //         .toString(),
+                                // southBoundaryImage: southImageUrl ??
+                                //     agriAndWorkImages.fourBoundaryPhotos![3]
+                                //         .toString(),
+                                foruBounadariesPhoto: agriAndWorkImages.fourBoundaryPhotos?? [],
                                 landmarkImageUrl: landmarkImageUrl ??
                                     agriAndWorkImages.landmarkPhoto,
                                 latlongImageUrl: latLongImageUrl ??
@@ -382,7 +410,7 @@ class _WorkAndAgriCultureImagesState
                                     SnackBar(
                                         backgroundColor: AppColors.green,
                                         content: Text(
-                                          'Form submitted successfully!',
+                                          'Form saved successfully!',
                                           style: AppStyles.whiteText16,
                                         )),
                                   );
@@ -391,7 +419,7 @@ class _WorkAndAgriCultureImagesState
                                     SnackBar(
                                         backgroundColor: AppColors.red,
                                         content: Text(
-                                          'Faild to submit the form please try again.',
+                                          'Faild to save the form please try again.',
                                           style: AppStyles.whiteText16,
                                         )),
                                   );
@@ -410,8 +438,8 @@ class _WorkAndAgriCultureImagesState
                                   'loading'), // Key for progress indicator
                             ),
                           )
-                              : const Text(
-                            'Next',
+                              : Text(
+                            'Save Form',
                             style: TextStyle(color: Colors.white),
                           ),
                         )
@@ -423,7 +451,7 @@ class _WorkAndAgriCultureImagesState
               // error: (error, stackTrace) => Center(child: Text('Error: $error')),
               error: (error, stackTrace) {
                 print('Error: $error');
-                return const Center(child: Text('faild to get data please check network'));
+                return Center(child: Text('faild to get data please check network'));
               },
             )
 

@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../base/utils/widget/custom_snackbar.dart';
-import '../dialog/pd_request_dialog.dart';
+import '../dialog/AcceptPDFile/pd_request_dialog.dart';
+import '../dialog/RivertPDFile/rivert_pd_dialogue.dart';
+import '../dialog/RivertPDFile/rivert_pd_dialogue_content.dart';
 import '../pd_view_model/pd_dash_viewmodel.dart';
 
 class PdRequestScreen extends ConsumerWidget {
@@ -19,6 +21,7 @@ class PdRequestScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pditems = ref.watch(fetchpdRefuseandAcceptListProvider);
     final pdRequestViewModel = ref.watch(pdRequestProvider);
+
     return Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(
@@ -32,6 +35,7 @@ class PdRequestScreen extends ConsumerWidget {
           data: (pdDataItems) {
             return Column(
               children: [
+                // Text('data'),
                 Expanded(
                   child:
                       // pditems == null // Check for loading state
@@ -71,6 +75,7 @@ class PdRequestScreen extends ConsumerWidget {
 
   itemCard(BuildContext context, PDReqItems pdreitem,
       RequestApiService pdRequestViewModel, ref) {
+
     return Column(
       children: [
         Container(
@@ -170,20 +175,26 @@ class PdRequestScreen extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+
+                  //Refuse PD
                   GestureDetector(
                     onTap: () {
-                      pdRequestViewModel.pdRequestDefuse(pdreitem.sId!).then(
-                        (value) {
-                          if (value!) {
 
-                            ref.refresh(fetchpdRefuseandAcceptListProvider);
-                            ref.refresh(fetchPdRequestListProvider);
-                            showCustomSnackBar(
-                                context, 'Request Rejected', AppColors.green);
-                          }
-                        },
-                      );
-                      // PdRequestDialogue.requestAcceptDialogue(context: context);
+                      // pdRequestViewModel.pdRequestDefuse(pdreitem.customerId!).then(
+                      //   (value) {
+                      //     if (value!) {
+                      //
+                      //       ref.refresh(fetchpdRefuseandAcceptListProvider);
+                      //       ref.refresh(fetchPdRequestListProvider);
+                      //       // ref.re
+                      //       showCustomSnackBar(
+                      //           context, 'Request Rejected', AppColors.green);
+                      //     }
+                      //   },
+                      // );
+                      //  PdRequestDialogue.requestAcceptDialogue(context: context);
+                       PdRivertDialogue.requestRivertDialogue(context: context, id: pdreitem.sId?? '',
+                          ref: ref );
                     },
                     child: Container(
                       padding: const EdgeInsets.only(top: 10),
@@ -199,8 +210,11 @@ class PdRequestScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
+
+                 //Accept PD
                   GestureDetector(
                     onTap: () {
+
                       PdRequestDialogue.requestAcceptDialogue(
                           context: context, id: pdreitem.sId ?? '');
                     },

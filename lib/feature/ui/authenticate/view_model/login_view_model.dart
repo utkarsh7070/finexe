@@ -4,6 +4,7 @@ import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/authenticate/model/login_request_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -19,38 +20,41 @@ import '../../../base/utils/widget/custom_snackbar.dart';
 import '../model/login_response_model.dart';
 
 final userValidationProvider =
-StateNotifierProvider.autoDispose<UserValidationNotifier, bool>(
-      (ref) {
+    StateNotifierProvider.autoDispose<UserValidationNotifier, bool>(
+  (ref) {
     return UserValidationNotifier();
   },
 );
 final passwordValidationProvider =
-StateNotifierProvider.autoDispose<PasswordValidationNotifier, bool>(
-      (ref) {
+    StateNotifierProvider.autoDispose<PasswordValidationNotifier, bool>(
+  (ref) {
     return PasswordValidationNotifier();
   },
 );
 final selectVendorProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 final dualFocusProvider =
-StateNotifierProvider.autoDispose<FocusViewModel, Map<String, bool>>((ref) {
+    StateNotifierProvider.autoDispose<FocusViewModel, Map<String, bool>>((ref) {
   return FocusViewModel();
 });
 
 final obscureTextProvider = StateProvider.autoDispose<bool>(
-      (ref) {
+  (ref) {
     return false;
   },
 );
 
-final isRememberMeCheckedProvider = StateProvider.autoDispose<bool>((ref) => false);
+final isRememberMeCheckedProvider =
+    StateProvider.autoDispose<bool>((ref) => false);
 
 final loginViewModelProvider =
-StateNotifierProvider.autoDispose<LoginViewModel, AsyncValue<DataModel>>((ref) {
+    StateNotifierProvider.autoDispose<LoginViewModel, AsyncValue<DataModel>>(
+        (ref) {
   final punchInRepository = ref.watch(punchInRepositoryProvider);
   final dio = ref.read(dioProvider);
   return LoginViewModel(
-      AsyncValue.data(DataModel(loginStatus: '', checkPunch: false, role: [],allowed: false)),
+      AsyncValue.data(DataModel(
+          loginStatus: '', checkPunch: false, role: [], allowed: false)),
       dio,
       punchInRepository);
 });
@@ -63,9 +67,9 @@ class FocusViewModel extends StateNotifier<Map<String, bool>> {
       : userFocusNode = FocusNode(),
         passFocusNode = FocusNode(),
         super({
-        'userFocusNode': false,
-        'passFocusNode': false,
-      }) {
+          'userFocusNode': false,
+          'passFocusNode': false,
+        }) {
     userFocusNode
         .addListener(() => _focusListener('userFocusNode', userFocusNode));
     passFocusNode
@@ -103,20 +107,25 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
 
   Future<void> clickPunchInButton(
       {required BuildContext context,
-        required String email,
-        required String password,
-        required String role,
-        required WidgetRef ref}) async {
-    await login(email: email, password: password, ref: ref,role: role,context: context).then(
-          (value) async {
+      required String email,
+      required String password,
+      required String role,
+      required WidgetRef ref}) async {
+    await login(
+            email: email,
+            password: password,
+            ref: ref,
+            role: role,
+            context: context)
+        .then(
+      (value) async {
         if (value) {
           if (kDebugMode) {
             print('check punch ${state.value?.checkPunch}');
             print('check punchCheck punch ${state.value?.role}');
           }
           if (state.value!.checkPunch) {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            List<String>? roles = prefs.getStringList('roleName');
+            List<String>? roles = speciality.getRole();
             print('Login screen roles-$roles ');
 
             if (roles != null) {
@@ -125,42 +134,50 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   AppRoutes.dashBoard, // Admin dashboard route
-                      (route) => false, // Remove all previous routes
+                  (route) => false, // Remove all previous routes
                 );
               } else if (roles.contains('sales')) {
                 log("Navigating to sales dashboard");
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   AppRoutes.dashBoard, // Sales dashboard route
-                      (route) => false, // Remove all previous routes
+                  (route) => false, // Remove all previous routes
                 );
               } else if (roles.contains('collection')) {
                 log("Navigating to collection dashboard");
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   AppRoutes.collectionHome, // Collection dashboard route
-                      (route) => false, // Remove all previous routes
+                  (route) => false, // Remove all previous routes
                 );
               } else if (roles.contains('salesAndCollection')) {
                 log("Navigating to sales and collection dashboard");
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   AppRoutes.dashBoard, // Sales and Collection dashboard route
-                      (route) => false, // Remove all previous routes
+                  (route) => false, // Remove all previous routes
                 );
               } else if (roles.contains('salesPdAndCollection')) {
                 log("Navigating to sales PD and collection dashboard");
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  AppRoutes.dashBoard, // Sales PD and Collection dashboard route
-                      (route) => false, // Remove all previous routes
+                  AppRoutes
+                      .dashBoard, // Sales PD and Collection dashboard route
+                  (route) => false, // Remove all previous routes
                 );
               } else if (roles.contains('cibil')) {
                 log("Navigating to CIBIL dashboard");
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   AppRoutes.dashBoard, // CIBIL dashboard route
-                      (route) => false, // Remove all previous routes
+                  (route) => false, // Remove all previous routes
+                );
+              } else if (roles.contains('creditPd')) {
+                log("Navigating to pd dashboard");
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.pdscreen, // CIBIL dashboard route
+                  (route) => false, // Remove all previous routes
                 );
               } else {
                 // Default role navigation
@@ -168,7 +185,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   AppRoutes.hrms, // Default route
-                      (route) => false, // Remove all previous routes
+                  (route) => false, // Remove all previous routes
                 );
               }
             } else {
@@ -177,7 +194,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.hrms, // Default route
-                    (route) => false, // Remove all previous routes
+                (route) => false, // Remove all previous routes
               );
             }
             /*switch (state.value?.role) {
@@ -250,7 +267,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
             Navigator.pushNamedAndRemoveUntil(
               context,
               AppRoutes.attendance,
-                  (route) => false,
+              (route) => false,
             );
           }
         }
@@ -260,20 +277,20 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
 
   Future<bool> login(
       {required String email,
-        required String password,
-        required String role,
-        required WidgetRef ref,
-        required BuildContext context}) async {
+      required String password,
+      required String role,
+      required WidgetRef ref,
+      required BuildContext context}) async {
     isLoading = true;
-    LoginRequestModel loginRequestModel =
-    LoginRequestModel(userName: email, password: password,employeeRole: role);
+    LoginRequestModel loginRequestModel = LoginRequestModel(
+        userName: email, password: password, employeeRole: role);
     // Set state to loading
     state = const AsyncValue.loading();
 
     print("login Input: ${loginRequestModel.toJson()}");
     try {
       final response =
-      await dio.post(Api.login, data: loginRequestModel.toJson());
+          await dio.post(Api.login, data: loginRequestModel.toJson());
 
       var responseData = response.data;
       print('Login response: $responseData');
@@ -283,7 +300,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
         isLoading = false;
 
         LoginResponseModel loginResponseModel =
-        LoginResponseModel.fromJson(response.data);
+            LoginResponseModel.fromJson(response.data);
         if (kDebugMode) {
           print("response:: ${response.data}");
         }
@@ -297,39 +314,47 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
         //----------------------------------------------------------------------
         // Create session after login
         await SessionService.createSession(
-            role:  loginResponseModel.items.roleName,
+            role: loginResponseModel.items.roleName,
             accessToken: loginResponseModel.items.token,
             employeeId: loginResponseModel.items.employeId,
             email: loginResponseModel.items.userName,
             name: loginResponseModel.items.userName,
             romId: loginResponseModel.items.roamId,
-            trakingMode: loginResponseModel.items.trackingMode
-        );
+            trakingMode: loginResponseModel.items.trackingMode);
         ref.refresh(attendanceProvider);
         //------------------------background service----------------------------
-        await BackgroundService().initializeService();
+        // await BackgroundService().initializeService();
         //---------------------------------------------------------------------
         PunchModel punchStatus = await punchStatusFunction(
-            _punchInRepository,
-            loginResponseModel.items.token,
-            // loginResponseModel.items.roleName.first.toString(),
-            context);
+                _punchInRepository,
+                loginResponseModel.items.token,
+                // loginResponseModel.items.roleName.first.toString(),
+                context)
+            .then(
+          (value) {
+            state = AsyncValue.data(DataModel(
+                allowed: value.allowed,
+                checkPunch: value.punchIn,
+                loginStatus: 'Sucsses',
+                role: loginResponseModel.items.roleName));
+            showCustomSnackBar(
+                context, loginResponseModel.message, Colors.green);
+            return value;
+          },
+        );
+        if (punchStatus != null) {
+          return true;
+        } else {
+          return false;
+        }
         // Update state to indicate success
-        state = AsyncValue.data(DataModel(
-            allowed: punchStatus.allowed,
-            checkPunch: punchStatus.punchIn,
-            loginStatus: 'Sucsses',
-            role: loginResponseModel.items.roleName));
-        showCustomSnackBar(context, loginResponseModel.message, Colors.green);
-        return true;
+
         // Return true here to indicate success
-      }
-      else if(response.statusCode==400){
+      } else if (response.statusCode == 400) {
         isLoading = false;
         showCustomSnackBar(context, message, Colors.red);
         return true;
-      }
-      else {
+      } else {
         showCustomSnackBar(context, response.data.message, Colors.red);
         // If status code is not 200, set state to error
         isLoading = false;
@@ -351,18 +376,17 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
 
 class DataModel {
   final String loginStatus;
- // final String role;
+  // final String role;
   final List<String> role;
   final bool checkPunch;
   final bool allowed;
 
-
-  DataModel(
-      {required this.loginStatus,
-        required this.checkPunch,
-        required this.role,
-        required this.allowed,
-      });
+  DataModel({
+    required this.loginStatus,
+    required this.checkPunch,
+    required this.role,
+    required this.allowed,
+  });
 }
 
 class RadioNotifier extends StateNotifier<Role> {
@@ -438,7 +462,7 @@ Future<Position> _getCurrentLocation() async {
   );
   // Get the current position
   Position position =
-  await Geolocator.getCurrentPosition(locationSettings: locationSettings);
+      await Geolocator.getCurrentPosition(locationSettings: locationSettings);
 
   return position;
 
@@ -457,24 +481,25 @@ Future<PunchModel> punchStatusFunction(
   try {
     Response response = await punchInRepository.checkPunch(location, tokens);
     var checkAttendanceResponse =
-    CheckAttendanceResponseModel.fromJson(response.data);
-    return PunchModel(punchIn: checkAttendanceResponse.items.punchIn,allowed: checkAttendanceResponse.items.allowed);
+        CheckAttendanceResponseModel.fromJson(response.data);
+        print(response.data);
+    return PunchModel(
+        punchIn: checkAttendanceResponse.items.punchIn,
+        allowed: checkAttendanceResponse.items.allowed);
   } on DioException catch (error) {
     DioExceptions.fromDioError(error, context);
   }
-  return PunchModel(allowed: false,punchIn: false);
+  return PunchModel(allowed: false, punchIn: false);
   // SesstionModel(
   //   token: tokens != null, role: role, puntchStatus: punchStatus);
   // Return true if token exists (logged in), false otherwise (not logged in)
 }
 
-class PunchModel{
+class PunchModel {
   final bool allowed;
   final bool punchIn;
 
   PunchModel({required this.allowed, required this.punchIn});
-
-
 }
 
 enum Role { Employee, Vendor, Lender }

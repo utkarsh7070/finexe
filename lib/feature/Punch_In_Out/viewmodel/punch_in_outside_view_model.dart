@@ -25,8 +25,8 @@ class PunchInOutSideViewModel {
 
     if (isSuccess) {
       // Fetch roles and handle navigation
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      List<String>? role = preferences.getStringList('roleName');
+      // SharedPreferences preferences = await SharedPreferences.getInstance();
+      List<String>? role =speciality.getRole();
       // String? name = preferences.getString('name');
        // initialiseRoamSdk(context,name??'');
 
@@ -119,7 +119,16 @@ class PunchInOutSideViewModel {
           AppRoutes.dashBoard, // CIBIL dashboard route
               (route) => false, // Remove all previous routes
         );
-      } else {
+      } 
+       else if (roles.contains('creditPd')) {
+        log("Navigating to sales dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.pdscreen, // Sales dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } 
+      else {
         // Default role navigation
         log('No matching role found, navigating to HRMS');
         Navigator.pushNamedAndRemoveUntil(

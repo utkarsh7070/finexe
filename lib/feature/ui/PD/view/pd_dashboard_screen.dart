@@ -1,4 +1,4 @@
-import 'package:advanced_search/advanced_search.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
@@ -20,27 +20,29 @@ class PdScreen extends ConsumerStatefulWidget {
 }
 
 class _PdScreenState extends ConsumerState<PdScreen> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    //AddBodDialog().addAlbumDialog(context, ref);
-    // ref.read(bodStatusNotifierProvider.notifier).checkBodStatus(context, ref);
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //
+  //   //AddBodDialog().addAlbumDialog(context, ref);
+  //   // ref.read(bodStatusNotifierProvider.notifier).checkBodStatus(context, ref);
+  //
+  //
+  // }
 
   @override
   Widget build(
     BuildContext context,
   ) {
-    final items = ref.watch(itemProvider);
+    // final items = ref.watch(itemProvider);
     final pdRequestList = ref.watch(fetchPdRequestListProvider);
     final pdRefuseList = ref.watch(fetchPdRefuseCasetProvider);
     final gridItems = ref.watch(griditemProvider);
-    var scaffoldKey = GlobalKey<ScaffoldState>();
+    var _scaffoldKey = GlobalKey<ScaffoldState>();
     // final pdITems = ref.watch(pdItemsProvider);
     return Scaffold(
-      key: scaffoldKey,
+      key: _scaffoldKey,
       drawer: const PdDrawer(),
       appBar: AppBar(
         // automaticallyImplyLeading: true,
@@ -79,52 +81,52 @@ class _PdScreenState extends ConsumerState<PdScreen> {
 
             children: [
               constantSizedBox(context),
-              AdvancedSearch(
-                  // data: ,
-                  maxElementsToDisplay: 10,
-                  singleItemHeight: 50,
-                  borderColor: Colors.grey,
-                  minLettersForSearch: 0,
-                  selectedTextColor: const Color(0xFF3363D9),
-                  fontSize: 14,
-                  borderRadius: 12.0,
-                  hintText: 'Search Me',
-                  cursorColor: Colors.blueGrey,
-                  autoCorrect: false,
-                  focusedBorderColor: Colors.blue,
-                  searchResultsBgColor: const Color(0x00fafafa),
-                  disabledBorderColor: Colors.cyan,
-                  enabledBorderColor: Colors.black,
-                  enabled: true,
-                  caseSensitive: false,
-                  inputTextFieldBgColor: Colors.white10,
-                  clearSearchEnabled: true,
-                  itemsShownAtStart: 10,
-                  searchMode: SearchMode.CONTAINS,
-                  showListOfResults: true,
-                  unSelectedTextColor: Colors.black54,
-                  verticalPadding: 10,
-                  horizontalPadding: 10,
-                  hideHintOnTextInputFocus: true,
-                  hintTextColor: Colors.grey,
-                  onItemTap: (index, value) {
-                    // if (kDebugMode) {
-                    //   print("selected item index is $index");
-                    // }
-                  },
-                  onSearchClear: () {
-                    // if (kDebugMode) {
-                    //   print("Cleared Search");
-                    // }
-                  },
-                  onSubmitted: (searchText, listOfResults) {
-                    print("Submitted: $searchText");
-                  },
-                  onEditingProgress: (searchText, listOfResults) {
-                    print("TextEdited: $searchText");
-                    print("LENGTH: ${listOfResults.length}");
-                  },
-                  searchItems: const []),
+              // AdvancedSearch(
+              //     // data: ,
+              //     maxElementsToDisplay: 10,
+              //     singleItemHeight: 50,
+              //     borderColor: Colors.grey,
+              //     minLettersForSearch: 0,
+              //     selectedTextColor: const Color(0xFF3363D9),
+              //     fontSize: 14,
+              //     borderRadius: 12.0,
+              //     hintText: 'Search Me',
+              //     cursorColor: Colors.blueGrey,
+              //     autoCorrect: false,
+              //     focusedBorderColor: Colors.blue,
+              //     searchResultsBgColor: const Color(0xFAFAFA),
+              //     disabledBorderColor: Colors.cyan,
+              //     enabledBorderColor: Colors.black,
+              //     enabled: true,
+              //     caseSensitive: false,
+              //     inputTextFieldBgColor: Colors.white10,
+              //     clearSearchEnabled: true,
+              //     itemsShownAtStart: 10,
+              //     searchMode: SearchMode.CONTAINS,
+              //     showListOfResults: true,
+              //     unSelectedTextColor: Colors.black54,
+              //     verticalPadding: 10,
+              //     horizontalPadding: 10,
+              //     hideHintOnTextInputFocus: true,
+              //     hintTextColor: Colors.grey,
+              //     onItemTap: (index, value) {
+              //       // if (kDebugMode) {
+              //       //   print("selected item index is $index");
+              //       // }
+              //     },
+              //     onSearchClear: () {
+              //       // if (kDebugMode) {
+              //       //   print("Cleared Search");
+              //       // }
+              //     },
+              //     onSubmitted: (searchText, listOfResults) {
+              //       print("Submitted: " + searchText);
+              //     },
+              //     onEditingProgress: (searchText, listOfResults) {
+              //       print("TextEdited: " + searchText);
+              //       print("LENGTH: " + listOfResults.length.toString());
+              //     },
+              //     searchItems: []),
               constantSizedBox(context),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -149,7 +151,9 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                           borderRadius: BorderRadius.circular(8),
                           color: const Color(0xffF4F4F4),
                         ),
-                        child: ListView.builder(
+                        child:data.isEmpty || data.length==0?
+                        Center(child: Text('No Request avialable'),):
+                        ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: data.length,
                           itemBuilder: (context, index) {
@@ -297,8 +301,8 @@ class _PdScreenState extends ConsumerState<PdScreen> {
               pdRefuseList.when(
                 data: (refuseItemsByPD) {
                 return
-                  refuseItemsByPD.isEmpty?
-                  const Text('No refused cases'):
+                  refuseItemsByPD.length==0?
+                  Text('No refused cases'):
                   ListView.builder(
                   shrinkWrap:
                   true, // Allows ListView to take up only the required height
@@ -381,7 +385,12 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                 error: (error, stackTrace) => throw Exception(),
                 loading: () {
                 return const Center(child: CircularProgressIndicator());
-              },)
+              },),
+              
+              constantSizedBox(context),
+              // constantSizedBox(context),
+              constantSizedBox(context)
+
 
             ],
           ),
@@ -397,6 +406,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
   }
 
   Widget squareBox({
+
     required String backImage,
     required String iconImage,
     required String title,
@@ -405,64 +415,82 @@ class _PdScreenState extends ConsumerState<PdScreen> {
     required Color titleColor,
     required Color stitleColor,
   }) {
-    return GestureDetector(
-      onTap: () {
-        if (title == 'Approved PD') {
-          Navigator.pushNamed(context, AppRoutes.pdapprove);
-        } else if (title == 'Pending PD') {
-          Navigator.pushNamed(context, AppRoutes.pdpending);
-        } else if (title == 'Rejected PD') {
-          Navigator.pushNamed(context, AppRoutes.pdreject);
-        } else if (title == 'Completed PD') {
-          print('Completed PD');
-          Navigator.pushNamed(context, AppRoutes.pdComplete);
-        }
-      },
-      child: Stack(
-        fit: StackFit.passthrough,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image(
-              image: AssetImage(backImage),
-              // height: displayHeight(context) * 0.16,
-              // width: displayWidth(context) * 0.5,
-              fit: BoxFit.cover,
-            ),
+    final gridItems = ref.watch(griditemProvider);
+
+    return Stack(
+      children: [
+
+        GestureDetector(
+          onTap: () {
+            if (title == 'Approved PD') {
+              Navigator.pushNamed(context, AppRoutes.pdapprove);
+            } else if (title == 'Pending PD') {
+              Navigator.pushNamed(context, AppRoutes.pdpending);
+            } else if (title == 'Rejected PD') {
+              Navigator.pushNamed(context, AppRoutes.pdreject);
+            } else if (title == 'Completed PD') {
+              print('Completed PD');
+              Navigator.pushNamed(context, AppRoutes.pdComplete);
+            }
+          },
+          child: Stack(
+            fit: StackFit.passthrough,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image(
+                  image: AssetImage(backImage),
+                  // height: displayHeight(context) * 0.16,
+                  // width: displayWidth(context) * 0.5,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned(
+                top: displayHeight(context) * 0.025,
+                left: displayWidth(context) * 0.02,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Image(
+                      image: AssetImage(iconImage),
+                      height: displayHeight(context) * 0.09,
+                      width: displayWidth(context) * 0.18,
+                    ),
+                    constantSizedBox(context),
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: titleColor,
+                      ),
+                    ),
+                    Text(
+                      stitle,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: stitleColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Positioned(
-            top: displayHeight(context) * 0.025,
-            left: displayWidth(context) * 0.02,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image(
-                  image: AssetImage(iconImage),
-                  height: displayHeight(context) * 0.09,
-                  width: displayWidth(context) * 0.18,
-                ),
-                constantSizedBox(context),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: titleColor,
-                  ),
-                ),
-                Text(
-                  stitle,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12,
-                    color: stitleColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+        // Positioned(
+        //     top: 0,right: 0,
+        //     child: Container(
+        //       height: 20,width: 20,
+        //       decoration: BoxDecoration(
+        //         shape: BoxShape.circle,
+        //         color: AppColors.red,
+        //       ),
+        //       child: Text(gridItems.length.toString(),
+        //         style: TextStyle(color: AppColors.white,),
+        //       ),)),
+      ],
     );
   }
 

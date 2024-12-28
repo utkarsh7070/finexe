@@ -3,17 +3,20 @@ import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 import 'package:flutter/Material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/Submit Data Models/cibil_form_model.dart';
 import '../view_model.dart/cibil_vmodel.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CibilDetailsForm extends ConsumerStatefulWidget {
   final String customerId;
 
-  const CibilDetailsForm({super.key, required this.customerId});
+  CibilDetailsForm({required this.customerId});
 
   @override
   _CibilDetailsFormState createState() => _CibilDetailsFormState();
@@ -48,10 +51,10 @@ class _CibilDetailsFormState extends ConsumerState<CibilDetailsForm> {
     //pdCibilSubmitProvider
     final cibileData = ref.watch(cibilDetailsProvider(widget.customerId));
 
-    final appSate = ref.watch(pdCibilSubmitProvider);
+    final _appSate = ref.watch(pdCibilSubmitProvider);
 
     return ExpansionTile(
-      title: const Text('Cibil Detail’s'),
+      title: Text('Cibil Detail’s'),
       onExpansionChanged: (expanded) {
         ref.read(isExpandedProvider.notifier).state = expanded;
         if (expanded) {
@@ -64,9 +67,9 @@ class _CibilDetailsFormState extends ConsumerState<CibilDetailsForm> {
         cibileData.when(
           data: (cibileDataForm) {
             if (cibildetailform_numberofLoanController.text.isEmpty) {
-              cibildetailform_numberofLoanController.text = cibileDataForm.totalLoans ?? '';
-              cibildetailform_currentLoanController.text = cibileDataForm.detailsOfCurrentLoans ?? '';
-              cibildetailform_resonforDPDController.text = cibileDataForm.reasonforDPD ?? '';
+              cibildetailform_numberofLoanController.text = cibileDataForm?.totalLoans ?? '';
+              cibildetailform_currentLoanController.text = cibileDataForm?.detailsOfCurrentLoans ?? '';
+              cibildetailform_resonforDPDController.text = cibileDataForm?.reasonforDPD ?? '';
             }
             return Form(
               key: _formKey,
@@ -124,31 +127,15 @@ class _CibilDetailsFormState extends ConsumerState<CibilDetailsForm> {
                           );
 
                           ref.read(pdCibilSubmitProvider.notifier).submitpdCibilDetailsForm(
+                            context: context,
                             customerId: widget.customerId,
                             pdType: 'creditPd',
                             cibilData: cibilFormDatat,
                           ).then(
                                 (value) {
                               if (value == true) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: AppColors.green,
-                                    content: Text(
-                                      'Form submitted successfully!',
-                                      style: AppStyles.whiteText16,
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: AppColors.red,
-                                    content: Text(
-                                      'An Error occurred while submitting the form. Please try again!',
-                                      style: AppStyles.whiteText16,
-                                    ),
-                                  ),
-                                );
+                                showCustomSnackBar(
+                                    context,'Form Saved successfully!', Colors.green);
                               }
                             },
                           );
@@ -164,7 +151,7 @@ class _CibilDetailsFormState extends ConsumerState<CibilDetailsForm> {
                           );
                         }
                       },
-                      child: appSate.isLoading == true
+                      child: _appSate.isLoading == true
                           ? const SizedBox(
                         width: 24, // Specify the width
                         height: 24, // Specify the height
@@ -176,7 +163,7 @@ class _CibilDetailsFormState extends ConsumerState<CibilDetailsForm> {
                         ),
                       ):
                       Text(
-                        'Next',
+                        'Save Form',
                         style: AppStyles.whiteText16,
                       ),
                     )
