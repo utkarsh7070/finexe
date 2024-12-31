@@ -68,13 +68,14 @@ class SessionModel {
   final bool? puntchStatus;
   final String? apkUrl;
   final bool? isUpdateRequired;
- // final List<String>?allRoleName;
-
+  // final List<String>?allRoleName;
 
   SessionModel(
-      {/*this.allRoleName,*/this.token = false, this.role = '', this.puntchStatus = false,this.apkUrl='', this.isUpdateRequired= false});
-
-
+      {/*this.allRoleName,*/ this.token = false,
+      this.role = '',
+      this.puntchStatus = false,
+      this.apkUrl = '',
+      this.isUpdateRequired = false});
 }
 
 // final punchInRepositoryProvider = Provider.autoDispose<PunchInRepositoryImp>((ref) {
@@ -92,7 +93,8 @@ Future<Position> getCurrentLocation() async {
 
 // .................Version Api.............
 
-final splashViewModelProvider = AsyncNotifierProvider<SplashViewModel, SessionModel>(() {
+final splashViewModelProvider =
+    AsyncNotifierProvider<SplashViewModel, SessionModel>(() {
   return SplashViewModel();
 });
 
@@ -110,72 +112,72 @@ class SplashViewModel extends AsyncNotifier<SessionModel> {
 
   @override
   FutureOr<SessionModel> build() {
-   return _apiService.fetchPosts(ref);
+    return _apiService.fetchPosts(ref);
   }
   // void downloadApk(String apkUrl,context){
   //   _apiService.downloadAndInstallApk(apkUrl);
   // }
-
 }
 
-final downloadProvider =  StateProvider.autoDispose<String>((ref) {
-  return '';
-},);
+final downloadProvider = StateProvider.autoDispose<String>(
+  (ref) {
+    return '';
+  },
+);
 
-class ApiService{
+class ApiService {
   ApiService();
   // static const platform = MethodChannel('apk_channel');
   // final PunchInRepositoryImp repositoryImp = PunchInRepositoryImp();
   // final Dio _dio = Dio();
   bool? punchStatus;
   String? apkUrl;
-  bool isUpdateRequired =  false;
+  bool isUpdateRequired = false;
 
   Future<SessionModel> fetchPosts(ref) async {
-  
-    String? tokens = speciality.getToken();
-    final dio = ref.watch(dioProvider);
     List<String>? role = speciality.getRole();
-    final position = await getCurrentLocation();
+    String? tokens = speciality.getToken();
+
+    // Check location only if necessary
+    Future<Position> positionFuture = getCurrentLocation();
+
+    // Fetch role and token from prefs
+
+    // Fetch version data concurrently
+    var versionFuture = fetchVersion();
+    Position position = await positionFuture;
+    var versionData = await versionFuture;
+
     if (tokens != null) {
+      final dio = ref.watch(dioProvider);
+
       Map<String, String> token = {"token": tokens};
       Map<String, double> location = {
         "latitude": position.latitude,
         "longitude": position.longitude,
       };
       try {
-        Response response =
-        await dio.get(Api.checkPunchIn,
+        Response response = await dio.get(Api.checkPunchIn,
             queryParameters: location, options: Options(headers: token));
-            if(kDebugMode){
-
-            
-        print('response data////// ${response.data}');}
-
-     
-
-        if(response.statusCode == 200) {
-
-          var checkAttendanceResponse =
-          CheckAttendanceResponseModel.fromJson(response.data);
-          print(response.data);
-
-          punchStatus = checkAttendanceResponse.items.punchIn;
-
-          final versionResponse = await dio.get(Api.getVersion);
-          final data = versionResponse.data['items'];
-          final serverVersion = data['version'];
-          apkUrl = data['apkUrl'];
-          print(response.data);
-
-          print(
-              'app server version- $serverVersion and App version-${AppConstants
-                  .staticAppVersion}');
-          isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
-        }else {
-          throw Exception('Failed to load data');
+        if (kDebugMode) {
+          print('response data////// ${response.data}');
         }
 
+        if (response.statusCode == 200) {
+          CheckAttendanceResponseModel checkAttendanceResponse =
+              CheckAttendanceResponseModel.fromJson(response.data);
+          bool? punchStatus = checkAttendanceResponse.items.punchIn;
+
+          return SessionModel(
+            token: true,
+            role: role?.first,
+            puntchStatus: punchStatus,
+            apkUrl: versionData['apkUrl'],
+            isUpdateRequired: versionData['isUpdateRequired'],
+          );
+        } else {
+          throw Exception('Failed to check punch-in status');
+        }
       } catch (e) {
         if (e is DioException) {
           if (e.response?.statusCode == 400) {
@@ -183,11 +185,11 @@ class ApiService{
             final errorMessage = e.response?.data['message'] ?? 'Bad Request';
             print("400 Error: $errorMessage");
             showCustomSnackBar(ref, errorMessage, Colors.red);
-
           } else {
             // Handle other Dio errors
             print("DioError: ${e.message}");
-            showCustomSnackBar(ref, "Something went wrong. Please try again.", Colors.red);
+            showCustomSnackBar(
+                ref, "Something went wrong. Please try again.", Colors.red);
           }
         } else {
           // Handle non-Dio errors
@@ -197,7 +199,26 @@ class ApiService{
       }
     }
     return SessionModel(
-        /*allRoleName:role,*/token: tokens != null, role: role?.first, puntchStatus: punchStatus,apkUrl: apkUrl,isUpdateRequired: isUpdateRequired);
+      token: tokens != null,
+      role: role?.first,
+      puntchStatus: false,
+      apkUrl: versionData['apkUrl'],
+      isUpdateRequired: versionData['isUpdateRequired'],
+    );
+  }
+
+  Future<Map<String, dynamic>> fetchVersion() async {
+    final dio = Dio();
+    try {
+      Response versionResponse = await dio.get(Api.getVersion);
+      final data = versionResponse.data['items'];
+      final serverVersion = data['version'];
+      final apkUrl = data['apkUrl'];
+      bool isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
+      return {'apkUrl': apkUrl, 'isUpdateRequired': isUpdateRequired};
+    } catch (e) {
+      throw Exception('Error fetching version data: $e');
+    }
   }
 
   // Future<void> downloadAndInstallApk(String apkUrl) async {

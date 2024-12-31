@@ -1497,6 +1497,7 @@ final directionsProvider =
 });
 
 //-----------------------------end map--------------------------------------------------------
+final searchResultsProvider = StateProvider<List<ItemsDetails>>((ref) => []);
 
 final fetchVisitPendingDataProvider =
     FutureProvider<List<Map<String, String>>>((ref) async {
@@ -1515,9 +1516,10 @@ final fetchVisitPendingDataProvider =
 
     GetVisitPendingResponseData apiResponseList =
         GetVisitPendingResponseData.fromJson(response.data);
-    // List<ItemsDetails> listOfLists = apiResponseList.items.map((map) {
-    //   return ItemsDetails.fromJson(map);
-    // }).toList();
+    List<ItemsDetails> listOfLists = apiResponseList.items.map((map) {
+      return ItemsDetails.fromJson(map);
+    }).toList();
+       ref.read(searchResultsProvider.notifier).state = listOfLists;
     return apiResponseList.items;
   } else {
     throw Exception('Failed to load data');
