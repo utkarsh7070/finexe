@@ -516,96 +516,8 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       default:
         return false;
     }
-    // print(modeOfCollectionController.dropDownValue?.value);
-    // print(creditPersonController.dropDownValue?.value);
-    // print(bankNameController.dropDownValue?.value);
-    // // if(state.modeTitle == 'bankName' && state.isTransactionImage){
-    // //
-    // // }else{
-    // //
-    // // }
-    // if (state.isTransactionImage && modeOfCollectionController.dropDownValue?.value!=null) {
-    //   final isPhoto = _validateTransactionImage(state.photoFile);
-    //   final isAmount = _validateEmiAmount(state.emiAmount);
-    //   // final isModeCollection = modeOfCollectionController.dropDownValue?.value!=null;
-    //   // final isCreditPerson = creditPersonController.dropDownValue?.value!=null;
-    //   // final isBank = bankNameController.dropDownValue?.value!=null;
-    //   // print('isModeCollection $isModeCollection  isCreditPerson $isCreditPerson, isBank  $isBank');
-    //   state = state.copyWith(isTransactionImage: isPhoto);
-    //   return isPhoto;
-    // } else {
-    //   return true;
-    // }
+
   }
-
-  /*Future<void> updateEmiSubmitButton(
-
-      {
-        required ItemsDetails detail,
-      required BuildContext context,
-      required WidgetRef ref}) async {
-    state = state.copyWith(isButtonVissible: true);
-    if (kDebugMode) {
-      print(
-          'Ld o:-${detail.ld}, customerName:- ${detail.customerName}, mobile:- ${detail.mobile},  commonId:- ${state.commonId}, image:- ${state.transactionImage}');
-    }
-
-    ObjectId? result1 = parseObjectId(state.commonId);
-
-    UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
-        fatherName: detail.fatherName ?? '',
-        ld: detail.ld ?? '',
-        collectedBy: '',
-        customerName: detail.customerName ?? '',
-        mobileNo: int.parse(detail.mobile ?? ''),
-        receivedAmount: int.parse(state.emiAmount),
-        transactionId: state.transactionId,
-        transactionImage: state.transactionImage,
-        modeOfCollectionId: state.modeOfCollectionId,
-        commonId: result1,
-        bankName: state.bankName,
-        customerEmail: state.receipt,
-        emiReceivedDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-        remarkByCollection: state.remark,
-        partner: detail.partner!);
-
-    print('Update EMI Input -${requestModel.toJson()}');
-
-    String? token = await SessionService.getToken();
-    final response = await dio.post(Api.updateEmiSubmit,
-        data: requestModel.toJson(),
-        options: Options(
-          headers: {"token": token},
-          validateStatus: (status) => true,
-        ));
-    if (kDebugMode) {
-      print(response.statusMessage);
-      print(response.statusCode);
-    }
-
-    var responseData = response.data;
-    print('Emi Paid response: $responseData');
-    var message = responseData['message'];
-
-    if (response.statusCode == 200 || responseData['status'] == true) {
-      showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
-      state = state.copyWith(isButtonVissible: false);
-      updatePhotoValue(context);
-      ref.refresh(fetchVisitPendingDataProvider);
-      ref.invalidate(updateEmiViewModelProvider);
-
-      if (kDebugMode) {
-        print('EmiUpdateResponse ${response.data}');
-      }
-    } else if (response.statusCode == 400 || responseData['status'] == false) {
-      // isLoading = false;
-      showCustomSnackBar(context, message, Colors.red);
-      print('Emi paid message ${response.statusMessage}');
-    } else {
-      throw Exception('Failed to load data');
-      // return false;
-    }
-  }*/
 
   Future<void> updateEmiSubmitButton(
       {required ItemsDetails detail,
@@ -1488,14 +1400,44 @@ final fetchVisitPendingDataProvider =
 
     GetVisitPendingResponseData apiResponseList =
         GetVisitPendingResponseData.fromJson(response.data);
-    // List<ItemsDetails> listOfLists = apiResponseList.items.map((map) {
-    //   return ItemsDetails.fromJson(map);
-    // }).toList();
+
+    List<ItemsDetails> listOfLists = apiResponseList.items.map((map) {
+      return ItemsDetails.fromJson(map);
+    }).toList();
+    ref.read(searchResultsProvider.notifier).state = listOfLists;
+
     return apiResponseList.items;
   } else {
     throw Exception('Failed to load data');
   }
 });
+
+
+
+
+// Provider for search query state
+/*final searchQueryProvider = StateProvider<String>((ref) => '');
+
+// FutureProvider for filtered visit pending data based on search query
+final filteredVisitPendingDataProvider =
+FutureProvider<List<Map<String, String>>>((ref) async {
+  final searchQuery = ref.watch(searchQueryProvider); // No `.state` here
+  final visitPendingData = await ref.watch(fetchVisitPendingDataProvider.future);
+
+  if (searchQuery.isEmpty) {
+    return visitPendingData;
+  }
+
+  // Filter the data based on the search query
+  return visitPendingData.where((item) {
+    return item.values.any((value) =>
+        value.toLowerCase().contains(searchQuery.toLowerCase()));
+  }).toList();
+});*/
+
+//-----------------------------end map--------------------------------------------------------
+final searchResultsProvider = StateProvider<List<ItemsDetails>>((ref) => []);
+
 
 final fetchCollectionDueDataProvider =
     FutureProvider<List<Map<String, String>>>((ref) async {

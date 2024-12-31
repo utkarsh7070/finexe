@@ -23,7 +23,7 @@ import '../model/response_model.dart';
 class AttendanceState {
   final String employeeName;
   final bool isLoading;
-  final bool punchAllowed;
+  final bool? punchAllowed;
   final bool punchStatus;
   final Position? currentPosition;
   final String? distanceMessage;
@@ -36,7 +36,7 @@ class AttendanceState {
   AttendanceState(
       {this.taskTitle = '',
         this.taskDescription = '',
-        this.punchAllowed = false,
+        this.punchAllowed ,
         this.employeeName = '',
         this.isLoading = false,
         this.punchStatus = false,
@@ -254,7 +254,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
             state.copyWith(checkAttendanceResponse: checkAttendanceResponse);
         state =
             state.copyWith(punchStatus: checkAttendanceResponse.items.punchIn,punchAllowed: checkAttendanceResponse.items.allowed);
-        log('punchIn Status: ${checkAttendanceResponse.items.punchIn}');
+        log('punchIn Status: ${checkAttendanceResponse.items.punchIn} punchIn allowed: ${checkAttendanceResponse.items.allowed}');
         return PunchAttendanceModel(allowed: checkAttendanceResponse.items.allowed, punchIn: checkAttendanceResponse.items.punchIn);
       } on DioException catch (error) {
         if (kDebugMode) {
@@ -486,15 +486,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
         }
       },
     );
-    // } else {
-    //   // await onPunchOut().then((value) async {
-    //   //   if(value!){
-    //   //     await checkPunch().then((value) {
-    //   //       state = state.copyWith(punchStatus: value);
-    //   //     },);
-    //   //   }
-    //   // },);
-    // }
+
     state = state.copyWith(isLoading: false);
   }
 
@@ -562,12 +554,6 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   }
 }
 
-// final socketServiceProvider = Provider<SocketService>((ref) {
-//   final socketService = SocketService();
-//   socketService.connectSocket();  // Connect when the provider is created
-//   return socketService;
-// });
-
 final punchInRepositoryProvider =
 Provider.autoDispose<PunchInRepositoryImp>((ref) {
   return PunchInRepositoryImp(); // Provides instance of PunchInRepository
@@ -581,46 +567,7 @@ StateNotifierProvider<AttendanceNotifier, AttendanceState>((ref) {
   return AttendanceNotifier(ref.watch(punchInRepositoryProvider), dio);
 });
 
-//
-// class UserSession extends AsyncNotifier<String?> {
-//   @override
-//   Future<String?> build() async {
-//     final prefs = await SharedPreferences.getInstance();
-//     return prefs.getString('email'); // Loads username if available
-//   }
-//
-//   // Future<void> setUser(String username) async {
-//   //   final prefs = await SharedPreferences.getInstance();
-//   //   await prefs.setString('username', username);
-//   //   state = AsyncData(username);
-//   // }
-//   //
-//   // Future<void> clearUser() async {
-//   //   final prefs = await SharedPreferences.getInstance();
-//   //   await prefs.clear();
-//   //   state = const AsyncData(null);
-//   // }
-// }
-//
-// final userSessionProvider = AsyncNotifierProvider<UserSession, String?>(UserSession.new);
 
-// final checkCurrentLocation = FutureProvider<String>(
-//   (ref) async {
-//     SharedPreferences preferences = await SessionService.getSession();
-//     final String? name = await preferences.getString('email');
-//     print('set in punch in screen name $name');
-//     return name!;
-//   },
-// );
-//
-// Future<Position> getCurrentLocation() async {
-//   await Geolocator.requestPermission();
-//   LocationSettings locationSettings = const LocationSettings(
-//     accuracy: LocationAccuracy.high,
-//     distanceFilter: 100,
-//   );
-//   return Geolocator.getCurrentPosition(locationSettings: locationSettings);
-// }
 class PunchAttendanceModel{
   final bool allowed;
   final bool punchIn;

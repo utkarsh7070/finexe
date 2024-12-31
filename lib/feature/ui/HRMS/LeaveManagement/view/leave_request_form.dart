@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/widget/custom_text_form.dart';
+import '../../../../base/utils/widget/dropdown_style.dart';
 import '../model/leave_request_model.dart';
 import '../view_model/leave_request_view_model.dart';
 
@@ -16,59 +17,14 @@ class LeaveRequestForm extends ConsumerStatefulWidget {
 }
 
 class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
-  final _formKey = GlobalKey<FormState>();
-  final _leaveReasonController = TextEditingController();
-  DateTime? _startDate;
-  DateTime? _endDate;
 
-  void _pickDate(BuildContext context, bool isStartDate) async {
-    final pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(), // Disable past dates
-      lastDate: DateTime(2100),
-    );
-
-    if (pickedDate != null) {
-      setState(() {
-        if (isStartDate) {
-          _startDate = pickedDate;
-        } else {
-          _endDate = pickedDate;
-        }
-      });
-    }
-  }
-
-  void _submitForm() async {
-    if (_formKey.currentState!.validate() && _startDate != null && _endDate != null) {
-      final viewModel = ref.read(leaveRequestViewModelProvider);
-      final formattedStartDate = DateFormat('yyyy-MM-dd').format(_startDate!);
-      final formattedEndDate = DateFormat('yyyy-MM-dd').format(_endDate!);
-
-      final leadData = LeaveRequestItem(
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
-        reasonForLeave: _leaveReasonController.text.trim(),
-      );
-
-      try {
-        viewModel.submitLeaveRequest(leadData, context);
-
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill all fields")),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+
+    final fetchLeaveType=ref.watch(fetchLeaveTypeProvider);
+    final viewModel = ref.watch(leaveRequestViewModelProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Leave Request Form",style: TextStyle(color: Colors.white)),
@@ -85,66 +41,117 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              TextFormField(
-                readOnly: true,
-                decoration: customInputDecoration(
-                  "Start Date",
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_month,color: AppColors.primary,),
-                    onPressed: () => _pickDate(context, true),
+        /*  key: _formKey,*/
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: viewModel.leaveTittleController,
+                  decoration: customInputDecoration("Tittle"),
+                  maxLines: 1,
+                  validator: (value) => value == null || value.isEmpty
+                      ? "Please enter leave tittle"
+                      : null,
+                ),
+
+                const SizedBox(height: 10),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: fetchLeaveType.when(
+                        data: (itemList) {
+                          return DropdownButtonFormField<String>(
+                            value: viewModel.leaveTypeController.text.isEmpty ? null : viewModel.leaveTypeController.text,
+                            onChanged: (value) {
+                             // _leaveTypeController.text = value!;
+                              viewModel.selectedLeaveTypeId = value;
+                            },
+                            items: itemList.map((item) {
+                              return DropdownMenuItem<String>(
+                                value: item.id, // Or whatever field you need
+                                child: Text(item.leaveType),
+                              );
+                            }).toList(),
+                            decoration: dropdownDecoration('Select Leave Type *'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select Branch';
+                              }
+                              return null;
+                            },
+                          );
+                        },
+                        loading: () {
+                          return const Center(child: CircularProgressIndicator());
+                        },
+                        error: (error, _) => const Text('Failed to load Leave Type'),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 10),
+
+                TextFormField(
+                  readOnly: true,
+                  decoration: customInputDecoration(
+                    "Start Date",
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_month,color: AppColors.primary,),
+                      onPressed: () =>  viewModel.pickDate(context, true),
+                    ),
                   ),
-                ),
-                controller: TextEditingController(
-                  text: _startDate != null
-                      ? DateFormat('yyyy-MM-dd').format(_startDate!)
-                      : '',
-                ),
-                validator: (value) => value == null || value.isEmpty
-                    ? "Please select a start date"
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                readOnly: true,
-                decoration: customInputDecoration(
-                  "End Date",
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_month,color: AppColors.primary,),
-                    onPressed: () => _pickDate(context, false),
+                  controller: TextEditingController(
+                    text: viewModel.startDate!= null
+                        ? DateFormat('yyyy-MM-dd').format(viewModel.startDate!)
+                        : '',
                   ),
+                  validator: (value) => value == null || value.isEmpty
+                      ? "Please select a start date"
+                      : null,
                 ),
-                controller: TextEditingController(
-                  text: _endDate != null
-                      ? DateFormat('yyyy-MM-dd').format(_endDate!)
-                      : '',
+                const SizedBox(height: 16),
+                TextFormField(
+                  readOnly: true,
+                  decoration: customInputDecoration(
+                    "End Date",
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_month,color: AppColors.primary,),
+                      onPressed: () => viewModel.pickDate(context, false),
+                    ),
+                  ),
+                  controller: TextEditingController(
+                    text: viewModel.endDate != null
+                        ? DateFormat('yyyy-MM-dd').format(viewModel.endDate!)
+                        : '',
+                  ),
+                  validator: (value) => value == null || value.isEmpty
+                      ? "Please select an end date"
+                      : null,
                 ),
-                validator: (value) => value == null || value.isEmpty
-                    ? "Please select an end date"
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _leaveReasonController,
-                decoration: customInputDecoration("Leave Reason"),
-                maxLines: 3,
-                validator: (value) => value == null || value.isEmpty
-                    ? "Please enter a leave reason"
-                    : null,
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary, // Set your desired background color here
-                  foregroundColor: Colors.white, // This sets the text and icon color
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: viewModel.leaveReasonController,
+                  decoration: customInputDecoration("Leave Reason"),
+                  maxLines: 3,
+                  validator: (value) => value == null || value.isEmpty
+                      ? "Please enter a leave reason"
+                      : null,
                 ),
-                child: const Text("Submit",),
-              ),
-            ],
+                const SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: () => viewModel.submitLeaveRequest(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary, // Set your desired background color here
+                    foregroundColor: Colors.white, // This sets the text and icon color
+                  ),
+                  child: const Text("Submit",),
+                ),
+              ],
+            ),
           ),
         ),
       ),

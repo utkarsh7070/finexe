@@ -1,6 +1,6 @@
 class Api {
   static const String baseUrlProduction = 'https://stageapi.fincooper.in';
- static const String baseUrl ='https://stageapi.fincooper.in/';// Stage URL
+   static const String baseUrl ='https://stageapi.fincooper.in/';// Stage URL
   // static const String baseUrl ='https://prod.fincooper.in/';// Production URL
   //  static const String baseUrl = 'https://stageapi.fincooper.in/';// Production URL
     // static const String baseUrl = 'https://prod.fincooper.in/';// Production URL
@@ -106,6 +106,8 @@ class Api {
   static const String getEmployeeList = '${baseUrl}v1/adminMaster/employe/getAllEmploye';
 
   static const String expenseSubmitForm = baseUrl;
+
+  static const String getAllLeaveType = '${baseUrl}v1/leaveType/getAllLeaveType';
 
 
   // http://localhost:5500/v1/calculator/getCustomer?employeeRole=sales&status=all__
