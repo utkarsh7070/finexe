@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:bson/bson.dart';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
@@ -11,6 +12,7 @@ import 'package:finexe/feature/ui/Collection/Collection%20cases/model/update_emi
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_submit_request_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -26,6 +28,7 @@ import '../model/visit_closure_submit_request_model.dart';
 import '../model/get_visit_pending_response_data.dart';
 import '../model/visit_pending_items_model.dart';
 import '../model/visit_update_upload_image_responce_model.dart';
+import 'package:path/path.dart' as path;
 
 final updateVisitDropDown = StateProvider<List<DropDownValueModel>>(
   (ref) {
@@ -95,13 +98,15 @@ final updateEmiFocusProvider =
 });
 
 final updateEmiViewModelProvider =
-    StateNotifierProvider<UpdateEmiViewModel, UpdateEmiModel>((ref) {
+    StateNotifierProvider.autoDispose<UpdateEmiViewModel, UpdateEmiModel>(
+        (ref) {
   final dio = ref.read(dioProvider);
   return UpdateEmiViewModel(dio);
 });
 
 final updateVisitViewModelProvider =
-    StateNotifierProvider<UpdateVisitViewModel, UpdateVisitModel>((ref) {
+    StateNotifierProvider.autoDispose<UpdateVisitViewModel, UpdateVisitModel>(
+        (ref) {
   final dio = ref.read(dioProvider);
 
   final position = ref.watch(currentLocationProvider);
@@ -131,11 +136,26 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     state = state.copyWith(isLoading: true);
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
-      state = state.copyWith(photoFile: pickedFile.path);
+      final isValid = _validateTransactionImage(pickedFile.path);
+      state = state.copyWith(photoFile: pickedFile.path,isPhotoFile: isValid);
+     final imagePath = await compressImage(File(pickedFile.path));
+      await uploadImage(imagePath!.path);
       return pickedFile;
     }
     return null;
   }
+
+  Future<XFile?> compressImage(File file) async {
+    String fileName = path.basename(file.path);
+    final String targetPath = '${file.parent.path}/compressed_$fileName';
+    final compressedBytes = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path, // Source path
+      targetPath, // Target path
+      quality: 10, // Compression quality (0-100)
+    );
+    return compressedBytes;
+  }
+
 
   Future<void> uploadImage(String image) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -193,7 +213,7 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     } else {}
   }
 
-  bool validateForm(String value,BuildContext context) {
+  bool validateForm(String value, BuildContext context) {
     switch (value) {
       case 'CustomerWillPayEmi':
         return validateCustomerPayForm(context);
@@ -209,17 +229,14 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
   }
 
   Future<void> visitFormSubmit(
-
       {required ItemsDetails datas, required BuildContext context}) async {
-
-    if(state.isLoading==true){
+    if (state.isLoading == true) {
       return;
     }
     state = state.copyWith(isButtonVissible: true);
     state = state.copyWith(isLoading: true);
 
     print('image of uploaded $imageApi');
-
 
     final strDate = DateFormat('dd/MM/yyyy').parse(state.date);
     final date = DateFormat('yyyy-MM-dd').format(strDate);
@@ -239,7 +256,6 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
       // latitude: data.latitude,
       // longitude: data.longitude
     );
-
 
     print(requestModel);
     String? token = speciality.getToken();
@@ -263,12 +279,10 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     } catch (e) {
       DioExceptions.fromDioError(e as DioException, context);
       showCustomSnackBar(context, 'something went wrong', Colors.red);
-    }
-    finally {
+    } finally {
       state = state.copyWith(isButtonVissible: false);
       state = state.copyWith(isLoading: false);
     }
-
   }
 
   void updatePhotoValue(context) {
@@ -316,28 +330,36 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     final isPaymentAmountValid = _validatePaymentAmount(state.paymentAmount);
     final isDateValid = _validateDate(state.date);
     final isPhoto = _validateTransactionImage(state.photoFile);
-    if(state.transitionImage.isEmpty){
-      showCustomSnackBar(context, 'Image is not uploaded in server', Colors.red.shade200);
+    if (state.transitionImage.isEmpty) {
+      showCustomSnackBar(
+          context, 'Image is not uploaded in server', Colors.red.shade200);
     }
     state = state.copyWith(
         isPaymentAmountValid: isPaymentAmountValid,
         isDateValid: isDateValid,
         isPhotoFile: isPhoto);
-    return isPaymentAmountValid && isDateValid && isPhoto && state.transitionImage.isNotEmpty;
+    return isPaymentAmountValid &&
+        isDateValid &&
+        isPhoto &&
+        state.transitionImage.isNotEmpty;
   }
 
   bool validateCustomerNotContactable(BuildContext context) {
     final isDate = _validateDate(state.date);
     final isReasonValid = _validateReason(state.reason);
     final isImage = _validateTransactionImage(state.photoFile);
-    if(state.transitionImage.isEmpty){
-      showCustomSnackBar(context, 'Image is not uploaded in server', Colors.red.shade200);
+    if (state.transitionImage.isEmpty) {
+      showCustomSnackBar(
+          context, 'Image is not uploaded in server', Colors.red.shade200);
     }
     state = state.copyWith(
         isDateValid: isDate,
         isPhotoFile: isImage,
         isReasonValid: isReasonValid);
-    return isDate && isReasonValid && isImage && state.transitionImage.isNotEmpty;
+    return isDate &&
+        isReasonValid &&
+        isImage &&
+        state.transitionImage.isNotEmpty;
   }
 
   bool validateCustomerNotPay(BuildContext context) {
@@ -346,8 +368,9 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     final isSolutionValid = _validateSolution(state.solution);
     final isDateValid = _validateDate(state.date);
     final isPhoto = _validateTransactionImage(state.photoFile);
-    if(state.transitionImage.isEmpty){
-      showCustomSnackBar(context, 'Image is not uploaded in server', Colors.red.shade200);
+    if (state.transitionImage.isEmpty) {
+      showCustomSnackBar(
+          context, 'Image is not uploaded in server', Colors.red.shade200);
     }
     state = state.copyWith(
         // isPaymentStatusValid: isPaymentStatusValid,
@@ -449,15 +472,20 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final isAmount = _validateEmiAmount(state.emiAmount);
     final isTransactionId = _validateTransactionId(state.transactionId);
     final isRemark = _validateRemark(state.remark);
-    if(state.transactionImage.isEmpty){
-      showCustomSnackBar(context, 'Image is not upload in server', Colors.red.shade200);
+    if (state.transactionImage.isEmpty) {
+      showCustomSnackBar(
+          context, 'Image is not upload in server', Colors.red.shade200);
     }
     state = state.copyWith(
         isTransactionImage: isPhoto,
         isTransactionId: isTransactionId,
         isEmiAmount: isAmount,
         isRemark: isRemark);
-    return isPhoto && isAmount && isTransactionId && isRemark && state.transactionImage.isNotEmpty;
+    return isPhoto &&
+        isAmount &&
+        isTransactionId &&
+        isRemark &&
+        state.transactionImage.isNotEmpty;
   }
 
   bool validAccountDeposit(context) {
@@ -465,12 +493,14 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final isPhoto = _validateTransactionImage(state.photoFile);
     final isAmount = _validateEmiAmount(state.emiAmount);
     final isTransactionId = _validateTransactionId(state.transactionId);
-    final isMentionMail = _validateReceipt(state.receipt);
+    final isMentionMail = _validateReceipt(state.receipt ?? '');
     final isRemark = _validateRemark(state.remark);
-    if(!isBank){
-      showCustomSnackBar(context, 'Please select bank name', Colors.red.shade200);
-    }else if(state.transactionImage.isEmpty){
-      showCustomSnackBar(context, 'Image is not upload in server', Colors.red.shade200);
+    if (!isBank) {
+      showCustomSnackBar(
+          context, 'Please select bank name', Colors.red.shade200);
+    } else if (state.transactionImage.isEmpty) {
+      showCustomSnackBar(
+          context, 'Image is not upload in server', Colors.red.shade200);
     }
     state = state.copyWith(
         isReceipt: isMentionMail,
@@ -490,15 +520,14 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
   bool validCashCollection(context) {
     final isCreditPerson = creditPersonController.dropDownValue?.value != null;
     final isAmount = _validateEmiAmount(state.emiAmount);
-    final isMentionMail = _validateReceipt(state.receipt);
+    final isMentionMail = _validateReceipt(state.receipt ?? '');
     final isRemark = _validateRemark(state.remark);
-    if(!isCreditPerson){
-      showCustomSnackBar(context, 'Please select credit person', Colors.red.shade200);
+    if (!isCreditPerson) {
+      showCustomSnackBar(
+          context, 'Please select credit person', Colors.red.shade200);
     }
     state = state.copyWith(
-        isReceipt: isMentionMail,
-        isEmiAmount: isAmount,
-        isRemark: isRemark);
+        isReceipt: isMentionMail, isEmiAmount: isAmount, isRemark: isRemark);
     return isAmount && isRemark && isMentionMail && isCreditPerson;
   }
 
@@ -609,13 +638,11 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
 
   Future<void> updateEmiSubmitButton(
       {required ItemsDetails detail,
-        required BuildContext context,
-        required WidgetRef ref}) async {
+      required BuildContext context,
+      required WidgetRef ref}) async {
     state = state.copyWith(isButtonVissible: true);
-    if(state.isLoading ==true){
-
-        print(
-            'Second time click ');
+    if (state.isLoading == true) {
+      print('Second time click ');
       return;
     }
     state = state.copyWith(isLoading: true);
@@ -623,11 +650,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       print(
           'Ld o:-${detail.ld}, customerName:- ${detail.customerName}, mobile:- ${detail.mobile}, commonId:- ${state.commonId}, image:- ${state.transactionImage}');
     }
-
-
     ObjectId? result1 = parseObjectId(state.commonId);
-
-
     UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
         fatherName: detail.fatherName ?? '',
         ld: detail.ld ?? '',
@@ -645,12 +668,10 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         remarkByCollection: state.remark,
         partner: detail.partner!);
 
-
     print('Update EMI Input -${requestModel.toJson()}');
 
-
-    String? token =speciality.getToken();
-    try{
+    String? token = speciality.getToken();
+    try {
       final response = await dio.post(Api.updateEmiSubmit,
           data: requestModel.toJson(),
           options: Options(
@@ -662,25 +683,18 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         print(response.statusCode);
       }
 
-
       var responseData = response.data;
       print('Emi Paid response: $responseData');
       var message = responseData['message'];
 
-
       if (response.statusCode == 200 || responseData['status'] == true) {
         showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
         updatePhotoValue(context);
-
-
-        ref.refresh(fetchVisitPendingDataProvider);
-        ref.invalidate(updateEmiViewModelProvider);
-
-
         if (kDebugMode) {
           print('EmiUpdateResponse ${response.data}');
         }
-      } else if (response.statusCode == 400 || responseData['status'] == false) {
+      } else if (response.statusCode == 400 ||
+          responseData['status'] == false) {
 // isLoading = false;
         showCustomSnackBar(context, message, Colors.red);
         print('Emi paid message ${response.statusMessage}');
@@ -688,14 +702,13 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         throw Exception('Failed to load data');
 // return false;
       }
-    }catch(e){
+    } catch (e) {
       showCustomSnackBar(context, 'Something went wrong', Colors.red);
       rethrow;
-    }finally{
+    } finally {
       state = state.copyWith(isButtonVissible: false);
       state = state.copyWith(isLoading: false);
     }
-
   }
 
   Future<XFile?> clickPhoto() async {
@@ -703,10 +716,23 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       state = state.copyWith(photoFile: pickedFile.path);
+      final imagePath = await compressImage(File(pickedFile.path));
+      await uploadImage(imagePath!.path);
       return pickedFile;
     }
     state = state.copyWith(isLoading: false);
     return null;
+  }
+
+  Future<XFile?> compressImage(File file) async {
+    String fileName = path.basename(file.path);
+    final String targetPath = '${file.parent.path}/compressed_$fileName';
+    final compressedBytes = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path, // Source path
+      targetPath, // Target path
+      quality: 10, // Compression quality (0-100)
+    );
+    return compressedBytes;
   }
 
   ObjectId? parseObjectId(String? id) {
@@ -738,16 +764,14 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       VisitUpdateUploadImageResponseModel imageResponseModel =
           VisitUpdateUploadImageResponseModel.fromJson(response.data);
       state = state.copyWith(isLoading: false);
-      state =
-          state.copyWith(transactionImage: imageResponseModel.items.image);
+      state = state.copyWith(transactionImage: imageResponseModel.items.image);
       if (kDebugMode) {
         print('image url ${imageResponseModel.items.image}');
         print('image url1 ${response.data}');
       }
 
-       imageApi = imageResponseModel.items.image;
-        print(imageApi);
-
+      imageApi = imageResponseModel.items.image;
+      print(imageApi);
     } else {
       state = state.copyWith(isLoading: false);
       throw Exception('Failed to load data');
@@ -777,8 +801,10 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
           modeTitle: apiResponseList.items.dropdownDetail?.modelName,
           isExtraFormOpen: apiResponseList.items.modeDetail.extraForm,
           isEmailVisible: apiResponseList.items.modeDetail.email,
-          isTransactionImageVisible: apiResponseList.items.modeDetail.transactionImage,
-          isTransactionIdVisible: apiResponseList.items.modeDetail.transactionId);
+          isTransactionImageVisible:
+              apiResponseList.items.modeDetail.transactionImage,
+          isTransactionIdVisible:
+              apiResponseList.items.modeDetail.transactionId);
 
       if (apiResponseList.items.detail != null) {
         for (final drop in apiResponseList.items.detail ?? []) {
@@ -1096,7 +1122,7 @@ class UpdateVisitModel {
     bool? isSolutionValid,
   }) {
     return UpdateVisitModel(
-      isButtonVissible: isButtonVissible??this.isButtonVissible,
+      isButtonVissible: isButtonVissible ?? this.isButtonVissible,
       transitionImage: transitionImage ?? this.transitionImage,
       isPhotoFile: isPhotoFile ?? this.isPhotoFile,
       isLoading: isLoading ?? this.isLoading,
@@ -1167,7 +1193,7 @@ class UpdateEmiModel {
   final String transactionImage;
   final String remark;
   final String bankName;
-  final String receipt;
+  final String? receipt;
   final bool isEmiAmount;
   final bool isRemark;
   final bool isBankName;
@@ -1179,9 +1205,8 @@ class UpdateEmiModel {
   final String modeTitle;
 
   UpdateEmiModel(
-      {
-        this.isButtonVissible = false,
-        this.isTransactionImageVisible = false,
+      {this.isButtonVissible = false,
+      this.isTransactionImageVisible = false,
       this.isReceiptVisible = false,
       this.isEmailVisible = false,
       this.isTransactionIdVisible = false,
@@ -1198,7 +1223,7 @@ class UpdateEmiModel {
       this.transactionImage = '',
       this.remark = '',
       this.bankName = '',
-      this.receipt = '',
+      this.receipt = null,
       this.isEmiAmount = true,
       this.isTransactionId = true,
       this.isTransactionImage = false,
@@ -1236,11 +1261,13 @@ class UpdateEmiModel {
     bool? isReceipt,
   }) {
     return UpdateEmiModel(
-      isButtonVissible: isButtonVissible?? this.isButtonVissible,
-      isEmailVisible: isEmailVisible?? this.isEmailVisible,
-        isReceiptVisible: isReceiptVisible?? this.isReceiptVisible,
-        isTransactionIdVisible: isTransactionIdVisible?? this.isTransactionIdVisible,
-        isTransactionImageVisible: isTransactionImageVisible?? this.isTransactionImageVisible,
+        isButtonVissible: isButtonVissible ?? this.isButtonVissible,
+        isEmailVisible: isEmailVisible ?? this.isEmailVisible,
+        isReceiptVisible: isReceiptVisible ?? this.isReceiptVisible,
+        isTransactionIdVisible:
+            isTransactionIdVisible ?? this.isTransactionIdVisible,
+        isTransactionImageVisible:
+            isTransactionImageVisible ?? this.isTransactionImageVisible,
         modeOfCollectionId: modeOfCollectionId ?? this.modeOfCollectionId,
         commonId: commonId ?? this.commonId,
         photoFile: photoFile ?? this.photoFile,

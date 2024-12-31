@@ -966,7 +966,7 @@ class ApplicantViewModel extends StateNotifier<KycFormState> {
   }
 
   bool _validateOtp(String aadhaar) {
-    return aadhaar.length >= 5 && aadhaar.isNotEmpty;
+    return aadhaar.length >= 6 && aadhaar.isNotEmpty;
   }
 
   bool _validateCommunicationAddress1(String address1) {

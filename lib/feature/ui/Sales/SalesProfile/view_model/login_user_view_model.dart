@@ -6,6 +6,7 @@ import 'package:finexe/feature/ui/HRMS/LeaveManagement/model/hrmsUserProfile.dar
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../Punch_In_Out/model/check_attendance_responce_model.dart';
@@ -114,6 +115,41 @@ Future<List<String>> checkPunchStatus(PunchInRepositoryImp punch) async {
   return [];
 }
 
+String formatTime(String time) {
+  print(time);
+  try {
+    if (time.isEmpty) return 'N/A';
+    DateFormat format = DateFormat("yyyy-MM-dd'T'hh:mm:ss a");
+    DateTime dateTime = format.parse(time);// Handle empty strings
+    // final parsedTime = DateTime.parse(time);
+    print('parse time $dateTime');
+    return DateFormat.jm()
+        .format(dateTime); // Format as 09:30 AM/PM
+  } catch (e) {
+    // Log or handle invalid date format
+    // debugPrint("Error parsing date: $e");
+    return 'Invalid Time';
+  }
+}
+
+String formatDate(String time) {
+  print(time);
+  try {
+    if (time.isEmpty) return 'N/A';
+    DateFormat format = DateFormat("yyyy-MM-dd'T'hh:mm:ss a");
+    DateTime dateTime = format.parse(time);// Handle empty strings
+    // final parsedTime = DateTime.parse(time);
+    print('parse time $dateTime');
+    return DateFormat.yMMMMd()
+        .format(dateTime); // Format as 09:30 AM/PM
+  } catch (e) {
+    // Log or handle invalid date format
+    // debugPrint("Error parsing date: $e");
+    return 'Invalid Time';
+  }
+}
+
+
 final loginUserProfileProvider =
     FutureProvider.autoDispose<HRMSUserProfile>((ref) async {
   final punchInRepository = ref.watch(punchInRepositoryProvider);
@@ -135,7 +171,7 @@ final loginUserProfileProvider =
     if (response.statusCode == 200) {
       // Parse the response and return the data
       final data = HRMSUserProfile.fromJson(response.data['items']);
-      final returnData = HRMSUserProfile(
+      final returnData = HRMSUserProfile(designationId: data.designationId,
           punchInTime: punchTime.first,
           punchOutTime: punchTime.last,
           mobileNo: data.mobileNo,

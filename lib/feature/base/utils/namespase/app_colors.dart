@@ -6,6 +6,13 @@ extension AppColors on Never {
   static const Color textGray = Color(0xff667085);
   static const Color primary = Color(0xff0082C6);
   static const Color primaryBg = Color(0xff74cdff);
+  static const Color primaryBg1 = Color(0xffF4F9FF);
+  static const Color bluePista = Color(0xff30BEB6);
+  static const Color bluePistaLight = Color(0xffF4FCFB);
+  static const Color greenDarkLight = Color(0xffA3D139);
+  static const Color greenDarkLightbg = Color(0xffFAFCF5);
+  static const Color redLight = Color(0xffFF7F74);
+  static const Color redLightBg = Color(0xffFFF8F8);
 
   static const Color tintGreen = Color(0xffD1FADF);
   static const Color appBackground = Color(0xfff7f9fa);
@@ -19,6 +26,8 @@ extension AppColors on Never {
   static const Color boxBorderGray = Color(0xFFD9D9D9);
   static const Color subTextColor = Color(0xFF667085);
   static const Color inactive = Color(0xFF5A5C5E);
+  static const Color subgraytext= Color(0xFFACAFB5);
+
   // static const Color primaryLight = Color(0xffb9e7ff);
   static const Color primaryLight = Color(0xffC7ECFF);
   static const Color primaryLight2 = Color(0xffd7f1ff);

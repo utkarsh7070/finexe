@@ -135,7 +135,7 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
                       borderRadius: BorderRadius.circular(50)),
                   onPressed: () {
                     Navigator.pushNamed(context, AppRoutes.newLone);
-                    // Navigator.pushNamed(context, AppRoutes.newLone);
+                    // Navigator.pushNamed(context, AppRoutes.employeeBasicDetails);
                   },
                   child: const Icon(
                     Icons.add,
