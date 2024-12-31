@@ -35,9 +35,7 @@ class VisitPendingScreen extends ConsumerWidget {
      
         
       
-         List<String> searchItems = listOfLists
-            .map((item) => item.customerName ?? '')
-            .toList();
+       
         return Container(
           padding: const EdgeInsets.only(left: 16, right: 16),
           height: displayHeight(context),
@@ -91,33 +89,14 @@ class VisitPendingScreen extends ConsumerWidget {
                     }
                   },
                onSubmitted: (searchText, listOfResults) {
-                 
-                    List<String> filteredNames = searchItems
-                        .where((name) =>
-                            name.toLowerCase().contains(searchText.toLowerCase()))
-                        .toList();
-
-                    // Map filtered names back to full ItemsDetails objects
-                    final filteredResults = listOfLists.where((item) {
-                      return filteredNames.contains(item.customerName);
-                    }).toList();
-
-                    ref.read(searchResultsProvider.notifier).state = filteredResults;
+                 searchupdate(ref,searchText,listOfLists);
+                   
                   },
                   onEditingProgress: (searchText, listOfResults) {
                   
-                    List<String> filteredNames = searchItems
-                        .where((name) =>
-                            name.toLowerCase().contains(searchText.toLowerCase()))
-                        .toList();
-
-                    final filteredResults = listOfLists.where((item) {
-                      return filteredNames.contains(item.customerName);
-                    }).toList();
-
-                    ref.read(searchResultsProvider.notifier).state = filteredResults;
+                   searchupdate(ref,searchText,listOfLists);
                   },
-                  searchItems: searchItems,
+                  searchItems: [],
                 ),
                 SizedBox(
                   height: displayHeight(context) * 0.03,

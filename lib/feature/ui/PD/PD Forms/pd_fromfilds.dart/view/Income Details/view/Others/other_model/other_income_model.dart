@@ -1,3 +1,37 @@
+
+
+class OtherIncomeDataModel {
+  bool? status;
+  int? subCode;
+  String? message;
+  String? error;
+  OtherIncomeModel? items;
+
+  OtherIncomeDataModel({this.status, this.subCode, this.message, this.error, this.items});
+
+  OtherIncomeDataModel.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    subCode = json['subCode'];
+    message = json['message'];
+    error = json['error'];
+    items = json['items'] != null ? new OtherIncomeModel.fromJson(json['items']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['subCode'] = this.subCode;
+    data['message'] = this.message;
+    data['error'] = this.error;
+    if (this.items != null) {
+      data['items'] = this.items!.toJson();
+    }
+    return data;
+  }
+}
+
+
+
 class OtherIncomeModel {
   final String incomeSourceType;
   final OtherIncomeData data;

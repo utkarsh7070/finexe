@@ -1,98 +1,138 @@
 class AgricultureDataModel {
-  final String incomeSourceType;
-  final AgricultureData data;
+  bool? status;
+  int? subCode;
+  String? message;
+  String? error;
+  AgricultreItems? items;
 
-  AgricultureDataModel({
-    required this.incomeSourceType,
-    required this.data,
+  AgricultureDataModel({this.status, this.subCode, this.message, this.error, this.items});
+
+  AgricultureDataModel.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    subCode = json['subCode'];
+    message = json['message'];
+    error = json['error'];
+    items = json['items'] != null ? new AgricultreItems.fromJson(json['items']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['subCode'] = this.subCode;
+    data['message'] = this.message;
+    data['error'] = this.error;
+    if (this.items != null) {
+      data['items'] = this.items!.toJson();
+    }
+    return data;
+  }
+}
+
+
+
+class AgricultreItems {
+  String? incomeSourceType;
+  AgricultureData? agricultureData;
+
+  AgricultreItems({
+    this.incomeSourceType,
+    this.agricultureData,
   });
+
+  factory AgricultreItems.fromJson(Map<String, dynamic> json) {
+    return AgricultreItems(
+      incomeSourceType: json['incomeSourceType'],
+      agricultureData: json['data'] != null
+          ? AgricultureData.fromJson(json['agricultureBusiness'])
+          : null,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'incomeSourceType': incomeSourceType,
-    'data': data.toJson(),
+    'data': agricultureData?.toJson(),
   };
 }
 
+
 class AgricultureData {
-  final String haveYouFaced;
-  final List<String> nameOfAgriOwner;
-  final String relationOfApplicant;
-  final String kasraSurveyNo;
-  final String agriLandInBigha;
-  final String otherName;
-  final String otherRelation;
-  final String otherRemark;
-  final String villageName;
-  final String detailOfLastCorp;
-  final String howMuchCropSoldInAmt;
-  final List<String> agriculturePhotos;
-  final List<String> whichCropIsPlanted;
-  final String agriDoingFromNoOfYears;
-  final String addressAsPerPawti;
-  final String districtName;
-  final String agriLandSurveyNo;
-  final String fertilizerShopOwnerName;
-  final String fertilizerShopOwnerContactNumber;
-  final String irrigationMethod;
-  final String significantChallengesThisSeason;
-  final String agriIncomeYearly;
-  final String ifCropDestroyedHowToPayEMI;
+  String? haveYouFaced;
+  List<String>? nameOfAgriOwner;
+  String? relationOfApplicant;
+  String? kasraSurveyNo;
+  String? agriLandInBigha;
+  String? otherName;
+  String? otherRelation;
+  String? otherRemark;
+  String? villageName;
+  String? detailOfLastCorp;
+  String? howMuchCropSoldInAmt;
+  List<String>? agriculturePhotos;
+  List<String>? whichCropIsPlanted;
+  String? agriDoingFromNoOfYears;
+  String? addressAsPerPawti;
+  String? districtName;
+  String? agriLandSurveyNo;
+  String? fertilizerShopOwnerName;
+  String? fertilizerShopOwnerContactNumber;
+  String? irrigationMethod;
+  String? significantChallengesThisSeason;
+  String? agriIncomeYearly;
+  String? ifCropDestroyedHowToPayEMI;
 
   AgricultureData({
-    required this.haveYouFaced,
-    required this.nameOfAgriOwner,
-    required this.relationOfApplicant,
-    required this.kasraSurveyNo,
-    required this.agriLandInBigha,
-    required this.otherName,
-    required this.otherRelation,
-    required this.otherRemark,
-    required this.villageName,
-    required this.detailOfLastCorp,
-    required this.howMuchCropSoldInAmt,
-    required this.agriculturePhotos,
-    required this.whichCropIsPlanted,
-    required this.agriDoingFromNoOfYears,
-    required this.addressAsPerPawti,
-    required this.districtName,
-    required this.agriLandSurveyNo,
-    required this.fertilizerShopOwnerName,
-    required this.fertilizerShopOwnerContactNumber,
-    required this.irrigationMethod,
-    required this.significantChallengesThisSeason,
-    required this.agriIncomeYearly,
-    required this.ifCropDestroyedHowToPayEMI,
+    this.haveYouFaced,
+    this.nameOfAgriOwner,
+    this.relationOfApplicant,
+    this.kasraSurveyNo,
+    this.agriLandInBigha,
+    this.otherName,
+    this.otherRelation,
+    this.otherRemark,
+    this.villageName,
+    this.detailOfLastCorp,
+    this.howMuchCropSoldInAmt,
+    this.agriculturePhotos,
+    this.whichCropIsPlanted,
+    this.agriDoingFromNoOfYears,
+    this.addressAsPerPawti,
+    this.districtName,
+    this.agriLandSurveyNo,
+    this.fertilizerShopOwnerName,
+    this.fertilizerShopOwnerContactNumber,
+    this.irrigationMethod,
+    this.significantChallengesThisSeason,
+    this.agriIncomeYearly,
+    this.ifCropDestroyedHowToPayEMI,
   });
 
   factory AgricultureData.fromJson(Map<String, dynamic> json) {
     return AgricultureData(
-      haveYouFaced: json['haveYouFaced'] ?? '',
-      nameOfAgriOwner: List<String>.from(json['nameOfAgriOwner'] ?? []),
-      relationOfApplicant: json['relationOfApplicant'] ?? '',
-      kasraSurveyNo: json['kasraSurveyNo'] ?? '',
-      agriLandInBigha: json['agriLandInBigha'] ?? '',
-      otherName: json['otherName'] ?? '',
-      otherRelation: json['otherRelation'] ?? '',
-      otherRemark: json['otherRemark'] ?? '',
-      villageName: json['villageName'] ?? '',
-      detailOfLastCorp: json['detailOfLastCorp'] ?? '',
-      howMuchCropSoldInAmt: json['howmuchcorpsoldInAmt'] ?? '',
-      agriculturePhotos: List<String>.from(json['agriculturePhotos'] ?? []),
-      whichCropIsPlanted: List<String>.from(json['whichCropIsPlanted'] ?? []),
-      agriDoingFromNoOfYears: json['agriDoingFromNoOfYears'] ?? '',
-      addressAsPerPawti: json['addressAsPerPawti'] ?? '',
-      districtName: json['districtName'] ?? '',
-      agriLandSurveyNo: json['agriLandSurveyNo'] ?? '',
-      fertilizerShopOwnerName: json['fertilizerShopOwnerName'] ?? '',
-      fertilizerShopOwnerContactNumber: json['fertilizerShopOwnerContactNumber'] ?? '',
-      irrigationMethod: json['WhatTypeOfIrrigationMethod'] ?? '',
-      significantChallengesThisSeason: json['significantChallengesThisSeason'] ?? '',
-      agriIncomeYearly: json['agriIncomeYearly'] ?? '',
-      ifCropDestroyedHowToPayEMI: json['ifCropDestroyedHowToPayEMI'] ?? '',
+      haveYouFaced: json['haveYouFaced'],
+      nameOfAgriOwner: (json['nameOfAgriOwner'] as List?)?.cast<String>(),
+      relationOfApplicant: json['relationOfApplicant'],
+      kasraSurveyNo: json['kasraSurveyNo'],
+      agriLandInBigha: json['agriLandInBigha'],
+      otherName: json['otherName'],
+      otherRelation: json['otherRelation'],
+      otherRemark: json['otherRemark'],
+      villageName: json['villageName'],
+      detailOfLastCorp: json['detailOfLastCorp'],
+      howMuchCropSoldInAmt: json['howmuchcorpsoldInAmt'],
+      agriculturePhotos: (json['agriculturePhotos'] as List?)?.cast<String>(),
+      whichCropIsPlanted: (json['whichCropIsPlanted'] as List?)?.cast<String>(),
+      agriDoingFromNoOfYears: json['agriDoingFromNoOfYears'],
+      addressAsPerPawti: json['addressAsPerPawti'],
+      districtName: json['districtName'],
+      agriLandSurveyNo: json['agriLandSurveyNo'],
+      fertilizerShopOwnerName: json['fertilizerShopOwnerName'],
+      fertilizerShopOwnerContactNumber: json['fertilizerShopOwnerContactNumber'],
+      irrigationMethod: json['WhatTypeOfIrrigationMethod'],
+      significantChallengesThisSeason: json['significantChallengesThisSeason'],
+      agriIncomeYearly: json['agriIncomeYearly'],
+      ifCropDestroyedHowToPayEMI: json['ifCropDestroyedHowToPayEMI'],
     );
   }
-
-  get howmuchcorpsoldInAmt => null;
 
   Map<String, dynamic> toJson() => {
     'haveYouFaced': haveYouFaced,
@@ -121,21 +161,18 @@ class AgricultureData {
   };
 }
 
-
-// ----------other drop down----------
 class OtherDropData {
-  final List<String> otherdrop;
-  OtherDropData({
-    required this.otherdrop
-});
+  List<String>? otherdrop;
 
-  factory OtherDropData.fromJson(Map<String, dynamic> json){
+  OtherDropData({this.otherdrop});
+
+  factory OtherDropData.fromJson(Map<String, dynamic> json) {
     return OtherDropData(
-      otherdrop: List<String>.from(json['nameOfAgriOwner'] ?? [])
+      otherdrop: (json['nameOfAgriOwner'] as List?)?.cast<String>(),
     );
   }
-  Map<String, dynamic> toJson() =>
-      {
-        'OtherDropData': OtherDropData,
-      };
+
+  Map<String, dynamic> toJson() => {
+    'OtherDropData': otherdrop,
+  };
 }

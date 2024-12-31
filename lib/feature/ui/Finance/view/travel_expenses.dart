@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
@@ -26,378 +27,381 @@ class Travelform extends ConsumerWidget {
 
     return getexpense.when(
       data: (data) {
-        return Scaffold(
-          bottomSheet: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: AppButton(
-                    isFill: true,
-                    bgColor: AppColors.primary,
-                    borderColor: AppColors.primaryLight,
-                    onTap: () {
-
-                    },
-                    label: 'Add Travel Expense',
-                    textStyle: AppStyles.smallTextStyleRich.copyWith(
-                        fontSize: FontSize.fontSize16,
-                        fontWeight: FontWeight.w500),
-                    width: displayWidth(context) * 0.4,
-                    height: displayHeight(context) * 0.05,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          appBar: AppBar(
-            title: const Text("Add Travel Expenses"),
-            centerTitle: true,
-            flexibleSpace: Container(
-              color: Colors.white,
-            ),
-            titleTextStyle: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
-              color: AppColors.black,
-            ),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.only(left: 16.0,right:10.0 ),
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        return NetworkListener(
+      context: context,
+          child: Scaffold(
+            bottomSheet: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Row(
                 children: [
-                 const Text(
-                    'Travel Expense form',
-                    style: TextStyle(
-                        fontSize: 17, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: displayHeight(context) * 0.02,
-                  ),
-                  AppFloatTextField(
-                    onTap: () async {
-                      viewModel.showdatepicker(context, 'start');
-                    },
-                    isReadOnly: true,
-                    inerHint: 'Start Travel Date',
-                    controller: viewModel.startTravelController,
-                    height: displayHeight(context) * 0.06,
-                    onChange: (value) {},
-                  ),
-                  SizedBox(
-                    height: displayHeight(context) * 0.02,
-                  ),
-                  AppFloatTextField(
-                    isReadOnly: true,
-                    onTap: () {
-                      viewModel.showdatepicker(context, 'end');
-                    },
-                    inerHint: 'End Travel Date',
-                    controller: viewModel.endTravelController,
-                    height: displayHeight(context) * 0.06,
-                    onChange: (value) {},
-                  ),
-                  SizedBox(
-                    height: displayHeight(context) * 0.02,
-                  ),
-                  AppFloatTextField(
-                    inerHint: 'Purpose of Travel',
-                    controller: viewModel.purposeController,
-                    height: displayHeight(context) * 0.06,
-                    onChange: (value) {
-                      viewModel.updateTravelData({
-                        'purposeOfTravel': viewModel.purposeController.text,
-                      });
-                    },
-                  ),
-                  SizedBox(
-                    height: displayHeight(context) * 0.02,
-                  ),
-                  DropDownTextField(
-                    onChanged: (dropDown) {
-                      if (dropDown != null) {
-
-                      }
-                    },
-
-                    clearOption: true,
-
-                    // listSpace: 20,
-                    listPadding: ListPadding(top: 20),
-                    enableSearch: false,
-                    dropDownList: data,
-                    listTextStyle: const TextStyle(color: AppColors.primary),
-                    dropDownItemCount: data.length,
-                    // textFieldFocusNode:
-                    //     paymentFocusViewModel.modeOfCollection,
-                    textFieldDecoration: InputDecoration(
-                      isDense: true,
-                      hintStyle: const TextStyle(color: AppColors.textGray),
-                      floatingLabelStyle: AppStyles.subHeading,
-                      label: const Text(
-                        'Travel Along With',
-                        style: TextStyle(
-                            fontSize: 14, color: AppColors.buttonBorderGray),
-                      ),
-                      enabledBorder: const OutlineInputBorder(
-                          borderSide:
-                          BorderSide(color: AppColors.gray, width: 1),
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      // filled: true,
-                      // fillColor: AppColors.gray,
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: AppColors.buttonBorderGray, width: 1),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-
-                      focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue, width: 2),
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                  Expanded(
+                    child: AppButton(
+                      isFill: true,
+                      bgColor: AppColors.primary,
+                      borderColor: AppColors.primaryLight,
+                      onTap: () {
+          
+                      },
+                      label: 'Add Travel Expense',
+                      textStyle: AppStyles.smallTextStyleRich.copyWith(
+                          fontSize: FontSize.fontSize16,
+                          fontWeight: FontWeight.w500),
+                      width: displayWidth(context) * 0.4,
+                      height: displayHeight(context) * 0.05,
                     ),
                   ),
-                  SizedBox(
-                    height: displayHeight(context) * 0.025,
-                  ),
-                  DropDownTextField(
-
-                    clearOption: true,
-                    // controller: ,
-
-                    // listSpace: 20,
-                    listPadding: ListPadding(top: 20),
-                    enableSearch: false,
-                    dropDownList: const [
-                      DropDownValueModel(name: 'vipul', value: 'x')
-                    ],
-                    listTextStyle: const TextStyle(color: AppColors.primary),
-                    dropDownItemCount: 1,
-                    // textFieldFocusNode:
-                    //     paymentFocusViewModel.modeOfCollection,
-                    textFieldDecoration: InputDecoration(
-                      isDense: true,
-                      hintStyle: const TextStyle(color: AppColors.textGray),
-                      floatingLabelStyle: AppStyles.subHeading,
-                      label: const Text(
-                        'Travel Mode',
-                        style: TextStyle(
-                            fontSize: 14, color: AppColors.buttonBorderGray),
-                      ),
-                      enabledBorder: const OutlineInputBorder(
-                          borderSide:
-                          BorderSide(color: AppColors.gray, width: 1),
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      // filled: true,
-                      // fillColor: AppColors.gray,
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: AppColors.buttonBorderGray, width: 1),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-
-                      focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue, width: 2),
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                ],
+              ),
+            ),
+            appBar: AppBar(
+              title: const Text("Add Travel Expenses"),
+              centerTitle: true,
+              flexibleSpace: Container(
+                color: Colors.white,
+              ),
+              titleTextStyle: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+                color: AppColors.black,
+              ),
+            ),
+            body: Padding(
+              padding: const EdgeInsets.only(left: 16.0,right:10.0 ),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                   const Text(
+                      'Travel Expense form',
+                      style: TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  SizedBox(
-                    height: displayHeight(context) * 0.01,
-                  ),
-                  SizedBox(
-                    height: displayHeight(context) * 0.01,
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    primary: false,
-                    itemCount: expensedetail.expenses.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SizedBox(
-                                width: displayWidth(context) * 0.5,
-                                height: displayHeight(context) * 0.15,
-                                child: Column(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceAround,
-                                  children: [
-                                    DropDownTextField(
-                                      // initialValue: ,
-                                      controller: expensedetail
-                                          .expenses[index].dropDownController,
-
-                                      key: Key('dropdown $index'),
-                                      onChanged: (dropDown) {
-
-                                        if (dropDown != null &&
-                                            dropDown is DropDownValueModel) {
-
-                                          viewModel.updateExpenseController(
-                                              index, {
-                                            'expensetype':
-                                            dropDown.name.toString()
-                                          });
-                                          // expensedetail
-                                          //   .expenses[index].dropDownController.dropDownValue=dropDown;
-                                        }
-                                      },
-
-                                      clearOption: true,
-                                      readOnly: true,
-                                      // controller: ,
-
-                                      // listSpace: 20,
-                                      listPadding: ListPadding(top: 20),
-                                      enableSearch: false,
-                                      dropDownList: data,
-                                      listTextStyle: const TextStyle(
-                                          color: AppColors.primary),
-                                      dropDownItemCount: data.length,
-                                      // textFieldFocusNode:
-                                      //     paymentFocusViewModel.modeOfCollection,
-                                      textFieldDecoration: InputDecoration(
-                                        isDense: true,
-                                        hintStyle: const TextStyle(
-                                            color: AppColors.textGray),
-                                        floatingLabelStyle:
-                                        AppStyles.subHeading,
-                                        label: const Text(
-                                          'Expense Type',
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color:
-                                              AppColors.buttonBorderGray),
-                                        ),
-                                        enabledBorder: const OutlineInputBorder(
+                    SizedBox(
+                      height: displayHeight(context) * 0.02,
+                    ),
+                    AppFloatTextField(
+                      onTap: () async {
+                        viewModel.showdatepicker(context, 'start');
+                      },
+                      isReadOnly: true,
+                      inerHint: 'Start Travel Date',
+                      controller: viewModel.startTravelController,
+                      height: displayHeight(context) * 0.06,
+                      onChange: (value) {},
+                    ),
+                    SizedBox(
+                      height: displayHeight(context) * 0.02,
+                    ),
+                    AppFloatTextField(
+                      isReadOnly: true,
+                      onTap: () {
+                        viewModel.showdatepicker(context, 'end');
+                      },
+                      inerHint: 'End Travel Date',
+                      controller: viewModel.endTravelController,
+                      height: displayHeight(context) * 0.06,
+                      onChange: (value) {},
+                    ),
+                    SizedBox(
+                      height: displayHeight(context) * 0.02,
+                    ),
+                    AppFloatTextField(
+                      inerHint: 'Purpose of Travel',
+                      controller: viewModel.purposeController,
+                      height: displayHeight(context) * 0.06,
+                      onChange: (value) {
+                        viewModel.updateTravelData({
+                          'purposeOfTravel': viewModel.purposeController.text,
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      height: displayHeight(context) * 0.02,
+                    ),
+                    DropDownTextField(
+                      onChanged: (dropDown) {
+                        if (dropDown != null) {
+          
+                        }
+                      },
+          
+                      clearOption: true,
+          
+                      // listSpace: 20,
+                      listPadding: ListPadding(top: 20),
+                      enableSearch: false,
+                      dropDownList: data,
+                      listTextStyle: const TextStyle(color: AppColors.primary),
+                      dropDownItemCount: data.length,
+                      // textFieldFocusNode:
+                      //     paymentFocusViewModel.modeOfCollection,
+                      textFieldDecoration: InputDecoration(
+                        isDense: true,
+                        hintStyle: const TextStyle(color: AppColors.textGray),
+                        floatingLabelStyle: AppStyles.subHeading,
+                        label: const Text(
+                          'Travel Along With',
+                          style: TextStyle(
+                              fontSize: 14, color: AppColors.buttonBorderGray),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                            borderSide:
+                            BorderSide(color: AppColors.gray, width: 1),
+                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                        // filled: true,
+                        // fillColor: AppColors.gray,
+                        border: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: AppColors.buttonBorderGray, width: 1),
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+          
+                        focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue, width: 2),
+                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                      ),
+                    ),
+                    SizedBox(
+                      height: displayHeight(context) * 0.025,
+                    ),
+                    DropDownTextField(
+          
+                      clearOption: true,
+                      // controller: ,
+          
+                      // listSpace: 20,
+                      listPadding: ListPadding(top: 20),
+                      enableSearch: false,
+                      dropDownList: const [
+                        DropDownValueModel(name: 'vipul', value: 'x')
+                      ],
+                      listTextStyle: const TextStyle(color: AppColors.primary),
+                      dropDownItemCount: 1,
+                      // textFieldFocusNode:
+                      //     paymentFocusViewModel.modeOfCollection,
+                      textFieldDecoration: InputDecoration(
+                        isDense: true,
+                        hintStyle: const TextStyle(color: AppColors.textGray),
+                        floatingLabelStyle: AppStyles.subHeading,
+                        label: const Text(
+                          'Travel Mode',
+                          style: TextStyle(
+                              fontSize: 14, color: AppColors.buttonBorderGray),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                            borderSide:
+                            BorderSide(color: AppColors.gray, width: 1),
+                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                        // filled: true,
+                        // fillColor: AppColors.gray,
+                        border: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: AppColors.buttonBorderGray, width: 1),
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+          
+                        focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue, width: 2),
+                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                      ),
+                    ),
+                    SizedBox(
+                      height: displayHeight(context) * 0.01,
+                    ),
+                    SizedBox(
+                      height: displayHeight(context) * 0.01,
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      primary: false,
+                      itemCount: expensedetail.expenses.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                SizedBox(
+                                  width: displayWidth(context) * 0.5,
+                                  height: displayHeight(context) * 0.15,
+                                  child: Column(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                    children: [
+                                      DropDownTextField(
+                                        // initialValue: ,
+                                        controller: expensedetail
+                                            .expenses[index].dropDownController,
+          
+                                        key: Key('dropdown $index'),
+                                        onChanged: (dropDown) {
+          
+                                          if (dropDown != null &&
+                                              dropDown is DropDownValueModel) {
+          
+                                            viewModel.updateExpenseController(
+                                                index, {
+                                              'expensetype':
+                                              dropDown.name.toString()
+                                            });
+                                            // expensedetail
+                                            //   .expenses[index].dropDownController.dropDownValue=dropDown;
+                                          }
+                                        },
+          
+                                        clearOption: true,
+                                        readOnly: true,
+                                        // controller: ,
+          
+                                        // listSpace: 20,
+                                        listPadding: ListPadding(top: 20),
+                                        enableSearch: false,
+                                        dropDownList: data,
+                                        listTextStyle: const TextStyle(
+                                            color: AppColors.primary),
+                                        dropDownItemCount: data.length,
+                                        // textFieldFocusNode:
+                                        //     paymentFocusViewModel.modeOfCollection,
+                                        textFieldDecoration: InputDecoration(
+                                          isDense: true,
+                                          hintStyle: const TextStyle(
+                                              color: AppColors.textGray),
+                                          floatingLabelStyle:
+                                          AppStyles.subHeading,
+                                          label: const Text(
+                                            'Expense Type',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color:
+                                                AppColors.buttonBorderGray),
+                                          ),
+                                          enabledBorder: const OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppColors.gray,
+                                                  width: 1),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10))),
+                                          // filled: true,
+                                          // fillColor: AppColors.gray,
+                                          border: const OutlineInputBorder(
                                             borderSide: BorderSide(
-                                                color: AppColors.gray,
+                                                color: AppColors.buttonBorderGray,
                                                 width: 1),
                                             borderRadius: BorderRadius.all(
-                                                Radius.circular(10))),
-                                        // filled: true,
-                                        // fillColor: AppColors.gray,
-                                        border: const OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: AppColors.buttonBorderGray,
-                                              width: 1),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10)),
+                                                Radius.circular(10)),
+                                          ),
+          
+                                          focusedBorder: const OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.blue, width: 2),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10))),
                                         ),
-
-                                        focusedBorder: const OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.blue, width: 2),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10))),
                                       ),
-                                    ),
-                                    AppFloatTextField(
-                                        inerHint: 'Expense Amount',
-                                        controller: expensedetail
-                                            .expenses[index].expensecontroller,
-                                        height: displayHeight(context) * 0.06,
-                                        onChange: (value) {
-                                          viewModel.updateExpenseController(
-                                              index, {'amount': value});
-                                        }),
-                                  ],
+                                      AppFloatTextField(
+                                          inerHint: 'Expense Amount',
+                                          controller: expensedetail
+                                              .expenses[index].expensecontroller,
+                                          height: displayHeight(context) * 0.06,
+                                          onChange: (value) {
+                                            viewModel.updateExpenseController(
+                                                index, {'amount': value});
+                                          }),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              InkWell(
-                                onTap: () => viewModel.pickImage(index),
-                                child: Stack(
-                                  children: [expensedetail
-                                      .expenses[index].receiptUrl!=''?
-                                  Container(
-                                      padding: const EdgeInsets.all(5),
+                                InkWell(
+                                  onTap: () => viewModel.pickImage(index),
+                                  child: Stack(
+                                    children: [expensedetail
+                                        .expenses[index].receiptUrl!=''?
+                                    Container(
+                                        padding: const EdgeInsets.all(5),
+                                        height: displayHeight(context) * 0.15,
+                                        width: displayWidth(context) * 0.35,
+                                        decoration: const BoxDecoration(
+                                            border: DashedBorder.fromBorderSide(
+                                              dashLength: 10,
+                                              side: BorderSide(
+                                                  color: Colors.black,
+                                                  width: 1),
+                                            ),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10)),
+                                            color: AppColors.boxBagGray),
+                                        child: Image.file(File(expensedetail
+                                            .expenses[index].receiptUrl))):
+                                    UploadBox(
+                                      isImage: true,
                                       height: displayHeight(context) * 0.15,
                                       width: displayWidth(context) * 0.35,
-                                      decoration: const BoxDecoration(
-                                          border: DashedBorder.fromBorderSide(
-                                            dashLength: 10,
-                                            side: BorderSide(
-                                                color: Colors.black,
-                                                width: 1),
-                                          ),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10)),
-                                          color: AppColors.boxBagGray),
-                                      child: Image.file(File(expensedetail
-                                          .expenses[index].receiptUrl))):
-                                  UploadBox(
-                                    isImage: true,
-                                    height: displayHeight(context) * 0.15,
-                                    width: displayWidth(context) * 0.35,
-                                    color: AppColors.buttonBorderGray,
-                                    iconData: Icons.file_upload_outlined,
-                                    textColor: AppColors.titleGray,
-                                    subTextColor: AppColors.textDarkGray,
-                                    title: 'Max size: 10MB',
-                                    subTitle: 'Front Image',
+                                      color: AppColors.buttonBorderGray,
+                                      iconData: Icons.file_upload_outlined,
+                                      textColor: AppColors.titleGray,
+                                      subTextColor: AppColors.textDarkGray,
+                                      title: 'Max size: 10MB',
+                                      subTitle: 'Front Image',
+                                    ),
+                                    ],
                                   ),
-                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                          Visibility(
-                              visible: index == 0,
-                              child: SizedBox(
-                                height: displayHeight(context) * 0.03,
-                              )),
-                          Visibility(
-                            visible: index != 0,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child:
-                              InkWell(
-                                onTap: () {
-                                  viewModel.removeExpense(index);
-                                },
-                                child:const Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Icon(Icons.remove),
-                                    SizedBox(width: 8),
-                                    Text('Remove Form Entry'),
-                                  ],
-                                ),
-                              ),
-
+                              ],
                             ),
-                          )
-                        ],
-                      );
-                    },
-                  ),
-                  AppButton(
-                    isFill: true,
-                    bgColor: AppColors.primary,
-                    borderColor: AppColors.primaryLight,
-                    onTap: () {
-                      viewModel.addEmptyExpense(Expense(
-                        expenseType: '',
-                        expenseAmount: 0,
-                        receiptUrl: '',
-                      ));
-                    },
-                    label: 'Add Expense',
-                    textStyle: AppStyles.smallTextStyleRich.copyWith(
-                        fontSize: FontSize.fontSize16,
-                        fontWeight: FontWeight.w500),
-                    width: displayWidth(context),
-                    height: displayHeight(context) * 0.05,
-                  ),
-                  SizedBox(
-                    height: displayHeight(context) * 0.08,
-                  )
-                ],
+                            Visibility(
+                                visible: index == 0,
+                                child: SizedBox(
+                                  height: displayHeight(context) * 0.03,
+                                )),
+                            Visibility(
+                              visible: index != 0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child:
+                                InkWell(
+                                  onTap: () {
+                                    viewModel.removeExpense(index);
+                                  },
+                                  child:const Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Icon(Icons.remove),
+                                      SizedBox(width: 8),
+                                      Text('Remove Form Entry'),
+                                    ],
+                                  ),
+                                ),
+          
+                              ),
+                            )
+                          ],
+                        );
+                      },
+                    ),
+                    AppButton(
+                      isFill: true,
+                      bgColor: AppColors.primary,
+                      borderColor: AppColors.primaryLight,
+                      onTap: () {
+                        viewModel.addEmptyExpense(Expense(
+                          expenseType: '',
+                          expenseAmount: 0,
+                          receiptUrl: '',
+                        ));
+                      },
+                      label: 'Add Expense',
+                      textStyle: AppStyles.smallTextStyleRich.copyWith(
+                          fontSize: FontSize.fontSize16,
+                          fontWeight: FontWeight.w500),
+                      width: displayWidth(context),
+                      height: displayHeight(context) * 0.05,
+                    ),
+                    SizedBox(
+                      height: displayHeight(context) * 0.08,
+                    )
+                  ],
+                ),
               ),
             ),
           ),

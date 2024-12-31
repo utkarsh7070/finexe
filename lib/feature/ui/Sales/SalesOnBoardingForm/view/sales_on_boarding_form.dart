@@ -1,3 +1,4 @@
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'Sales_on_boarding_form/applicant_form/appliction_form.dart';
@@ -7,9 +8,12 @@ class SalesOnBoardingForm extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const Scaffold(
-      body: SafeArea(
-        child:ApplicationDetails({})
+    return NetworkListener(
+      context: context,
+      child: const Scaffold(
+        body: SafeArea(
+          child:ApplicationDetails({})
+        ),
       ),
     );
   }

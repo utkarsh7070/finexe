@@ -1,12 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // import '../../../../../../../base/api/dio.dart';
 // import '../../../../../../../base/service/session_service.dart';
+import '../../../../../base/api/dio_exception.dart';
 import '../model/Submit Data Models/loan_detail_modal.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 
 // ----------- post api ---------
 final pdLoanDetailsProvider =
@@ -24,6 +27,7 @@ class PDLoanDetailsModel extends StateNotifier<ApplicantState> {
     required String customerId,
     required String pdType,
     required UpdateLoanDetails loanDetails,
+    required BuildContext context,
   }) async {
     state = state.copyWith(isLoading: true);
 
@@ -32,7 +36,10 @@ class PDLoanDetailsModel extends StateNotifier<ApplicantState> {
       'customerId': customerId,
       'pdType': pdType,
     };
-
+    // if(state.isLoading==true){
+    //   print('click second time');
+    //   return false;
+    // }
     final token = speciality.getToken();
 
     try {
@@ -51,10 +58,20 @@ class PDLoanDetailsModel extends StateNotifier<ApplicantState> {
         print('Error while submitting income details');
         return false;
       }
-    } catch (e) {
+    }
+    // catch (e) {
+    //   state = state.copyWith(isLoading: false);
+    //   print('Exception in LoanDetails form: $e');
+    //   // throw Exception(e);
+    //   return false;
+    // }
+    catch (error) {
+      print(error);
       state = state.copyWith(isLoading: false);
-      print('Exception in LoanDetails form: $e');
-      // throw Exception(e);
+      DioExceptions.fromDioError(error as DioException, context);
+      // Handle exceptions and set state to error
+      // state = AsyncValue.error(error, stackTrace);
+      print('response.data.message ${error}');
       return false;
     }
   }
@@ -63,7 +80,7 @@ class PDLoanDetailsModel extends StateNotifier<ApplicantState> {
 // ---------------- GET: Fetch Income
 
 final loanDetailsGetProvider =
-    FutureProvider.autoDispose.family<UpdateLoanDetails,String>((ref,custId) async {
+    FutureProvider.autoDispose.family<UpdateLoanDetails?,String>((ref,custId) async {
   // Directly create an instance of TotalIncomeApi
   final viewModel = loanDetailApi(Dio()); // Inject Dio directly here
   // Fetch the income details
@@ -75,9 +92,9 @@ class loanDetailApi {
 
   loanDetailApi(this._dio);
 
-  Future<UpdateLoanDetails> fetchLoanDetails(String customerId) async {
+  Future<UpdateLoanDetails?> fetchLoanDetails(String customerId) async {
     final token = speciality.getToken();
-
+    UpdateLoanDetails details = UpdateLoanDetails();
     try {
       final response = await _dio.get(
         '${Api.getpdformdata}$customerId',
@@ -88,20 +105,24 @@ class loanDetailApi {
         // Accessing the nested `approveLoanDetails` in the API response
         final data = response.data['items'];
         if (data != null && data['approveLoanDetails'] != null) {
-          final details =
+           details =
               UpdateLoanDetails.fromJson(data['approveLoanDetails']);
           return details;
         } else {
-          throw Exception("approveLoanDetails not found in the response.");
+          // throw Exception("approveLoanDetails not found in the response.");
+          print('approveLoanDetails not found in the response.');
+          return details;
         }
-      } else {
-        throw Exception(
-          "Failed to load loan data. Status code: ${response.statusCode}",
-        );
       }
+      // else {
+      //   throw Exception(
+      //     "Failed to load loan data. Status code: ${response.statusCode}",
+      //   );
+      // }
     } catch (e) {
       print("Error fetching loan details: $e");
-      throw Exception("Error fetching loan details: $e");
+      // throw Exception("Error fetching loan details: $e");
+      return details;
     }
   }
 }

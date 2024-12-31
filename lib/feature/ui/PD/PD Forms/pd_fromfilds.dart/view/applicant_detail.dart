@@ -1,19 +1,29 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
+import 'package:finexe/feature/base/utils/widget/app_text_filed_login.dart';
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
+import 'package:finexe/feature/base/utils/widget/upload_box.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/simple_dropdown.dart';
+// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view_model.dart/applicant_view_model.dart';
+// import 'package:finexe/feature/ui/PD/view/common%20imagePicker/image_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../common imagePicker/image_picker.dart';
 import '../view_model.dart/applicant_view_model.dart';
 
 class ApplicantForm extends ConsumerStatefulWidget {
   // const ApplicantForm({super.key});
   final String customerId;
-  const ApplicantForm({super.key, required this.customerId});
+  ApplicantForm({required this.customerId});
 
   @override
   _ApplicantFormState createState() => _ApplicantFormState();
@@ -25,7 +35,6 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
     // TODO: implement initState
     super.initState();
   }
-// class ApplicantForm extends ConsumerWidget{
 
   final _formKey = GlobalKey<FormState>();
 
@@ -67,11 +76,9 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
 
   String applicantImageUrl = '';
 
-
-
   @override
   Widget build(BuildContext context) {
-    final isExpanded = ref.watch(isAppExpandedProvider);
+    final _isExpanded = ref.watch(isAppExpandedProvider);
     final applicantDetails = ref.watch(applicationDetailsProvider(widget.customerId));
     final appState = ref.watch(pdapplicantViewModelProvider);
     // final applicantImage = ref.watch(applicantImageProvider);
@@ -92,35 +99,36 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                 ref.refresh(applicationDetailsProvider(widget.customerId));
               }
             },
-            initiallyExpanded: isExpanded,
+            initiallyExpanded: _isExpanded,
             children: <Widget>[
               applicantDetails.when(
-
                   data: (applicant) {
-                    print('applicantImageUrl ${Api.baseUrl}${applicant.applicant!}');
+
+
+                    // print('applicantImageUrl ${Api.baseUrl}${applicant.applicant!}');
                     if (occupationController.text.isEmpty) {
-                      occupationController.text = applicant.applicant!.occupation ?? '';
+                      occupationController.text = applicant.items?.applicant?.occupation ?? '';
                       applicantTypeController.text =
-                          applicant.applicant!.applicantType ?? '';
-                      businessTypeController.text = applicant.applicant!.businessType ?? '';
+                          applicant.items?.applicant?.applicantType ?? '';
+                      businessTypeController.text = applicant.items?.applicant?.businessType ?? '';
                       // occupationController.text = applicant.occupation ?? '';
-                      nationalityController.text = applicant.applicant!.nationality ?? '';
-                      religionController.text = applicant.applicant!.religion ?? '';
-                      casteController.text = applicant.applicant!.caste ?? '';
-                      categoryController.text = applicant.applicant!.category ?? '';
+                      nationalityController.text = applicant.items?.applicant?.nationality ?? '';
+                      religionController.text = applicant.items?.applicant?.religion ?? '';
+                      casteController.text = applicant.items?.applicant?.caste ?? '';
+                      categoryController.text =applicant.items?.applicant?.category ?? '';
                       alternateMobileController.text =
-                          applicant.applicant!.alternateMobileNo ?? '';
+                          applicant.items?.applicant?.alternateMobileNo ?? '';
                       houseLandmarkController.text =
-                          applicant.applicant!.houseLandMark ?? '';
-                      emailController.text = applicant.applicant!.email ?? '';
+                          applicant.items?.applicant?.houseLandMark ?? '';
+                      emailController.text = applicant.items?.applicant?.email ?? '';
                       yearsAtCurrentAddressController.text =
-                          applicant.applicant!.noOfyearsAtCurrentAddress ?? '';
+                          applicant.items?.applicant?.noOfyearsAtCurrentAddress ?? '';
                       educationalDetailsController.text =
-                          applicant.applicant!.educationalDetails ?? '';
+                          applicant.items?.applicant?.educationalDetails ?? '';
                       dependentsController.text =
-                          applicant.applicant!.noOfDependentWithCustomer ?? '';
+                          applicant.items?.applicant?.noOfDependentWithCustomer ?? '';
                       residenceTypeController.text =
-                          applicant.applicant!.residenceType ?? '';
+                          applicant.items?.applicant?.residenceType ?? '';
                     }
                     return Column(
                       children: [
@@ -133,20 +141,23 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                           ),
                         ),
 
-                        const Text(
+                        Text(
                           'Applicant Image',
                           // textAlign: TextAlign.left,
                         ),
 
                         CommonImagePicker(
-                          applicantImage: applicant.applicantImage ?? '',
+                          applicantImage: applicant.items?.applicantImage ?? '',
                           onImageUploaded: (imageUrl) {
                             setState(() {
-                              applicant.applicantImage!.isNotEmpty
-                                  ? applicant.applicantImage = imageUrl
-                                  : // Update the image URL
-                              applicantImageUrl = imageUrl;
-                              print('applicantImageUrl:: $applicantImageUrl');
+                              if(applicant.items !=null ){
+                                applicant.items!.applicantImage!.isNotEmpty
+                                    ? applicant.items?.applicantImage = imageUrl
+                                    : // Update the image URL
+                                applicantImageUrl = imageUrl;
+                                print('applicantImageUrl:: $applicantImageUrl');
+                              }
+
                             });
                           },
                         ),
@@ -155,9 +166,9 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                         CustomDropDownTextField(
                           labelText: 'Applicant Type',
                           controller: applicantTypeController,
-                          items: const[
-                             DropDownValueModel(name: "Individual", value: "Individual"),
-                             DropDownValueModel(
+                          items: [
+                            DropDownValueModel(name: "Individual", value: "Individual"),
+                            DropDownValueModel(
                                 name: "Non Individual", value: "Non Individual"),
                           ],
                         ),
@@ -168,20 +179,20 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                         CustomDropDownTextField(
                           labelText: 'Business Type',
                           controller: businessTypeController,
-                          items: const[
-                             DropDownValueModel(
+                          items: [
+                            DropDownValueModel(
                                 name: "Self Employed Proffessional",
                                 value: "Self Employed Proffessional"),
-                             DropDownValueModel(
+                            DropDownValueModel(
                                 name: "Self Emplyed Non Proffessional",
                                 value: "Self Emplyed Non Proffessional"),
-                             DropDownValueModel(
+                            DropDownValueModel(
                                 name: "Agriculture Business",
                                 value: "Agriculture Business"),
-                             DropDownValueModel(name: "House Wife", value: "House Wife"),
-                             DropDownValueModel(name: "Retired", value: "Retired"),
-                             DropDownValueModel(name: "Salaried", value: "Salaried"),
-                             DropDownValueModel(name: "Other", value: "Other"),
+                            DropDownValueModel(name: "House Wife", value: "House Wife"),
+                            DropDownValueModel(name: "Retired", value: "Retired"),
+                            DropDownValueModel(name: "Salaried", value: "Salaried"),
+                            DropDownValueModel(name: "Other", value: "Other"),
                           ],
                         ),
                         constSizedbox(context),
@@ -323,7 +334,7 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
 
                         // Alternate Mobile No
                         CustomTextFormField(
-                          length: 10,
+                           length: 10,
                           textInputType: TextInputType.number,
                           controller: alternateMobileController,
                           width: displayWidth(context),
@@ -331,8 +342,10 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                           onValidate: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Alternate Mobile No is required';
+                            } else if(value.length<10){
+                              return 'Mobile Number Must Be Exactly 10 Numeric Digits';
                             }
-                            if (!RegExp(r'^\+?[1-9]\d{1,14}$').hasMatch(value)) {
+                            else if (!RegExp(r'^\+?[1-9]\d{1,14}$').hasMatch(value)) {
                               return 'Please enter a valid mobile number';
                             }
                             return null;
@@ -365,7 +378,7 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
 
                         // Years at Current Address
                         CustomTextFormField(
-                          textInputType: const TextInputType.numberWithOptions(),
+                          textInputType: TextInputType.numberWithOptions(),
                           controller: yearsAtCurrentAddressController,
                           width: displayWidth(context),
                           inerHint: 'Years at Current Address',
@@ -396,7 +409,7 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                         CustomDropDownTextField(
                           labelText: 'Residence Type',
                           controller: residenceTypeController,
-                          items: const [
+                          items: [
                             DropDownValueModel(name: "Owned", value: "Owned"),
                             DropDownValueModel(name: "Rented", value: "Rented"),
                             DropDownValueModel(name: "Leased", value: "Leased"),
@@ -416,6 +429,7 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                                 ref
                                     .read(pdapplicantViewModelProvider.notifier)
                                     .submitpdApplicantForm(
+                                  context: context,
                                     applicantdImage: applicantImageUrl,
                                     customerId: widget.customerId,
                                     pdType: 'creditPd',
@@ -442,38 +456,44 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                                     .then(
                                       (value) {
                                     if (value) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: AppColors.green,
-                                          content: Text(
-                                            'Form submitted successfully!',
-                                            style: AppStyles.whiteText16,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: AppColors.red,
-                                          content: Text(
-                                            'Please fill all required details!',
-                                            style: AppStyles.whiteText16,
-                                          ),
-                                        ),
-                                      );
+                                      // ScaffoldMessenger.of(context).showSnackBar(
+                                      //   SnackBar(
+                                      //     backgroundColor: AppColors.green,
+                                      //     content: Text(
+                                      //       'Details Saved successfully!',
+                                      //       style: AppStyles.whiteText16,
+                                      //     ),
+                                      //   ),
+                                      // );
+                                      showCustomSnackBar(
+                                          context,'Details Saved successfully!', Colors.greenAccent);
                                     }
+                                    // else {
+                                    //   ScaffoldMessenger.of(context).showSnackBar(
+                                    //     SnackBar(
+                                    //       backgroundColor: AppColors.red,
+                                    //       content: Text(
+                                    //         'Network error form not saved.',
+                                    //         style: AppStyles.whiteText16,
+                                    //       ),
+                                    //     ),
+                                    //   );
+                                    // }
                                   },
                                 );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: AppColors.red,
-                                    content: Text(
-                                      'Please fill all required details!',
-                                      style: AppStyles.whiteText16,
-                                    ),
-                                  ),
-                                );
+                              }
+                              else {
+                                // ScaffoldMessenger.of(context).showSnackBar(
+                                //   SnackBar(
+                                //     backgroundColor: AppColors.red,
+                                //     content: Text(
+                                //       'Please fill all required details!',
+                                //       style: AppStyles.whiteText16,
+                                //     ),
+                                //   ),
+                                // );
+                                showCustomSnackBar(
+                                    context,'Please fill all required details!', Colors.red);
                               }
                             },
                             child: appState.isLoading == true
@@ -487,8 +507,8 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                                     'loading'), // Key for progress indicator
                               ),
                             )
-                                : const Text(
-                              'Next',
+                                : Text(
+                              'Save Form',
                               style: TextStyle(color: Colors.white),
                             ),
                           ),

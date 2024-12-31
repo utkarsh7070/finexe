@@ -1,7 +1,11 @@
+import 'package:finexe/feature/base/internetConnection/connection_overlay.dart';
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
+
+import 'package:finexe/feature/base/utils/widget/app_button.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
 import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
@@ -426,17 +430,36 @@ class HRMSDashboardScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-            );
-          },
-          error: (error, stackTrace) {
-            throw Exception(error);
-          },
-          loading: () {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          },
-        ));
+              /*BottomBar(employee: userProfileAsync),*/
+            ],
+          ),
+        );
+      },
+     error: (error, stack) => Scaffold( appBar: AppBar(
+              title:
+              const Text("Dashboard", style: TextStyle(color: Colors.white)),
+              backgroundColor: AppColors.primary,
+              centerTitle: true,
+              leading: Visibility(
+                visible: (role.role.contains('sales') || role.role.contains('collection') || role.role.contains('pd') || role.role.contains('admin')),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+            ),body: NoDataFound(retry: true, ontap: () {
+              ref.refresh(loginUserProfileProvider);
+            },)),
+      loading: () {
+        return const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        );
+      },
+    ));
+
   }
 
   Future<void> _showMyDialog(BuildContext context) async {

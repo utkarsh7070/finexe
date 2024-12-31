@@ -2,10 +2,14 @@
 
 
 
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../base/api/api.dart';
 import '../../base/utils/widget/custom_snackbar.dart';
@@ -19,7 +23,7 @@ class LeaveRequestHomeViewModel {
   /*Future<void> submitLeaveHomeRequest(LeaveRequestItem leadData,BuildContext context) async {
     try {
 <<<<<<< HEAD
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
 =======
       String? token = speciality.getToken();
 >>>>>>> origin/To_merge
@@ -82,20 +86,26 @@ class LeaveRequestHomeViewModel {
       final responseData = response.data;
       print('Leave Request Response: $responseData');
 
-      // Extract the message
-      String message = responseData['message'] ?? 'An error occurred. Please try again.';
+      Fluttertoast.showToast(msg: responseData['message'].toString());
+      // Future.delayed(Duration(seconds: 2));
+     
 
-      if (response.statusCode == 200 && responseData['status'] == true) {
-       // log('Leave Request Successfully');
-        showCustomSnackBar(context, 'Leave Request Submitted', Colors.green);
-      } else {
-        // Handle error responses
-        showCustomSnackBar(context, message, Colors.red);
-      }
+
+
+      // Extract the message
+      // String message = responseData['message'] ?? 'An error occurred. Please try again.';
+
+      // if (response.statusCode == 200 && responseData['status'] == true) {
+      //  // log('Leave Request Successfully');
+      //   showCustomSnackBar(context, 'Leave Request Submitted', Colors.green);
+      // } else {
+      //   // Handle error responses
+      //   showCustomSnackBar(context, message, Colors.red);
+      // }
     } catch (e) {
       // Handle unexpected errors
-      print("Error submitting form: $e");
-      showCustomSnackBar(context, 'Unexpected error occurred. Please try again.', Colors.red);
+      ExceptionHandler().handleError(e);
+     
     }
   }
 

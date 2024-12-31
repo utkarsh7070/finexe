@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Model/pd_pending_response_model.dart';
+import '../Model/search_list_model.dart';
 
 class Applicant {
   final String name;
@@ -141,6 +142,79 @@ class ApiService {
       print(response.data);
 
       if (response.statusCode == 200) {
+        return responseModel.items;
+      } else {
+        throw Exception('Failed to load data with status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+}
+
+//***************************************for-search-query***************************
+
+final searchCurrentpage = StateProvider<int>((ref) => 1);
+final serchInputProvider = StateProvider<String>((ref) => '');
+
+final searchPaginationDataProvider = FutureProvider.autoDispose.family<List<SearchItems>, int>((ref,page) async {
+  final apiService = ref.read(apiSearchdataProvider);
+  // final page = ref.watch(currentPageProvider);
+  final serchInput = ref.watch(serchInputProvider);
+  const int limit = 10;
+  const String status = 'accept';
+  final response = await apiService.fetchSearchData(
+    status: status,
+    page: page,
+    limit: limit,
+    searchQuery: serchInput,
+  );
+  return response?? [];
+});
+
+
+final apiSearchdataProvider = Provider<SearchQuearyViewM>((ref) {
+  // final dio= ref.watch(dioProvider);
+  return SearchQuearyViewM();
+});
+
+
+class SearchQuearyViewM {
+  final Dio _dio = Dio();
+
+  // ApiService();
+
+  Future<List<SearchItems>> fetchSearchData({
+    required String status,
+    required int page,
+    required int limit,
+    required String searchQuery,
+
+    // String searchQuery = '',
+  }) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString('token');
+    if (kDebugMode) {
+      print(token);
+      print('$status  $page   $limit  $searchQuery');
+    }
+
+    try {
+      final response = await _dio.get(
+        Api.pdAssign,options: Options(headers: {'token':token}),
+        queryParameters: {
+          'status': status,
+          'page': page,
+          'limit': limit,
+          'searchQuery': searchQuery,
+        },
+      );
+      // PdPendingResponseModel responseModel =PdPendingResponseModel.fromJson(response.data);
+      SearchListModel responseModel =SearchListModel.fromJson(response.data);
+      print('search data response: ${response.data}');
+
+      if (response.statusCode == 200) {
+        // print
         return responseModel.items;
       } else {
         throw Exception('Failed to load data with status code: ${response.statusCode}');

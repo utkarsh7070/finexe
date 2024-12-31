@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
@@ -5,10 +6,13 @@ import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/refrence_form_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view_model.dart/refrence_detail_vmodel.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/referance/referance_details.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/Submit Data Models/refrence_form_model.dart';
 import '../view_model.dart/refrence_detail_vmodel.dart';
 final isExpRefrenceDetProvider = StateProvider<bool>((ref) => false);
@@ -16,7 +20,7 @@ final isExpRefrenceDetProvider = StateProvider<bool>((ref) => false);
 class RefrenceDetailsForm extends ConsumerStatefulWidget {
   // const RefrenceDetailsForm({super.key});
   final String customerId;
-  const RefrenceDetailsForm({super.key, required this.customerId});
+  RefrenceDetailsForm({required this.customerId});
   @override
   _RefrenceDetailsFormState createState() => _RefrenceDetailsFormState();
 }
@@ -69,15 +73,15 @@ class _RefrenceDetailsFormState extends ConsumerState<RefrenceDetailsForm> {
   Widget build(BuildContext context) {
     final appState = ref.watch(pdRefrenceSubmitProvider);
 
-    final isExpanded = ref.watch(isExpRefrenceDetProvider);
+    final _isExpanded = ref.watch(isExpRefrenceDetProvider);
     final getFormData = ref.watch(getRefrenceDataProvider(widget.customerId));
-    if (kDebugMode) {
-      print(
-          'get refrence addres : ${getFormData.value?.items!.referenceDetails![0].address}');
-      print(
-          'get refrence addres : ${getFormData.value?.items!.referenceDetails![0].name}');
-    }
-    return  ExpansionTile(
+    // if (kDebugMode) {
+    //   print(
+    //       'get refrence addres : ${getFormData.value?.items!.referenceDetails![0].address}');
+    //   print(
+    //       'get refrence addres : ${getFormData.value?.items!.referenceDetails![0].name}');
+    // }
+    return ExpansionTile(
           childrenPadding: const EdgeInsets.only(left: 16, bottom: 10),
           shape: const Border(
             bottom: BorderSide(color: AppColors.dividerColor),
@@ -90,35 +94,42 @@ class _RefrenceDetailsFormState extends ConsumerState<RefrenceDetailsForm> {
               ref.refresh(getRefrenceDataProvider(widget.customerId));
             }
           },
-          initiallyExpanded: isExpanded,
+          initiallyExpanded: _isExpanded,
           children: <Widget>[
             getFormData.when(
                 data: (refdata) {
-                  if (!isInitialDataSet && refdata.items != null) {
-                    refrenceDetailsForm_refrenceController1.text =
-                        refdata.items!.referenceDetails![0].name ?? '';
-                    refrenceDetailsForm_addressController1.text =
-                        refdata.items!.referenceDetails![0].address ?? '';
-                    refrenceDetailsForm_relationController1.text =
-                        refdata.items!.referenceDetails![0].relation ?? '';
-                    refrenceDetailsForm_mobileNumberController1.text =
-                        refdata.items!.referenceDetails![0].mobileNumber ?? '';
-                    if (refdata.items!.referenceDetails != null &&
-                        refdata.items!.referenceDetails!.length > 1) {
-                      // Populate the second reference details
-                      refrenceDetailsForm_refrenceController2.text =
-                          refdata.items!.referenceDetails![1].name ?? '';
-                      refrenceDetailsForm_addressController2.text =
-                          refdata.items!.referenceDetails![1].address ?? '';
-                      refrenceDetailsForm_relationController2.text =
-                          refdata.items!.referenceDetails![1].relation ?? '';
-                      refrenceDetailsForm_mobileNumberController2.text =
-                          refdata.items!.referenceDetails![1].mobileNumber ?? '';
-                    }
+                  if(refdata.items?.referenceDetails != null) {
+                    if (refdata.items!.referenceDetails!.length > 0) {
+                      if (!isInitialDataSet && refdata.items != null) {
+                        refrenceDetailsForm_refrenceController1.text =
+                            refdata.items!.referenceDetails?[0].name ?? '';
+                        refrenceDetailsForm_addressController1.text =
+                            refdata.items!.referenceDetails?[0].address ?? '';
+                        refrenceDetailsForm_relationController1.text =
+                            refdata.items!.referenceDetails?[0].relation ?? '';
+                        refrenceDetailsForm_mobileNumberController1.text =
+                            refdata.items!.referenceDetails?[0].mobileNumber ??
+                                '';
+                        if (refdata.items!.referenceDetails != null &&
+                            refdata.items!.referenceDetails!.length > 1) {
+                          // Populate the second reference details
+                          refrenceDetailsForm_refrenceController2.text =
+                              refdata.items!.referenceDetails?[1].name ?? '';
+                          refrenceDetailsForm_addressController2.text =
+                              refdata.items!.referenceDetails?[1].address ?? '';
+                          refrenceDetailsForm_relationController2.text =
+                              refdata.items!.referenceDetails?[1].relation ??
+                                  '';
+                          refrenceDetailsForm_mobileNumberController2.text =
+                              refdata.items!.referenceDetails?[1]
+                                  .mobileNumber ?? '';
+                        }
 
-                    isInitialDataSet = true;
+                        isInitialDataSet = true;
+                      }
+                    }
                   }
-                  return   Form(
+                  return Form(
                       key: _formKey,
                       child: Column(
                         children: [
@@ -336,6 +347,7 @@ class _RefrenceDetailsFormState extends ConsumerState<RefrenceDetailsForm> {
                                 ref
                                     .read(pdRefrenceSubmitProvider.notifier)
                                     .submitpdRefrenceDetailsForm(
+                                  context: context,
                                   customerId:  widget.customerId,
                                   pdType: 'creditPd',
                                   refrenceFormList: refrenceFormdata
@@ -345,26 +357,20 @@ class _RefrenceDetailsFormState extends ConsumerState<RefrenceDetailsForm> {
                                     .then(
                                       (value) {
                                     if (value) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: AppColors.green,
-                                          content: Text(
-                                            'Form submitted successfully!',
-                                            style: AppStyles.whiteText16,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: AppColors.red,
-                                          content: Text(
-                                            'Faild to submit the form please try again!',
-                                            style: AppStyles.whiteText16,
-                                          ),
-                                        ),
-                                      );
+                                      showCustomSnackBar(
+                                          context,'Form Saved successfully!', Colors.green);
                                     }
+                                    // else {
+                                    //   ScaffoldMessenger.of(context).showSnackBar(
+                                    //     SnackBar(
+                                    //       backgroundColor: AppColors.red,
+                                    //       content: Text(
+                                    //         'Faild to save the form please try again!',
+                                    //         style: AppStyles.whiteText16,
+                                    //       ),
+                                    //     ),
+                                    //   );
+                                    // }
                                   },
                                 );
                               },
@@ -380,7 +386,7 @@ class _RefrenceDetailsFormState extends ConsumerState<RefrenceDetailsForm> {
                                 ),
                               )
                                   : Text(
-                                'Next',
+                                'Save Form',
                                 style: AppStyles.whiteText16,
                               ))
                         ],
@@ -390,7 +396,7 @@ class _RefrenceDetailsFormState extends ConsumerState<RefrenceDetailsForm> {
               //  error: (error, stackTrace) => Center(child: Text('Error: $error')),
               error: (error, stackTrace) {
                 print('Error: $error');
-                return const Center(child: Text('faild to get data please try again'));
+                return Center(child: Text('faild to get data please try again'));
               },
             )
 

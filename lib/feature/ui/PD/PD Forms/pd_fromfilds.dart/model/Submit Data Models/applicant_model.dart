@@ -14,18 +14,18 @@ class ApplicantModel {
     message = json['message'];
     error = json['error'];
     items = json['items'] != null
-        ? ApplicantItems.fromJson(json['items'])
+        ? new ApplicantItems.fromJson(json['items'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = status;
-    data['subCode'] = subCode;
-    data['message'] = message;
-    data['error'] = error;
-    if (items != null) {
-      data['items'] = items!.toJson();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['subCode'] = this.subCode;
+    data['message'] = this.message;
+    data['error'] = this.error;
+    if (this.items != null) {
+      data['items'] = this.items!.toJson();
     }
     return data;
   }
@@ -43,7 +43,7 @@ class ApplicantItems {
   String? pendingReason;
   String? applicantImage;
   String? guarantorImage;
-  List<String>? coApplicantImage;
+  // List<String>? coApplicantImage;
   String? landmarkPhoto;
   String? latLongPhoto;
   List<String>? fourBoundaryPhotos;
@@ -86,7 +86,7 @@ class ApplicantItems {
       this.pendingReason,
       this.applicantImage,
       this.guarantorImage,
-      this.coApplicantImage,
+      // this.coApplicantImage,
       this.landmarkPhoto,
       this.latLongPhoto,
       this.fourBoundaryPhotos,
@@ -119,7 +119,7 @@ class ApplicantItems {
 
   ApplicantItems.fromJson(Map<String, dynamic> json) {
     applicant = json['applicant'] != null
-        ? Applicant.fromJson(json['applicant'])
+        ? new Applicant.fromJson(json['applicant'])
         : null;
     remarkByPd = json['remarkByPd'];
     sId = json['_id'];
@@ -131,7 +131,7 @@ class ApplicantItems {
     pendingReason = json['pendingReason'];
     applicantImage = json['applicantImage'];
     guarantorImage = json['guarantorImage'];
-    coApplicantImage = json['coApplicantImage'].cast<String>();
+    // coApplicantImage = json['coApplicantImage'].cast<String>();
     landmarkPhoto = json['landmarkPhoto'];
     latLongPhoto = json['latLongPhoto'];
     fourBoundaryPhotos = json['fourBoundaryPhotos'].cast<String>();
@@ -164,50 +164,50 @@ class ApplicantItems {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (applicant != null) {
-      data['applicant'] = applicant!.toJson();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.applicant != null) {
+      data['applicant'] = this.applicant!.toJson();
     }
-    data['remarkByPd'] = remarkByPd;
-    data['_id'] = sId;
-    data['customerId'] = customerId;
-    data['pdId'] = pdId;
-    data['pdType'] = pdType;
-    data['videoUpload'] = videoUpload;
-    data['rejectReason'] = rejectReason;
-    data['pendingReason'] = pendingReason;
-    data['applicantImage'] = applicantImage;
-    data['guarantorImage'] = guarantorImage;
-    data['coApplicantImage'] = coApplicantImage;
-    data['landmarkPhoto'] = landmarkPhoto;
-    data['latLongPhoto'] = latLongPhoto;
-    data['fourBoundaryPhotos'] = fourBoundaryPhotos;
-    data['workPhotos'] = workPhotos;
-    data['propertyOtherPhotos'] = propertyOtherPhotos;
-    data['selfiWithCustomer'] = selfiWithCustomer;
-    data['photoWithLatLong'] = photoWithLatLong;
-    data['front'] = front;
-    data['leftSide'] = leftSide;
-    data['rightSide'] = rightSide;
-    data['approachRoad'] = approachRoad;
-    data['mainRoad'] = mainRoad;
-    data['interiorRoad'] = interiorRoad;
-    data['selfieWithProperty'] = selfieWithProperty;
-    data['propertyPhoto'] = propertyPhoto;
-    data['gasDiaryPhoto'] = gasDiaryPhoto;
-    data['SSSMPhoto'] = sSSMPhoto;
-    data['familyMemberPhotos'] = familyMemberPhotos;
-    data['otherDocUpload'] = otherDocUpload;
-    data['residentType'] = residentType;
-    data['residentCurrentSince'] = residentCurrentSince;
-    data['status'] = status;
-    data['approvalRemarkCreditPd'] = approvalRemarkCreditPd;
-    data['pdfLink'] = pdfLink;
-    data['remarkMessage'] = remarkMessage;
-    data['bdCompleteDate'] = bdCompleteDate;
-    data['createdAt'] = createdAt;
-    data['updatedAt'] = updatedAt;
-    data['__v'] = iV;
+    data['remarkByPd'] = this.remarkByPd;
+    data['_id'] = this.sId;
+    data['customerId'] = this.customerId;
+    data['pdId'] = this.pdId;
+    data['pdType'] = this.pdType;
+    data['videoUpload'] = this.videoUpload;
+    data['rejectReason'] = this.rejectReason;
+    data['pendingReason'] = this.pendingReason;
+    data['applicantImage'] = this.applicantImage;
+    data['guarantorImage'] = this.guarantorImage;
+    // data['coApplicantImage'] = this.coApplicantImage;
+    data['landmarkPhoto'] = this.landmarkPhoto;
+    data['latLongPhoto'] = this.latLongPhoto;
+    data['fourBoundaryPhotos'] = this.fourBoundaryPhotos;
+    data['workPhotos'] = this.workPhotos;
+    data['propertyOtherPhotos'] = this.propertyOtherPhotos;
+    data['selfiWithCustomer'] = this.selfiWithCustomer;
+    data['photoWithLatLong'] = this.photoWithLatLong;
+    data['front'] = this.front;
+    data['leftSide'] = this.leftSide;
+    data['rightSide'] = this.rightSide;
+    data['approachRoad'] = this.approachRoad;
+    data['mainRoad'] = this.mainRoad;
+    data['interiorRoad'] = this.interiorRoad;
+    data['selfieWithProperty'] = this.selfieWithProperty;
+    data['propertyPhoto'] = this.propertyPhoto;
+    data['gasDiaryPhoto'] = this.gasDiaryPhoto;
+    data['SSSMPhoto'] = this.sSSMPhoto;
+    data['familyMemberPhotos'] = this.familyMemberPhotos;
+    data['otherDocUpload'] = this.otherDocUpload;
+    data['residentType'] = this.residentType;
+    data['residentCurrentSince'] = this.residentCurrentSince;
+    data['status'] = this.status;
+    data['approvalRemarkCreditPd'] = this.approvalRemarkCreditPd;
+    data['pdfLink'] = this.pdfLink;
+    data['remarkMessage'] = this.remarkMessage;
+    data['bdCompleteDate'] = this.bdCompleteDate;
+    data['createdAt'] = this.createdAt;
+    data['updatedAt'] = this.updatedAt;
+    data['__v'] = this.iV;
     return data;
   }
 }
@@ -271,24 +271,24 @@ class Applicant {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['applicantType'] = applicantType;
-    data['businessType'] = businessType;
-    data['occupation'] = occupation;
-    data['DOB'] = dOB;
-    data['email'] = email;
-    data['houseLandMark'] = houseLandMark;
-    data['alternateMobileNo'] = alternateMobileNo;
-    data['noOfyearsAtCurrentAddress'] = noOfyearsAtCurrentAddress;
-    data['gender'] = gender;
-    data['religion'] = religion;
-    data['nationality'] = nationality;
-    data['category'] = category;
-    data['caste'] = caste;
-    data['maritalStatus'] = maritalStatus;
-    data['noOfDependentWithCustomer'] = noOfDependentWithCustomer;
-    data['educationalDetails'] = educationalDetails;
-    data['residenceType'] = residenceType;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['applicantType'] = this.applicantType;
+    data['businessType'] = this.businessType;
+    data['occupation'] = this.occupation;
+    data['DOB'] = this.dOB;
+    data['email'] = this.email;
+    data['houseLandMark'] = this.houseLandMark;
+    data['alternateMobileNo'] = this.alternateMobileNo;
+    data['noOfyearsAtCurrentAddress'] = this.noOfyearsAtCurrentAddress;
+    data['gender'] = this.gender;
+    data['religion'] = this.religion;
+    data['nationality'] = this.nationality;
+    data['category'] = this.category;
+    data['caste'] = this.caste;
+    data['maritalStatus'] = this.maritalStatus;
+    data['noOfDependentWithCustomer'] = this.noOfDependentWithCustomer;
+    data['educationalDetails'] = this.educationalDetails;
+    data['residenceType'] = this.residenceType;
     return data;
   }
 }
