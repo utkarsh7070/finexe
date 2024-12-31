@@ -126,6 +126,7 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
       //   SystemNavigator.pop();
       //   return false; // Prevents back navigation
       // },
+
       child: NetworkListener(
       context: context,
         child: Scaffold(
@@ -164,6 +165,7 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
               ],
             )),
       ),
+
     );
   }
 }

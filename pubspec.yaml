@@ -90,6 +90,8 @@ dependencies:
   change_app_package_name: ^1.4.0
 
 
+  flutter_image_compress: ^2.3.0
+
 #  AIzaSyCiUeNk2R6jiihpsymrcQhGC586itXxAYg
 
 

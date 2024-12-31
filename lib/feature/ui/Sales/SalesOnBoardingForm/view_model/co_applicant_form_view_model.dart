@@ -770,10 +770,6 @@ class ApplicantViewModel extends StateNotifier<List<KycFormState>> {
         if (i != index) state[i],
     ];
 
-    // state = [
-    //   for (final todo in state)
-    //     if (todo.id != index) todo,
-    // ];
   }
 
   // void removeItem(String item) {

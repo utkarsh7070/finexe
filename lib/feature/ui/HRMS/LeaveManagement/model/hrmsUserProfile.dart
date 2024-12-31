@@ -11,6 +11,7 @@ class HRMSUserProfile {
   final String employeUniqueId;
   final String punchInTime;
   final String punchOutTime;
+  final Map<String,dynamic> designationId;
 
 
   HRMSUserProfile({
@@ -25,6 +26,7 @@ class HRMSUserProfile {
     required this.fatherName,
     required this.employeePhoto,
     required this.employeUniqueId,
+    required this.designationId
   });
 
   factory HRMSUserProfile.fromJson(Map<String, dynamic> json) {
@@ -40,8 +42,27 @@ class HRMSUserProfile {
       fatherName: json['fatherName'] ?? '',
       employeePhoto: json['employeePhoto'] ?? '',
       employeUniqueId: json['employeUniqueId'] ?? '',
+      designationId: json['designationId'] ?? [],
     );
   }
 
   String get fullName => '$employeName $fatherName';
 }
+
+// class BranchIdClass {
+//   final String? id;
+//   final String? name;
+//
+//   BranchIdClass({
+//     this.id,
+//     this.name,
+//   });
+//
+//   factory BranchIdClass.fromJson(Map<String, dynamic> json) {
+//     return BranchIdClass(
+//       id: json['_id'] ?? '',
+//       name: json['name'] ?? '',
+//     );
+//   }
+// }
+

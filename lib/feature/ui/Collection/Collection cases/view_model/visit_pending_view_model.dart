@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:bson/bson.dart';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
@@ -11,6 +12,7 @@ import 'package:finexe/feature/ui/Collection/Collection%20cases/model/update_emi
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_submit_request_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -26,6 +28,7 @@ import '../model/visit_closure_submit_request_model.dart';
 import '../model/get_visit_pending_response_data.dart';
 import '../model/visit_pending_items_model.dart';
 import '../model/visit_update_upload_image_responce_model.dart';
+import 'package:path/path.dart' as path;
 
 final updateVisitDropDown = StateProvider<List<DropDownValueModel>>(
   (ref) {
@@ -95,13 +98,15 @@ final updateEmiFocusProvider =
 });
 
 final updateEmiViewModelProvider =
-    StateNotifierProvider<UpdateEmiViewModel, UpdateEmiModel>((ref) {
+    StateNotifierProvider.autoDispose<UpdateEmiViewModel, UpdateEmiModel>(
+        (ref) {
   final dio = ref.read(dioProvider);
   return UpdateEmiViewModel(dio);
 });
 
 final updateVisitViewModelProvider =
-    StateNotifierProvider<UpdateVisitViewModel, UpdateVisitModel>((ref) {
+    StateNotifierProvider.autoDispose<UpdateVisitViewModel, UpdateVisitModel>(
+        (ref) {
   final dio = ref.read(dioProvider);
 
   final position = ref.watch(currentLocationProvider);
@@ -131,11 +136,26 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     state = state.copyWith(isLoading: true);
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
-      state = state.copyWith(photoFile: pickedFile.path);
+      final isValid = _validateTransactionImage(pickedFile.path);
+      state = state.copyWith(photoFile: pickedFile.path,isPhotoFile: isValid);
+     final imagePath = await compressImage(File(pickedFile.path));
+      await uploadImage(imagePath!.path);
       return pickedFile;
     }
     return null;
   }
+
+  Future<XFile?> compressImage(File file) async {
+    String fileName = path.basename(file.path);
+    final String targetPath = '${file.parent.path}/compressed_$fileName';
+    final compressedBytes = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path, // Source path
+      targetPath, // Target path
+      quality: 10, // Compression quality (0-100)
+    );
+    return compressedBytes;
+  }
+
 
   Future<void> uploadImage(String image) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -473,7 +493,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final isPhoto = _validateTransactionImage(state.photoFile);
     final isAmount = _validateEmiAmount(state.emiAmount);
     final isTransactionId = _validateTransactionId(state.transactionId);
-    final isMentionMail = _validateReceipt(state.receipt);
+    final isMentionMail = _validateReceipt(state.receipt ?? '');
     final isRemark = _validateRemark(state.remark);
     if (!isBank) {
       showCustomSnackBar(
@@ -500,7 +520,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
   bool validCashCollection(context) {
     final isCreditPerson = creditPersonController.dropDownValue?.value != null;
     final isAmount = _validateEmiAmount(state.emiAmount);
-    final isMentionMail = _validateReceipt(state.receipt);
+    final isMentionMail = _validateReceipt(state.receipt ?? '');
     final isRemark = _validateRemark(state.remark);
     if (!isCreditPerson) {
       showCustomSnackBar(
@@ -630,9 +650,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       print(
           'Ld o:-${detail.ld}, customerName:- ${detail.customerName}, mobile:- ${detail.mobile}, commonId:- ${state.commonId}, image:- ${state.transactionImage}');
     }
-
     ObjectId? result1 = parseObjectId(state.commonId);
-
     UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
         fatherName: detail.fatherName ?? '',
         ld: detail.ld ?? '',
@@ -672,10 +690,6 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       if (response.statusCode == 200 || responseData['status'] == true) {
         showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
         updatePhotoValue(context);
-
-        ref.refresh(fetchVisitPendingDataProvider);
-        ref.invalidate(updateEmiViewModelProvider);
-
         if (kDebugMode) {
           print('EmiUpdateResponse ${response.data}');
         }
@@ -702,10 +716,23 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       state = state.copyWith(photoFile: pickedFile.path);
+      final imagePath = await compressImage(File(pickedFile.path));
+      await uploadImage(imagePath!.path);
       return pickedFile;
     }
     state = state.copyWith(isLoading: false);
     return null;
+  }
+
+  Future<XFile?> compressImage(File file) async {
+    String fileName = path.basename(file.path);
+    final String targetPath = '${file.parent.path}/compressed_$fileName';
+    final compressedBytes = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path, // Source path
+      targetPath, // Target path
+      quality: 10, // Compression quality (0-100)
+    );
+    return compressedBytes;
   }
 
   ObjectId? parseObjectId(String? id) {
@@ -1166,7 +1193,7 @@ class UpdateEmiModel {
   final String transactionImage;
   final String remark;
   final String bankName;
-  final String receipt;
+  final String? receipt;
   final bool isEmiAmount;
   final bool isRemark;
   final bool isBankName;
@@ -1196,7 +1223,7 @@ class UpdateEmiModel {
       this.transactionImage = '',
       this.remark = '',
       this.bankName = '',
-      this.receipt = '',
+      this.receipt = null,
       this.isEmiAmount = true,
       this.isTransactionId = true,
       this.isTransactionImage = false,

@@ -26,18 +26,14 @@ class HRMSDashBoardViewModel extends StateNotifier<bool> {
   final Dio dio;
 
   Future<bool?> onPunchOut(BuildContext context) async {
-    // SharedPreferences sharedPreferences = await  SharedPreferences.getInstance();
-    // final String? storedToken = sharedPreferences.getString('token');
     final String? storedToken = speciality.getToken();
 
-    
     Map<String, String> token = {"token": storedToken!};
     print(token.values);
     try {
       log('onPunchOut');
       var response = await _punchInRepository.punchOut(token);
       print('punch out response  ${response.data}');
-// log("onPunchOut response: " + response.);
       log('puch');
       var responseData = response.data; // Assuming response.data is a Map
       var message = responseData['message'];
@@ -97,11 +93,12 @@ class HRMSDashBoardViewModel extends StateNotifier<bool> {
 
 class RoleListModel {
   final List<String> role;
+
   RoleListModel({required this.role});
 }
 
 class RoleListNotifier extends StateNotifier<RoleListModel> {
-  RoleListNotifier() : super(RoleListModel(role: [])){
+  RoleListNotifier() : super(RoleListModel(role: [])) {
     loadRoles();
   }
 
@@ -125,6 +122,19 @@ class RoleListNotifier extends StateNotifier<RoleListModel> {
   }
 }
 
-final roleListProvider = StateNotifierProvider.autoDispose<RoleListNotifier, RoleListModel>(
-      (ref) => RoleListNotifier(),
+final roleListProvider =
+    StateNotifierProvider.autoDispose<RoleListNotifier, RoleListModel>(
+  (ref) => RoleListNotifier(),
 );
+// final AttendanceCountStateProvider = StateProvider<List<AttendanceCountModel>>((ref) {
+//   return [
+//
+//   ];
+// },);
+//
+// class AttendanceCountModel{
+//   final String label;
+//   final String count;
+//   AttendanceCountModel(this.label, this.count);
+//
+// }
