@@ -172,14 +172,16 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                   AppRoutes.dashBoard, // CIBIL dashboard route
                   (route) => false, // Remove all previous routes
                 );
-              } else if (roles.contains('creditPd')) {
-                log("Navigating to pd dashboard");
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  AppRoutes.pdscreen, // CIBIL dashboard route
-                  (route) => false, // Remove all previous routes
-                );
-              } else {
+              } 
+              // else if (roles.contains('creditPd')) {
+              //   log("Navigating to pd dashboard");
+              //   Navigator.pushNamedAndRemoveUntil(
+              //     context,
+              //     AppRoutes.pdscreen, // CIBIL dashboard route
+              //     (route) => false, // Remove all previous routes
+              //   );
+              // } 
+              else {
                 // Default role navigation
                 log('No matching role found, navigating to HRMS');
                 Navigator.pushNamedAndRemoveUntil(
@@ -275,104 +277,103 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
     );
   }
 
-  Future<bool> login(
-      {required String email,
-      required String password,
-      required String role,
-      required WidgetRef ref,
-      required BuildContext context}) async {
-    isLoading = true;
-    LoginRequestModel loginRequestModel = LoginRequestModel(
-        userName: email, password: password, employeeRole: role);
-    // Set state to loading
-    state = const AsyncValue.loading();
+  Future<bool> login({
+  required String email,
+  required String password,
+  required String role,
+  required WidgetRef ref,
+  required BuildContext context,
+}) async {
+  isLoading = true;
+  LoginRequestModel loginRequestModel = LoginRequestModel(
+    userName: email,
+    password: password,
+    employeeRole: role,
+  );
+  state = const AsyncValue.loading();
 
-    print("login Input: ${loginRequestModel.toJson()}");
-    try {
-      final response =
-          await dio.post(Api.login, data: loginRequestModel.toJson());
+  print("login Input: ${loginRequestModel.toJson()}");
 
-      var responseData = response.data;
-      print('Login response: $responseData');
-      var message = responseData['message'];
+  try {
+    final response = await dio.post(Api.login, data: loginRequestModel.toJson());
 
-      if (response.statusCode == 200) {
-        isLoading = false;
 
-        LoginResponseModel loginResponseModel =
-            LoginResponseModel.fromJson(response.data);
-        if (kDebugMode) {
-          print("response:: ${response.data}");
-        }
-        if (kDebugMode) {
-          print('role:: ${loginResponseModel.items.roleName}');
-          print('role:: ${loginResponseModel.items}');
-        }
-        //------------------------------start background service----------------
-        // SocketService().startTracking(loginResponseModel.items.employeId);
-        // FlutterBackgroundService().invoke("startService");
-        //----------------------------------------------------------------------
-        // Create session after login
-        await SessionService.createSession(
-            role: loginResponseModel.items.roleName,
-            accessToken: loginResponseModel.items.token,
-            employeeId: loginResponseModel.items.employeId,
-            email: loginResponseModel.items.userName,
-            name: loginResponseModel.items.userName,
-            romId: loginResponseModel.items.roamId,
-            trakingMode: loginResponseModel.items.trackingMode);
-        ref.refresh(attendanceProvider);
-        //------------------------background service----------------------------
-        // await BackgroundService().initializeService();
-        //---------------------------------------------------------------------
-        PunchModel punchStatus = await punchStatusFunction(
-                _punchInRepository,
-                loginResponseModel.items.token,
-                // loginResponseModel.items.roleName.first.toString(),
-                context)
-            .then(
-          (value) {
-            state = AsyncValue.data(DataModel(
-                allowed: value.allowed,
-                checkPunch: value.punchIn,
-                loginStatus: 'Sucsses',
-                role: loginResponseModel.items.roleName));
-            showCustomSnackBar(
-                context, loginResponseModel.message, Colors.green);
-            return value;
-          },
-        );
-        if (punchStatus != null) {
+
+
+    var responseData = response.data;
+    print('Login response: $responseData');
+    var message = responseData['message'];
+
+      // Success: Process login data
+      
+      LoginResponseModel loginResponseModel = LoginResponseModel.fromJson(response.data);
+
+     
+
+      PunchModel punchStatus = await punchStatusFunction(
+        _punchInRepository,
+        loginResponseModel.items.token,
+        context,
+      );
+
+
+
+         if (punchStatus.allowed != null&&punchStatus.punchIn!=null) {
+           state = AsyncValue.data(DataModel(
+          allowed: punchStatus.allowed!,
+          checkPunch: punchStatus.punchIn!,
+          loginStatus: 'Success',
+          role: loginResponseModel.items.roleName,
+        ));
+
+         await SessionService.createSession(
+        role: loginResponseModel.items.roleName,
+        accessToken: loginResponseModel.items.token,
+        employeeId: loginResponseModel.items.employeId,
+        email: loginResponseModel.items.userName,
+        name: loginResponseModel.items.userName,
+        romId: loginResponseModel.items.roamId,
+        trakingMode: loginResponseModel.items.trackingMode,
+      );
+      ref.refresh(attendanceProvider);
+
           return true;
         } else {
+       
+            state = AsyncValue.error('', StackTrace.current);
           return false;
         }
-        // Update state to indicate success
 
-        // Return true here to indicate success
-      } else if (response.statusCode == 400) {
-        isLoading = false;
-        showCustomSnackBar(context, message, Colors.red);
-        return true;
-      } else {
-        showCustomSnackBar(context, response.data.message, Colors.red);
-        // If status code is not 200, set state to error
-        isLoading = false;
-        state = AsyncValue.error(
-            'Login failed with status: ${response.statusCode}',
-            StackTrace.current);
-        return false;
-      }
-    } catch (error, stackTrace) {
-      print(error);
-      isLoading = false;
-      DioExceptions.fromDioError(error as DioException, context);
-      // Handle exceptions and set state to error
-      state = AsyncValue.error(error, stackTrace);
-      return false;
-    }
+      
+  
+
+  
+    //  else {
+      
+    //   // Use the reusable error handler for other status codes
+    
+    
+    //   state = AsyncValue.error('Login failed with status: ${response.statusCode}', StackTrace.current);
+    //   return false;
+    // }
+  } catch (error, stackTrace) {
+
+    // Handle exceptions (network errors, etc.)
+
+   
+  
+    ExceptionHandler().handleError(error);
+    state = AsyncValue.error(error, stackTrace);
+    return false;
   }
-}
+  finally{ 
+    isLoading = false;
+
+  
+
+  }
+}}
+
 
 class DataModel {
   final String loginStatus;
@@ -483,21 +484,24 @@ Future<PunchModel> punchStatusFunction(
     var checkAttendanceResponse =
         CheckAttendanceResponseModel.fromJson(response.data);
         print(response.data);
+        
     return PunchModel(
         punchIn: checkAttendanceResponse.items.punchIn,
         allowed: checkAttendanceResponse.items.allowed);
-  } on DioException catch (error) {
-    DioExceptions.fromDioError(error, context);
+  } catch (error) {
+     
+ExceptionHandler().handleError(error);
+   
   }
-  return PunchModel(allowed: false, punchIn: false);
+  return PunchModel(allowed: null, punchIn: null);
   // SesstionModel(
   //   token: tokens != null, role: role, puntchStatus: punchStatus);
   // Return true if token exists (logged in), false otherwise (not logged in)
 }
 
 class PunchModel {
-  final bool allowed;
-  final bool punchIn;
+  final bool? allowed;
+  final bool? punchIn;
 
   PunchModel({required this.allowed, required this.punchIn});
 }

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:finexe/feature/base/api/api.dart';
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
@@ -22,55 +23,58 @@ class PdRequestScreen extends ConsumerWidget {
     final pditems = ref.watch(fetchpdRefuseandAcceptListProvider);
     final pdRequestViewModel = ref.watch(pdRequestProvider);
 
-    return Scaffold(
-        appBar: AppBar(
-          flexibleSpace: Container(
-            color: Colors.white,
+    return NetworkListener(
+      context: context,
+      child: Scaffold(
+          appBar: AppBar(
+            flexibleSpace: Container(
+              color: Colors.white,
+            ),
+            backgroundColor: AppColors.white,
+            title: const Text('PD Request'),
+            centerTitle: true,
           ),
-          backgroundColor: AppColors.white,
-          title: const Text('PD Request'),
-          centerTitle: true,
-        ),
-        body: pditems.when(
-          data: (pdDataItems) {
-            return Column(
-              children: [
-                // Text('data'),
-                Expanded(
-                  child:
-                      // pditems == null // Check for loading state
-                      //     ? Center(child: CircularProgressIndicator())
-                      //     :
-                      pditems.value!.isEmpty // Check for empty state
-                          ? const Center(
-                              child: Text(
-                                'No PD Requests found',
-                                style:
-                                    TextStyle(fontSize: 16, color: Colors.grey),
+          body: pditems.when(
+            data: (pdDataItems) {
+              return Column(
+                children: [
+                  // Text('data'),
+                  Expanded(
+                    child:
+                        // pditems == null // Check for loading state
+                        //     ? Center(child: CircularProgressIndicator())
+                        //     :
+                        pditems.value!.isEmpty // Check for empty state
+                            ? const Center(
+                                child: Text(
+                                  'No PD Requests found',
+                                  style:
+                                      TextStyle(fontSize: 16, color: Colors.grey),
+                                ),
+                              )
+                            : ListView.builder(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                itemCount: pdDataItems.length,
+                                itemBuilder: (context, index) {
+                                  final applicant = pdDataItems[index];
+                                  return itemCard(context, applicant,
+                                      pdRequestViewModel, ref);
+                                },
                               ),
-                            )
-                          : ListView.builder(
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              itemCount: pdDataItems.length,
-                              itemBuilder: (context, index) {
-                                final applicant = pdDataItems[index];
-                                return itemCard(context, applicant,
-                                    pdRequestViewModel, ref);
-                              },
-                            ),
-                ),
-              ],
-            );
-          },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stackTrace) => Center(child: Text('Error: $error')),
-          // error: (error, stackTrace) {
-          //   print('Error: $error');
-          //   return Center(
-          //     child: Text('Data not found'),
-          //   );
-          // },
-        ));
+                  ),
+                ],
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stackTrace) => Center(child: Text('Error: $error')),
+            // error: (error, stackTrace) {
+            //   print('Error: $error');
+            //   return Center(
+            //     child: Text('Data not found'),
+            //   );
+            // },
+          )),
+    );
   }
 
   itemCard(BuildContext context, PDReqItems pdreitem,

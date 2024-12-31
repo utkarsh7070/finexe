@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:roam_flutter/roam_flutter.dart';
 
 import '../../../../Punch_In_Out/repository/puch_In_repository_imp.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
@@ -45,7 +44,6 @@ class HRMSDashBoardViewModel extends StateNotifier<bool> {
 // Punch punchInModel = PunchInModel.fromJson(response.data);
       if (response.statusCode == 200) {
         showCustomSnackBar(context, message, AppColors.green);
-        Roam.stopTracking();
 // PunchInModel punchInModel = PunchInModel.fromJson(response.data);
       } else {
         showCustomSnackBar(context, message, AppColors.green);

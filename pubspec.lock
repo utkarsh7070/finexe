@@ -190,6 +190,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.1"
+  change_app_package_name:
+    dependency: "direct main"
+    description:
+      name: change_app_package_name
+      sha256: "1d6ca5fbaba7264f70857941543337b2efe48f19ae2eef29b89927541b52a787"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   characters:
     dependency: transitive
     description:
@@ -840,6 +848,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.3"
+  flutter_swipe_button:
+    dependency: "direct main"
+    description:
+      name: flutter_swipe_button
+      sha256: "67df9f1121ad10429b900a723366403441634ebb2c064fd4babb7de274366a36"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.3"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -1570,6 +1586,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.7"
+  restart_app:
+    dependency: "direct main"
+    description:
+      name: restart_app
+      sha256: "00d5ec3e9de871cedbe552fc41e615b042b5ec654385e090e0983f6d02f655ed"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.2"
   riverpod:
     dependency: "direct main"
     description:
@@ -1578,14 +1602,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
-  roam_flutter:
-    dependency: "direct main"
-    description:
-      name: roam_flutter
-      sha256: "782574f7d3462376e598d99c4a915af29a046070d56392a6588c5f0ee4989d10"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.7"
   rxdart:
     dependency: transitive
     description:

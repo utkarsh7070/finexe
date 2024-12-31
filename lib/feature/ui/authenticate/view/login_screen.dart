@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'package:finexe/feature/base/dialog/all_permission_dialog.dart';
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
@@ -72,301 +73,305 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     log('loginState.isLoading:: ${loginState.isLoading}');
 
-    return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Container(
-          width: displayWidth(context),
-          decoration: const BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/images/login_back.png'),
-                  fit: BoxFit.fill)),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              // autovalidateMode: AutovalidateMode.onUserInteraction,
-              key: _formKey,
-              child: SizedBox(
-                width: displayWidth(context),
-                height: displayHeight(context),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: displayHeight(context) * 0.05,
-                    ),
-                    Container(
-                      alignment: Alignment.center,
-                      margin:
-                          EdgeInsets.only(left: displayWidth(context) * 0.3),
-                      height: displayHeight(context) * 0.15,
-                      width: displayWidth(context) * 0.30,
-                      // decoration: const BoxDecoration(
-                      child: Image.asset('assets/images/login_logo.png'),
-                    ),
-                    SizedBox(
-                      height: displayHeight(context) * 0.04,
-                    ),
-                    const Text(
-                      'User Name',
-                      //style: AppStyles.headingTextStyleXL,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
+    return NetworkListener(
+      context: context,
+      child: SafeArea(
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Container(
+            width: displayWidth(context),
+            decoration: const BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('assets/images/login_back.png'),
+                    fit: BoxFit.fill)),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                // autovalidateMode: AutovalidateMode.onUserInteraction,
+                key: _formKey,
+                child: SizedBox(
+                  width: displayWidth(context),
+                  height: displayHeight(context),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: displayHeight(context) * 0.05,
                       ),
-                    ),
-                    AppTextField(
-                      onChange: (value) {
-                        checkUsernameValidation.checkUsername(value);
-                      },
-                      // initialValue: 'dfgbfgbnx',
-                      // focusNode: focusViewModel.userFocusNode,
-                      // currentState: focusStates['userFocusNode'],
-                      // focusNode: ,
-                      // inerHint: 'Enter your user name',
-                      height: userValidations
-                          ? displayHeight(context) * 0.09
-                          : null,
-                      onFiledSubmitted: (value) {
-                        log('onFiledSubmitted');
-                        ref
-                            .read(userValidationProvider.notifier)
-                            .checkUsername(value.toString());
-                      },
-                      onValidate: (value) {
-                        print(value);
-                        if (value!.trim().isEmpty) {
-                          return "username is a required field";
-                        }
-                        return '';
-                      },
-                      errorText: "username is a required field",
-                      isError: userValidations,
-                      controller: _emailController,
-                      textInputAction: TextInputAction.next,
-                    ),
-                    SizedBox(height: displayHeight(context) * 0.02),
-                    const Text(
-                      'Password',
-                      //style: AppStyles.headingTextStyleXL,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
+                      Container(
+                        alignment: Alignment.center,
+                        margin:
+                            EdgeInsets.only(left: displayWidth(context) * 0.3),
+                        height: displayHeight(context) * 0.15,
+                        width: displayWidth(context) * 0.30,
+                        // decoration: const BoxDecoration(
+                        child: Image.asset('assets/images/login_logo.png'),
                       ),
-                    ),
-                    AppTextField(
-                      onChange: (value) {
-                        checkPassValidation.checkPassword(value);
-                      },
-                      // initialValue: 'cvfcfbcvb',
-                      // maxLine: 1,
-                      // focusNode: focusViewModel.passFocusNode,
-                      // currentState: focusStates['passFocusNode'],
-                      height: passwordValidations
-                          ? displayHeight(context) * 0.09
-                          : null,
-                      // focusNode: FocusNode(),
-                      onValidate: (value) {
-                        print(value);
-                        if (value!.isEmpty) {
-                          return "password is a required field";
-                        }
-                        return '';
-                      },
-                      onFiledSubmitted: (value) {
-                        ref
-                            .read(passwordValidationProvider.notifier)
-                            .checkPassword(value);
-                      },
-                      // inerHint: 'Password',
-                      errorText: "password is a required field",
-                      isError: passwordValidations,
-                      textInputAction: TextInputAction.next,
-                      isSuffix: true,
-                      obscureText: obscureValue,
-                      maximumLines: obscureValue ? 1 : null, // Set maxLines to 1 when obscureText is true
-                      suffixIcon: obscureValue
-                          ? CupertinoIcons.eye_slash
-                          : CupertinoIcons.eye,
-                      suffixOnTap: () {
-                        if (obscureValue != true) {
-                          ref.read(obscureTextProvider.notifier).state = true;
-                        } else {
-                          ref.read(obscureTextProvider.notifier).state = false;
-                        }
-                      },
-                      // hint: 'Password',
-                      controller: _passwordController,
-                    ),
-                    Row(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Checkbox(
-                                  value: isChecked,
-                                  onChanged: (value) {
-                                    print(isChecked);
-                                    // Update the state using the provider
-                                    ref
-                                        .read(isRememberMeCheckedProvider
-                                            .notifier)
-                                        .state = value!;
-                                  },
-                                  side: const BorderSide(
-                                    color: Colors.blue, // Blue border
-                                    width: 2.0,
-                                  ),
-                                ),
-                                const Text(
-                                  "Remember me",
-                                  style: TextStyle(
-                                      fontSize: 16.0, color: Colors.blue),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: displayWidth(context) * 0.05,
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                // Navigate to the Forgot Password screen
-                                print("Forgot Password tapped");
-                              },
-                              child: const Text(
-                                "Forgot Password?",
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: Colors.blue,
-                                  //decoration: TextDecoration.underline,
-                                ),
-                              ),
-                            ),
-                          ],
+                      SizedBox(
+                        height: displayHeight(context) * 0.04,
+                      ),
+                      const Text(
+                        'User Name',
+                        //style: AppStyles.headingTextStyleXL,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
                         ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: vendorState,
-                          onChanged: (value) {
-                            print(vendorState);
-                            // Update the state using the provider
-                            if(value!=null) {
-                              vendorStateViewModel.state = value;
-                            }
-                            // selectedValue = vendorState? '' : 'vendor';
-                            // print('selectedValue:: $selectedValue');
-                          },
-                          side: const BorderSide(
-                            color: Colors.blue, // Blue border
-                            width: 2.0,
-                          ),
+                      ),
+                      AppTextField(
+                        onChange: (value) {
+                          checkUsernameValidation.checkUsername(value);
+                        },
+                        // initialValue: 'dfgbfgbnx',
+                        // focusNode: focusViewModel.userFocusNode,
+                        // currentState: focusStates['userFocusNode'],
+                        // focusNode: ,
+                        // inerHint: 'Enter your user name',
+                        height: userValidations
+                            ? displayHeight(context) * 0.09
+                            : null,
+                        onFiledSubmitted: (value) {
+                          log('onFiledSubmitted');
+                          ref
+                              .read(userValidationProvider.notifier)
+                              .checkUsername(value.toString());
+                        },
+                        onValidate: (value) {
+                          print(value);
+                          if (value!.trim().isEmpty) {
+                            return "username is a required field";
+                          }
+                          return '';
+                        },
+                        errorText: "username is a required field",
+                        isError: userValidations,
+                        controller: _emailController,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      SizedBox(height: displayHeight(context) * 0.02),
+                      const Text(
+                        'Password',
+                        //style: AppStyles.headingTextStyleXL,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
                         ),
-                        const Text(
-                          "Vendor",
-                          style: TextStyle(fontSize: 16.0, color: Colors.blue),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: displayHeight(context) * 0.04),
-                    SizedBox(
-                      height: displayHeight(context) * 0.06,
-                      width: displayWidth(context),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.only(top: 10, bottom: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onPressed: () async {
-                          // SharedPreferences preferences =
-                          //     await SharedPreferences.getInstance();
-
-                          final user = _emailController.text.isEmpty;
-                          final pass = _passwordController.text.isEmpty;
-                          if (user || pass) {
-                            ref
-                                .read(userValidationProvider.notifier)
-                                .checkUsername(_emailController.text);
-                            ref
-                                .read(passwordValidationProvider.notifier)
-                                .checkPassword(_passwordController.text);
+                      ),
+                      AppTextField(
+                        onChange: (value) {
+                          checkPassValidation.checkPassword(value);
+                        },
+                        // initialValue: 'cvfcfbcvb',
+                        // maxLine: 1,
+                        // focusNode: focusViewModel.passFocusNode,
+                        // currentState: focusStates['passFocusNode'],
+                        height: passwordValidations
+                            ? displayHeight(context) * 0.09
+                            : null,
+                        // focusNode: FocusNode(),
+                        onValidate: (value) {
+                          print(value);
+                          if (value!.isEmpty) {
+                            return "password is a required field";
+                          }
+                          return '';
+                        },
+                        onFiledSubmitted: (value) {
+                          ref
+                              .read(passwordValidationProvider.notifier)
+                              .checkPassword(value);
+                        },
+                        // inerHint: 'Password',
+                        errorText: "password is a required field",
+                        isError: passwordValidations,
+                        textInputAction: TextInputAction.next,
+                        isSuffix: true,
+                        obscureText: obscureValue,
+                        maximumLines: obscureValue ? 1 : null, // Set maxLines to 1 when obscureText is true
+                        suffixIcon: obscureValue
+                            ? CupertinoIcons.eye_slash
+                            : CupertinoIcons.eye,
+                        suffixOnTap: () {
+                          if (obscureValue != true) {
+                            ref.read(obscureTextProvider.notifier).state = true;
                           } else {
-                            final String role = vendorState? 'vendor' : '';
-                            if (kDebugMode) {
-                              print(role);
-                            }
-
-                            loginStateViewModel.clickPunchInButton(
-                                context: context,
-                                email: _emailController.text.trim(),
-                                password: _passwordController.text.trim(),
-                                ref: ref,role: role);
+                            ref.read(obscureTextProvider.notifier).state = false;
                           }
                         },
-                        child: loginState.isLoading
-                            ? Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const SizedBox(
-                                      width: 24, // Specify the width
-                                      height: 24, // Specify the height
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 3,
-                                        key: ValueKey(
-                                            'loading'), // Key for progress indicator
-                                      ),
+                        // hint: 'Password',
+                        controller: _passwordController,
+                      ),
+                      Row(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: isChecked,
+                                    onChanged: (value) {
+                                      print(isChecked);
+                                      // Update the state using the provider
+                                      ref
+                                          .read(isRememberMeCheckedProvider
+                                              .notifier)
+                                          .state = value!;
+                                    },
+                                    side: const BorderSide(
+                                      color: Colors.blue, // Blue border
+                                      width: 2.0,
                                     ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      'please wait..',
-                                      style: AppStyles.smallTextStyleRich
-                                          .copyWith(
-                                              color: AppColors.white,
-                                              fontSize: FontSize.fontSize16,
-                                              fontWeight: FontWeight.w500),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : const Text(
-                                'Login',
-                                style: TextStyle(color: Colors.white),
+                                  ),
+                                  const Text(
+                                    "Remember me",
+                                    style: TextStyle(
+                                        fontSize: 16.0, color: Colors.blue),
+                                  ),
+                                ],
                               ),
+                              SizedBox(
+                                width: displayWidth(context) * 0.05,
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  // Navigate to the Forgot Password screen
+                                  print("Forgot Password tapped");
+                                },
+                                child: const Text(
+                                  "Forgot Password?",
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Colors.blue,
+                                    //decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ),
-                    const Spacer(),
-                    Container(
-                      alignment: Alignment.center,
-                      child: const Text('All Rights Reserved By',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xff999999))),
-                    ),
-                    Container(
-                      height: displayHeight(context) * 0.05,
-                      width: displayWidth(context) * 0.4,
-                      alignment: Alignment.center,
-                      margin:
-                          EdgeInsets.only(left: displayWidth(context) * 0.25),
-                      child: Image.asset(
-                        'assets/images/login_bottom.png',
-                        fit: BoxFit.cover,
-                        //  alignment: Alignment.center,
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: vendorState,
+                            onChanged: (value) {
+                              print(vendorState);
+                              // Update the state using the provider
+                              if(value!=null) {
+                                vendorStateViewModel.state = value;
+                              }
+                              // selectedValue = vendorState? '' : 'vendor';
+                              // print('selectedValue:: $selectedValue');
+                            },
+                            side: const BorderSide(
+                              color: Colors.blue, // Blue border
+                              width: 2.0,
+                            ),
+                          ),
+                          const Text(
+                            "Vendor",
+                            style: TextStyle(fontSize: 16.0, color: Colors.blue),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      SizedBox(height: displayHeight(context) * 0.04),
+                      SizedBox(
+                        height: displayHeight(context) * 0.06,
+                        width: displayWidth(context),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.only(top: 10, bottom: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () async {
+
+                            // SharedPreferences preferences =
+                            //     await SharedPreferences.getInstance();
+      
+                            final user = _emailController.text.isEmpty;
+                            final pass = _passwordController.text.isEmpty;
+                            if (user || pass) {
+                              ref
+                                  .read(userValidationProvider.notifier)
+                                  .checkUsername(_emailController.text);
+                              ref
+                                  .read(passwordValidationProvider.notifier)
+                                  .checkPassword(_passwordController.text);
+                            } else {
+                              final String role = vendorState? 'vendor' : '';
+                              if (kDebugMode) {
+                                print(role);
+                              }
+      
+                              loginStateViewModel.clickPunchInButton(
+                                  context: context,
+                                  email: _emailController.text.trim(),
+                                  password: _passwordController.text.trim(),
+                                  ref: ref,role: role);
+                            }
+                          },
+                          child: loginState.isLoading
+                              ? Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const SizedBox(
+                                        width: 24, // Specify the width
+                                        height: 24, // Specify the height
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 3,
+                                          key: ValueKey(
+                                              'loading'), // Key for progress indicator
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        'please wait..',
+                                        style: AppStyles.smallTextStyleRich
+                                            .copyWith(
+                                                color: AppColors.white,
+                                                fontSize: FontSize.fontSize16,
+                                                fontWeight: FontWeight.w500),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              : const Text(
+                                  'Login',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        alignment: Alignment.center,
+                        child: const Text('All Rights Reserved By',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xff999999))),
+                      ),
+                      Container(
+                        height: displayHeight(context) * 0.05,
+                        width: displayWidth(context) * 0.4,
+                        alignment: Alignment.center,
+                        margin:
+                            EdgeInsets.only(left: displayWidth(context) * 0.25),
+                        child: Image.asset(
+                          'assets/images/login_bottom.png',
+                          fit: BoxFit.cover,
+                          //  alignment: Alignment.center,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

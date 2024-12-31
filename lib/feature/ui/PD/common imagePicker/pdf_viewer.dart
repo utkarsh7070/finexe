@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:dio/dio.dart';
@@ -86,33 +87,36 @@ class _PDFViewerFromUrlState extends State<PDFViewerFromUrl> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('PDF Viewer'),
-      ),
-      body: _isLoading
-          ? const Center(
-        child: CircularProgressIndicator(), // Show loading spinner
-      )
-          : _localFilePath == null
-          ? const Center(
-        child: Text('Failed to load PDF'),
-      )
-          : PDFView(
-        filePath: _localFilePath!,
-        enableSwipe: true,
-        swipeHorizontal: false,
-        autoSpacing: true,
-        pageFling: true,
-        onRender: (pages) {
-          print('PDF Rendered with $pages pages');
-        },
-        onError: (error) {
-          print('Error loading PDF: $error');
-        },
-        onPageError: (page, error) {
-          print('Error on page $page: $error');
-        },
+    return NetworkListener(
+      context: context,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('PDF Viewer'),
+        ),
+        body: _isLoading
+            ? const Center(
+          child: CircularProgressIndicator(), // Show loading spinner
+        )
+            : _localFilePath == null
+            ? const Center(
+          child: Text('Failed to load PDF'),
+        )
+            : PDFView(
+          filePath: _localFilePath!,
+          enableSwipe: true,
+          swipeHorizontal: false,
+          autoSpacing: true,
+          pageFling: true,
+          onRender: (pages) {
+            print('PDF Rendered with $pages pages');
+          },
+          onError: (error) {
+            print('Error loading PDF: $error');
+          },
+          onPageError: (page, error) {
+            print('Error on page $page: $error');
+          },
+        ),
       ),
     );
   }

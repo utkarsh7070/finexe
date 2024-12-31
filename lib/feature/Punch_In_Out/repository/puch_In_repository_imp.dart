@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
+import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/extentions/dio_extension.dart';
 
 // import 'package:finexe_attendance/feature/attendance/model/response_model.dart';
@@ -41,19 +42,20 @@ class PunchInRepositoryImp extends PunchInRepository {
       await dio.get(Api.punchIn,queryParameters: queryParam, options: Options(headers: token));
       log('punchIn api: ${Api.punchIn.toString()}');
 
-      if (kDebugMode) {
-        print(response.data);
-      }
-      if (response.statusCode == 500) {
-        if (kDebugMode) {
-          print('500 error');
-        }
-      } else if (response.statusCode == 404) {
-        if (kDebugMode) {}
-      } else if (response.statusCode == 200){
+      // if (kDebugMode) {
+      //   print(response.data);
+      // }
+      // if (response.statusCode == 500) {
+      //   if (kDebugMode) {
+      //     print('500 error');
+      //   }
+      // } else if (response.statusCode == 404) {
+      //   if (kDebugMode) {}
+      // } else if (response.statusCode == 200){
         return response;
-      }
+      // }
     } catch (exception) {
+      ExceptionHandler().handleError(exception);
       return Future.error(exception);
     }
   }

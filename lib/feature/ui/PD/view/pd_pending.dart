@@ -1,5 +1,6 @@
 import 'package:advanced_search/advanced_search.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
@@ -139,134 +140,137 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
     }
     // final applicants = ref.watch(applicantProvider);
     // final asyncData = ref.watch(paginatedDataProvider);
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-
-      appBar: AppBar(
-        flexibleSpace: Container(
-          color: Colors.white,
+    return NetworkListener(
+      context: context,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+      
+        appBar: AppBar(
+          flexibleSpace: Container(
+            color: Colors.white,
+          ),
+          backgroundColor: AppColors.white,
+          title: const Text('PD Pending'),
+          centerTitle: true,
         ),
-        backgroundColor: AppColors.white,
-        title: const Text('PD Pending'),
-        centerTitle: true,
-      ),
-      body: FutureBuilder<List<Item>>(
-        future: ref.read(paginatedDataProvider(_currentPage).future),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting && _data.isEmpty) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            return RefreshIndicator(
-              onRefresh: _fetchInitialData,
-              child: Stack(
-                children: [
-                  Positioned(
-                    child: Column(
-                      children: [
-                        if (_data.isEmpty)
-                          Container(
-                            margin: EdgeInsets.only(
-                              top: displayHeight(context) * 0.1,
-                              left: displayWidth(context) * 0.35,
+        body: FutureBuilder<List<Item>>(
+          future: ref.read(paginatedDataProvider(_currentPage).future),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting && _data.isEmpty) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else {
+              return RefreshIndicator(
+                onRefresh: _fetchInitialData,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      child: Column(
+                        children: [
+                          if (_data.isEmpty)
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: displayHeight(context) * 0.1,
+                                left: displayWidth(context) * 0.35,
+                              ),
+                              child: Text('No Data available'),
+                            )
+                          else
+                            SizedBox(
+                              height: displayHeight(context) * 0.8, // Adjust height as needed
+                              child: ListView.builder(
+                                padding: EdgeInsets.only(top: displayHeight(context) * 0.08),
+                                controller: _scrollController,
+                                shrinkWrap: true,
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                scrollDirection: Axis.vertical,
+                                itemCount: _data.length,
+                                itemBuilder: (context, index) {
+                                  final applicant = _data[index];
+                                  return _buildApplicantDetails(context, applicant);
+                                },
+                              ),
                             ),
-                            child: Text('No Data available'),
-                          )
-                        else
-                          SizedBox(
-                            height: displayHeight(context) * 0.8, // Adjust height as needed
-                            child: ListView.builder(
-                              padding: EdgeInsets.only(top: displayHeight(context) * 0.08),
-                              controller: _scrollController,
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      child: Container(
+                        color: Colors.white,
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: AdvancedSearch(
+                          maxElementsToDisplay: 10,
+                          singleItemHeight: displayHeight(context) * 0.28,
+                          borderColor: Colors.grey,
+                          minLettersForSearch: 1,
+                          selectedTextColor: const Color(0xFF3363D9),
+                          fontSize: 14,
+                          borderRadius: 12.0,
+                          hintText: 'Search Me',
+                          cursorColor: Colors.blueGrey,
+                          autoCorrect: false,
+                          focusedBorderColor: Colors.blue,
+                          searchResultsBgColor: const Color(0xFAFAFA),
+                          disabledBorderColor: Colors.cyan,
+                          enabledBorderColor: Colors.black,
+                          enabled: true,
+                          caseSensitive: false,
+                          inputTextFieldBgColor: Colors.white10,
+                          clearSearchEnabled: true,
+                          itemsShownAtStart: 10,
+                          searchMode: SearchMode.CONTAINS,
+                          showListOfResults: true,
+                          unSelectedTextColor: Colors.black54,
+                          hideHintOnTextInputFocus: true,
+                          hintTextColor: Colors.grey,
+                          onItemTap: (index, searchText) {
+                            ref.read(serchInputProvider.notifier).state = searchText;
+                            ref.read(searchPaginationDataProvider(_searchcurrentPage).future);
+                          },
+                          onEditingProgress: (searchText, listOfResults) {
+                            ref.read(serchInputProvider.notifier).state = searchText;
+      
+                            setState(() {
+                              _Searchdata = _filteredSearchData
+                                  .where((item) => item.customerName
+                                  .toLowerCase()
+                                  .contains(searchText.toLowerCase()))
+                                  .toList();
+                            });
+      
+                            ref.read(searchPaginationDataProvider(_searchcurrentPage).future);
+                          },
+                          searchItems: _Searchdata.map((item) => item.customerName).toList(),
+                          searchItemsWidget: (p0) {
+                            return ListView.builder(
+                              controller: _searchscrollController,
                               shrinkWrap: true,
                               physics: const AlwaysScrollableScrollPhysics(),
                               scrollDirection: Axis.vertical,
-                              itemCount: _data.length,
+                              itemCount: _Searchdata.length,
                               itemBuilder: (context, index) {
-                                final applicant = _data[index];
-                                return _buildApplicantDetails(context, applicant);
+                                final searchData = _Searchdata[index];
+                                return _buildSearchDetails(context, searchData);
                               },
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    child: Container(
-                      color: Colors.white,
-                      margin: EdgeInsets.symmetric(horizontal: 20),
-                      child: AdvancedSearch(
-                        maxElementsToDisplay: 10,
-                        singleItemHeight: displayHeight(context) * 0.28,
-                        borderColor: Colors.grey,
-                        minLettersForSearch: 1,
-                        selectedTextColor: const Color(0xFF3363D9),
-                        fontSize: 14,
-                        borderRadius: 12.0,
-                        hintText: 'Search Me',
-                        cursorColor: Colors.blueGrey,
-                        autoCorrect: false,
-                        focusedBorderColor: Colors.blue,
-                        searchResultsBgColor: const Color(0xFAFAFA),
-                        disabledBorderColor: Colors.cyan,
-                        enabledBorderColor: Colors.black,
-                        enabled: true,
-                        caseSensitive: false,
-                        inputTextFieldBgColor: Colors.white10,
-                        clearSearchEnabled: true,
-                        itemsShownAtStart: 10,
-                        searchMode: SearchMode.CONTAINS,
-                        showListOfResults: true,
-                        unSelectedTextColor: Colors.black54,
-                        hideHintOnTextInputFocus: true,
-                        hintTextColor: Colors.grey,
-                        onItemTap: (index, searchText) {
-                          ref.read(serchInputProvider.notifier).state = searchText;
-                          ref.read(searchPaginationDataProvider(_searchcurrentPage).future);
-                        },
-                        onEditingProgress: (searchText, listOfResults) {
-                          ref.read(serchInputProvider.notifier).state = searchText;
-
-                          setState(() {
-                            _Searchdata = _filteredSearchData
-                                .where((item) => item.customerName
-                                .toLowerCase()
-                                .contains(searchText.toLowerCase()))
-                                .toList();
-                          });
-
-                          ref.read(searchPaginationDataProvider(_searchcurrentPage).future);
-                        },
-                        searchItems: _Searchdata.map((item) => item.customerName).toList(),
-                        searchItemsWidget: (p0) {
-                          return ListView.builder(
-                            controller: _searchscrollController,
-                            shrinkWrap: true,
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            scrollDirection: Axis.vertical,
-                            itemCount: _Searchdata.length,
-                            itemBuilder: (context, index) {
-                              final searchData = _Searchdata[index];
-                              return _buildSearchDetails(context, searchData);
-                            },
-                          );
-                        },
-                        onSearchClear: () {
-                          ref.read(serchInputProvider.notifier).state = '';
-                          setState(() {
-                            _Searchdata.clear();
-                            _searchcurrentPage = 1;
-                          });
-                        },
+                            );
+                          },
+                          onSearchClear: () {
+                            ref.read(serchInputProvider.notifier).state = '';
+                            setState(() {
+                              _Searchdata.clear();
+                              _searchcurrentPage = 1;
+                            });
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          }
-        },
+                  ],
+                ),
+              );
+            }
+          },
+        ),
       ),
     );
 
