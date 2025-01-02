@@ -32,6 +32,9 @@ class LeaveRequestDetailsViewModel {
         final leaveRequests = (data['employeeLeave'] as List)
             .map((e) => LeaveRequestModel.fromJson(e))
             .toList();
+        print('data leave request>>>>>>>> ${data['employeeLeave'].toString()}');
+
+
 
         return {
           "counters": counters,
