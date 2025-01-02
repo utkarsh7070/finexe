@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 import 'package:intl/intl.dart';
 import '../../../../base/api/api.dart';
+import '../../../../base/dialog/logout_dialog.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/namespase/app_style.dart';
 import '../../../Collection/Collection_home_dashboard/Widget/punct_in_out_action_dialog_content.dart';
@@ -95,9 +96,11 @@ class HRMSDashboardScreen extends ConsumerWidget {
                 ),
                 actions: [
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        LogOutDialog.logOutDialog(context: context);
+                      },
                       icon: const Icon(
-                        Icons.notifications_outlined,
+                        Icons.logout,
                       ))
                 ],
                 // const Text("Dashboard", style: TextStyle(color: Colors.white)),
@@ -253,7 +256,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                                                         builder: (context) =>
                                                             const LeaveRequestScreen()),
                                                   );
-                              })
+                              }),
                         ],
                       ),
                       SizedBox(height: displayHeight(context) * 0.04),

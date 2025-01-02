@@ -146,6 +146,13 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
     DropDownValueModel(name: 'Unemployed', value: 'Unemployed'),
   ];
 
+  @override
+  void dispose() {
+    dependentDropdownControllerProvider.dispose();
+    whetherEmployeeDropdownControllerProvider.dispose();
+    super.dispose();
+  }
+
   void updateFathers(String val){
 
   }
@@ -200,6 +207,15 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
       AdditionalFamilyMemberModel()
     ]);
   }
+
+  void removeItem(int index) {
+    state = state.copyWith(additionalFamilyMember:  [
+      for (int i = 0; i < state.additionalFamilyMember.length; i++)
+        if (i != index) state.additionalFamilyMember[i],
+    ]);
+
+  }
+
 
   // void removeItem(int index) {
   //   state = [

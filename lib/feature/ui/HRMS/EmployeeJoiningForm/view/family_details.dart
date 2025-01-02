@@ -1,4 +1,5 @@
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -160,7 +161,7 @@ class FamilyDetails extends ConsumerWidget{
                 return
                   Card(
                     child: Padding(
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       child: Column(
                         children: [
                            AppFloatTextField(
@@ -423,7 +424,9 @@ class FamilyDetails extends ConsumerWidget{
                           Visibility(
                               visible:index>=1,
                               child: IconButton(
-                                  onPressed: () {}, icon: Icon(Icons.minimize)))
+                                  onPressed: () {
+                                    employeeDataViewModel.removeItem(index);
+                                  }, icon: const Icon(Icons.minimize)))
                         ],
                       ),
                     ),
@@ -435,11 +438,18 @@ class FamilyDetails extends ConsumerWidget{
                 label: 'Add Family Member',
                 onTap: () {
                   employeeDataViewModel.addFamilyMember();
-              },)
+              },),
+              AppButton(
+                width: displayWidth(context)*0.50,
+                //validation is remaining
+                label: 'Next',
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.bankDetails);
+                  // employeeDataViewModel.addFamilyMember();
+                },)
           ],),
         ),
       ),
     );
   }
-
 }

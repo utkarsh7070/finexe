@@ -81,7 +81,6 @@ class NewLoanViewModel extends StateNotifier<PhoneNumberState> {
       print(response.statusMessage);
       print(response.statusCode);
     }
-
     print('New loan response ${response.data}');
 
     if (response.statusCode == 200) {
@@ -114,7 +113,7 @@ class NewLoanViewModel extends StateNotifier<PhoneNumberState> {
   bool validation() {
     final isPhone = _validatePhoneNumber(state.phoneNumber);
     state = state.copyWith(isPhoneNumberValid: isPhone);
-    return isPhone.toString().isNotEmpty;
+    return isPhone.toString().isNotEmpty && !(state.phoneNumber.length != 10);
   }
 
   void updateEmi() {
