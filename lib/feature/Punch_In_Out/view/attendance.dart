@@ -214,6 +214,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                           'formattedStartDate-$formattedStartDate & formattedEndDate- $formattedEndDate');
       
                                       final leadData = LeaveRequestItem(
+                                        leaveType: '',title: '',
                                         startDate: formattedStartDate,
                                         endDate: formattedEndDate,
                                         reasonForLeave: reasonForLeave,
