@@ -132,12 +132,14 @@ class HRMSDashboardScreen extends ConsumerWidget {
                       Card(
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          side: const BorderSide(color: AppColors.boxBorderGray),
+                          side:
+                              const BorderSide(color: AppColors.boxBorderGray),
                           borderRadius:
                               BorderRadius.circular(12), // Rounded corners
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 16.0,right: 16,bottom: 25,top: 25),
+                          padding: const EdgeInsets.only(
+                              left: 16.0, right: 16, bottom: 25, top: 25),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -149,13 +151,16 @@ class HRMSDashboardScreen extends ConsumerWidget {
                               Text(
                                 'Today Check In ${formatDate(userProfile.punchInTime)}, ${formatTime(userProfile.punchInTime)}',
                                 style: AppStyles.headingTextStyleFooter
-                                    .copyWith(color: AppColors.textDarkGray,fontSize: FontSize.fontSizeXS),
+                                    .copyWith(
+                                        color: AppColors.textDarkGray,
+                                        fontSize: FontSize.fontSizeXS),
                               ),
                               SizedBox(
                                 height: displayHeight(context) * 0.04,
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   timeShow(
                                       icon: Icons.move_to_inbox_outlined,
@@ -234,15 +239,15 @@ class HRMSDashboardScreen extends ConsumerWidget {
                               label: 'Attendance',
                               onTap: () {
                                 final String employeeId = userProfile
-                                                      .employeeId; // Ensure this field exists in your model
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          AttendanceDetailsScreen(
-                                                              employeeId: employeeId),
-                                                    ),
-                                                  );
+                                    .employeeId; // Ensure this field exists in your model
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        AttendanceDetailsScreen(
+                                            employeeId: employeeId),
+                                  ),
+                                );
                               }),
                           SizedBox(
                             width: displayWidth(context) * 0.10,
@@ -252,11 +257,11 @@ class HRMSDashboardScreen extends ConsumerWidget {
                               label: 'Leave',
                               onTap: () {
                                 Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const LeaveRequestScreen()),
-                                                  );
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const LeaveRequestScreen()),
+                                );
                               })
                         ],
                       ),
@@ -270,17 +275,17 @@ class HRMSDashboardScreen extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           showAttendanceCount(
-                          count: '7878',
-                          label: 'Total Attendance',
-                          context: context,
-                          bgColor: AppColors.primaryBg1,
-                          borderColor: Colors.blue),
-                  showAttendanceCount(
-                      count: '7878',
-                      label: 'Leave Request',
-                      context: context,
-                      bgColor: AppColors.bluePistaLight,
-                      borderColor: AppColors.bluePista)
+                              count: '7878',
+                              label: 'Total Attendance',
+                              context: context,
+                              bgColor: AppColors.primaryBg1,
+                              borderColor: Colors.blue),
+                          showAttendanceCount(
+                              count: '7878',
+                              label: 'Leave Request',
+                              context: context,
+                              bgColor: AppColors.bluePistaLight,
+                              borderColor: AppColors.bluePista)
                         ],
                       ),
                       SizedBox(height: displayHeight(context) * 0.02),
@@ -431,35 +436,40 @@ class HRMSDashboardScreen extends ConsumerWidget {
                 ),
               ),
               /*BottomBar(employee: userProfileAsync),*/
-            ],
-          ),
-        );
-      },
-     error: (error, stack) => Scaffold( appBar: AppBar(
-              title:
-              const Text("Dashboard", style: TextStyle(color: Colors.white)),
-              backgroundColor: AppColors.primary,
-              centerTitle: true,
-              leading: Visibility(
-                visible: (role.role.contains('sales') || role.role.contains('collection') || role.role.contains('pd') || role.role.contains('admin')),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
+            );
+          },
+          error: (error, stack) => Scaffold(
+              appBar: AppBar(
+                title: const Text("Dashboard",
+                    style: TextStyle(color: Colors.white)),
+                backgroundColor: AppColors.primary,
+                centerTitle: true,
+                leading: Visibility(
+                  visible: (role.role.contains('sales') ||
+                      role.role.contains('collection') ||
+                      role.role.contains('pd') ||
+                      role.role.contains('admin')),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => Navigator.pop(context),
                   ),
-                  onPressed: () => Navigator.pop(context),
                 ),
               ),
-            ),body: NoDataFound(retry: true, ontap: () {
-              ref.refresh(loginUserProfileProvider);
-            },)),
-      loading: () {
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
-      },
-    ));
-
+              body: NoDataFound(
+                retry: true,
+                ontap: () {
+                  ref.refresh(loginUserProfileProvider);
+                },
+              )),
+          loading: () {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          },
+        ));
   }
 
   Future<void> _showMyDialog(BuildContext context) async {
@@ -544,12 +554,18 @@ class HRMSDashboardScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,style: AppStyles.cardTextStyle16.copyWith(fontSize: FontSize.fontSize),),
-          Text(count,style: AppStyles.blacktext14.copyWith(fontSize: FontSize.fontSizeXS,color: borderColor),),
+          Text(
+            label,
+            style:
+                AppStyles.cardTextStyle16.copyWith(fontSize: FontSize.fontSize),
+          ),
+          Text(
+            count,
+            style: AppStyles.blacktext14
+                .copyWith(fontSize: FontSize.fontSizeXS, color: borderColor),
+          ),
         ],
       ),
     );
   }
 }
-
-
