@@ -13,7 +13,7 @@ import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_upda
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+// import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -1439,62 +1439,62 @@ final mapControllerProvider =
 });
 
 // Provider to manage the polyline for directions
-final polylineProvider = StateProvider<List<Polyline>>((ref) => []);
+// final polylineProvider = StateProvider<List<Polyline>>((ref) => []);
 
 // Provider to fetch directions between two points
-final directionsProvider =
-    FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
-  final currentLocation = await ref.watch(currentLocationProvider.future);
+// final directionsProvider =
+//     FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
+//   final currentLocation = await ref.watch(currentLocationProvider.future);
 
-  // final polylinePoints = PolylinePoints();
-  const apiKey =
-      'AIzaSyCiUeNk2R6jiihpsymrcQhGC586itXxAYg'; // Replace with your actual API key
-  final String url =
-      'https://maps.googleapis.com/maps/api/directions/json?origin=${currentLocation.latitude},${currentLocation.longitude}&destination=${destination.latitude},${destination.longitude}&key=$apiKey';
+//   // final polylinePoints = PolylinePoints();
+//   const apiKey =
+//       'AIzaSyCiUeNk2R6jiihpsymrcQhGC586itXxAYg'; // Replace with your actual API key
+//   final String url =
+//       'https://maps.googleapis.com/maps/api/directions/json?origin=${currentLocation.latitude},${currentLocation.longitude}&destination=${destination.latitude},${destination.longitude}&key=$apiKey';
 
-  List<LatLng> decodePolyline(String encoded) {
-    PolylinePoints polylinePoints = PolylinePoints();
-    List<PointLatLng> points = polylinePoints.decodePolyline(encoded);
+//   List<LatLng> decodePolyline(String encoded) {
+//     PolylinePoints polylinePoints = PolylinePoints();
+//     List<PointLatLng> points = polylinePoints.decodePolyline(encoded);
 
-    return points
-        .map((point) => LatLng(point.latitude, point.longitude))
-        .toList();
-  }
+//     return points
+//         .map((point) => LatLng(point.latitude, point.longitude))
+//         .toList();
+//   }
 
-  final response = await http.get(Uri.parse(url));
+//   final response = await http.get(Uri.parse(url));
 
-  if (response.statusCode == 200) {
-    final data = jsonDecode(response.body);
-    if (data['routes'].isNotEmpty) {
-      final String polyline = data['routes'][0]['overview_polyline']['points'];
+//   if (response.statusCode == 200) {
+//     final data = jsonDecode(response.body);
+//     if (data['routes'].isNotEmpty) {
+//       final String polyline = data['routes'][0]['overview_polyline']['points'];
 
-      return decodePolyline(polyline);
-    } else {
-      throw Exception('No routes found');
-    }
-  } else {
-    throw Exception('Failed to fetch directions');
-  }
+//       return decodePolyline(polyline);
+//     } else {
+//       throw Exception('No routes found');
+//     }
+//   } else {
+//     throw Exception('Failed to fetch directions');
+//   }
 
-  // final result = await polylinePoints.getRouteBetweenCoordinates(
-  //   request: PolylineRequest(
-  //     origin: PointLatLng(currentLocation.latitude, currentLocation.longitude),
-  //     destination: PointLatLng(destination.latitude, destination.longitude),
-  //     mode: TravelMode.driving,
-  //   ),
-  //   googleApiKey: apiKey,
-  // );
-  // print(result.points.isNotEmpty);
-  // if (result.points.isNotEmpty) {
-  //   // print(result.points.isNotEmpty);
-  //   // Convert the points to a list of LatLng
-  //   return result.points
-  //       .map((point) => LatLng(point.latitude, point.longitude))
-  //       .toList();
-  // } else {
-  //   return [];
-  // }
-});
+//   // final result = await polylinePoints.getRouteBetweenCoordinates(
+//   //   request: PolylineRequest(
+//   //     origin: PointLatLng(currentLocation.latitude, currentLocation.longitude),
+//   //     destination: PointLatLng(destination.latitude, destination.longitude),
+//   //     mode: TravelMode.driving,
+//   //   ),
+//   //   googleApiKey: apiKey,
+//   // );
+//   // print(result.points.isNotEmpty);
+//   // if (result.points.isNotEmpty) {
+//   //   // print(result.points.isNotEmpty);
+//   //   // Convert the points to a list of LatLng
+//   //   return result.points
+//   //       .map((point) => LatLng(point.latitude, point.longitude))
+//   //       .toList();
+//   // } else {
+//   //   return [];
+//   // }
+// });
 
 //-----------------------------end map--------------------------------------------------------
 final searchResultsProvider = StateProvider<List<ItemsDetails>>((ref) => []);
