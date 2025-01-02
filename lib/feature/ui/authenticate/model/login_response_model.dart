@@ -38,7 +38,7 @@ class Items {
   @JsonKey(name: "token")
   String token;
   @JsonKey(name: "roamId")
-  String roamId;
+  String? roamId;
   @JsonKey(name: "trackingMode")
   String trackingMode;
 

@@ -13,7 +13,7 @@ import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_upda
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+// import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -545,58 +545,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
       default:
         return false;
     }
-    // print(modeOfCollectionController.dropDownValue?.value);
-    // print(creditPersonController.dropDownValue?.value);
-    // print(bankNameController.dropDownValue?.value);
-    // // if(state.modeTitle == 'bankName' && state.isTransactionImage){
-    // //
-    // // }else{
-    // //
-    // // }
-    // if (state.isTransactionImage && modeOfCollectionController.dropDownValue?.value!=null) {
-    //   final isPhoto = _validateTransactionImage(state.photoFile);
-    //   final isAmount = _validateEmiAmount(state.emiAmount);
-    //   // final isModeCollection = modeOfCollectionController.dropDownValue?.value!=null;
-    //   // final isCreditPerson = creditPersonController.dropDownValue?.value!=null;
-    //   // final isBank = bankNameController.dropDownValue?.value!=null;
-    //   // print('isModeCollection $isModeCollection  isCreditPerson $isCreditPerson, isBank  $isBank');
-    //   state = state.copyWith(isTransactionImage: isPhoto);
-    //   return isPhoto;
-    // } else {
-    //   return true;
-    // }
-  }
 
-  /*Future<void> updateEmiSubmitButton(
-
-      {
-        required ItemsDetails detail,
-      required BuildContext context,
-      required WidgetRef ref}) async {
-    state = state.copyWith(isButtonVissible: true);
-    if (kDebugMode) {
-      print(
-          'Ld o:-${detail.ld}, customerName:- ${detail.customerName}, mobile:- ${detail.mobile},  commonId:- ${state.commonId}, image:- ${state.transactionImage}');
-    }
-
-    ObjectId? result1 = parseObjectId(state.commonId);
-
-    UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
-        fatherName: detail.fatherName ?? '',
-        ld: detail.ld ?? '',
-        collectedBy: '',
-        customerName: detail.customerName ?? '',
-        mobileNo: int.parse(detail.mobile ?? ''),
-        receivedAmount: int.parse(state.emiAmount),
-        transactionId: state.transactionId,
-        transactionImage: state.transactionImage,
-        modeOfCollectionId: state.modeOfCollectionId,
-        commonId: result1,
-        bankName: state.bankName,
-        customerEmail: state.receipt,
-        emiReceivedDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-        remarkByCollection: state.remark,
-        partner: detail.partner!);
 
     print('Update EMI Input -${requestModel.toJson()}');
 
@@ -1439,62 +1388,62 @@ final mapControllerProvider =
 });
 
 // Provider to manage the polyline for directions
-final polylineProvider = StateProvider<List<Polyline>>((ref) => []);
+// final polylineProvider = StateProvider<List<Polyline>>((ref) => []);
 
 // Provider to fetch directions between two points
-final directionsProvider =
-    FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
-  final currentLocation = await ref.watch(currentLocationProvider.future);
+// final directionsProvider =
+//     FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
+//   final currentLocation = await ref.watch(currentLocationProvider.future);
 
-  // final polylinePoints = PolylinePoints();
-  const apiKey =
-      'AIzaSyCiUeNk2R6jiihpsymrcQhGC586itXxAYg'; // Replace with your actual API key
-  final String url =
-      'https://maps.googleapis.com/maps/api/directions/json?origin=${currentLocation.latitude},${currentLocation.longitude}&destination=${destination.latitude},${destination.longitude}&key=$apiKey';
+//   // final polylinePoints = PolylinePoints();
+//   const apiKey =
+//       'AIzaSyCiUeNk2R6jiihpsymrcQhGC586itXxAYg'; // Replace with your actual API key
+//   final String url =
+//       'https://maps.googleapis.com/maps/api/directions/json?origin=${currentLocation.latitude},${currentLocation.longitude}&destination=${destination.latitude},${destination.longitude}&key=$apiKey';
 
-  List<LatLng> decodePolyline(String encoded) {
-    PolylinePoints polylinePoints = PolylinePoints();
-    List<PointLatLng> points = polylinePoints.decodePolyline(encoded);
+//   List<LatLng> decodePolyline(String encoded) {
+//     PolylinePoints polylinePoints = PolylinePoints();
+//     List<PointLatLng> points = polylinePoints.decodePolyline(encoded);
 
-    return points
-        .map((point) => LatLng(point.latitude, point.longitude))
-        .toList();
-  }
+//     return points
+//         .map((point) => LatLng(point.latitude, point.longitude))
+//         .toList();
+//   }
 
-  final response = await http.get(Uri.parse(url));
+//   final response = await http.get(Uri.parse(url));
 
-  if (response.statusCode == 200) {
-    final data = jsonDecode(response.body);
-    if (data['routes'].isNotEmpty) {
-      final String polyline = data['routes'][0]['overview_polyline']['points'];
+//   if (response.statusCode == 200) {
+//     final data = jsonDecode(response.body);
+//     if (data['routes'].isNotEmpty) {
+//       final String polyline = data['routes'][0]['overview_polyline']['points'];
 
-      return decodePolyline(polyline);
-    } else {
-      throw Exception('No routes found');
-    }
-  } else {
-    throw Exception('Failed to fetch directions');
-  }
+//       return decodePolyline(polyline);
+//     } else {
+//       throw Exception('No routes found');
+//     }
+//   } else {
+//     throw Exception('Failed to fetch directions');
+//   }
 
-  // final result = await polylinePoints.getRouteBetweenCoordinates(
-  //   request: PolylineRequest(
-  //     origin: PointLatLng(currentLocation.latitude, currentLocation.longitude),
-  //     destination: PointLatLng(destination.latitude, destination.longitude),
-  //     mode: TravelMode.driving,
-  //   ),
-  //   googleApiKey: apiKey,
-  // );
-  // print(result.points.isNotEmpty);
-  // if (result.points.isNotEmpty) {
-  //   // print(result.points.isNotEmpty);
-  //   // Convert the points to a list of LatLng
-  //   return result.points
-  //       .map((point) => LatLng(point.latitude, point.longitude))
-  //       .toList();
-  // } else {
-  //   return [];
-  // }
-});
+//   // final result = await polylinePoints.getRouteBetweenCoordinates(
+//   //   request: PolylineRequest(
+//   //     origin: PointLatLng(currentLocation.latitude, currentLocation.longitude),
+//   //     destination: PointLatLng(destination.latitude, destination.longitude),
+//   //     mode: TravelMode.driving,
+//   //   ),
+//   //   googleApiKey: apiKey,
+//   // );
+//   // print(result.points.isNotEmpty);
+//   // if (result.points.isNotEmpty) {
+//   //   // print(result.points.isNotEmpty);
+//   //   // Convert the points to a list of LatLng
+//   //   return result.points
+//   //       .map((point) => LatLng(point.latitude, point.longitude))
+//   //       .toList();
+//   // } else {
+//   //   return [];
+//   // }
+// });
 
 //-----------------------------end map--------------------------------------------------------
 final searchResultsProvider = StateProvider<List<ItemsDetails>>((ref) => []);
@@ -1528,15 +1477,44 @@ final fetchVisitPendingDataProvider =
 
     GetVisitPendingResponseData apiResponseList =
         GetVisitPendingResponseData.fromJson(response.data);
+
     List<ItemsDetails> listOfLists = apiResponseList.items.map((map) {
       return ItemsDetails.fromJson(map);
     }).toList();
     ref.read(searchResultsProvider.notifier).state = listOfLists;
+
     return apiResponseList.items;
   } else {
     throw Exception('Failed to load data');
   }
 });
+
+
+
+
+// Provider for search query state
+/*final searchQueryProvider = StateProvider<String>((ref) => '');
+
+// FutureProvider for filtered visit pending data based on search query
+final filteredVisitPendingDataProvider =
+FutureProvider<List<Map<String, String>>>((ref) async {
+  final searchQuery = ref.watch(searchQueryProvider); // No `.state` here
+  final visitPendingData = await ref.watch(fetchVisitPendingDataProvider.future);
+
+  if (searchQuery.isEmpty) {
+    return visitPendingData;
+  }
+
+  // Filter the data based on the search query
+  return visitPendingData.where((item) {
+    return item.values.any((value) =>
+        value.toLowerCase().contains(searchQuery.toLowerCase()));
+  }).toList();
+});*/
+
+//-----------------------------end map--------------------------------------------------------
+final searchResultsProvider = StateProvider<List<ItemsDetails>>((ref) => []);
+
 
 final fetchCollectionDueDataProvider =
     FutureProvider<List<Map<String, String>>>((ref) async {
