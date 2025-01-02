@@ -1,3 +1,4 @@
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,120 +44,123 @@ class _LeadListScreenState extends ConsumerState<LeadListScreen> {
     // Watch the selected provider
     final leadViewModel = ref.watch(leadProvider);
 
-    return Scaffold(
-        body: Container(
-      width: displayWidth(context),
-      height: displayHeight(context),
-      color: AppColors.primary,
-      padding: const EdgeInsets.only(top: 70),
-      child: Container(
+    return NetworkListener(
+      context: context,
+      child: Scaffold(
+          body: Container(
+        width: displayWidth(context),
         height: displayHeight(context),
-        padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30), topRight: Radius.circular(30))),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  height: displayHeight(context) * 0.02,
-                  width: displayWidth(context) * 0.05,
-                ),
-                const Text(
-                  textAlign: TextAlign.center,
-                  'Customer Details',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    // Add lead action
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(
-                            builder: (context) =>
-                                const LeadGenerationForm())) // Replace with your second page widget
-                        .then((refreshNeeded) {
-                      // Check if refresh is needed
-                      if (refreshNeeded == true) {
-                        // Trigger the data refresh in the ViewModel
-                        ref.refresh(leadShowViewModelProvider);
-                      }
-                    });
-                  },
-                ),
-              ],
-            ),
-            SizedBox(
-              height: displayHeight(context) * 0.01,
-            ),
-            Expanded(
-              child:
-              Column(
+        color: AppColors.primary,
+        padding: const EdgeInsets.only(top: 70),
+        child: Container(
+          height: displayHeight(context),
+          padding: const EdgeInsets.all(20),
+          decoration: const BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Status Filter
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Created"),
-                      Radio<int>(
-                        value: 0,
-                        groupValue: selectedStatus,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedStatus = value!;
-                          });
-                        },
-                      ),
-                      const Text("Assigned"),
-                      Radio<int>(
-                        value: 1,
-                        groupValue: selectedStatus,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedStatus = value!;
-                          });
-                        },
-                      ),
-                      const Text("Rejected"),
-                      Radio<int>(
-                        value: 2,
-                        groupValue: selectedStatus,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedStatus = value!;
-                          });
-                        },
-                      ),
-                    ],
+                  SizedBox(
+                    height: displayHeight(context) * 0.02,
+                    width: displayWidth(context) * 0.05,
                   ),
-                  const SizedBox(height: 20),
-
-                  // Use leadViewModel.when outside of Row
-                  leadViewModel.when(
-                    data: (leadViewModelDetails) {
-                      return _buildVisitTab(leadViewModelDetails); // Pass the visit data here
-                    },
-                    error: (error, stackTrace) {
-                      return const Text('Error loading visit details');
-                    },
-                    loading: () {
-                      return const Center(child: CircularProgressIndicator());
+                  const Text(
+                    textAlign: TextAlign.center,
+                    'Customer Details',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      // Add lead action
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(
+                              builder: (context) =>
+                                  const LeadGenerationForm())) // Replace with your second page widget
+                          .then((refreshNeeded) {
+                        // Check if refresh is needed
+                        if (refreshNeeded == true) {
+                          // Trigger the data refresh in the ViewModel
+                          ref.refresh(leadShowViewModelProvider);
+                        }
+                      });
                     },
                   ),
-
                 ],
               ),
-            ),
-          ],
+              SizedBox(
+                height: displayHeight(context) * 0.01,
+              ),
+              Expanded(
+                child:
+                Column(
+                  children: [
+                    // Status Filter
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Created"),
+                        Radio<int>(
+                          value: 0,
+                          groupValue: selectedStatus,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedStatus = value!;
+                            });
+                          },
+                        ),
+                        const Text("Assigned"),
+                        Radio<int>(
+                          value: 1,
+                          groupValue: selectedStatus,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedStatus = value!;
+                            });
+                          },
+                        ),
+                        const Text("Rejected"),
+                        Radio<int>(
+                          value: 2,
+                          groupValue: selectedStatus,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedStatus = value!;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+      
+                    // Use leadViewModel.when outside of Row
+                    leadViewModel.when(
+                      data: (leadViewModelDetails) {
+                        return _buildVisitTab(leadViewModelDetails); // Pass the visit data here
+                      },
+                      error: (error, stackTrace) {
+                        return const Text('Error loading visit details');
+                      },
+                      loading: () {
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                    ),
+      
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    ));
+      )),
+    );
   }
   void showCustomerDetailsDialog(BuildContext context, Object item) {
     showDialog(

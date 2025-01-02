@@ -1,4 +1,5 @@
 
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/api/api.dart';
@@ -10,23 +11,16 @@ import 'package:finexe/feature/ui/PD/Common%20Widgets/CustomDropdownWithCross.da
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/simple_dropdown.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/Income%20Details/view/Agriculutre/view_model/agri_view_model.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view/Income%20Details/view/Agriculutre/view_model/agri_view_model.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_update_data/view/Income%20Details/view/Agriculutre/view_model/agri_view_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-// import '../../../../../../../../../../base/utils/namespase/app_colors.dart';
-// import '../../../../../../../../../../base/utils/namespase/app_style.dart';
-// import '../../../../../../../../Common Widgets/CustomDropdownWithCross.dart';
-// import '../../../../../../../../Common Widgets/common_textfield.dart';
-// import '../../../../../Common Dropdown/common_dropdown.dart';
 import '../../../co-applicant_form.dart';
 import 'agri_mode/agriculture_income_form_model.dart';
 
 class AgricultureIncomeDetail extends ConsumerStatefulWidget {
   // const AgricultureIncomeDetail({super.key});
   final String customerId;
-  const AgricultureIncomeDetail({super.key, required this.customerId});
+  AgricultureIncomeDetail({required this.customerId});
   @override
   _AgricultureIncomeDetailState createState() =>
       _AgricultureIncomeDetailState();
@@ -95,20 +89,20 @@ class _AgricultureIncomeDetailState
   List<String> finalOptions = []; // Stores the final selected values
 
 // Ensure fetched pre-selections are initialized
-  void initializePreSelectedOptions(List<String> fetchedData) {
-    setState(() {
-      selectedOptions.clear(); // Clear any existing selections
-
-      // Iterate through fetched data and pre-select valid options
-      for (var item in fetchedData) {
-        selectedOptions.add(item); // Add predefined options
-      }
-
-      // Update finalOptions and input text
-      finalOptions = getCombinedSelectedOptions();
-      incomeForm_AgriOwner.text = finalOptions.join(", ");
-    });
-  }
+//   void initializePreSelectedOptions(List<String> fetchedData) {
+//     setState(() {
+//       selectedOptions.clear(); // Clear any existing selections
+//
+//       // Iterate through fetched data and pre-select valid options
+//       for (var item in fetchedData) {
+//         selectedOptions.add(item); // Add predefined options
+//       }
+//
+//       // Update finalOptions and input text
+//       finalOptions = getCombinedSelectedOptions();
+//       incomeForm_AgriOwner.text = finalOptions.join(", ");
+//     });
+//   }
 
 // Function to toggle options
   void toggleOption(String option) {
@@ -206,50 +200,96 @@ class _AgricultureIncomeDetailState
               child: Text('Error: $error'),
             ),
         data: (agriBusinessData) {
-          // if (incomeForm_AgriOwner.text.isEmpty) {
-          if (!isInitialDataSet) {
-            print('isInitialDataSet:: $isInitialDataSet');
-            print('object: ${incomeForm_AgriOwner.text.isEmpty}');
-            if (selectedOptions.isEmpty) {
-              selectedOptions.addAll(agriBusinessData.nameOfAgriOwner);
-              finalOptions = agriBusinessData.nameOfAgriOwner;
-              incomeForm_AgriOwner.text =
-                  finalOptions.join(", "); // Pre-fill text
+          var agriData = agriBusinessData?.items?.agricultureData;
+
+          // var agriData = agriBusinessData?.items?.agricultureData;
+
+          if (incomeForm_AgriOwner.text.isEmpty) {
+            if (!isInitialDataSet) {
+              print('isInitialDataSet:: $isInitialDataSet');
+              print('object: ${incomeForm_AgriOwner.text.isEmpty}');
+
+              // Ensure agriData is not null before using it
+              if (agriData != null) {
+                if (selectedOptions.isEmpty && agriData.nameOfAgriOwner != null) {
+                  selectedOptions.addAll(agriData.nameOfAgriOwner!);
+                  finalOptions = agriData.nameOfAgriOwner!;
+                  incomeForm_AgriOwner.text = finalOptions.join(", "); // Pre-fill text
+                }
+
+                incomeForm_KasraNo.text = agriData.kasraSurveyNo ?? '';
+                incomeForm_Relationofapplicant.text = agriData.relationOfApplicant ?? '';
+                incomeForm_villageName.text = agriData.villageName ?? '';
+                incomeForm_AgrilandAcre.text = agriData.agriLandInBigha ?? '';
+                incomeForm_AddressPawti.text = agriData.addressAsPerPawti ?? '';
+                incomeForm_DistrictName.text = agriData.districtName ?? '';
+                incomeForm_AgrilandSurvey.text = agriData.agriLandSurveyNo ?? '';
+                incomeForm_FertilizerOwnername.text = agriData.fertilizerShopOwnerName ?? '';
+                incomeForm_FertilizerOwnerContact.text = agriData.fertilizerShopOwnerContactNumber ?? '';
+                incomeForm_TypeofIrrigation.text = agriData.irrigationMethod ?? '';
+                incomeForm_TypeSignificantChallenge.text = agriData.haveYouFaced ?? '';
+                incomeForm_SignificationSeason.text = agriData.significantChallengesThisSeason ?? '';
+                incomeForm_AgriIncome.text = agriData.agriIncomeYearly ?? '';
+                incomeForm_CropDestroyed.text = agriData.ifCropDestroyedHowToPayEMI ?? '';
+                incomeForm_CropPlanted.text = agriData.whichCropIsPlanted?.join(", ") ?? '';
+                selectedCrops = agriData.whichCropIsPlanted ?? [];
+                incomeForm_AgriFromYear.text = agriData.agriDoingFromNoOfYears ?? '';
+                incomeForm_DetailLastCrop.text = agriData.detailOfLastCorp ?? '';
+                incomeForm_CropSOLD.text = agriData.howMuchCropSoldInAmt ?? '';
+                incomeForm_OtherRelation.text = agriData.otherRelation ?? '';
+                incomeForm_OtherName.text = agriData.otherName ?? '';
+                incomeForm_OtherRemark.text = agriData.otherRemark ?? '';
+              } else {
+                print("Error: agriData is null.");
+              }
+
+              isInitialDataSet = true; // Prevent further overwrites
             }
-            incomeForm_KasraNo.text = agriBusinessData.kasraSurveyNo ?? '';
-            incomeForm_Relationofapplicant.text =
-                agriBusinessData.relationOfApplicant;
-            incomeForm_villageName.text = agriBusinessData.villageName;
-            incomeForm_AgrilandAcre.text = agriBusinessData.agriLandInBigha;
-            incomeForm_AddressPawti.text = agriBusinessData.addressAsPerPawti;
-            incomeForm_DistrictName.text = agriBusinessData.districtName;
-            incomeForm_AgrilandSurvey.text = agriBusinessData.agriLandSurveyNo;
-            incomeForm_FertilizerOwnername.text =
-                agriBusinessData.fertilizerShopOwnerName;
-            incomeForm_FertilizerOwnerContact.text =
-                agriBusinessData.fertilizerShopOwnerContactNumber;
-            incomeForm_TypeofIrrigation.text =
-                agriBusinessData.irrigationMethod ?? '';
-            incomeForm_TypeSignificantChallenge.text =
-                agriBusinessData.haveYouFaced ?? '';
-            incomeForm_SignificationSeason.text =
-                agriBusinessData.significantChallengesThisSeason;
-            incomeForm_AgriIncome.text = agriBusinessData.agriIncomeYearly;
-            incomeForm_CropDestroyed.text =
-                agriBusinessData.ifCropDestroyedHowToPayEMI;
-            incomeForm_CropPlanted.text =
-                agriBusinessData.whichCropIsPlanted.join(", ");
-            selectedCrops = agriBusinessData.whichCropIsPlanted;
-            incomeForm_AgriFromYear.text =
-                agriBusinessData.agriDoingFromNoOfYears;
-            incomeForm_DetailLastCrop.text =
-                agriBusinessData.detailOfLastCorp ?? '';
-            incomeForm_CropSOLD.text = agriBusinessData.howMuchCropSoldInAmt;
-            incomeForm_OtherRelation.text = agriBusinessData.otherRelation;
-            incomeForm_OtherName.text = agriBusinessData.otherName;
-            incomeForm_OtherRemark.text = agriBusinessData.otherRemark;
-            isInitialDataSet = true; // Prevent further overwrites
           }
+
+
+          // if (!isInitialDataSet) {
+          //   print('isInitialDataSet:: $isInitialDataSet');
+          //   print('object: ${incomeForm_AgriOwner.text.isEmpty}');
+          //
+          //   var agriData = agriBusinessData?.items?.agricultureData;
+          //
+          //   if (selectedOptions.isEmpty && agriData?.nameOfAgriOwner != null) {
+          //     selectedOptions.addAll(agriData!.nameOfAgriOwner!);
+          //     finalOptions = agriData.nameOfAgriOwner!;
+          //     incomeForm_AgriOwner.text = finalOptions.join(", "); // Pre-fill text
+          //   }
+          //
+          //   incomeForm_KasraNo.text = agriData?.kasraSurveyNo ?? '';
+          //   incomeForm_Relationofapplicant.text = agriData?.relationOfApplicant ?? '';
+          //   incomeForm_villageName.text = agriData?.villageName ?? '';
+          //   incomeForm_AgrilandAcre.text = agriData?.agriLandInBigha ?? '';
+          //   incomeForm_AddressPawti.text = agriData?.addressAsPerPawti ?? '';
+          //   incomeForm_DistrictName.text = agriData?.districtName ?? '';
+          //   incomeForm_AgrilandSurvey.text = agriData?.agriLandSurveyNo ?? '';
+          //   incomeForm_FertilizerOwnername.text = agriData?.fertilizerShopOwnerName ?? '';
+          //   incomeForm_FertilizerOwnerContact.text = agriData?.fertilizerShopOwnerContactNumber ?? '';
+          //   incomeForm_TypeofIrrigation.text = agriData?.irrigationMethod ?? '';
+          //   incomeForm_TypeSignificantChallenge.text = agriData?.haveYouFaced ?? '';
+          //   incomeForm_SignificationSeason.text = agriData?.significantChallengesThisSeason ?? '';
+          //   incomeForm_AgriIncome.text = agriData?.agriIncomeYearly ?? '';
+          //   incomeForm_CropDestroyed.text = agriData?.ifCropDestroyedHowToPayEMI ?? '';
+          //
+          //   if (agriData?.whichCropIsPlanted != null) {
+          //     incomeForm_CropPlanted.text = agriData!.whichCropIsPlanted.join(", ");
+          //     selectedCrops = agriData.whichCropIsPlanted;
+          //   }
+          //
+          //   incomeForm_AgriFromYear.text = agriData?.agriDoingFromNoOfYears ?? '';
+          //   incomeForm_DetailLastCrop.text = agriData?.detailOfLastCorp ?? '';
+          //   incomeForm_CropSOLD.text = agriData?.howMuchCropSoldInAmt ?? '';
+          //   incomeForm_OtherRelation.text = agriData?.otherRelation ?? '';
+          //   incomeForm_OtherName.text = agriData?.otherName ?? '';
+          //   incomeForm_OtherRemark.text = agriData?.otherRemark ?? '';
+          //
+          //   isInitialDataSet = true; // Prevent further overwrites
+          // }
+
 
           return GestureDetector(
             onTap: () {
@@ -288,19 +328,21 @@ class _AgricultureIncomeDetailState
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    finalOptions.isNotEmpty
-                                        ? finalOptions
-                                            .join(", ") // Show selected options
-                                        : "Name of Agri Owner", // Placeholder when no options selected
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: finalOptions.isEmpty
-                                          ? Colors.grey
-                                          : Colors.black,
+                                  Expanded(
+                                    child: Text(
+                                      finalOptions.isNotEmpty
+                                          ? finalOptions
+                                              .join(", ") // Show selected options
+                                          : "Name of Agri Owner", // Placeholder when no options selected
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: finalOptions.isEmpty
+                                            ? Colors.grey
+                                            : Colors.black,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   Icon(
                                     isDropdownOpen
@@ -318,7 +360,7 @@ class _AgricultureIncomeDetailState
                               if (isDropdownOpen) ...[
                                 otherDataAsyncValue.when(
                                   data: (otherData) => Column(
-                                    children: otherData.otherdrop.map((option) {
+                                    children:  otherData.otherdrop!.map((option) {
                                       return CheckboxListTile(
                                         selected:
                                             selectedOptions.contains(option),
@@ -400,8 +442,12 @@ class _AgricultureIncomeDetailState
                                         onPressed: () {
                                           print("Upload Image button clicked");
                                         },
+                                        child: const Text(
+                                          "Upload Document",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(0xff0082c6),
+                                          backgroundColor: Color(0xff0082c6),
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 14),
                                           shape: RoundedRectangleBorder(
@@ -409,16 +455,12 @@ class _AgricultureIncomeDetailState
                                                 BorderRadius.circular(12),
                                           ),
                                         ),
-                                        child: const Text(
-                                          "Upload Document",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
                                       ),
                                       InkWell(
                                         onTap: () {
                                           print("Upload Image button clicked");
                                         },
-                                        child: const Text(
+                                        child: Text(
                                           "Preview Document Image",
                                           style: TextStyle(
                                               color: Colors.blue,
@@ -436,6 +478,8 @@ class _AgricultureIncomeDetailState
                       ),
                     ),
 
+
+                    //*************************************************
                     sizedBoxWithContext(context, 0.03),
                     Padding(
                       padding: const EdgeInsets.only(right: 15),
@@ -451,6 +495,7 @@ class _AgricultureIncomeDetailState
                         // textInputAction: TextInputAction.next,
                         // textInputType: TextInputType.name,
                         // onChange: (value) => incomeForm_KasraNo,
+                        textInputType: TextInputType.number,
                       ),
                     ),
 
@@ -501,7 +546,8 @@ class _AgricultureIncomeDetailState
                         },
                         controller: incomeForm_AgrilandAcre,
                         textInputAction: TextInputAction.next,
-                        textInputType: TextInputType.name,
+                        textInputType: TextInputType.number,
+                        // textInputType: TextInputType.name,
                       ),
                     ),
 
@@ -552,7 +598,7 @@ class _AgricultureIncomeDetailState
                         },
                         controller: incomeForm_AgrilandSurvey,
                         textInputAction: TextInputAction.next,
-                        textInputType: TextInputType.name,
+                        textInputType: TextInputType.number,
                       ),
                     ),
                     // Spacing between buttons
@@ -588,7 +634,7 @@ class _AgricultureIncomeDetailState
                         },
                         controller: incomeForm_FertilizerOwnerContact,
                         textInputAction: TextInputAction.next,
-                        textInputType: TextInputType.name,
+                        textInputType: TextInputType.number,
                       ),
                     ),
 
@@ -596,7 +642,7 @@ class _AgricultureIncomeDetailState
                     Padding(
                       padding: const EdgeInsets.only(right: 18),
                       child: CustomDropDownTextField(
-                        items: const [
+                        items: [
                           DropDownValueModel(name: "Rainfed", value: "Rainfed"),
                           DropDownValueModel(
                               name: "Tubewell", value: "Tubewell"),
@@ -620,7 +666,7 @@ class _AgricultureIncomeDetailState
                     Padding(
                       padding: const EdgeInsets.only(right: 18),
                       child: CustomDropDownTextField(
-                        items: const [
+                        items: [
                           DropDownValueModel(name: "Yes", value: "Yes"),
                           DropDownValueModel(name: "No", value: "No"),
                         ],
@@ -660,7 +706,7 @@ class _AgricultureIncomeDetailState
                         },
                         controller: incomeForm_AgriIncome,
                         textInputAction: TextInputAction.next,
-                        textInputType: TextInputType.name,
+                        textInputType: TextInputType.number,
                       ),
                     ),
 
@@ -686,7 +732,7 @@ class _AgricultureIncomeDetailState
                     Padding(
                       padding: const EdgeInsets.only(right: 18),
                       child: CustomDropdownWithCross(
-                        items: const [
+                        items: [
                           "Wheat",
                           "Corn",
                           "Soybean",
@@ -756,8 +802,8 @@ class _AgricultureIncomeDetailState
                       ),
                     ),
 
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Text(
                         'Land Book Image',
                         style: TextStyle(
@@ -767,15 +813,15 @@ class _AgricultureIncomeDetailState
                         textAlign: TextAlign.start,
                       ),
                     ),
-
-                    ...agriBusinessData.agriculturePhotos
+                     if(agriData?.agriculturePhotos !=null)
+                    ...agriData!.agriculturePhotos!
                         .asMap()
                         .entries
                         .map((entry) {
                       final int index = entry.key;
                       final String image = entry.value;
                       print(
-                          'agriBusinessData.agriculturePhotos from server:: ${agriBusinessData.agriculturePhotos.length}');
+                          'agriBusinessData.agriculturePhotos from server:: ${agriData?.agriculturePhotos?.length}');
                       print('image:: $image');
                       return Stack(
                         children: [
@@ -787,12 +833,12 @@ class _AgricultureIncomeDetailState
                                 imageUrl:
                                     //  workPhotosList.length == 0
                                     //     ? '${Api.baseUrl}${agriAndWorkImages.workPhotos![index]}':
-                                    '${Api.baseUrl}$image',
+                                    '${Api.baseUrl}${image}',
                                 height: displayHeight(context) * 0.16,
                                 width: displayWidth(context) * 0.91,
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) =>
-                                    const Center(child: CircularProgressIndicator()),
+                                    Center(child: CircularProgressIndicator()),
                                 errorWidget: (context, url, error) =>
                                     Image.asset(
                                   'assets/images/no_internet.jpg',
@@ -809,10 +855,13 @@ class _AgricultureIncomeDetailState
                             child: GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  agriBusinessData.agriculturePhotos
-                                      .removeAt(index);
-                                  print(
-                                      'agriBusinessData.agriculturePhotos:: ${agriBusinessData.agriculturePhotos.length}');
+                                  if( agriBusinessData !=null){
+                                    agriData.agriculturePhotos!
+                                        .removeAt(index);
+                                    print(
+                                        'agriBusinessData.agriculturePhotos:: ${agriData.agriculturePhotos?.length}');
+                                  }
+
                                 });
                               },
                               child: Image.asset(
@@ -825,7 +874,7 @@ class _AgricultureIncomeDetailState
                           ),
                         ],
                       );
-                    }),
+                    }).toList(),
                     // Container for uploading new images
                     constSizedbox(context),
                     GestureDetector(
@@ -838,11 +887,11 @@ class _AgricultureIncomeDetailState
                                 setState(() {
                                   // print('workphotoUrl: $value');
                                   // workPhotosList.add(value);
-                                  agriBusinessData.agriculturePhotos.add(value);
+                                  agriData?.agriculturePhotos?.add(value);
                                   // print(
                                   //     'workPhotosList url length:: ${workPhotosList.length}');
                                   print(
-                                      'agriBusinessData.agriculturePhotos:: ${agriBusinessData.agriculturePhotos.length}');
+                                      'agriBusinessData.agriculturePhotos:: ${agriData?.agriculturePhotos?.length}');
                                 });
                               },
                             );
@@ -870,9 +919,9 @@ class _AgricultureIncomeDetailState
 
                     ElevatedButton(
                         onPressed: () async {
-                          final formData = AgricultureDataModel(
+                          final formData = AgricultreItems(
                             incomeSourceType: "agricultureBusiness",
-                            data: AgricultureData(
+                            agricultureData: AgricultureData(
                               nameOfAgriOwner: finalOptions,
                               haveYouFaced:
                                   incomeForm_TypeSignificantChallenge.text,
@@ -890,7 +939,7 @@ class _AgricultureIncomeDetailState
                               //   "/uploads/file_1732020760659.screenshot(76).png"
                               // ],
                               agriculturePhotos:
-                                  agriBusinessData.agriculturePhotos,
+                                  agriData?.agriculturePhotos,
                               whichCropIsPlanted: [incomeForm_CropPlanted.text],
                               agriDoingFromNoOfYears:
                                   incomeForm_AgriFromYear.text,

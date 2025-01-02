@@ -6,11 +6,11 @@ class MultiSelectDropdown extends StatefulWidget {
   final String labelText;
 
   const MultiSelectDropdown({
-    super.key,
+    Key? key,
     required this.options,
     required this.controller,
     this.labelText = 'Select Options',
-  });
+  }) : super(key: key);
 
   @override
   State<MultiSelectDropdown> createState() => _MultiSelectDropdownState();

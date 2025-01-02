@@ -1,10 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+import 'package:finexe/feature/base/service/session_service.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/refrence_form_model.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/referance/referance_details.dart';
+import 'package:flutter/Material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 
+import '../../../../../base/api/dio_exception.dart';
+import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/Submit Data Models/refrence_form_model.dart';
 
 class PDRefrenceDetails extends StateNotifier<ApplicationState> {
@@ -17,6 +22,7 @@ class PDRefrenceDetails extends StateNotifier<ApplicationState> {
     required String pdType,
     // required List<ReferenceDetails> refrenceFormList,
     required List<Map<String, dynamic>> refrenceFormList,
+    required BuildContext context
   }) async {
     state = state.copyWith(isLoading: true);
 
@@ -26,7 +32,10 @@ class PDRefrenceDetails extends StateNotifier<ApplicationState> {
       'customerId': customerId,
       'pdType': pdType,
     };
-
+    // if(state.isLoading==true){
+    //   print('click second time');
+    //   return false;
+    // }
     String? token = speciality.getToken();
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
@@ -36,11 +45,12 @@ class PDRefrenceDetails extends StateNotifier<ApplicationState> {
       print(token);
       print(payload);
       print(response.data);
-      print('Payload: $payload');
+      print('Payload: ${payload}');
 
       if (response.statusCode == 200) {
         print('refrence form submitted: ${response.data}');
-
+        showCustomSnackBar(
+            context,'Form Saved successfully!', Colors.green);
         state = state.copyWith(isLoading: false);
         return true;
       } else {
@@ -48,12 +58,17 @@ class PDRefrenceDetails extends StateNotifier<ApplicationState> {
         print('Error while submitting refernceFormData form');
         return false;
       }
-    } catch (e) {
+    }
+    catch (error) {
+      print(error);
       state = state.copyWith(isLoading: false);
-      print('Exception in refrenceDeatils form: $e');
-      // throw Exception(e);
+      DioExceptions.fromDioError(error as DioException, context);
+      // Handle exceptions and set state to error
+      // state = AsyncValue.error(error, stackTrace);
+      print('response.data.message ${error}');
       return false;
     }
+
   }
 }
 
@@ -101,7 +116,7 @@ class RefFormDetailProvider {
 
   Future<RefrenceDetailModel> fetchRefDetails(String custId) async {
     String? token = speciality.getToken();
-
+    RefrenceDetailModel refernceFormData = RefrenceDetailModel();
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY"; // Replace with a secure way of managing tokens
     print('url: ${Api.getpdformdata}$custId');
@@ -116,17 +131,22 @@ class RefFormDetailProvider {
         final Map<String, dynamic> responseData = response.data;
 
         // Parse the response into the GetApplicantDetailsModel
-        final refernceFormData = RefrenceDetailModel.fromJson(responseData);
+         refernceFormData = RefrenceDetailModel.fromJson(responseData);
 
-        print('refernceFormData:: $refernceFormData');
-        return refernceFormData;
-            } else {
+        if (refernceFormData != null) {
+          print('refernceFormData:: ${refernceFormData}');
+          return refernceFormData;
+        } else {
+          throw Exception("refernceFormData details not found in the response");
+        }
+      } else {
         throw Exception(
             "Failed to load refernceFormData data: ${response.statusCode}");
       }
     } catch (e) {
       print("Error fetching refernceFormData details: $e");
-      throw Exception("Error fetching refernceFormData data: $e");
+      // throw Exception("Error fetching refernceFormData data: $e");
+      return refernceFormData;
     }
   }
 }

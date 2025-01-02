@@ -11,7 +11,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:roam_flutter/roam_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/model/add_task_request_model.dart';
 import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/model/add_task_response_model.dart';
@@ -23,7 +22,7 @@ import '../model/response_model.dart';
 class AttendanceState {
   final String employeeName;
   final bool isLoading;
-  final bool punchAllowed;
+  final bool? punchAllowed;
   final bool punchStatus;
   final Position? currentPosition;
   final String? distanceMessage;
@@ -36,7 +35,7 @@ class AttendanceState {
   AttendanceState(
       {this.taskTitle = '',
         this.taskDescription = '',
-        this.punchAllowed = false,
+        this.punchAllowed ,
         this.employeeName = '',
         this.isLoading = false,
         this.punchStatus = false,
@@ -472,7 +471,16 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
                 AppRoutes.dashBoard, // Collection dashboard route
                     (route) => false, // Remove all previous routes
               );
+              
               break;
+              //   case 'creditPd':
+              // log("Navigating to collection dashboard");
+              // Navigator.pushNamedAndRemoveUntil(
+              //   context,
+              //   AppRoutes.pdscreen, // Collection dashboard route
+              //       (route) => false, // Remove all previous routes
+              // );
+              // break;
             default:
               Navigator.pushNamedAndRemoveUntil(
                 context,
@@ -524,9 +532,11 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       );
       return true;
       // Navigator.pushNamed(context, AppRoutes.eod);
-    } on DioException catch (error) {
-      DioExceptions.fromDioError(error, context);
-      state = state.copyWith(isLoading: false);
+    } catch (error) {
+    ExceptionHandler().handleError(error);
+      
+    }finally{
+state = state.copyWith(isLoading: false);
     }
     return false;
   }
@@ -547,7 +557,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       // Punch punchInModel = PunchInModel.fromJson(response.data);
       if (response.statusCode == 200) {
         showCustomSnackBar(context, message, AppColors.green);
-        Roam.stopTracking();
+      
         // PunchInModel punchInModel = PunchInModel.fromJson(response.data);
       } else {
         showCustomSnackBar(context, message, AppColors.green);

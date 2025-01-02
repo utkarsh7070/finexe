@@ -1,5 +1,7 @@
 
 
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
+import 'package:finexe/feature/base/utils/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -69,82 +71,86 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Leave Request Form",style: TextStyle(color: Colors.white)),
-        backgroundColor: AppColors.primary,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back,color: Colors.white,),
-          onPressed: () => Navigator.pop(context),
+    return NetworkListener(
+      context: context,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Leave Request Form",style: TextStyle(color: Colors.white)),
+          backgroundColor: AppColors.primary,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back,color: Colors.white,),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
-      ),
-
-
-
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              TextFormField(
-                readOnly: true,
-                decoration: customInputDecoration(
-                  "Start Date",
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_month,color: AppColors.primary,),
-                    onPressed: () => _pickDate(context, true),
+      
+      
+      
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                TextFormField(
+                  readOnly: true,
+                  decoration: customInputDecoration(
+                    "Start Date",
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_month,color: AppColors.primary,),
+                      onPressed: () => _pickDate(context, true),
+                    ),
                   ),
-                ),
-                controller: TextEditingController(
-                  text: _startDate != null
-                      ? DateFormat('yyyy-MM-dd').format(_startDate!)
-                      : '',
-                ),
-                validator: (value) => value == null || value.isEmpty
-                    ? "Please select a start date"
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                readOnly: true,
-                decoration: customInputDecoration(
-                  "End Date",
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_month,color: AppColors.primary,),
-                    onPressed: () => _pickDate(context, false),
+                  controller: TextEditingController(
+                    text: _startDate != null
+                        ? DateFormat('yyyy-MM-dd').format(_startDate!)
+                        : '',
                   ),
+                  validator: (value) => value == null || value.isEmpty
+                      ? "Please select a start date"
+                      : null,
                 ),
-                controller: TextEditingController(
-                  text: _endDate != null
-                      ? DateFormat('yyyy-MM-dd').format(_endDate!)
-                      : '',
+                const SizedBox(height: 16),
+                TextFormField(
+                  readOnly: true,
+                  decoration: customInputDecoration(
+                    "End Date",
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_month,color: AppColors.primary,),
+                      onPressed: () => _pickDate(context, false),
+                    ),
+                  ),
+                  controller: TextEditingController(
+                    text: _endDate != null
+                        ? DateFormat('yyyy-MM-dd').format(_endDate!)
+                        : '',
+                  ),
+                  validator: (value) => value == null || value.isEmpty
+                      ? "Please select an end date"
+                      : null,
                 ),
-                validator: (value) => value == null || value.isEmpty
-                    ? "Please select an end date"
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _leaveReasonController,
-                decoration: customInputDecoration("Leave Reason"),
-                maxLines: 3,
-                validator: (value) => value == null || value.isEmpty
-                    ? "Please enter a leave reason"
-                    : null,
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary, // Set your desired background color here
-                  foregroundColor: Colors.white, // This sets the text and icon color
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _leaveReasonController,
+                  decoration: customInputDecoration("Leave Reason"),
+                  maxLines: 3,
+                  validator: (value) => value == null || value.isEmpty
+                      ? "Please enter a leave reason"
+                      : null,
                 ),
-                child: const Text("Submit",),
-              ),
-            ],
+                const SizedBox(height: 32),
+                AppButton(onTap: _submitForm,label: 'Submit',isFill: true,),
+                // ElevatedButton(
+                //   onPressed: _submitForm,
+                //   style: ElevatedButton.styleFrom(
+                //     backgroundColor: AppColors.primary, // Set your desired background color here
+                //     foregroundColor: Colors.white, // This sets the text and icon color
+                //   ),
+                //   child: const Text("Submit",),
+                // ),
+              ],
+            ),
           ),
         ),
       ),

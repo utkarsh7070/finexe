@@ -9,12 +9,12 @@ class CustomDropdownWithCross extends StatefulWidget {
   final Function(List<String>) onSelectionChanged;
 
   const CustomDropdownWithCross({
-    super.key,
+    Key? key,
     required this.items,
     this.initialSelectedItems = const [], // Defaul
     required this.onSelectionChanged,
     this.placeholder = 'Select Items',
-  });
+  }) : super(key: key);
 
   @override
   _CustomDropdownWithCrossState createState() =>
@@ -79,7 +79,7 @@ class _CustomDropdownWithCrossState extends State<CustomDropdownWithCross> {
                   children: [
                     Text(widget.placeholder,
                         style: const TextStyle(color: Colors.grey)),
-                    const Icon(Icons.arrow_drop_down)
+                    Icon(Icons.arrow_drop_down)
                   ],
                 ),
               ],

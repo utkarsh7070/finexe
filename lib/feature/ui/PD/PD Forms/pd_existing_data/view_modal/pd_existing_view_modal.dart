@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
+import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_existing_data/modal/pd_existing_modal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -166,7 +167,7 @@ class GuarantorDetailsProvider {
   Future<GuarantorDetails> fetchGuarantorDetails(String customerId) async {
     try {
       final response = await _dio
-          .get('${Api.getGuarantorFormDetails}/66dec7b50084c9b822d403d1');
+          .get('${Api.getGuarantorFormDetails}/$customerId');
       // print('Response: ${response.data['items']}');
 
       if (response.statusCode == 200 && response.data != null) {
@@ -176,7 +177,8 @@ class GuarantorDetailsProvider {
       }
     } catch (e) {
       print("Error fetching guarantor data: $e");
-      throw Exception("Error fetching guarantor data: $e");
+      // throw Exception("Error fetching guarantor data: $e");
+      return GuarantorDetails.fromJson({});
     }
   }
 }

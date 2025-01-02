@@ -1,6 +1,7 @@
 // user_profile_view_model.dart
 import 'dart:async';
 
+import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/model/hrmsUserProfile.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,7 +25,7 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<LoginUserProfile>> {
   Future<void> fetchLoginUserProfile() async {
     try {
 <<<<<<< HEAD
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
 =======
       String? token = speciality.getToken();
 >>>>>>> origin/To_merge
@@ -168,7 +169,7 @@ final loginUserProfileProvider =
     // Log the full response to debug
     print('Response user login: ${response.data}');
 
-    if (response.statusCode == 200) {
+    // if (response.statusCode == 200) {
       // Parse the response and return the data
       final data = HRMSUserProfile.fromJson(response.data['items']);
       final returnData = HRMSUserProfile(designationId: data.designationId,
@@ -185,10 +186,10 @@ final loginUserProfileProvider =
           employeUniqueId: data.employeUniqueId);
       print('Login User data response: $data');
       return returnData;
-    } else {
-      throw Exception('Failed to load user profile');
-    }
+  
   } catch (error) {
+    ExceptionHandler().handleError(error);
+    
     // Log the error for debugging
     print('Error: $error');
     rethrow; // The FutureProvider will handle this as an AsyncError

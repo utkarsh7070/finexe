@@ -13,17 +13,17 @@ class RefrenceDetailModel {
     subCode = json['subCode'];
     message = json['message'];
     error = json['error'];
-    items = json['items'] != null ? Items.fromJson(json['items']) : null;
+    items = json['items'] != null ? new Items.fromJson(json['items']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = status;
-    data['subCode'] = subCode;
-    data['message'] = message;
-    data['error'] = error;
-    if (items != null) {
-      data['items'] = items!.toJson();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['subCode'] = this.subCode;
+    data['message'] = this.message;
+    data['error'] = this.error;
+    if (this.items != null) {
+      data['items'] = this.items!.toJson();
     }
     return data;
   }
@@ -38,16 +38,16 @@ class Items {
     if (json['referenceDetails'] != null) {
       referenceDetails = <ReferenceDetailListModel>[];
       json['referenceDetails'].forEach((v) {
-        referenceDetails!.add(ReferenceDetailListModel.fromJson(v));
+        referenceDetails!.add(new ReferenceDetailListModel.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (referenceDetails != null) {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.referenceDetails != null) {
       data['referenceDetails'] =
-          referenceDetails!.map((v) => v.toJson()).toList();
+          this.referenceDetails!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -70,11 +70,11 @@ class ReferenceDetailListModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['name'] = name;
-    data['address'] = address;
-    data['relation'] = relation;
-    data['mobileNumber'] = mobileNumber;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    data['address'] = this.address;
+    data['relation'] = this.relation;
+    data['mobileNumber'] = this.mobileNumber;
     return data;
   }
 }

@@ -2,16 +2,18 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
+import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/Material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 // import '../../../../../../../../../../base/api/api.dart';
 // import '../../../../../../../../../../base/service/session_service.dart';
 // import '../../../../../../../../../../base/utils/widget/custom_snackbar.dart';
+import '../../../../../../../../base/api/dio_exception.dart';
 import 'milk_model/milk_income_form_model.dart';
 
 class AnimalImageUploadNotifier extends StateNotifier<List<File>> {
@@ -122,21 +124,18 @@ class MilkBusinessFormViewModel {
             'Updated milk business data: ${updatedData['incomeSource'][0]['milkBusiness']}');
 
         showCustomSnackBar(
-            context, 'Milk Business Form Submitted', Colors.green);
-      } else {
-        // Log the error response for debugging
-        print('Error response: ${response.data}');
-        throw Exception('Failed to submit milk business form');
+            context, 'Milk Business Form saved', Colors.green);
       }
     } catch (e) {
       print("Error submitting milk business form: $e");
-      showCustomSnackBar(context, 'Form Submission Failed', Colors.red);
+      DioExceptions.fromDioError(e as DioException, context);
+
     }
   }
 }
 
 //  -------------- get api
-final milkBusinessProvider = FutureProvider.autoDispose.family<MilkBusinessData,String>((ref,customerId) async {
+final milkBusinessProvider = FutureProvider.autoDispose.family<MilkDataModel?,String>((ref,customerId) async {
   final apiService = ApiService();
   return apiService.fetchMilkBusiness(customerId);
 });
@@ -144,7 +143,7 @@ final milkBusinessProvider = FutureProvider.autoDispose.family<MilkBusinessData,
 class ApiService {
   final Dio _dio = Dio();
 
-  Future<MilkBusinessData> fetchMilkBusiness(String custId) async {
+  Future<MilkDataModel?> fetchMilkBusiness(String custId) async {
     final token = speciality.getToken();
 
     try {
@@ -165,9 +164,15 @@ class ApiService {
 
         final incomeSource = items['incomeSource'];
         print('Income Source Type: ${incomeSource.runtimeType}');
-
+        if (items.isEmpty) {
+          print('Error: "items" field is missing in response');
+          // throw Exception('Error: "incomeSource" field is missing in response');
+          return null;
+        }
         if (incomeSource == null) {
-          throw Exception('Error: "incomeSource" field is missing in response');
+          print('Error: "incomeSource" field is missing in response');
+          // throw Exception('Error: "incomeSource" field is missing in response');
+          return null;
         }
 
         if (incomeSource is List) {
@@ -181,7 +186,7 @@ class ApiService {
                 print('Milk Business: $milkBusiness');
 
                 if (milkBusiness != null) {
-                  return MilkBusinessData.fromJson(milkBusiness);
+                  return MilkDataModel.fromJson(milkBusiness);
                 } else {
                   throw Exception('Error: "milkBusiness" data is missing in the entry');
                 }

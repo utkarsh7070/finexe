@@ -600,7 +600,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
 
     print('Update EMI Input -${requestModel.toJson()}');
 
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
     final response = await dio.post(Api.updateEmiSubmit,
         data: requestModel.toJson(),
         options: Options(
@@ -1499,6 +1499,18 @@ final directionsProvider =
 //-----------------------------end map--------------------------------------------------------
 final searchResultsProvider = StateProvider<List<ItemsDetails>>((ref) => []);
 
+
+void searchupdate(ref, String searchterm, List<ItemsDetails> listOfLists) {
+
+  final filteredResults = listOfLists.where((item) {
+    
+    return item.customerName != null &&
+       ( item.customerName!.toLowerCase().contains(searchterm.toLowerCase())|| item.ld!.toLowerCase().contains(searchterm.toLowerCase()));
+  }).toList();
+
+  ref.read(searchResultsProvider.notifier).state = filteredResults;
+}
+
 final fetchVisitPendingDataProvider =
     FutureProvider<List<Map<String, String>>>((ref) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -1519,7 +1531,7 @@ final fetchVisitPendingDataProvider =
     List<ItemsDetails> listOfLists = apiResponseList.items.map((map) {
       return ItemsDetails.fromJson(map);
     }).toList();
-       ref.read(searchResultsProvider.notifier).state = listOfLists;
+    ref.read(searchResultsProvider.notifier).state = listOfLists;
     return apiResponseList.items;
   } else {
     throw Exception('Failed to load data');

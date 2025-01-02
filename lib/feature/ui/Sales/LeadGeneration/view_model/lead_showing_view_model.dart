@@ -95,7 +95,7 @@ class LeadShowViewModel extends ChangeNotifier {
   Future<void> fetchLeads(BuildContext context) async {
     try {
 <<<<<<< HEAD
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
 =======
       String? token = speciality.getToken();
 >>>>>>> origin/To_merge

@@ -62,7 +62,7 @@ class LeaveRequestViewModel {
 
 /*Future<void> submitLeaveRequest(LeaveRequestItem leadData,BuildContext context) async {
     try {
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
 
       print('Leave input ${leadData.toJson()}');
       final response = await _dio.post(Api.submitLeaveRequest, // Replace with your API endpoint
