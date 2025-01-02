@@ -431,9 +431,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                 ),
               ),
               /*BottomBar(employee: userProfileAsync),*/
-            ],
-          ),
-        );
+            );
       },
      error: (error, stack) => Scaffold( appBar: AppBar(
               title:
