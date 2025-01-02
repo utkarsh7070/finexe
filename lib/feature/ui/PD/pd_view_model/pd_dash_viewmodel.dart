@@ -211,7 +211,7 @@ class BodStatusNotifier extends StateNotifier<AsyncValue<BodStatusResponse?>> {
 
 
 final fetchPdRequestListProvider =
-FutureProvider<List<PDReqItems>>((ref) async {
+FutureProvider.autoDispose<List<PDReqItems>>((ref) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String? token = sharedPreferences.getString('token');
   // final String token =
@@ -227,12 +227,12 @@ FutureProvider<List<PDReqItems>>((ref) async {
   print(response.statusCode);
   if (response.statusCode == 200) {
     print(response.data);
-    List<dynamic> responseList = response.data['items']['items'] ?? [];
+    List<dynamic> responseList = response.data['items'] ?? [];
 
     // Map the list of dynamic objects to List<PDReqItems>
     List<PDReqItems> apiResponseList =
     responseList.map((item) => PDReqItems.fromJson(item)).toList();
-    print('PDReqItems ${apiResponseList[0].creditPdId}');
+    print('PDReqItems ${apiResponseList.length}');
     return apiResponseList;
   } else {
     throw Exception('Failed to load data');
@@ -255,16 +255,16 @@ FutureProvider.autoDispose<List<RefuseItem>>((ref) async {
 
   final response = await dio.get(Api.pdAssign,
       queryParameters: queryParam, options: Options(headers: {"token": token}));
-  // print(response.statusMessage);
-  // print(response.statusCode);
+  print(response.statusMessage);
+  print(response.statusCode);
   if (response.statusCode == 200) {
-    print('>>>>>>>>>>>>>>>>>>>>.${response.data}');
-    List<dynamic> responseList = response.data['items']['items'] ?? [];
+    print(response.data);
+    List<dynamic> responseList = response.data['items'] ?? [];
 
     // Map the list of dynamic objects to List<PDReqItems>
     List<RefuseItem> apiResponseList =
     responseList.map((item) => RefuseItem.fromJson(item)).toList();
-    print('PDReqItemsrejection >>>>${apiResponseList.length}');
+    print('PDReqItems ${apiResponseList.length}');
     return apiResponseList;
   } else {
 

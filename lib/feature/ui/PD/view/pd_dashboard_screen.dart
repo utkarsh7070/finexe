@@ -1,6 +1,5 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:finexe/feature/base/internetConnection/connection_overlay.dart';
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
@@ -42,7 +41,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
     final pdRefuseList = ref.watch(fetchPdRefuseCasetProvider);
     final gridItems = ref.watch(griditemProvider);
     var _scaffoldKey = GlobalKey<ScaffoldState>();
-    final pdITems = ref.watch(pdItemsProvider);
+    // final pdITems = ref.watch(pdItemsProvider);
     return NetworkListener(
       context: context,
       child: Scaffold(
@@ -386,7 +385,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                     },
                   );
                 },
-                  error: (error, stackTrace) {return Text('data');},
+                  error: (error, stackTrace) => throw Exception(),
                   loading: () {
                   return const Center(child: CircularProgressIndicator());
                 },),
