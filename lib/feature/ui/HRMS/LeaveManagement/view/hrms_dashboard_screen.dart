@@ -408,17 +408,17 @@ class HRMSDashboardScreen extends ConsumerWidget {
                       //           ),
                       //           Column(
                       //             children: [
-                                    // IconButton(
-                                    //   onPressed: () {
-                                    //     LogOutDialog.logOutDialog(
-                                    //         context: context);
-                                    //   },
-                                    //   icon: const Icon(
-                                    //     Icons.logout,
-                                    //     color: AppColors.primary,
-                                    //   ),
-                                    // ),
-                                    // const Text('Logout')
+                      //               IconButton(
+                      //                 onPressed: () {
+                      //                   LogOutDialog.logOutDialog(
+                      //                       context: context);
+                      //                 },
+                      //                 icon: const Icon(
+                      //                   Icons.logout,
+                      //                   color: AppColors.primary,
+                      //                 ),
+                      //               ),
+                      //               const Text('Logout')
                       //             ],
                       //           ),
                       //         ],
