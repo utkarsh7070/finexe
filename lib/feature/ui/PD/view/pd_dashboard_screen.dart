@@ -236,7 +236,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                           ),
                         ),
                     error: (error, stackTrace) {
-                      throw Exception(error);
+                      return Text('');
                     },
                     loading: () {
                       return const Center(child: CircularProgressIndicator());
@@ -385,7 +385,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                     },
                   );
                 },
-                  error: (error, stackTrace) => throw Exception(),
+                  error: (error, stackTrace) => Text(''),
                   loading: () {
                   return const Center(child: CircularProgressIndicator());
                 },),

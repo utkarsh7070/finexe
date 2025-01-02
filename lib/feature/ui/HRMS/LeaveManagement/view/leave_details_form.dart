@@ -1,5 +1,3 @@
-
-
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,50 +38,35 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
 
     final leaveRequestAsync = ref.watch(leaveRequestDetailsViewModelProvider);
 
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("All Leaves",style: TextStyle(color: Colors.white)),
-        backgroundColor: AppColors.primary,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back,color: Colors.white,),
-          onPressed: () => Navigator.pop(context),
+    return NetworkListener(
+      context: context,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("All Leaves",style: TextStyle(color: Colors.white)),
+          backgroundColor: AppColors.primary,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back,color: Colors.white,),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
-      ),
-      body: leaveRequestAsync.when(
-        data: (leaveData) {
-          final counters = leaveData["counters"] as CountersModel;
-          final leaveRequests = leaveData["leaveRequests"] as List<LeaveRequestModel>;
-          return Column(
-            children: [
-              const SizedBox(height: 20),
-              // Counters at the top
-              _buildCounters(
-                totalLeave: counters.totalLeave,
-                totalApprove: counters.totalApprove,
-                totalReject: counters.totalReject,
-              ),
-
-              const SizedBox(height: 0),
-              // Header Row
-             // _buildHeader(),
-
-              // Leave List
-              Expanded(
-                child: ListView.builder(
-                  itemCount: leaveRequests.length,
-                  itemBuilder: (context, index) {
-                    final leave = leaveRequests[index];
-                   // return _buildLeaveRow(leave);
-                    return _buildLeaveCard(leave,context);
-                  },
-
+        body: leaveRequestAsync.when(
+          data: (leaveData) {
+            final counters = leaveData["counters"] as CountersModel;
+            final leaveRequests = leaveData["leaveRequests"] as List<LeaveRequestModel>;
+            return Column(
+              children: [
+                const SizedBox(height: 20),
+                // Counters at the top
+                _buildCounters(
+                  totalLeave: counters.totalLeave,
+                  totalApprove: counters.totalApprove,
+                  totalReject: counters.totalReject,
                 ),
       
-                const SizedBox(height: 20),
+                const SizedBox(height: 0),
                 // Header Row
-                _buildHeader(),
+               // _buildHeader(),
       
                 // Leave List
                 Expanded(
@@ -91,7 +74,8 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                     itemCount: leaveRequests.length,
                     itemBuilder: (context, index) {
                       final leave = leaveRequests[index];
-                      return _buildLeaveRow(leave);
+                     // return _buildLeaveRow(leave);
+                      return _buildLeaveCard(leave,context);
                     },
                   ),
                 ),

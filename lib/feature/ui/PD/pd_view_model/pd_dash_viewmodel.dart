@@ -218,21 +218,21 @@ FutureProvider.autoDispose<List<PDReqItems>>((ref) async {
   //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
   final Map<String, String> queryParam = {"status": "WIP", "searchQuery": ""};
   final dio = ref.read(dioProvider);
-  print('Api.getReqRefP:: ${Api.getReqRefP}');
-  print('token:: ${token}');
+  // print('Api.getReqRefP:: ${Api.getReqRefP}');
+  // print('token:: ${token}');
 
   final response = await dio.get(Api.getReqRefP,
       queryParameters: queryParam, options: Options(headers: {"token": token}));
-  print(response.statusMessage);
-  print(response.statusCode);
+  // print(response.statusMessage);
+  // print(response.statusCode);
   if (response.statusCode == 200) {
-    print(response.data);
-    List<dynamic> responseList = response.data['items'] ?? [];
+    // print(response.data);
+    List<dynamic> responseList = response.data['items']['items'] ?? [];
 
     // Map the list of dynamic objects to List<PDReqItems>
     List<PDReqItems> apiResponseList =
     responseList.map((item) => PDReqItems.fromJson(item)).toList();
-    print('PDReqItems ${apiResponseList.length}');
+    // print('PDReqItems ${apiResponseList.length}');
     return apiResponseList;
   } else {
     throw Exception('Failed to load data');
@@ -259,8 +259,8 @@ FutureProvider.autoDispose<List<RefuseItem>>((ref) async {
   print(response.statusCode);
   if (response.statusCode == 200) {
     print(response.data);
-    List<dynamic> responseList = response.data['items'] ?? [];
-
+    List<dynamic> responseList = response.data['items']['items'] ?? [];
+   print(responseList.toString());
     // Map the list of dynamic objects to List<PDReqItems>
     List<RefuseItem> apiResponseList =
     responseList.map((item) => RefuseItem.fromJson(item)).toList();

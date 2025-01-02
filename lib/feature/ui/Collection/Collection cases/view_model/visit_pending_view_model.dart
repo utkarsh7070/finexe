@@ -544,46 +544,46 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         return false;
       default:
         return false;
-    }
+    }}
 
 
-    print('Update EMI Input -${requestModel.toJson()}');
+  //   print('Update EMI Input -${requestModel.toJson()}');
 
-    String? token = speciality.getToken();
-    final response = await dio.post(Api.updateEmiSubmit,
-        data: requestModel.toJson(),
-        options: Options(
-          headers: {"token": token},
-          validateStatus: (status) => true,
-        ));
-    if (kDebugMode) {
-      print(response.statusMessage);
-      print(response.statusCode);
-    }
+  //   String? token = speciality.getToken();
+  //   final response = await dio.post(Api.updateEmiSubmit,
+  //       data: requestModel.toJson(),
+  //       options: Options(
+  //         headers: {"token": token},
+  //         validateStatus: (status) => true,
+  //       ));
+  //   if (kDebugMode) {
+  //     print(response.statusMessage);
+  //     print(response.statusCode);
+  //   }
 
-    var responseData = response.data;
-    print('Emi Paid response: $responseData');
-    var message = responseData['message'];
+  //   var responseData = response.data;
+  //   print('Emi Paid response: $responseData');
+  //   var message = responseData['message'];
 
-    if (response.statusCode == 200 || responseData['status'] == true) {
-      showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
-      state = state.copyWith(isButtonVissible: false);
-      updatePhotoValue(context);
-      ref.refresh(fetchVisitPendingDataProvider);
-      ref.invalidate(updateEmiViewModelProvider);
+  //   if (response.statusCode == 200 || responseData['status'] == true) {
+  //     showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
+  //     state = state.copyWith(isButtonVissible: false);
+  //     updatePhotoValue(context);
+  //     ref.refresh(fetchVisitPendingDataProvider);
+  //     ref.invalidate(updateEmiViewModelProvider);
 
-      if (kDebugMode) {
-        print('EmiUpdateResponse ${response.data}');
-      }
-    } else if (response.statusCode == 400 || responseData['status'] == false) {
-      // isLoading = false;
-      showCustomSnackBar(context, message, Colors.red);
-      print('Emi paid message ${response.statusMessage}');
-    } else {
-      throw Exception('Failed to load data');
-      // return false;
-    }
-  }*/
+  //     if (kDebugMode) {
+  //       print('EmiUpdateResponse ${response.data}');
+  //     }
+  //   } else if (response.statusCode == 400 || responseData['status'] == false) {
+  //     // isLoading = false;
+  //     showCustomSnackBar(context, message, Colors.red);
+  //     print('Emi paid message ${response.statusMessage}');
+  //   } else {
+  //     throw Exception('Failed to load data');
+  //     // return false;
+    
+  
 
   Future<void> updateEmiSubmitButton(
       {required ItemsDetails detail,
@@ -1513,7 +1513,7 @@ FutureProvider<List<Map<String, String>>>((ref) async {
 });*/
 
 //-----------------------------end map--------------------------------------------------------
-final searchResultsProvider = StateProvider<List<ItemsDetails>>((ref) => []);
+// final searchResultsProvider = StateProvider<List<ItemsDetails>>((ref) => []);
 
 
 final fetchCollectionDueDataProvider =
