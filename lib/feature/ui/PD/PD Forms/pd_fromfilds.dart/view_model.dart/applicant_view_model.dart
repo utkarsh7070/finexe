@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
+import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
@@ -9,7 +11,9 @@ import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_upda
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../../base/api/dio_exception.dart';
 import '../model/Submit Data Models/applicant_model.dart';
 
 final isAppExpandedProvider = StateProvider<bool>((ref) => false);
@@ -24,6 +28,7 @@ class PDApplicantViewModel extends StateNotifier<ApplicantState> {
     String? applicantdImage,
     required String customerId,
     required String pdType,
+    required BuildContext context,
     String? applicantType,
     String? businessType,
     String? occupation,
@@ -42,8 +47,10 @@ class PDApplicantViewModel extends StateNotifier<ApplicantState> {
     String? educationalDetails,
     String? residenceType,
   }) async {
-    state = state.copyWith(isLoading: true);
 
+
+    // Set loading state to true
+    state = state.copyWith(isLoading: true);
     final applicantdata = Applicant(
       applicantType: applicantType,
       businessType: businessType,
@@ -82,24 +89,42 @@ class PDApplicantViewModel extends StateNotifier<ApplicantState> {
       print(token);
       print(payload);
       print(response.data);
-      print('Payload: $payload');
+      print('Payload: ${payload}');
 
       if (response.statusCode == 200) {
-        Applicant applicantdata = Applicant.fromJson(response.data);
+        // Applicant applicantdata = Applicant.fromJson(response.data);
         print('Applicant form submitted: $response');
 
         state = state.copyWith(isLoading: false);
         return true;
-      } else {
+      }else if (state.isLoading == true) {
+        print('click second time');
+         return false;
+      }
+      else {
         state = state.copyWith(isLoading: false);
         print('Error while submitting applicant form');
         return false;
       }
-    } catch (e) {
+    }
+    // catch (e) {
+    //   state = state.copyWith(isLoading: false);
+    //   print('Exception: $e');
+    //   // throw Exception(e);
+    //   return false;
+    // }
+    catch (error) {
+      print(error);
       state = state.copyWith(isLoading: false);
-      print('Exception: $e');
-      // throw Exception(e);
+      DioExceptions.fromDioError(error as DioException, context);
+      // Handle exceptions and set state to error
+      // state = AsyncValue.error(error, stackTrace);
+      print('response.data.message ${error}');
       return false;
+    }
+    finally{
+      state = state.copyWith(isLoading: false);
+
     }
   }
 }
@@ -145,7 +170,7 @@ class ApplicantState {
 //   return await viewModel.fetchLoanDetails(token, customerId);
 // });
 final applicationDetailsProvider =
-    FutureProvider.autoDispose.family<ApplicantItems,String>((ref,customerId) async {
+    FutureProvider.autoDispose.family<ApplicantModel,String>((ref,customerId) async {
   final viewModel = ApplicationFormDetailsProvider();
   return await viewModel.fetchApplicationDetails(customerId);
 });
@@ -153,9 +178,9 @@ final applicationDetailsProvider =
 class ApplicationFormDetailsProvider {
   final Dio _dio = Dio();
 
-  Future<ApplicantItems> fetchApplicationDetails(String customerId) async {
+  Future<ApplicantModel> fetchApplicationDetails(String customerId) async {
     String? token = speciality.getToken();
-
+    ApplicantModel details= ApplicantModel();
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY"; // Replace with a secure way of managing tokens
     print('url: ${Api.getpdformdata}$customerId');
@@ -170,93 +195,111 @@ class ApplicationFormDetailsProvider {
         final Map<String, dynamic> responseData = response.data;
 
         // Parse the response into the GetApplicantDetailsModel
-        final details = ApplicantModel.fromJson(responseData);
+         details = ApplicantModel.fromJson(responseData);
 
         if (details.items != null) {
-          return details.items!;
+          return details;
         } else {
-          throw Exception("Applicant details not found in the response");
+          // throw Exception("Applicant details not found in the response");
+          print('Applicant details not found in the response');
+          return details;
         }
-      } else {
-        throw Exception(
-            "Failed to load application data: ${response.statusCode}");
       }
-    } catch (e) {
-      print("Error fetching applicant details: $e");
-      throw Exception("Error fetching application data: $e");
+
+      else {
+        // throw Exception(
+        //     "Failed to load application data: ${response.statusCode}");
+        print('Failed to load application data: ${response.statusCode}');
+        return details;
+
+      }
+    }
+    // catch (e) {
+    //   print("Error fetching applicant details: $e");
+    //   throw Exception("Error fetching application data: $e");
+    // }
+    catch (e) {
+      if (e is DioException && e.response?.statusCode == 404) {
+        // throw Exception("Resource not found. statusCode == 404", );
+        print('Resource not found. statusCode == 404');
+      }
+      print("Error fetching Asset Details: $e");
+      // throw Exception("An error occurred: ${e.toString()}");
+      print('applicant details:: ${details.items}');
+      return details ;
     }
   }
 }
 
-final applicantImageProvider =
-    StateNotifierProvider<ApplicantImageNotifier, XFile?>((ref) {
-  final dio = ref.read(dioProvider);
-  return ApplicantImageNotifier(dio);
-});
-
-class ApplicantImageNotifier extends StateNotifier<XFile?> {
-  final Dio _dio;
-
-  ApplicantImageNotifier(this._dio) : super(null);
-
-  Future<XFile?> pickSecondImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.camera);
-
-    if (image != null) {
-      state = image;
-      return image;
-    }
-    return null;
-  }
-
-  void removeSecondImage() {
-    state = null;
-  }
-
-  Future<String> uploadImage(String image, BuildContext context) async {
-    String? token = speciality.getToken();
-
-    // String? token =
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
-
-    if (token == null) {
-      throw Exception('Token is missing. Please log in again.');
-    }
-
-    // state = state.copyWith(isLoading: true);
-
-    var formData = FormData.fromMap({
-      'image':
-          await MultipartFile.fromFile(image, filename: image.split('/').last),
-    });
-
-    try {
-      final response = await _dio.post(
-        Api.uploadImageCollection,
-        data: formData,
-        options: Options(headers: {"token": token}),
-      );
-
-      if (response.statusCode == 200) {
-        VisitUpdateUploadImageResponseModel imageResponseModel =
-            VisitUpdateUploadImageResponseModel.fromJson(response.data);
-
-        // state = state.copyWith(isLoading: false);
-        return imageResponseModel.items.image;
-      } else {
-        showCustomSnackBar(context, 'Failed to upload image.', AppColors.red);
-        throw Exception(
-            'Failed to upload image. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      // state = state.copyWith(isLoading: false);
-      showCustomSnackBar(
-          context,
-          'An error occurred while uploading the image. Please try again.',
-          AppColors.red);
-      throw Exception(
-          'An error occurred while uploading the image. Please try again.');
-    }
-  }
-}
+// final applicantImageProvider =
+//     StateNotifierProvider<ApplicantImageNotifier, XFile?>((ref) {
+//   final dio = ref.read(dioProvider);
+//   return ApplicantImageNotifier(dio);
+// });
+//
+// class ApplicantImageNotifier extends StateNotifier<XFile?> {
+//   final Dio _dio;
+//
+//   ApplicantImageNotifier(this._dio) : super(null);
+//
+//   Future<XFile?> pickSecondImage() async {
+//     final ImagePicker picker = ImagePicker();
+//     final XFile? image = await picker.pickImage(source: ImageSource.camera);
+//
+//     if (image != null) {
+//       state = image;
+//       return image;
+//     }
+//     return null;
+//   }
+//
+//   void removeSecondImage() {
+//     state = null;
+//   }
+//
+//   Future<String> uploadImage(String image, BuildContext context) async {
+//     String? token = speciality.getToken();
+//
+//     // String? token =
+//     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
+//
+//     if (token == null) {
+//       throw Exception('Token is missing. Please log in again.');
+//     }
+//
+//     // state = state.copyWith(isLoading: true);
+//
+//     var formData = FormData.fromMap({
+//       'image':
+//           await MultipartFile.fromFile(image, filename: image.split('/').last),
+//     });
+//
+//     try {
+//       final response = await _dio.post(
+//         Api.uploadImageCollection,
+//         data: formData,
+//         options: Options(headers: {"token": token}),
+//       );
+//
+//       if (response.statusCode == 200) {
+//         VisitUpdateUploadImageResponseModel imageResponseModel =
+//             VisitUpdateUploadImageResponseModel.fromJson(response.data);
+//
+//         // state = state.copyWith(isLoading: false);
+//         return imageResponseModel.items.image;
+//       } else {
+//         showCustomSnackBar(context, 'Failed to upload image.', AppColors.red);
+//         throw Exception(
+//             'Failed to upload image. Status code: ${response.statusCode}');
+//       }
+//     } catch (e) {
+//       // state = state.copyWith(isLoading: false);
+//       showCustomSnackBar(
+//           context,
+//           'An error occurred while uploading the image. Please try again.',
+//           AppColors.red);
+//       throw Exception(
+//           'An error occurred while uploading the image. Please try again.');
+//     }
+//   }
+// }

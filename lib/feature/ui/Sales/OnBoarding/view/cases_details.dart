@@ -1,3 +1,4 @@
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,68 +61,71 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
   Widget build(BuildContext context) {
     final processStatus = ref.watch(processStatusProvider);
     final processStatusViewModel = ref.read(processStatusProvider.notifier);
-    final goPayment = ref.read(paymentCaseProvider((context)).notifier);
-    final paymentNotifier = ref.read(cashfreePaymentProvider.notifier);
+    // final goPayment = ref.read(paymentCaseProvider((context)).notifier);
+    // final paymentNotifier = ref.read(cashfreePaymentProvider.notifier);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.customerName, style: const TextStyle(color: Colors.white)),
-        backgroundColor: AppColors.primary,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Container(
-        width: displayWidth(context),
-        height: displayHeight(context),
-        color: AppColors.primary,
-        padding: const EdgeInsets.only(top: 30),
-        child: Container(
-          height: displayHeight(context),
-          padding: const EdgeInsets.all(20),
-          decoration: const BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
-            ),
+    return NetworkListener(
+      context: context,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.customerName, style: const TextStyle(color: Colors.white)),
+          backgroundColor: AppColors.primary,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
           ),
-          child: processStatus.when(
-            data: (data) {
-              if (data == null) {
-                return const Center(child: Text('No data available'));
-              }
-
-              // Map sections with their corresponding data
-              final sections = {
-                'Sales': data.sales,
-                'Cibil': data.cibil,
-                'Branch Pendancy': data.branchPendancy,
-                /* 'Vendor Details': data.vendorDetails,*/
-                'PD': data.pd,
-              };
-
-              // Build a collapsible list view
-              return ListView(
-                children: sections.entries.map((entry) {
-                  final sectionName = entry.key;
-                  final sectionData = entry.value;
-
-                  return _buildSection(
-                    processStatusViewModel: processStatusViewModel,
-                    sectionName: sectionName,
-                    sectionData: sectionData,
-                    ref: ref,
-                    goPayment: goPayment,
-                    paymentNotifier: paymentNotifier,
-                  );
-                }).toList(),
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Center(child: Text('Error: $error')),
+        ),
+        body: Container(
+          width: displayWidth(context),
+          height: displayHeight(context),
+          color: AppColors.primary,
+          padding: const EdgeInsets.only(top: 30),
+          child: Container(
+            height: displayHeight(context),
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
+              ),
+            ),
+            child: processStatus.when(
+              data: (data) {
+                if (data == null) {
+                  return const Center(child: Text('No data available'));
+                }
+      
+                // Map sections with their corresponding data
+                final sections = {
+                  'Sales': data.sales,
+                  'Cibil': data.cibil,
+                  'Branch Pendancy': data.branchPendancy,
+                  /* 'Vendor Details': data.vendorDetails,*/
+                  'PD': data.pd,
+                };
+      
+                // Build a collapsible list view
+                return ListView(
+                  children: sections.entries.map((entry) {
+                    final sectionName = entry.key;
+                    final sectionData = entry.value;
+      
+                    return _buildSection(
+                      processStatusViewModel: processStatusViewModel,
+                      sectionName: sectionName,
+                      sectionData: sectionData,
+                      ref: ref,
+                      goPayment: '',
+                      paymentNotifier: '',
+                    );
+                  }).toList(),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
+            ),
           ),
         ),
       ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:finexe/feature/Punch_In_Out/view/attendance.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/material.dart';
@@ -21,17 +22,22 @@ class PunchInOutSideViewModel {
   // late Timer trackingTimer;
 
   Future<void> punchInOutSideRequestWithRole(String reasonForPunch, BuildContext context) async {
-    bool isSuccess = await punchInOutSideRequest(reasonForPunch, context);
+    bool isSuccess = true;
+    // await punchInOutSideRequest(reasonForPunch, context);
 
     if (isSuccess) {
       // Fetch roles and handle navigation
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      List<String>? role = preferences.getStringList('roleName');
+      // SharedPreferences preferences = await SharedPreferences.getInstance();
+      List<String>? role =speciality.getRole();
       // String? name = preferences.getString('name');
        // initialiseRoamSdk(context,name??'');
 
       if (role != null && role.isNotEmpty) {
-        navigateBasedOnRole(role.first, context);
+        showAttendanceSuccessPopup(context, reasonForPunch);
+        Future.delayed(const Duration(seconds: 4),() {
+            navigateBasedOnRole(role.first, context,);
+        },);
+      
       } else {
         log('No roles found for user.');
         ScaffoldMessenger.of(context).showSnackBar(
@@ -119,7 +125,16 @@ class PunchInOutSideViewModel {
           AppRoutes.dashBoard, // CIBIL dashboard route
               (route) => false, // Remove all previous routes
         );
-      } else {
+      } 
+      //  else if (roles.contains('creditPd')) {
+      //   log("Navigating to sales dashboard");
+      //   Navigator.pushNamedAndRemoveUntil(
+      //     context,
+      //     AppRoutes.pdscreen, // Sales dashboard route
+      //         (route) => false, // Remove all previous routes
+      //   );
+      // } 
+      else {
         // Default role navigation
         log('No matching role found, navigating to HRMS');
         Navigator.pushNamedAndRemoveUntil(

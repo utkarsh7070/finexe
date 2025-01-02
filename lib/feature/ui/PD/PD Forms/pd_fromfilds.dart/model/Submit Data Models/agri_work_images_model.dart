@@ -14,18 +14,18 @@ class AgriCultureAndWorkImageModel {
     message = json['message'];
     error = json['error'];
     items = json['items'] != null
-        ? AgriWorkItems.fromJson(json['items'])
+        ? new AgriWorkItems.fromJson(json['items'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = status;
-    data['subCode'] = subCode;
-    data['message'] = message;
-    data['error'] = error;
-    if (items != null) {
-      data['items'] = items!.toJson();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['subCode'] = this.subCode;
+    data['message'] = this.message;
+    data['error'] = this.error;
+    if (this.items != null) {
+      data['items'] = this.items!.toJson();
     }
     return data;
   }
@@ -69,12 +69,12 @@ class AgriWorkItems {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['fourBoundaryPhotos'] = fourBoundaryPhotos;
-    data['workPhotos'] = workPhotos;
-    data['videoUpload'] = videoUpload;
-    data['landmarkPhoto'] = landmarkPhoto;
-    data['latLongPhoto'] = latLongPhoto;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['fourBoundaryPhotos'] = this.fourBoundaryPhotos;
+    data['workPhotos'] = this.workPhotos;
+    data['videoUpload'] = this.videoUpload;
+    data['landmarkPhoto'] = this.landmarkPhoto;
+    data['latLongPhoto'] = this.latLongPhoto;
     return data;
   }
 }

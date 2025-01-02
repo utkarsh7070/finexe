@@ -298,20 +298,21 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      paymentViewModel.clickPhoto().then(
-                        (value) {
-                          if (value != null) {
-                            imagePath = value.path;
-
-                            paymentViewModel.updateTransactionImage(imagePath!);
-
-                            print('imagepath $imagePath');
-                            paymentViewModel.uploadImage(value.path);
-                          } else {
-                            print('elsepart');
-                          }
-                        },
-                      );
+                      paymentViewModel.clickPhoto();
+                      //     .then(
+                      //   (value) {
+                      //     if (value != null) {
+                      //       imagePath = value.path;
+                      //
+                      //       // paymentViewModel.updateTransactionImage(imagePath!);
+                      //
+                      //       print('imagepath $imagePath');
+                      //
+                      //     } else {
+                      //       print('elsepart');
+                      //     }
+                      //   },
+                      // );
                     },
                     child: !paymentState.isLoading
                         ? Visibility(
@@ -357,7 +358,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                             (value) {
 
                               paymentViewModel.updatePhotoValue(context);
-                              ref.invalidate(updateVisitViewModelProvider);
+                              // ref.invalidate(updateVisitViewModelProvider);
                             },
                           );
                           // paymentViewModel.updatePhotoValue('',context);

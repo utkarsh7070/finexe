@@ -13,17 +13,17 @@ class CibilFormModel {
     subCode = json['subCode'];
     message = json['message'];
     error = json['error'];
-    items = json['items'] != null ? CibilItems.fromJson(json['items']) : null;
+    items = json['items'] != null ? new CibilItems.fromJson(json['items']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = status;
-    data['subCode'] = subCode;
-    data['message'] = message;
-    data['error'] = error;
-    if (items != null) {
-      data['items'] = items!.toJson();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['subCode'] = this.subCode;
+    data['message'] = this.message;
+    data['error'] = this.error;
+    if (this.items != null) {
+      data['items'] = this.items!.toJson();
     }
     return data;
   }
@@ -36,14 +36,14 @@ class CibilItems {
 
   CibilItems.fromJson(Map<String, dynamic> json) {
     cibilAnalysis = json['cibilAnalysis'] != null
-        ? CibilAnalysis.fromJson(json['cibilAnalysis'])
+        ? new CibilAnalysis.fromJson(json['cibilAnalysis'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (cibilAnalysis != null) {
-      data['cibilAnalysis'] = cibilAnalysis!.toJson();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.cibilAnalysis != null) {
+      data['cibilAnalysis'] = this.cibilAnalysis!.toJson();
     }
     return data;
   }
@@ -64,10 +64,10 @@ class CibilAnalysis {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['TotalLoans'] = totalLoans;
-    data['detailsOfCurrentLoans'] = detailsOfCurrentLoans;
-    data['reasonforDPD'] = reasonforDPD;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['TotalLoans'] = this.totalLoans;
+    data['detailsOfCurrentLoans'] = this.detailsOfCurrentLoans;
+    data['reasonforDPD'] = this.reasonforDPD;
     return data;
   }
 }

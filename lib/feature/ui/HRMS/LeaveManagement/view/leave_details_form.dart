@@ -1,5 +1,6 @@
 
 
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -39,6 +40,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
 
     final leaveRequestAsync = ref.watch(leaveRequestDetailsViewModelProvider);
 
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("All Leaves",style: TextStyle(color: Colors.white)),
@@ -76,30 +78,46 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                    // return _buildLeaveRow(leave);
                     return _buildLeaveCard(leave,context);
                   },
+
                 ),
-              ),
-            ],
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text("Error: $err")),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primary,
-        onPressed: () {
-          // Add leave request functionality
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) =>  const LeaveRequestForm()),
-          ).then((refreshNeeded) {
-            // Check if refresh is needed
-            if (refreshNeeded == true) {
-              // Trigger the data refresh in the ViewModel
-              ref.refresh(leaveRequestDetailsViewModelProvider);
-            }
-          });
-        },
-        child: const Icon(Icons.add),
+      
+                const SizedBox(height: 20),
+                // Header Row
+                _buildHeader(),
+      
+                // Leave List
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: leaveRequests.length,
+                    itemBuilder: (context, index) {
+                      final leave = leaveRequests[index];
+                      return _buildLeaveRow(leave);
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (err, stack) => Center(child: Text("Error: $err")),
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: AppColors.primary,
+          onPressed: () {
+            // Add leave request functionality
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) =>  const LeaveRequestForm()),
+            ).then((refreshNeeded) {
+              // Check if refresh is needed
+              if (refreshNeeded == true) {
+                // Trigger the data refresh in the ViewModel
+                ref.refresh(leaveRequestDetailsViewModelProvider);
+              }
+            });
+          },
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

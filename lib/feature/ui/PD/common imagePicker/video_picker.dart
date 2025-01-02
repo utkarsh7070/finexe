@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
@@ -5,10 +6,14 @@ import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/base/utils/widget/upload_box.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+// import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../base/service/session_service.dart';
 
 class CommonVideoPicker extends StatefulWidget {
   final String
@@ -17,11 +22,11 @@ class CommonVideoPicker extends StatefulWidget {
       onImageUploaded; // Callback to pass uploaded image URL // getting url from uploadimage api
 
   const CommonVideoPicker({
-    super.key,
+    Key? key,
     // this.applicantImage,
     required this.gettingVideoUrlFromServer,
     required this.onImageUploaded,
-  });
+  }) : super(key: key);
 
   @override
   _CommonVideoPickerState createState() => _CommonVideoPickerState();
@@ -53,10 +58,20 @@ class _CommonVideoPickerState extends State<CommonVideoPicker> {
         _selectedVideo = video;
         print('video.path: ${video.path}');
       });
-      // await initializeVideoPlayer(video.path);
-      await uploadImage(video.path);
+      await initializeVideoPlayer(video.path);
+      // final compressedFile = await compressVideo(video.path);
+
+      // await uploadImage(compressedFile!.path);
     }
   }
+  // Future<File?> compressVideo(String videoPath) async {
+  //   final compressedVideo = await VideoCompress.compressVideo(
+  //     videoPath,
+  //     quality: VideoQuality.MediumQuality,
+  //     deleteOrigin: false, // Keep the original file
+  //   );
+  //   return compressedVideo?.file;
+  // }
 
   Future<void> initializeVideoPlayer(String videoPath) async {
     // Dispose of the previous controller if it exists
@@ -133,8 +148,8 @@ class _CommonVideoPickerState extends State<CommonVideoPicker> {
     } catch (e) {
       // _showSnackBar('An error occurred while uploading the image.');
       showCustomSnackBar(context,
-          'An error occurred while uploading the image.', AppColors.red);
-
+          'Faild to upload the video try again', AppColors.red);
+      print('error uploading image:: $e');
       setState(() {
         _isLoading = false; // Stop loading on failure
         print('_isLoading false');
@@ -151,7 +166,7 @@ class _CommonVideoPickerState extends State<CommonVideoPicker> {
   @override
   Widget build(BuildContext context) {
     return _isLoading
-        ? SizedBox(
+        ? Container(
             height: displayHeight(context) * 0.16,
             width: displayWidth(context) * 0.91,
 
@@ -206,7 +221,7 @@ class _CommonVideoPickerState extends State<CommonVideoPicker> {
                                 : SizedBox(
                                     height: displayHeight(context) * 0.16,
                                     width: displayWidth(context) * 0.91,
-                                    child: const Center(
+                                    child: Center(
                                         child: CircularProgressIndicator()))),
                   ),
                   Positioned(
@@ -295,7 +310,7 @@ class _CommonVideoPickerState extends State<CommonVideoPicker> {
                       },
                       child: Container(
                         alignment: Alignment.center,
-                        padding: const EdgeInsets.all(14),
+                        padding: EdgeInsets.all(14),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.grey.withOpacity(

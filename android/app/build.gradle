@@ -45,10 +45,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-//    dependencies {
-//        implementation "com.google.android.gms:play-services-maps:19.0.0" // Add the Google Maps dependency
-//        // Other dependencies...
-//    }
+   dependencies {
+       implementation "com.google.android.gms:play-services-maps:19.0.0" // Add the Google Maps dependency
+       // Other dependencies...
+   }
 }
 
 flutter {

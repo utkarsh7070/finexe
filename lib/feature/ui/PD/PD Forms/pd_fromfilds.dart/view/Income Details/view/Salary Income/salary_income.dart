@@ -21,7 +21,7 @@ import 'salary_model/salary_income_model.dart';
 class Salaryincomedetail extends ConsumerStatefulWidget {
   // const Salaryincomedetail({super.key});
   final String customerId;
-  const Salaryincomedetail({super.key, required this.customerId});
+  Salaryincomedetail({required this.customerId});
   @override
   ConsumerState<Salaryincomedetail> createState() => _SalaryIncomeFormState();
 }
@@ -64,27 +64,27 @@ class _SalaryIncomeFormState extends ConsumerState<Salaryincomedetail> {
     final fetchAsyncValue = ref.watch(salaryDetailsProvider(widget.customerId));
     final imageNotifier = ref.read(threemonthsimageUploadProvider.notifier);
 
-    print("output for get $fetchAsyncValue");
+    print("output for get ${fetchAsyncValue}");
 
     return fetchAsyncValue.when(
       loading: () =>
-          const Center(child: CircularProgressIndicator()), // Show loading indicator
+          Center(child: CircularProgressIndicator()), // Show loading indicator
       error: (error, stack) =>
           Center(child: Text('Error: $error')), // Show error message
       data: (salaryDetails) {
         // When data is loaded, populate the form
         if (SalaryincomeForm_AddressSalayProvider.text.isEmpty) {
-          SalaryincomeForm_CompanyName.text = salaryDetails.companyName ?? '';
+          SalaryincomeForm_CompanyName.text = salaryDetails?.items?.data.companyName ?? '';
           SalaryincomeForm_AddressSalayProvider.text =
-              salaryDetails.addressOfSalaryProvider ?? '';
+              salaryDetails?.items?.data.addressOfSalaryProvider ?? '';
           SalaryincomeForm_MobileNo.text =
-              salaryDetails.mobNoOfSalaryProvider ?? '';
+              salaryDetails?.items?.data.mobNoOfSalaryProvider ?? '';
           SalaryincomeForm_FromNumberYear.text =
-              salaryDetails.doingFromNoYears ?? '';
+              salaryDetails?.items?.data.doingFromNoYears ?? '';
           SalaryincomeForm_SalaryPaid.text =
-              salaryDetails.salaryPaidThrough ?? '';
+              salaryDetails?.items?.data.salaryPaidThrough ?? '';
           SalaryincomeForm_MonthlySalary.text =
-              salaryDetails.monthlyNetSalary ?? '';
+              salaryDetails?.items?.data.monthlyNetSalary ?? '';
         }
         return SingleChildScrollView(
           child: Form(
@@ -199,10 +199,10 @@ class _SalaryIncomeFormState extends ConsumerState<Salaryincomedetail> {
                 Text('Last three months of salary slip',
                     style: AppStyles.blackText16),
                 ImageListWidget(
-                  imageUrls: salaryDetails.last3MonthSalarySlipPhotos,
+                  imageUrls: salaryDetails?.items?.data.last3MonthSalarySlipPhotos??[''],
                   onRemove: (index) {
                     setState(() {
-                      salaryDetails.last3MonthSalarySlipPhotos.removeAt(index);
+                      salaryDetails?.items?.data.last3MonthSalarySlipPhotos.removeAt(index);
                     });
                   },
                   onAddImage: () async {
@@ -218,12 +218,12 @@ class _SalaryIncomeFormState extends ConsumerState<Salaryincomedetail> {
                             setState(() {
                               // print('workphotoUrl: $value');
                               // workPhotosList.add(value);
-                              salaryDetails.last3MonthSalarySlipPhotos
+                              salaryDetails?.items?.data.last3MonthSalarySlipPhotos
                                   .add(value);
                               // print(
                               //     'workPhotosList url length:: ${workPhotosList.length}');
                               print(
-                                  'salaryDetails.last3MonthSalarySlipPhotos:: ${salaryDetails.last3MonthSalarySlipPhotos.length}');
+                                  'salaryDetails.last3MonthSalarySlipPhotos:: ${salaryDetails?.items?.data.last3MonthSalarySlipPhotos.length}');
                             });
                           },
                         );
@@ -237,10 +237,10 @@ class _SalaryIncomeFormState extends ConsumerState<Salaryincomedetail> {
                 Text('Last three months of salary slip',
                     style: AppStyles.blackText16),
                 ImageListWidget(
-                  imageUrls: salaryDetails.last3MonthSalarySlipPhotos,
+                  imageUrls: salaryDetails?.items?.data.last3MonthSalarySlipPhotos??[''],
                   onRemove: (index) {
                     setState(() {
-                      salaryDetails.last3MonthSalarySlipPhotos.removeAt(index);
+                      salaryDetails?.items?.data.last3MonthSalarySlipPhotos.removeAt(index);
                     });
                   },
                   onAddImage: () async {
@@ -256,12 +256,12 @@ class _SalaryIncomeFormState extends ConsumerState<Salaryincomedetail> {
                             setState(() {
                               // print('workphotoUrl: $value');
                               // workPhotosList.add(value);
-                              salaryDetails.last3MonthSalarySlipPhotos
+                              salaryDetails?.items?.data.last3MonthSalarySlipPhotos
                                   .add(value);
                               // print(
                               //     'workPhotosList url length:: ${workPhotosList.length}');
                               print(
-                                  'salaryDetails.last3MonthSalarySlipPhotos:: ${salaryDetails.last3MonthSalarySlipPhotos.length}');
+                                  'salaryDetails.last3MonthSalarySlipPhotos:: ${salaryDetails?.items?.data.last3MonthSalarySlipPhotos.length}');
                             });
                           },
                         );
@@ -275,14 +275,17 @@ class _SalaryIncomeFormState extends ConsumerState<Salaryincomedetail> {
                     style: AppStyles.blackText16),
 
                 CommonImagePicker(
-                  applicantImage: salaryDetails.bankStatementPhoto ?? '',
+                  applicantImage: salaryDetails?.items?.data.bankStatementPhoto ?? '',
                   onImageUploaded: (imageUrl) {
                     setState(() {
-                      salaryDetails.bankStatementPhoto.isNotEmpty
-                          ? salaryDetails.bankStatementPhoto = imageUrl
-                          : // Update the image URL
-                          bankStatementUrl = imageUrl;
-                      print('bankStatementUrl:: $bankStatementUrl');
+                      if( salaryDetails?.items?.data.bankStatementPhoto!=null){
+                        salaryDetails!.items!.data.bankStatementPhoto.isNotEmpty
+                            ? salaryDetails.items!.data.bankStatementPhoto = imageUrl
+                            : // Update the image URL
+                        bankStatementUrl = imageUrl;
+                        print('bankStatementUrl:: $bankStatementUrl');
+                      }
+
                     });
                   },
                 ),
@@ -290,10 +293,10 @@ class _SalaryIncomeFormState extends ConsumerState<Salaryincomedetail> {
 
                 Text('Salary Photos', style: AppStyles.blackText16),
                 ImageListWidget(
-                  imageUrls: salaryDetails.salaryPhotos,
+                  imageUrls: salaryDetails?.items?.data.salaryPhotos ?? [''],
                   onRemove: (index) {
                     setState(() {
-                      salaryDetails.salaryPhotos.removeAt(index);
+                      salaryDetails?.items?.data.salaryPhotos.removeAt(index);
                     });
                   },
                   onAddImage: () async {
@@ -309,11 +312,11 @@ class _SalaryIncomeFormState extends ConsumerState<Salaryincomedetail> {
                             setState(() {
                               // print('workphotoUrl: $value');
                               // workPhotosList.add(value);
-                              salaryDetails.salaryPhotos.add(value);
+                              salaryDetails?.items?.data.salaryPhotos.add(value);
                               // print(
                               //     'workPhotosList url length:: ${workPhotosList.length}');
                               print(
-                                  'salaryDetails.last3MonthSalarySlipPhotos:: ${salaryDetails.salaryPhotos.length}');
+                                  'salaryDetails.last3MonthSalarySlipPhotos:: ${salaryDetails?.items?.data.salaryPhotos.length}');
                             });
                           },
                         );
@@ -346,11 +349,11 @@ class _SalaryIncomeFormState extends ConsumerState<Salaryincomedetail> {
                                     SalaryincomeForm_MonthlySalary.text,
                                 salaryCredited6Month: "",
                                 last3MonthSalarySlipPhotos:
-                                    salaryDetails.last3MonthSalarySlipPhotos,
+                                salaryDetails?.items?.data.last3MonthSalarySlipPhotos?? [],
                                 bankStatementPhoto:
-                                    salaryDetails.bankStatementPhoto,
+                                salaryDetails?.items?.data.bankStatementPhoto??'',
                                 // salaryPhotos: ["/uploads/default_milk_photo.png"],
-                                salaryPhotos: salaryDetails.salaryPhotos));
+                                salaryPhotos: salaryDetails?.items?.data.salaryPhotos?? ['']));
 
                         await viewModel.submitSalaryDetailsForm(
                             formData, context);
@@ -366,7 +369,7 @@ class _SalaryIncomeFormState extends ConsumerState<Salaryincomedetail> {
                       }
                     },
                     child: Text(
-                      'Next',
+                      'Save Form',
                       style: AppStyles.whiteText16,
                     )),
               ],

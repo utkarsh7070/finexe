@@ -1,11 +1,13 @@
 // user_profile_view_model.dart
 import 'dart:async';
 
+import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/model/hrmsUserProfile.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../Punch_In_Out/model/check_attendance_responce_model.dart';
@@ -23,7 +25,7 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<LoginUserProfile>> {
   Future<void> fetchLoginUserProfile() async {
     try {
 <<<<<<< HEAD
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
 =======
       String? token = speciality.getToken();
 >>>>>>> origin/To_merge
@@ -114,6 +116,41 @@ Future<List<String>> checkPunchStatus(PunchInRepositoryImp punch) async {
   return [];
 }
 
+String formatTime(String time) {
+  print(time);
+  try {
+    if (time.isEmpty) return 'N/A';
+    DateFormat format = DateFormat("yyyy-MM-dd'T'hh:mm:ss a");
+    DateTime dateTime = format.parse(time);// Handle empty strings
+    // final parsedTime = DateTime.parse(time);
+    print('parse time $dateTime');
+    return DateFormat.jm()
+        .format(dateTime); // Format as 09:30 AM/PM
+  } catch (e) {
+    // Log or handle invalid date format
+    // debugPrint("Error parsing date: $e");
+    return 'Invalid Time';
+  }
+}
+
+String formatDate(String time) {
+  print(time);
+  try {
+    if (time.isEmpty) return 'N/A';
+    DateFormat format = DateFormat("yyyy-MM-dd'T'hh:mm:ss a");
+    DateTime dateTime = format.parse(time);// Handle empty strings
+    // final parsedTime = DateTime.parse(time);
+    print('parse time $dateTime');
+    return DateFormat.yMMMMd()
+        .format(dateTime); // Format as 09:30 AM/PM
+  } catch (e) {
+    // Log or handle invalid date format
+    // debugPrint("Error parsing date: $e");
+    return 'Invalid Time';
+  }
+}
+
+
 final loginUserProfileProvider =
     FutureProvider.autoDispose<HRMSUserProfile>((ref) async {
   final punchInRepository = ref.watch(punchInRepositoryProvider);
@@ -132,10 +169,10 @@ final loginUserProfileProvider =
     // Log the full response to debug
     print('Response user login: ${response.data}');
 
-    if (response.statusCode == 200) {
+    // if (response.statusCode == 200) {
       // Parse the response and return the data
       final data = HRMSUserProfile.fromJson(response.data['items']);
-      final returnData = HRMSUserProfile(
+      final returnData = HRMSUserProfile(designationId: data.designationId,
           punchInTime: punchTime.first,
           punchOutTime: punchTime.last,
           mobileNo: data.mobileNo,
@@ -149,10 +186,10 @@ final loginUserProfileProvider =
           employeUniqueId: data.employeUniqueId);
       print('Login User data response: $data');
       return returnData;
-    } else {
-      throw Exception('Failed to load user profile');
-    }
+  
   } catch (error) {
+    ExceptionHandler().handleError(error);
+    
     // Log the error for debugging
     print('Error: $error');
     rethrow; // The FutureProvider will handle this as an AsyncError

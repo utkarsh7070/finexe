@@ -386,19 +386,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         visible: paymentState.isTransactionImageVisible,
                         child: GestureDetector(
                           onTap: () {
-                            paymentViewModel.clickPhoto().then(
-                              (value) {
-                                if (value != null) {
-                                  // imagePath = value.path;
-                                  // print('imagepath ${imagePath}');
-                                  paymentViewModel.uploadImage(value.path);
-                                } else {
-                                  // ref.watch(updateEmiViewModelProvider.notifier);
-                                  // paymentState.isLoading = false;
-                                  print('elsepart');
-                                }
-                              },
-                            );
+                            paymentViewModel.clickPhoto();
                           },
                           child:
                           !paymentState.isLoading ?
@@ -451,6 +439,8 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                               paymentViewModel.updateEmiSubmitButton(
                                   detail: item!, context: context, ref: ref);
                             }
+                            ref.refresh(fetchVisitPendingDataProvider);
+                            // ref.invalidate(updateEmiViewModelProvider);
                           } else {
                             showCustomSnackBar(
                                 context,

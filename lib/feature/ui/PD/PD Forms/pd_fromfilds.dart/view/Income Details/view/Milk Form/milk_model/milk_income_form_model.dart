@@ -1,3 +1,34 @@
+
+class MilkDataModel {
+  bool? status;
+  int? subCode;
+  String? message;
+  String? error;
+  MilkBusinessModel? items;
+
+  MilkDataModel({this.status, this.subCode, this.message, this.error, this.items});
+
+  MilkDataModel.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    subCode = json['subCode'];
+    message = json['message'];
+    error = json['error'];
+    items = json['items'] != null ? new MilkBusinessModel.fromJson(json['items']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['subCode'] = this.subCode;
+    data['message'] = this.message;
+    data['error'] = this.error;
+    if (this.items != null) {
+      data['items'] = this.items!.toJson();
+    }
+    return data;
+  }
+}
+
 class MilkBusinessModel {
   final String incomeSourceType;
   final MilkBusinessData data;
@@ -11,6 +42,13 @@ class MilkBusinessModel {
     'incomeSourceType': incomeSourceType,
     'data': data.toJson(),
   };
+  // Create object from JSON
+  factory MilkBusinessModel.fromJson(Map<String, dynamic> json) {
+    return MilkBusinessModel(
+      incomeSourceType: json['incomeSourceType'] as String,
+      data: MilkBusinessData.fromJson(json['data']),
+    );
+  }
 }
 
 class MilkBusinessData {

@@ -14,18 +14,18 @@ class GauranterFormModel {
     message = json['message'];
     error = json['error'];
     items = json['items'] != null
-        ? GauranterItems.fromJson(json['items'])
+        ? new GauranterItems.fromJson(json['items'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = status;
-    data['subCode'] = subCode;
-    data['message'] = message;
-    data['error'] = error;
-    if (items != null) {
-      data['items'] = items!.toJson();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['subCode'] = this.subCode;
+    data['message'] = this.message;
+    data['error'] = this.error;
+    if (this.items != null) {
+      data['items'] = this.items!.toJson();
     }
     return data;
   }
@@ -53,21 +53,21 @@ class GauranterItems {
     pdId = json['pdId'];
     pdType = json['pdType'];
     guarantor = json['guarantor'] != null
-        ? Guarantor.fromJson(json['guarantor'])
+        ? new Guarantor.fromJson(json['guarantor'])
         : null;
     guarantorImage = json['guarantorImage'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['_id'] = sId;
-    data['customerId'] = customerId;
-    data['pdId'] = pdId;
-    data['pdType'] = pdType;
-    if (guarantor != null) {
-      data['guarantor'] = guarantor!.toJson();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['customerId'] = this.customerId;
+    data['pdId'] = this.pdId;
+    data['pdType'] = this.pdType;
+    if (this.guarantor != null) {
+      data['guarantor'] = this.guarantor!.toJson();
     }
-    data['guarantorImage'] = guarantorImage;
+    data['guarantorImage'] = this.guarantorImage;
     return data;
   }
 }
@@ -128,23 +128,23 @@ class Guarantor {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['guarantorType'] = guarantorType;
-    data['businessType'] = businessType;
-    data['occupation'] = occupation;
-    data['residenceType'] = residenceType;
-    data['DOB'] = dOB;
-    data['emailId'] = emailId;
-    data['houseLandMark'] = houseLandMark;
-    data['alternateMobileNo'] = alternateMobileNo;
-    data['noOfyearsAtCurrentAddress'] = noOfyearsAtCurrentAddress;
-    data['gender'] = gender;
-    data['religion'] = religion;
-    data['nationality'] = nationality;
-    data['category'] = category;
-    data['caste'] = caste;
-    data['maritalStatus'] = maritalStatus;
-    data['educationalDetails'] = educationalDetails;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['guarantorType'] = this.guarantorType;
+    data['businessType'] = this.businessType;
+    data['occupation'] = this.occupation;
+    data['residenceType'] = this.residenceType;
+    data['DOB'] = this.dOB;
+    data['emailId'] = this.emailId;
+    data['houseLandMark'] = this.houseLandMark;
+    data['alternateMobileNo'] = this.alternateMobileNo;
+    data['noOfyearsAtCurrentAddress'] = this.noOfyearsAtCurrentAddress;
+    data['gender'] = this.gender;
+    data['religion'] = this.religion;
+    data['nationality'] = this.nationality;
+    data['category'] = this.category;
+    data['caste'] = this.caste;
+    data['maritalStatus'] = this.maritalStatus;
+    data['educationalDetails'] = this.educationalDetails;
     return data;
   }
 }

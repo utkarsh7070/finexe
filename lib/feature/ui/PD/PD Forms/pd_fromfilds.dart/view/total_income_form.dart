@@ -3,9 +3,11 @@ import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_update_data/model/Submit%20Data%20Models/total_income_modal.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/Submit Data Models/total_income_modal.dart';
 import '../view_model.dart/total_income_view_modal.dart';
 final isExpTotalIncomeProvider = StateProvider<bool>((ref) => false);
@@ -13,7 +15,7 @@ final isExpTotalIncomeProvider = StateProvider<bool>((ref) => false);
 class TotalIncomeDetailsForm extends ConsumerStatefulWidget {
   // const TotalIncomeDetailsForm({super.key});
   final String customerId;
-  const TotalIncomeDetailsForm({super.key, required this.customerId});
+  TotalIncomeDetailsForm({required this.customerId});
   @override
   _TotalIncomeDetailsFormState createState() => _TotalIncomeDetailsFormState();
 }
@@ -45,7 +47,7 @@ class _TotalIncomeDetailsFormState
   Widget build(BuildContext context) {
     //isExpTotalIncomeProvider
     final appState = ref.watch(pdIncomeDetailsProvider);
-    final isExpanded = ref.watch(isExpTotalIncomeProvider);
+    final _isExpanded = ref.watch(isExpTotalIncomeProvider);
 
     final incomeDetails = ref.watch(totalIncomeDetailsProvider(widget.customerId));
     // print('appState:: ${incomeDetails}');
@@ -63,19 +65,19 @@ class _TotalIncomeDetailsFormState
               ref.refresh(totalIncomeDetailsProvider(widget.customerId));
             }
           },
-          initiallyExpanded: isExpanded,
+          initiallyExpanded: _isExpanded,
           children: <Widget>[
             incomeDetails.when(
                 data: (incomeData) {
                   if (totalincomeForm_yearlyIncomeController.text.isEmpty) {
                     totalincomeForm_expensesYearlyController.text =
-                        incomeData.totalExpensesYearly ?? '';
+                        incomeData.totalIncomeDetails?.totalExpensesYearly ?? '';
                     totalincomeForm_expensesMonthlyController.text =
-                        incomeData.totalExpensesMonthly ?? '';
+                        incomeData.totalIncomeDetails?.totalExpensesMonthly ?? '';
                     totalincomeForm_yearlyIncomeController.text =
-                        incomeData.totalYearlyIncome ?? '';
+                        incomeData.totalIncomeDetails?.totalYearlyIncome ?? '';
                     totalincomeForm_monthlyIncomeController.text =
-                        incomeData.totalMonthlyIncome ?? '';
+                        incomeData.totalIncomeDetails?.totalMonthlyIncome ?? '';
                   }
                   return  Form(
                       key: _formKey,
@@ -178,31 +180,25 @@ class _TotalIncomeDetailsFormState
                                 await ref
                                     .read(pdIncomeDetailsProvider.notifier)
                                     .submitIncomeDetails(
+                                  context: context,
                                   customerId:  widget.customerId,
                                   pdType: 'creditPd',
                                   incomeDetails:
                                   incomeDetails, // Pass the object here
+                                ).then(
+                                  (value) {
+                                    if(value==true){
+                                      showCustomSnackBar(
+                                          context,'Form Saved successfully!', Colors.green);
+                                    }
+
+                                  },
                                 );
 
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: AppColors.green,
-                                    content: Text(
-                                      'Form submitted successfully!',
-                                      style: AppStyles.whiteText16,
-                                    ),
-                                  ),
-                                );
+
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: AppColors.red,
-                                    content: Text(
-                                      'Please fill all required details!',
-                                      style: AppStyles.whiteText16,
-                                    ),
-                                  ),
-                                );
+                                showCustomSnackBar(
+                                    context,'Please fill all required details!', Colors.green);
                               }
                             },
                             child: appState.isLoading == true
@@ -217,7 +213,7 @@ class _TotalIncomeDetailsFormState
                               ),
                             )
                                 : Text(
-                              'Next',
+                              'Save Form',
                               style: AppStyles.whiteText16,
                             ),
                           ),

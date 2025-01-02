@@ -5,13 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart'; // Adjust the path
 // import '../../../../../../../base/utils/namespase/app_colors.dart';
+import '../../../../../base/utils/widget/custom_snackbar.dart';
+import '../model/Submit Data Models/police_station_model.dart';
+import '../view_model.dart/applicant_view_model.dart';
 import '../view_model.dart/police_view_modal.dart';
 final isExpPoliceStationProvider = StateProvider<bool>((ref) => false);
 
 class PoliceStationForm extends ConsumerStatefulWidget {
   // const PoliceStationForm({super.key});
   final String customerId;
-  const PoliceStationForm({super.key, required this.customerId});
+  PoliceStationForm({required this.customerId});
   @override
   ConsumerState<PoliceStationForm> createState() => _PoliceStationFormState();
 }
@@ -40,9 +43,9 @@ class _PoliceStationFormState extends ConsumerState<PoliceStationForm> {
     // Access the ViewModel's state
     final appState = ref.watch(pdPoliceSubmitDataProvider);
 
-    final isExpanded = ref.watch(isExpPoliceStationProvider);
+    final _isExpanded = ref.watch(isExpPoliceStationProvider);
     final policeDetails = ref.watch(policeDetailsProvider(widget.customerId));
-    print('policegetData:: $policeDetails');
+    print('policegetData:: ${policeDetails}');
 
     return ExpansionTile(
           childrenPadding: const EdgeInsets.only(left: 16, bottom: 10),
@@ -57,16 +60,16 @@ class _PoliceStationFormState extends ConsumerState<PoliceStationForm> {
               ref.refresh(policeDetailsProvider(widget.customerId));
             }
           },
-          initiallyExpanded: isExpanded,
+          initiallyExpanded: _isExpanded,
           children: [
             policeDetails.when(
                 data: (policeData) {
                   if (policestationFormNameController.text.isEmpty) {
-                    policestationFormNameController.text = policeData.stationName ?? '';
+                    policestationFormNameController.text = policeData.items?.policeStation?.stationName ?? '';
                     policestationFormAddressController.text =
-                        policeData.stationAddress ?? '';
+                        policeData.items?.policeStation?.stationAddress ?? '';
                   }
-                  return  Form(
+                  return Form(
                     key: _formKey,
                     child: Column(
                       children: [
@@ -109,6 +112,7 @@ class _PoliceStationFormState extends ConsumerState<PoliceStationForm> {
                             ref
                                 .read(pdPoliceSubmitDataProvider.notifier)
                                 .submitpdPoloiceForm(
+                              context:  context,
                               customerId:  widget.customerId,
                               pdType: 'creditPd',
                               //  policeStation: policeStation,
@@ -119,25 +123,8 @@ class _PoliceStationFormState extends ConsumerState<PoliceStationForm> {
                             ).then(
                               (value) {
                                 if (value) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      backgroundColor: AppColors.green,
-                                      content: Text(
-                                        'Form submitted successfully!',
-                                        style: AppStyles.whiteText16,
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      backgroundColor: AppColors.red,
-                                      content: Text(
-                                        'Faild to submit the form please try again',
-                                        style: AppStyles.whiteText16,
-                                      ),
-                                    ),
-                                  );
+                                  showCustomSnackBar(
+                                      context,'Form Saved successfully!', Colors.green);
                                 }
                               },
                             );
@@ -154,7 +141,7 @@ class _PoliceStationFormState extends ConsumerState<PoliceStationForm> {
                             ),
                           )
                               : Text(
-                            'Next',
+                            'Save Form',
                             style: AppStyles.whiteText16,
                           ),
                         ),

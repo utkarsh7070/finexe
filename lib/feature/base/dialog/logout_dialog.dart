@@ -25,6 +25,7 @@ class LogOutDialog {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
+                    fontWeight: FontWeight.w500
                   )),
           //const Text('Add User Phrase /n/n Say user phrase aloud or type in manually'),
           content: SizedBox(

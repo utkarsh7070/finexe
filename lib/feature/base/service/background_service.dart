@@ -11,7 +11,6 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 // class BackgroundService{
@@ -102,6 +101,12 @@ class BackgroundService {
   static ServiceInstance? mService;
   static SwitchService staticValue = SwitchService.start;
   static String? serviceSatus;
+
+  static final BackgroundService _instance = BackgroundService._internal();
+  factory BackgroundService() => _instance;
+  late IO.Socket socket;
+
+  BackgroundService._internal();
 
   Future<void> initializeService() async {
     final service = FlutterBackgroundService();

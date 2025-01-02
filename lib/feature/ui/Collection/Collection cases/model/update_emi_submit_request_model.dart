@@ -27,7 +27,7 @@ class UpdateEmiSubmitRequestModel {
   @JsonKey(name: "bankName")
   String bankName;
   @JsonKey(name: "customerEmail")
-  String customerEmail;
+  String? customerEmail;
   @JsonKey(name: "emiReceivedDate")
   String emiReceivedDate;
   @JsonKey(name: "remarkByCollection")

@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart';
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/ui/Sales/SalesProfile/view/sales_profile.dart';
 import 'package:flutter/material.dart';
@@ -126,41 +126,46 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
       //   SystemNavigator.pop();
       //   return false; // Prevents back navigation
       // },
-      child: Scaffold(
-          floatingActionButton: tabViewModel.selectedIndex == 0
-              ? FloatingActionButton(
-                  foregroundColor: AppColors.black,
-                  backgroundColor: AppColors.white,
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50)),
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.newLone);
-                    // Navigator.pushNamed(context, AppRoutes.newLone);
-                  },
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.black,
-                  ),
-                )
-              : null,
 
-          bottomNavigationBar:
-              DashBoardBottomNavigationBar(tabController: _tabController),
-          appBar: tabViewModel.selectedIndex == 0?AppBar(iconTheme: const IconThemeData(color: AppColors.white),
-            backgroundColor: AppColors.primary,
-          ):null,
-          drawer:  const DrawerScreen(),
-          body: IndexedStack(
-            index: tabViewModel.selectedIndex,
-            children: const <Widget>[
-              OnBoardingScreen(),
-              SalesCasesScreen(),
-              LeadListScreen(),
-              SalesProfile(),
+      child: NetworkListener(
+      context: context,
+        child: Scaffold(
+            floatingActionButton: tabViewModel.selectedIndex == 0
+                ? FloatingActionButton(
+                    foregroundColor: AppColors.black,
+                    backgroundColor: AppColors.white,
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50)),
+                    onPressed: () {
+                      Navigator.pushNamed(context, AppRoutes.newLone);
+                      // Navigator.pushNamed(context, AppRoutes.newLone);
+                    },
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.black,
+                    ),
+                  )
+                : null,
+        
+            bottomNavigationBar:
+                DashBoardBottomNavigationBar(tabController: _tabController),
+            appBar: tabViewModel.selectedIndex == 0?AppBar(iconTheme: const IconThemeData(color: AppColors.white),
+              backgroundColor: AppColors.primary,
+            ):null,
+            drawer:  const DrawerScreen(),
+            body: IndexedStack(
+              index: tabViewModel.selectedIndex,
+              children: const <Widget>[
+                OnBoardingScreen(),
+                SalesCasesScreen(),
+                LeadListScreen(),
+                SalesProfile(),
+        
+              ],
+            )),
+      ),
 
-            ],
-          )),
     );
   }
 }

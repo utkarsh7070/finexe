@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:roam_flutter/roam_flutter.dart';
 
 import '../../../../Punch_In_Out/repository/puch_In_repository_imp.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
@@ -27,25 +26,20 @@ class HRMSDashBoardViewModel extends StateNotifier<bool> {
   final Dio dio;
 
   Future<bool?> onPunchOut(BuildContext context) async {
-    // SharedPreferences sharedPreferences = await  SharedPreferences.getInstance();
-    // final String? storedToken = sharedPreferences.getString('token');
     final String? storedToken = speciality.getToken();
 
-    
     Map<String, String> token = {"token": storedToken!};
     print(token.values);
     try {
       log('onPunchOut');
       var response = await _punchInRepository.punchOut(token);
       print('punch out response  ${response.data}');
-// log("onPunchOut response: " + response.);
       log('puch');
       var responseData = response.data; // Assuming response.data is a Map
       var message = responseData['message'];
 // Punch punchInModel = PunchInModel.fromJson(response.data);
       if (response.statusCode == 200) {
         showCustomSnackBar(context, message, AppColors.green);
-        Roam.stopTracking();
 // PunchInModel punchInModel = PunchInModel.fromJson(response.data);
       } else {
         showCustomSnackBar(context, message, AppColors.green);
@@ -99,11 +93,12 @@ class HRMSDashBoardViewModel extends StateNotifier<bool> {
 
 class RoleListModel {
   final List<String> role;
+
   RoleListModel({required this.role});
 }
 
 class RoleListNotifier extends StateNotifier<RoleListModel> {
-  RoleListNotifier() : super(RoleListModel(role: [])){
+  RoleListNotifier() : super(RoleListModel(role: [])) {
     loadRoles();
   }
 
@@ -127,6 +122,19 @@ class RoleListNotifier extends StateNotifier<RoleListModel> {
   }
 }
 
-final roleListProvider = StateNotifierProvider.autoDispose<RoleListNotifier, RoleListModel>(
-      (ref) => RoleListNotifier(),
+final roleListProvider =
+    StateNotifierProvider.autoDispose<RoleListNotifier, RoleListModel>(
+  (ref) => RoleListNotifier(),
 );
+// final AttendanceCountStateProvider = StateProvider<List<AttendanceCountModel>>((ref) {
+//   return [
+//
+//   ];
+// },);
+//
+// class AttendanceCountModel{
+//   final String label;
+//   final String count;
+//   AttendanceCountModel(this.label, this.count);
+//
+// }

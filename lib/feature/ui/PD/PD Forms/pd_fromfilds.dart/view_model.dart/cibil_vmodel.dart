@@ -3,11 +3,17 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/model/Submit%20Data%20Models/cibil_form_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/refrence_form_model.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/referance/referance_details.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 
+
+import '../../../../../base/api/dio_exception.dart';
+import '../model/Submit Data Models/refrence_form_model.dart';
 final isExpandedProvider = StateProvider<bool>((ref) => false);
 
 
@@ -19,13 +25,16 @@ class PDCibilDetails extends StateNotifier<ApplicationState> {
   Future<bool> submitpdCibilDetailsForm({
     required String customerId,
     required String pdType,
-
+    required BuildContext context,
     // required List<ReferenceDetails> refrenceFormList,
    // required List<Map<String, dynamic>> refrenceFormList,
     required CibilAnalysis cibilData
   }) async {
     state = state.copyWith(isLoading: true);
-
+    // if(state.isLoading==true){
+    //   print('click second time');
+    //   return false;
+    // }
     // Add customerId and pdType to the payload
     final payload = {
       'cibilAnalysis': cibilData.toJson(),
@@ -42,7 +51,7 @@ class PDCibilDetails extends StateNotifier<ApplicationState> {
       print(token);
       print(payload);
       print(response.data);
-      print('Payload: $payload');
+      print('Payload: ${payload}');
 
       if (response.statusCode == 200) {
         print('cibil form submitted: ${response.data}');
@@ -54,9 +63,12 @@ class PDCibilDetails extends StateNotifier<ApplicationState> {
         print('Error while submitting refernceFormData form');
         return false;
       }
-    } catch (e) {
+    }
+    catch (e) {
       state = state.copyWith(isLoading: false);
       print('Exception in refrenceDeatils form: $e');
+      DioExceptions.fromDioError(e as DioException, context);
+
       // throw Exception(e);
       return false;
     }
@@ -99,7 +111,7 @@ class ApplicationState {
 
 
 final cibilDetailsProvider =
-FutureProvider.autoDispose.family<CibilAnalysis,String>((ref,customerId) async {
+FutureProvider.autoDispose.family<CibilAnalysis?,String>((ref,customerId) async {
   final viewModel = ApplicationFormDetailsProvider();
   return await viewModel.fetchApplicationDetails(customerId);
 });
@@ -107,9 +119,9 @@ FutureProvider.autoDispose.family<CibilAnalysis,String>((ref,customerId) async {
 class ApplicationFormDetailsProvider {
   final Dio _dio = Dio();
 
-  Future<CibilAnalysis> fetchApplicationDetails(String customerId) async {
+  Future<CibilAnalysis?> fetchApplicationDetails(String customerId) async {
     String? token = speciality.getToken();
-
+    CibilAnalysis cibildetails = CibilAnalysis();
     print('urlC: ${Api.getpdformdata}$customerId');
 
     try {
@@ -129,21 +141,30 @@ class ApplicationFormDetailsProvider {
           final cibilData = itemsData['cibilAnalysis'];
 
           if (cibilData != null && cibilData is Map<String, dynamic>) {
-            final cibildetails = CibilAnalysis.fromJson(cibilData);
+             cibildetails = CibilAnalysis.fromJson(cibilData);
             print('cibildetails:: ${cibildetails.totalLoans}');
             return cibildetails;
           } else {
-            throw Exception("Cibil Analysis data not found in the response");
+            // throw Exception("Cibil Analysis data not found in the response");
+            print('Cibil Analysis data not found in the response');
+            return cibildetails;
           }
         } else {
-          throw Exception("Items data not found in the response");
+          // throw Exception("Items data not found in the response");
+          print('Items data not found in the response');
+          return cibildetails;
+
         }
       } else {
-        throw Exception("Failed to load application data: ${response.statusCode}");
+        // throw Exception("Failed to load application data: ${response.statusCode}");
+        print('Failed to load application data: ${response.statusCode}');
+        return cibildetails;
+
       }
     } catch (e) {
       print("Error fetching applicant details: $e");
-      throw Exception("Error fetching application data: $e");
+      // throw Exception("Error fetching application data: $e");
+      return cibildetails;
     }
   }
 

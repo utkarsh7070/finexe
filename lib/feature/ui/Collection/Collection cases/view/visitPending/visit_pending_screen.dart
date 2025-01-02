@@ -23,10 +23,7 @@ class VisitPendingScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final data = ref.watch(fetchVisitPendingDataProvider);
-    final searchResults = ref.watch(searchResultsProvider);
-
-
-
+     final searchResults = ref.watch(searchResultsProvider);
     return data.when(
       data: (data) {
         List<ItemsDetails> listOfLists = data.map((map) {
@@ -36,6 +33,7 @@ class VisitPendingScreen extends ConsumerWidget {
         List<String> searchItems = listOfLists
             .map((item) => item.customerName ?? '')
             .toList();
+
 
         return Container(
           padding: const EdgeInsets.only(left: 16, right: 16),
@@ -48,7 +46,9 @@ class VisitPendingScreen extends ConsumerWidget {
             child: Column(
               children: [
                 SizedBox(height: displayHeight(context)*0.01,)
+
                 , AdvancedSearch(
+
 
                   // data: ,
                   maxElementsToDisplay: 0,
@@ -89,6 +89,7 @@ class VisitPendingScreen extends ConsumerWidget {
                       print("Cleared Search");
                     }
                   },
+
                   onSubmitted: (searchText, listOfResults) {
 
                     List<String> filteredNames = searchItems
@@ -117,6 +118,7 @@ class VisitPendingScreen extends ConsumerWidget {
                     ref.read(searchResultsProvider.notifier).state = filteredResults;
                   },
                   searchItems: searchItems,
+
                 ),
                 SizedBox(
                   height: displayHeight(context) * 0.03,
@@ -127,7 +129,9 @@ class VisitPendingScreen extends ConsumerWidget {
                     height: displayHeight(context),
                     width: displayWidth(context),
                     child: ListView.builder(
+
                       itemCount: searchResults.length, // Use filtered results
+
                       itemBuilder: (context, index) {
                         final item = searchResults[index];
                         // List<String> valueList = item.values.toList();

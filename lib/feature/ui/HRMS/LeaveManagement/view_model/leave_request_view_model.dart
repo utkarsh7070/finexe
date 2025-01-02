@@ -107,6 +107,7 @@ class LeaveRequestViewModel extends ChangeNotifier {
 
 }
 
+
 final fetchLeaveTypeProvider = FutureProvider.autoDispose<List<Item>>((ref) async {
   String? token = speciality.getToken();
   final dio = ref.read(dioProvider);
@@ -138,6 +139,7 @@ final fetchLeaveTypeProvider = FutureProvider.autoDispose<List<Item>>((ref) asyn
     print('Unexpected error: $e');
     throw Exception(e);
   }
+
 
 });
 
