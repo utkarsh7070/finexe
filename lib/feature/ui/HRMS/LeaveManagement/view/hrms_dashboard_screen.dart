@@ -1,11 +1,11 @@
+
+import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 import 'package:finexe/feature/base/internetConnection/connection_overlay.dart';
+
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
-
-import 'package:finexe/feature/base/utils/widget/app_button.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
 import 'package:flutter/cupertino.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
@@ -99,9 +99,11 @@ class HRMSDashboardScreen extends ConsumerWidget {
                 ),
                 actions: [
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        LogOutDialog.logOutDialog(context: context);
+                      },
                       icon: const Icon(
-                        Icons.notifications_outlined,
+                        Icons.logout,
                       ))
                 ],
                 // const Text("Dashboard", style: TextStyle(color: Colors.white)),
@@ -457,6 +459,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
         );
       },
     ));
+
 
   }
 
