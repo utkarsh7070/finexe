@@ -173,14 +173,14 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                   (route) => false, // Remove all previous routes
                 );
               } 
-              // else if (roles.contains('creditPd')) {
-              //   log("Navigating to pd dashboard");
-              //   Navigator.pushNamedAndRemoveUntil(
-              //     context,
-              //     AppRoutes.pdscreen, // CIBIL dashboard route
-              //     (route) => false, // Remove all previous routes
-              //   );
-              // } 
+              else if (roles.contains('creditPd')) {
+                log("Navigating to pd dashboard");
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.pdscreen, // CIBIL dashboard route
+                  (route) => false, // Remove all previous routes
+                );
+              } 
               else {
                 // Default role navigation
                 log('No matching role found, navigating to HRMS');

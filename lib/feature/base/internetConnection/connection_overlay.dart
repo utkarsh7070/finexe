@@ -44,7 +44,7 @@ class NoDataFound extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaY: 1, sigmaX: 1),
+        filter: ImageFilter.blur(sigmaY: 0, sigmaX: 0),
         child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
