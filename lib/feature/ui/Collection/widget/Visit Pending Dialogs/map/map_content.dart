@@ -17,7 +17,7 @@ class MapContent extends ConsumerWidget{
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentLocation = ref.watch(currentLocationProvider);
-    final polylines = ref.watch(polylineProvider);
+    // final polylines = ref.watch(polylineProvider);
 
       return currentLocation.when(
         data: (position) {
@@ -54,21 +54,21 @@ class MapContent extends ConsumerWidget{
     });
   }
   // Function to get directions and update the polyline required provider
-  void _getDirections(
-      {required WidgetRef ref, required LatLng origin, required LatLng destination}) async {
-    final directions = await ref.read(directionsProvider(destination).future);
-    print("directions $directions");
-    if (directions.isNotEmpty) {
-      final polyline =
-      Polyline(
-        polylineId: const PolylineId('route'),
-        color: Colors.blue,
-        width: 5,
-        points: directions,
-      );
-      ref.read(polylineProvider.notifier).state = [polyline];
-    }
-  }
+  // void _getDirections(
+  //     {required WidgetRef ref, required LatLng origin, required LatLng destination}) async {
+  //   final directions = await ref.read(directionsProvider(destination).future);
+  //   print("directions $directions");
+  //   if (directions.isNotEmpty) {
+  //     final polyline =
+  //     Polyline(
+  //       polylineId: const PolylineId('route'),
+  //       color: Colors.blue,
+  //       width: 5,
+  //       points: directions,
+  //     );
+  //     ref.read(polylineProvider.notifier).state = [polyline];
+  //   }
+  // }
 
   // void openMap(double latitude, double longitude) async {
   //   final googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
