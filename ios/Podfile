@@ -35,6 +35,7 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
   pod 'GoogleMaps', '~> 7.3'
+
   # pod 'Google-Maps-iOS-Utils', '~> 4.2.2'
   # pod 'GooglePlaces'
   

@@ -1,3 +1,4 @@
+import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 import 'package:finexe/feature/base/internetConnection/connection_overlay.dart';
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
@@ -98,11 +99,17 @@ class HRMSDashboardScreen extends ConsumerWidget {
                   ),
                 ),
                 actions: [
-                  IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.notifications_outlined,
-                      ))
+                   IconButton(
+                                      onPressed: () {
+                                        LogOutDialog.logOutDialog(
+                                            context: context);
+                                      },
+                                      icon: const Icon(
+                                        Icons.logout,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                 
                 ],
                 // const Text("Dashboard", style: TextStyle(color: Colors.white)),
                 // backgroundColor: AppColors.primary,
@@ -405,17 +412,17 @@ class HRMSDashboardScreen extends ConsumerWidget {
                       //           ),
                       //           Column(
                       //             children: [
-                      //               IconButton(
-                      //                 onPressed: () {
-                      //                   LogOutDialog.logOutDialog(
-                      //                       context: context);
-                      //                 },
-                      //                 icon: const Icon(
-                      //                   Icons.logout,
-                      //                   color: AppColors.primary,
-                      //                 ),
-                      //               ),
-                      //               const Text('Logout')
+                                    // IconButton(
+                                    //   onPressed: () {
+                                    //     LogOutDialog.logOutDialog(
+                                    //         context: context);
+                                    //   },
+                                    //   icon: const Icon(
+                                    //     Icons.logout,
+                                    //     color: AppColors.primary,
+                                    //   ),
+                                    // ),
+                                    // const Text('Logout')
                       //             ],
                       //           ),
                       //         ],
