@@ -1,12 +1,16 @@
 import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart';
 import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/dialog/logout_dialog.dart';
+
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
+
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/view/leave_request_form.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -44,13 +48,18 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     // final punchInOutSideViewModel = ref.read(punchInOutSideViewModelProvider);
 
     final checkPunchProvider = ref.watch(attendanceProvider);
+
     bool? isallowed;
 
     isallowed =
     checkPunchProvider.punchAllowed;
+
     // final socketService = ref.read(socketServiceProvider);
     final data = ref.watch(attendanceProvider);
+
+    print("mp punching status ${checkPunchProvider.punchAllowed}");
     //--------------------------------new code in progress-----------------------------------
+
     // final attendeance
     //---------------------------------------------------------------------------------------
     return NetworkListener(
@@ -980,6 +989,7 @@ void showAttendanceSuccessPopup(BuildContext context, String remark) {
                       ],
                     ),
                   ),
+
                   Expanded(
                     child: Container(
                       child: Text(

@@ -24,18 +24,17 @@ class VisitPendingScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final data = ref.watch(fetchVisitPendingDataProvider);
      final searchResults = ref.watch(searchResultsProvider);
-
-
-
     return data.when(
       data: (data) {
         List<ItemsDetails> listOfLists = data.map((map) {
           return ItemsDetails.fromJson(map);
         }).toList();
-     
-        
-      
-       
+
+        List<String> searchItems = listOfLists
+            .map((item) => item.customerName ?? '')
+            .toList();
+
+
         return Container(
           padding: const EdgeInsets.only(left: 16, right: 16),
           height: displayHeight(context),
@@ -47,7 +46,9 @@ class VisitPendingScreen extends ConsumerWidget {
             child: Column(
               children: [
                 SizedBox(height: displayHeight(context)*0.01,)
-               , AdvancedSearch(
+
+                , AdvancedSearch(
+
 
                   // data: ,
                   maxElementsToDisplay: 0,
@@ -88,15 +89,36 @@ class VisitPendingScreen extends ConsumerWidget {
                       print("Cleared Search");
                     }
                   },
-               onSubmitted: (searchText, listOfResults) {
-                 searchupdate(ref,searchText,listOfLists);
-                   
+
+                  onSubmitted: (searchText, listOfResults) {
+
+                    List<String> filteredNames = searchItems
+                        .where((name) =>
+                        name.toLowerCase().contains(searchText.toLowerCase()))
+                        .toList();
+
+                    // Map filtered names back to full ItemsDetails objects
+                    final filteredResults = listOfLists.where((item) {
+                      return filteredNames.contains(item.customerName);
+                    }).toList();
+
+                    ref.read(searchResultsProvider.notifier).state = filteredResults;
                   },
                   onEditingProgress: (searchText, listOfResults) {
-                  
-                   searchupdate(ref,searchText,listOfLists);
+
+                    List<String> filteredNames = searchItems
+                        .where((name) =>
+                        name.toLowerCase().contains(searchText.toLowerCase()))
+                        .toList();
+
+                    final filteredResults = listOfLists.where((item) {
+                      return filteredNames.contains(item.customerName);
+                    }).toList();
+
+                    ref.read(searchResultsProvider.notifier).state = filteredResults;
                   },
-                  searchItems: [],
+                  searchItems: searchItems,
+
                 ),
                 SizedBox(
                   height: displayHeight(context) * 0.03,
@@ -107,7 +129,9 @@ class VisitPendingScreen extends ConsumerWidget {
                     height: displayHeight(context),
                     width: displayWidth(context),
                     child: ListView.builder(
-                     itemCount: searchResults.length, // Use filtered results
+
+                      itemCount: searchResults.length, // Use filtered results
+
                       itemBuilder: (context, index) {
                         final item = searchResults[index];
                         // List<String> valueList = item.values.toList();
@@ -123,16 +147,16 @@ class VisitPendingScreen extends ConsumerWidget {
                                     SizedBox(
                                       child: Row(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
                                           customerNameDetails(
                                             mobile: item.mobile!,
                                             context,
                                             heading: 'Customer Name',
                                             data:
-                                                '${item.customerName} S/O ${item.fatherName}',
+                                            '${item.customerName} S/O ${item.fatherName}',
                                           ),
                                           GestureDetector(
                                             onTap: () {
@@ -147,10 +171,10 @@ class VisitPendingScreen extends ConsumerWidget {
                                             },
                                             child: Center(
                                                 child: Image.asset(
-                                              'assets/images/info.png',
-                                              height: 20,
-                                              width: 20,
-                                            )),
+                                                  'assets/images/info.png',
+                                                  height: 20,
+                                                  width: 20,
+                                                )),
                                           )
                                         ],
                                       ),
@@ -160,30 +184,30 @@ class VisitPendingScreen extends ConsumerWidget {
                                     ),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                       children: [
                                         Center(
                                             child: Text(
-                                          item.ld!,
-                                          style: AppStyles.cardTextStyle16
-                                              .copyWith(
+                                              item.ld!,
+                                              style: AppStyles.cardTextStyle16
+                                                  .copyWith(
                                                   color: AppColors.primary,
                                                   fontSize: FontSize.fontSizeS),
-                                        )),
+                                            )),
                                         Container(
                                             padding: const EdgeInsets.all(6),
                                             decoration: const BoxDecoration(
                                                 borderRadius: BorderRadius.only(
                                                     topLeft: Radius.circular(10),
                                                     bottomRight:
-                                                        Radius.circular(10)),
+                                                    Radius.circular(10)),
                                                 color: AppColors.primaryOrange),
                                             child: Center(
                                                 child: Text(
-                                              item.partner!,
-                                              style: const TextStyle(
-                                                  color: Colors.orange),
-                                            ))),
+                                                  item.partner!,
+                                                  style: const TextStyle(
+                                                      color: Colors.orange),
+                                                ))),
                                       ],
                                     ),
                                     const Divider(
@@ -194,11 +218,11 @@ class VisitPendingScreen extends ConsumerWidget {
                                     ),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                       children: [
                                         Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               'Address',
@@ -206,17 +230,17 @@ class VisitPendingScreen extends ConsumerWidget {
                                             ),
                                             SizedBox(
                                                 width:
-                                                    displayWidth(context) * 0.65,
+                                                displayWidth(context) * 0.65,
                                                 child: Text(
                                                     item.address!.capitalize(),
                                                     maxLines: 3,
                                                     overflow:
-                                                        TextOverflow.ellipsis,
+                                                    TextOverflow.ellipsis,
                                                     style: AppStyles
                                                         .subHeadingW500
                                                         .copyWith(
-                                                            fontWeight: FontWeight
-                                                                .w600))),
+                                                        fontWeight: FontWeight
+                                                            .w600))),
                                           ],
                                         ),
                                         SizedBox(
@@ -238,10 +262,10 @@ class VisitPendingScreen extends ConsumerWidget {
                                                 color: AppColors.primaryLight),
                                             child: Center(
                                                 child: Image.asset(
-                                              'assets/images/Location.png',
-                                              height: 20,
-                                              width: 20,
-                                            )),
+                                                  'assets/images/Location.png',
+                                                  height: 20,
+                                                  width: 20,
+                                                )),
                                           ),
                                         )
                                       ],
@@ -252,7 +276,7 @@ class VisitPendingScreen extends ConsumerWidget {
                                     ),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
+                                      MainAxisAlignment.spaceAround,
                                       children: [
                                         Container(
                                           width: displayWidth(context) * 0.25,
@@ -298,7 +322,7 @@ class VisitPendingScreen extends ConsumerWidget {
                                     // ),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                       children: [
                                         SizedBox(
                                           width: displayWidth(context) * 0.37,
@@ -309,15 +333,15 @@ class VisitPendingScreen extends ConsumerWidget {
                                                 backgroundColor: AppColors.white,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(10),
+                                                  BorderRadius.circular(10),
                                                 ),
                                               ),
                                               onPressed: () {
                                                 UpdateVisitDialog()
                                                     .updateVisitDialog(
-                                                        item: item,
-                                                        context: context,
-                                                        index: index);
+                                                    item: item,
+                                                    context: context,
+                                                    index: index);
                                               },
                                               child: const Text(
                                                 'Update Visit',
@@ -334,7 +358,7 @@ class VisitPendingScreen extends ConsumerWidget {
                                                 backgroundColor: AppColors.white,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(10),
+                                                  BorderRadius.circular(10),
                                                 ),
                                               ),
                                               onPressed: () {
@@ -363,7 +387,7 @@ class VisitPendingScreen extends ConsumerWidget {
                                             backgroundColor: AppColors.white,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                             ),
                                           ),
                                           onPressed: () {
@@ -421,9 +445,9 @@ class VisitPendingScreen extends ConsumerWidget {
 
   Widget buttons(context,
       {required String text,
-      required VoidCallback onTap,
-      required String text1,
-      required VoidCallback onTap1}) {
+        required VoidCallback onTap,
+        required String text1,
+        required VoidCallback onTap1}) {
     return SizedBox(
       width: displayWidth(context),
       child: Row(
@@ -481,9 +505,9 @@ class VisitPendingScreen extends ConsumerWidget {
 
   Widget emiText(
       {required String text1,
-      required String text2,
-      required Color text1Color,
-      required Color text2Color}) {
+        required String text2,
+        required Color text1Color,
+        required Color text2Color}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
