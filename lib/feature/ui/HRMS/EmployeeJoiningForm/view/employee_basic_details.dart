@@ -15,6 +15,7 @@ class EmployeeBasicDetails extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final employeeDataViewModel = ref.read(employeeViewModelProvider.notifier);
+    final employeeDataController = ref.watch(employeeDetailsController);
     // final employeeDataState = ref.watch(employeeViewModelProvider);
     return Scaffold(
       appBar: AppBar(
@@ -31,7 +32,7 @@ class EmployeeBasicDetails extends ConsumerWidget {
             children: [
               const Text('Employee Basic Details'),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
               AppFloatTextField(
                 // focusNode:
@@ -51,7 +52,7 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
               AppFloatTextField(
                 // focusNode:
@@ -71,7 +72,7 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
               SizedBox(
                 child: Center(
@@ -80,22 +81,28 @@ class EmployeeBasicDetails extends ConsumerWidget {
                     width: displayWidth(context) * 0.50,
                     label: 'Send Otp',
                     onTap: () {
-                      OtpDialog().otpDialog(context: context);
+                      employeeDataViewModel.fetchAadhaarNumber(context).then((value) {
+                        if(value){
+                            OtpDialog().otpDialog(context: context);
+                          }
+                        },);
+
                     },
                   ),
                 ),
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
-              const AppFloatTextField(
+               AppFloatTextField(
+                 controller: employeeDataViewModel.fullNameController,
                 // focusNode:
                 // personalFocusViewModel.aadhaarFocusNode,
                 // currentState:
                 // personalFocusStates['aadhaarFocusNode'],
-                // onChange: (value) {
-                //   personalFormViewModel.updateAadhaar(value);
-                // },
+                onChange: (value) {
+                  employeeDataViewModel.updateName(value);
+                },
                 // height: !personalFormState.isAadhaarValid
                 //     ? displayHeight(context) * 0.09
                 //     : null,
@@ -106,16 +113,16 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
-              const AppFloatTextField(
+               AppFloatTextField(
                 // focusNode:
                 // personalFocusViewModel.aadhaarFocusNode,
                 // currentState:
                 // personalFocusStates['aadhaarFocusNode'],
-                // onChange: (value) {
-                //   personalFormViewModel.updateAadhaar(value);
-                // },
+                onChange: (value) {
+                  employeeDataViewModel.updateGender(value);
+                },
                 // height: !personalFormState.isAadhaarValid
                 //     ? displayHeight(context) * 0.09
                 //     : null,
@@ -126,16 +133,16 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
-              const AppFloatTextField(
+               AppFloatTextField(
                 // focusNode:
                 // personalFocusViewModel.aadhaarFocusNode,
                 // currentState:
                 // personalFocusStates['aadhaarFocusNode'],
-                // onChange: (value) {
-                //   personalFormViewModel.updateAadhaar(value);
-                // },
+                onChange: (value) {
+                  employeeDataViewModel.updateMaritalStatus(value);
+                },
                 // height: !personalFormState.isAadhaarValid
                 //     ? displayHeight(context) * 0.09
                 //     : null,
@@ -146,16 +153,16 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
-              const AppFloatTextField(
+               AppFloatTextField(
                 // focusNode:
                 // personalFocusViewModel.aadhaarFocusNode,
                 // currentState:
                 // personalFocusStates['aadhaarFocusNode'],
-                // onChange: (value) {
-                //   personalFormViewModel.updateAadhaar(value);
-                // },
+                onChange: (value) {
+                  employeeDataViewModel.updateContact(value);
+                },
                 // height: !personalFormState.isAadhaarValid
                 //     ? displayHeight(context) * 0.09
                 //     : null,
@@ -166,16 +173,16 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
-              const AppFloatTextField(
+               AppFloatTextField(
                 // focusNode:
                 // personalFocusViewModel.aadhaarFocusNode,
                 // currentState:
                 // personalFocusStates['aadhaarFocusNode'],
-                // onChange: (value) {
-                //   personalFormViewModel.updateAadhaar(value);
-                // },
+                onChange: (value) {
+                  employeeDataViewModel.updateEmail(value);
+                },
                 // height: !personalFormState.isAadhaarValid
                 //     ? displayHeight(context) * 0.09
                 //     : null,
@@ -186,9 +193,10 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
               AppFloatTextField(
+                controller: employeeDataViewModel.dobController,
                 isReadOnly: true,
                 suffixIcon: Icons.calendar_month,
                 isSuffix: true,
@@ -199,9 +207,9 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 // personalFocusViewModel.aadhaarFocusNode,
                 // currentState:
                 // personalFocusStates['aadhaarFocusNode'],
-                // onChange: (value) {
-                //   personalFormViewModel.updateAadhaar(value);
-                // },
+                onChange: (value) {
+                  employeeDataViewModel.updateDob(value);
+                },
                 // height: !personalFormState.isAadhaarValid
                 //     ? displayHeight(context) * 0.09
                 //     : null,
@@ -212,16 +220,16 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
-              const AppFloatTextField(
+               AppFloatTextField(
                 // focusNode:
                 // personalFocusViewModel.aadhaarFocusNode,
                 // currentState:
                 // personalFocusStates['aadhaarFocusNode'],
-                // onChange: (value) {
-                //   personalFormViewModel.updateAadhaar(value);
-                // },
+                onChange: (value) {
+                  employeeDataViewModel.updateIdentityMark(value);
+                },
                 // height: !personalFormState.isAadhaarValid
                 //     ? displayHeight(context) * 0.09
                 //     : null,
@@ -232,20 +240,22 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
               const Text('Permanent Address'),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
-              const AppFloatTextField(
+               AppFloatTextField(
+                 height: displayHeight(context)*0.10,
+                 controller: employeeDataViewModel.permanentAddress1Controller,
                 // focusNode:
                 // personalFocusViewModel.aadhaarFocusNode,
                 // currentState:
                 // personalFocusStates['aadhaarFocusNode'],
-                // onChange: (value) {
-                //   personalFormViewModel.updateAadhaar(value);
-                // },
+                onChange: (value) {
+                  employeeDataViewModel.updatePermanentAddress(value);
+                },
                 // height: !personalFormState.isAadhaarValid
                 //     ? displayHeight(context) * 0.09
                 //     : null,
@@ -256,16 +266,17 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
-              const AppFloatTextField(
+               AppFloatTextField(
+                 controller: employeeDataViewModel.permanentStateController,
                 // focusNode:
                 // personalFocusViewModel.aadhaarFocusNode,
                 // currentState:
                 // personalFocusStates['aadhaarFocusNode'],
-                // onChange: (value) {
-                //   personalFormViewModel.updateAadhaar(value);
-                // },
+                onChange: (value) {
+                  employeeDataViewModel.updatePermanentAddressState(value);
+                },
                 // height: !personalFormState.isAadhaarValid
                 //     ? displayHeight(context) * 0.09
                 //     : null,
@@ -276,20 +287,21 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   AppFloatTextField(
                     width: displayWidth(context) * 0.45,
+                    controller: employeeDataViewModel.permanentCityController,
                     // focusNode:
                     // personalFocusViewModel.aadhaarFocusNode,
                     // currentState:
                     // personalFocusStates['aadhaarFocusNode'],
-                    // onChange: (value) {
-                    //   personalFormViewModel.updateAadhaar(value);
-                    // },
+                    onChange: (value) {
+                      employeeDataViewModel.updatePermanentCity(value);
+                    },
                     // height: !personalFormState.isAadhaarValid
                     //     ? displayHeight(context) * 0.09
                     //     : null,
@@ -300,17 +312,18 @@ class EmployeeBasicDetails extends ConsumerWidget {
                     textInputAction: TextInputAction.done,
                   ),
                   SizedBox(
-                    height: displayHeight(context) * 0.02,
+                    height: displayHeight(context) * 0.01,
                   ),
                   AppFloatTextField(
                     width: displayWidth(context) * 0.45,
+                    controller: employeeDataViewModel.permanentPinCodeController,
                     // focusNode:
                     // personalFocusViewModel.aadhaarFocusNode,
                     // currentState:
                     // personalFocusStates['aadhaarFocusNode'],
-                    // onChange: (value) {
-                    //   personalFormViewModel.updateAadhaar(value);
-                    // },
+                    onChange: (value) {
+                      employeeDataViewModel.updatePermanentPinCode(value);
+                    },
                     // height: !personalFormState.isAadhaarValid
                     //     ? displayHeight(context) * 0.09
                     //     : null,
@@ -323,7 +336,7 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 ],
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -334,9 +347,9 @@ class EmployeeBasicDetails extends ConsumerWidget {
                     // personalFocusViewModel.aadhaarFocusNode,
                     // currentState:
                     // personalFocusStates['aadhaarFocusNode'],
-                    // onChange: (value) {
-                    //   personalFormViewModel.updateAadhaar(value);
-                    // },
+                    onChange: (value) {
+                      employeeDataViewModel.updateLatitude(value);
+                    },
                     // height: !personalFormState.isAadhaarValid
                     //     ? displayHeight(context) * 0.09
                     //     : null,
@@ -352,9 +365,9 @@ class EmployeeBasicDetails extends ConsumerWidget {
                     // personalFocusViewModel.aadhaarFocusNode,
                     // currentState:
                     // personalFocusStates['aadhaarFocusNode'],
-                    // onChange: (value) {
-                    //   personalFormViewModel.updateAadhaar(value);
-                    // },
+                    onChange: (value) {
+                      employeeDataViewModel.updateLongitude(value);
+                    },
                     // height: !personalFormState.isAadhaarValid
                     //     ? displayHeight(context) * 0.09
                     //     : null,
@@ -371,16 +384,16 @@ class EmployeeBasicDetails extends ConsumerWidget {
               ),
               const Text('Current Address'),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
-              const AppFloatTextField(
+               AppFloatTextField(
                 // focusNode:
                 // personalFocusViewModel.aadhaarFocusNode,
                 // currentState:
                 // personalFocusStates['aadhaarFocusNode'],
-                // onChange: (value) {
-                //   personalFormViewModel.updateAadhaar(value);
-                // },
+                onChange: (value) {
+                  employeeDataViewModel.updateCurrentAddress(value);
+                },
                 // height: !personalFormState.isAadhaarValid
                 //     ? displayHeight(context) * 0.09
                 //     : null,
@@ -391,16 +404,16 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
-              const AppFloatTextField(
+               AppFloatTextField(
                 // focusNode:
                 // personalFocusViewModel.aadhaarFocusNode,
                 // currentState:
                 // personalFocusStates['aadhaarFocusNode'],
-                // onChange: (value) {
-                //   personalFormViewModel.updateAadhaar(value);
-                // },
+                onChange: (value) {
+                  employeeDataViewModel.updateCurrentState(value);
+                },
                 // height: !personalFormState.isAadhaarValid
                 //     ? displayHeight(context) * 0.09
                 //     : null,
@@ -411,7 +424,7 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -422,9 +435,9 @@ class EmployeeBasicDetails extends ConsumerWidget {
                     // personalFocusViewModel.aadhaarFocusNode,
                     // currentState:
                     // personalFocusStates['aadhaarFocusNode'],
-                    // onChange: (value) {
-                    //   personalFormViewModel.updateAadhaar(value);
-                    // },
+                    onChange: (value) {
+                      employeeDataViewModel.updateCurrentCity(value);
+                    },
                     // height: !personalFormState.isAadhaarValid
                     //     ? displayHeight(context) * 0.09
                     //     : null,
@@ -440,9 +453,9 @@ class EmployeeBasicDetails extends ConsumerWidget {
                     // personalFocusViewModel.aadhaarFocusNode,
                     // currentState:
                     // personalFocusStates['aadhaarFocusNode'],
-                    // onChange: (value) {
-                    //   personalFormViewModel.updateAadhaar(value);
-                    // },
+                    onChange: (value) {
+                      employeeDataViewModel.updateCurrentPinCode(value);
+                    },
                     // height: !personalFormState.isAadhaarValid
                     //     ? displayHeight(context) * 0.09
                     //     : null,
@@ -455,7 +468,7 @@ class EmployeeBasicDetails extends ConsumerWidget {
                 ],
               ),
               SizedBox(
-                height: displayHeight(context) * 0.02,
+                height: displayHeight(context) * 0.01,
               ),
               AppButton(
                 width: displayWidth(context) * 0.50,

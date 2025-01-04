@@ -54,6 +54,7 @@ class AppTextField extends StatelessWidget {
       alignment: Alignment.center,
       child: Center(
         child: TextFormField(
+
           maxLines: maximumLines,
           validator: onValidate,
           // autofocus: true,
@@ -66,6 +67,7 @@ class AppTextField extends StatelessWidget {
           keyboardType: textInputType,
           onFieldSubmitted: onFiledSubmitted,
           decoration: InputDecoration(
+            isDense: true,
               enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: AppColors.subgraytext)),
               floatingLabelBehavior: FloatingLabelBehavior.always,

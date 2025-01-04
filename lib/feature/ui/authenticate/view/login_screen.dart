@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'package:finexe/feature/base/dialog/all_permission_dialog.dart';
-import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
@@ -88,7 +87,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: displayHeight(context) * 0.10,
+                  height: displayHeight(context) * 0.05,
                 ),
                 Container(
                   width: displayWidth(context) * 0.20,
@@ -190,7 +189,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   controller: _emailController,
                   textInputAction: TextInputAction.next,
                 ),
-                SizedBox(height: displayHeight(context) * 0.02),
+                SizedBox(height: displayHeight(context) * 0.01),
                 const Text(
                   'Password',
                   //style: AppStyles.headingTextStyleXL,

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/extentions/capital_letter.dart';
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
@@ -9,7 +8,6 @@ import 'package:finexe/feature/ui/Collection/Collection%20cases/model/VisitItemC
 import 'package:flutter/material.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../../../base/api/api.dart';
 import '../../model/VisitItemCallingModelData.dart';
 import '../../model/VisitItemCollectionModelData.dart';
@@ -18,7 +16,6 @@ import '../../model/VisitItemNoticeModelData.dart';
 import '../../model/visit_pending_items_model.dart';
 import '../../view_model/visit_detail_view_model.dart';
 import '../../view_model/visit_pending_view_model.dart';
-
 
 class CollectionMoreInfoScreen extends ConsumerStatefulWidget {
 

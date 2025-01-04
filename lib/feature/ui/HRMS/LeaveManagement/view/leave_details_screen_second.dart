@@ -54,9 +54,9 @@ class LeaveDetailsScreenSecond extends StatelessWidget {
       context: context,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Leave Details'),
+          title: const Text('Leave Details'),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pop(context); // Back to previous screen
             },
@@ -65,7 +65,7 @@ class LeaveDetailsScreenSecond extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Card(
               margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -92,8 +92,8 @@ class LeaveDetailsScreenSecond extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text("Title", style: TextStyle(color: Colors.grey[600]),),
-                              Text(leave.title ?? "N/A", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
-                              Divider(color: Colors.grey, thickness: 0.5, height: 16, endIndent: 20,),// Space between the divider and text above),
+                              Text(leave.title ?? "N/A", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+                              const Divider(color: Colors.grey, thickness: 0.5, height: 16, endIndent: 20,),// Space between the divider and text above),
                             ],
                           ),
                         ),
@@ -107,9 +107,9 @@ class LeaveDetailsScreenSecond extends StatelessWidget {
                               ),
                                Text(
                                    leave.leaveType!.isNotEmpty ? leave.leaveType! : "N/A",
-                                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                               ),
-                              Divider(color: Colors.grey, thickness: 0.5, height: 16, indent: 20,),
+                              const Divider(color: Colors.grey, thickness: 0.5, height: 16, indent: 20,),
                             ],
                           ),
                         ),
@@ -128,8 +128,8 @@ class LeaveDetailsScreenSecond extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text("Approved By", style: TextStyle(color: Colors.grey[600]),),
-                              Text(leave.reportingManagerName ?? "N/A", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
-                              Divider(color: Colors.grey, thickness: 0.5, height: 16,endIndent: 20,),
+                              Text(leave.reportingManagerName ?? "N/A", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+                              const Divider(color: Colors.grey, thickness: 0.5, height: 16,endIndent: 20,),
                             ],
                           ),
                         ),
@@ -138,8 +138,8 @@ class LeaveDetailsScreenSecond extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text("Approval Status", style: TextStyle(color: Colors.grey[600]),),
-                              Text(getApprovalStatus(leave.approvalByReportingManager), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
-                              Divider(color: Colors.grey, thickness: 0.5, height: 16,indent: 20,),
+                              Text(getApprovalStatus(leave.approvalByReportingManager), style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+                              const Divider(color: Colors.grey, thickness: 0.5, height: 16,indent: 20,),
 
                             ],
                           ),
@@ -155,25 +155,25 @@ class LeaveDetailsScreenSecond extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("Date Range", style: TextStyle(color: Colors.grey[600]),),
-                            Text("${formatDate(leave.startDate)} - ${formatDate(leave.endDate)}", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+                            Text("${formatDate(leave.startDate)} - ${formatDate(leave.endDate)}", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
                           ],
                         ),
                       ],
                     ),
 
-                    Divider(color: Colors.grey, thickness: 0.5, height: 16,endIndent: 0,),
+                    const Divider(color: Colors.grey, thickness: 0.5, height: 16,endIndent: 0,),
 
                     const SizedBox(height: 16),
                     Text("Reason for Leave:", style: TextStyle(color: Colors.grey[600]),),
-                    Text(leave.reasonForLeave ?? "", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+                    Text(leave.reasonForLeave ?? "", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
 
-                    Divider(color: Colors.grey, thickness: 0.5, height: 16,endIndent: 0,),
+                    const Divider(color: Colors.grey, thickness: 0.5, height: 16,endIndent: 0,),
 
                     if (leave.approvalByReportingManager == "no") ...[
                       const SizedBox(height: 16),
                       Text(
                         "Reject Reason: ${leave.reasonByReportingManager}",
-                        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                        style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ],

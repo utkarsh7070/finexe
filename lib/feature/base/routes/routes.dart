@@ -2,6 +2,7 @@ import 'package:finexe/feature/Punch_In_Out/view/attendance.dart';
 import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/home_collection_view/DashboardScreen.dart';
 import 'package:finexe/feature/ui/HRMS/EmployeeJoiningForm/view/bank_details.dart';
 import 'package:finexe/feature/ui/HRMS/EmployeeJoiningForm/view/employee_basic_details.dart';
+import 'package:finexe/feature/ui/HRMS/EmployeeJoiningForm/view/nominee_information.dart';
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/view/hrms_dashboard_screen.dart';
 import 'package:finexe/feature/ui/PD/view/pd_completed.dart';
 import 'package:finexe/feature/ui/Sales/NewLone/view/new_loan_screen.dart';
@@ -76,6 +77,7 @@ class AppRoutes {
   static const String employeeBasicDetails = '/employeeBasicDetails';
   static const String familyDetails = '/familyDetails';
   static const String bankDetails = '/bankDetails';
+  static const String nomineeInformation = '/nomineeInformation';
 
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -302,6 +304,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) =>  const HRMSDashboardScreen());
         case bankDetails:
         return MaterialPageRoute(builder: (_) =>   const BankDetails());
+        case nomineeInformation:
+        return MaterialPageRoute(builder: (_) =>    NomineeInformation());
 
       default:
         return MaterialPageRoute(

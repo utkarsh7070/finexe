@@ -48,9 +48,6 @@ class VisitPendingScreen extends ConsumerWidget {
                 SizedBox(height: displayHeight(context)*0.01,)
 
                 , AdvancedSearch(
-
-
-                  // data: ,
                   maxElementsToDisplay: 0,
                   singleItemHeight: 50,
                   borderColor: Colors.grey,
