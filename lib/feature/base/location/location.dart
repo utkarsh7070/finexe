@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 
+import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:geolocator/geolocator.dart';
 
 Future<Position?> getCurrentLocation() async {
@@ -34,7 +35,8 @@ Future<Position?> getCurrentLocation() async {
     );
     return position;
   } catch (e) {
-    log('Error getting location: $e');
+    ExceptionHandler().handleError(e);
+   
     return null;
   }
 }

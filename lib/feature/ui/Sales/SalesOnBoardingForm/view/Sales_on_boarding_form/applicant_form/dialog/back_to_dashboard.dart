@@ -1,9 +1,6 @@
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
-import 'package:finexe/feature/base/utils/widget/app_button.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../../../base/utils/namespase/app_colors.dart';
@@ -32,7 +29,7 @@ class ConfirmBackToDashBoard extends ConsumerWidget {
               },
               child: const Text(
                 'Yes',
-                style: const TextStyle(color: AppColors.white),
+                style: TextStyle(color: AppColors.white),
               ),
             ),
           ),
@@ -48,7 +45,7 @@ class ConfirmBackToDashBoard extends ConsumerWidget {
               },
               child: const Text(
                 'No',
-                style: const TextStyle(color: AppColors.black),
+                style: TextStyle(color: AppColors.black),
               ),
             ),
           ),

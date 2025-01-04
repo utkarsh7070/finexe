@@ -2,9 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/ui/PD/Model/pd_request_list_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+
+import '../../../base/api/dio_exception.dart';
+import '../../../base/service/session_service.dart';
 
 // class PdRequestItem {
 //   final String id;
@@ -85,6 +90,10 @@ final fetchpdRefuseandAcceptListProvider =
   }
 });
 
+
+
+
+
 final acceptpdrequestProvider =
     FutureProvider.autoDispose<List<PDReqItems>>((ref) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -117,6 +126,11 @@ final acceptpdrequestProvider =
   }
 });
 
+
+
+
+
+//*******************************Refuse and Reject
 final pdRequestProvider = Provider<RequestApiService>((ref) {
   final dio = ref.watch(dioProvider);
   return RequestApiService(dio);
@@ -126,42 +140,98 @@ class RequestApiService {
   final Dio dio;
 
   RequestApiService(this.dio);
+  Future<bool?> pdRequestAccept(String id,BuildContext context) async {
+    try {
+      if (kDebugMode) {
+        print(id);
+      }
 
-  Future<bool?> pdRequestAccept(String id) async {
-    if (kDebugMode) {
-      print(id);
-    }
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
-    final queryParam = {'_id': id, 'status': 'accept'};
-    final response = await dio.post(Api.revertByVendor,
+      String? token = speciality.getToken();
+
+      if (token==null) {
+        if (kDebugMode) {
+          print("Token is null. Unable to proceed with the request.");
+        }
+        return false;
+      }
+
+      final queryParam = {'_id': id, 'status': 'accept'};
+      print(queryParam.toString());
+      final response = await dio.post(
+        Api.revertByVendor,
         queryParameters: queryParam,
-        options: Options(headers: {"token": token}));
-    if (kDebugMode) {
-      print(response.data);
+        options: Options(headers: {"token": token}),
+      );
+
+      if (kDebugMode) {
+        print('pdRequestAccept: ${response.data}');
+      }
+
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } catch (e) {
+      if (e is DioException) {
+        DioExceptions.fromDioError(e, context);
+      } else {
+        if (kDebugMode) {
+          print("An unexpected error occurred: $e");
+        }
+      }
+      return false;
     }
-    if (response.statusCode == 200) {
-      return true;
+  }
+
+
+  //Revert Api
+  Future<bool?> pdRequestRevert(String id,String rivertReason,BuildContext context) async {
+    try {
+      if (kDebugMode) {
+        print('Request ID: $id');
+      }
+
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      String? token = sharedPreferences.getString('token');
+
+      final queryParam = {
+        '_id': id,
+        'status': 'rivert',
+        'remark': rivertReason, //reason of rejectectoin
+      };
+      print('queryParam ${queryParam.values}');
+      final response = await dio.post(
+        Api.revertByVendor,
+        queryParameters: queryParam,
+        options: Options(
+            headers: {"token": token}),
+      );
+      print('revert api :: ${Api.revertByVendor}');
+      if (kDebugMode) {
+        print('Response Data: ${response.data}');
+      }
+
+      if (response.statusCode == 200) {
+        // print('object')
+        return true;
+      } else {
+        // Handle and log error messages from the API response
+        final errorMessage = response.data['message'] ?? 'An unknown error occurred';
+        print('Error Message from API: $errorMessage');
+
+        // Optionally, you can show this message in the UI using a dialog/snackbar
+        return false;
+      }
+    }   catch (e) {
+      // Handle any other exceptions
+      print('revert api :: ${Api.revertByVendor}');
+
+      print('Exception: $e');
+      DioExceptions.fromDioError(e as DioException, context);
+
     }
+
     return false;
   }
 
-  Future<bool?> pdRequestDefuse(String id) async {
-    if (kDebugMode) {
-      print(id);
-    }
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
-    final queryParam = {'_id': id, 'status': 'reject'};
-    final response = await dio.post(Api.revertByVendor,
-        queryParameters: queryParam,
-        options: Options(headers: {"token": token}));
-    if (kDebugMode) {
-      print(response.data);
-    }
-    if (response.statusCode == 200) {
-      return true;
-    }
-    return false;
-  }
+
 }

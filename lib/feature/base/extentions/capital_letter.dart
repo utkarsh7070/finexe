@@ -3,7 +3,7 @@ extension StringExtension on String {
     if (isEmpty) {
       return ''; // Return an empty string if the original string is empty.
     }
-    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
 }
 

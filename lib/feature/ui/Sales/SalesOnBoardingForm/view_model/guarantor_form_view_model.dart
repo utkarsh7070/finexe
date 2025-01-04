@@ -170,9 +170,9 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
             final response = await dio.post(Api.aadhaarNumber,
                 data: aadhaarNumberRequestModel.toJson());
             var responseData = response.data;
-            print('fetch pan father response: ${responseData}');
+            print('fetch pan father response: $responseData');
             var message = responseData['message'];
-            print('message - ${message}');
+            print('message - $message');
 
             if(response.statusCode == 400){
               DioExceptions.fromDioError(responseData as DioException, context);
@@ -435,6 +435,9 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
 
 
 
+
+
+
   /*Future<void> pickImages() async {
     // var video = await Permission.storage.status;
     if (await Permission.photos.status.isDenied &&
@@ -536,12 +539,10 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
         XFile? pickedImage =
             await picker.pickImage(source: ImageSource.gallery);
         print('image before null condition  ${pickedImage!.path.toString()}');
-        if (pickedImage != null) {
-          print('image ${pickedImage.path}');
-          state = state.copyWith(aadhaarPhotoFilePath1: pickedImage.path);
-          // File(pickedImage.path) as AadhaarFormState;
-        }
-      } catch (e) {
+        print('image ${pickedImage.path}');
+        state = state.copyWith(aadhaarPhotoFilePath1: pickedImage.path);
+        // File(pickedImage.path) as AadhaarFormState;
+            } catch (e) {
         print('Failed to pick image: $e');
       }
     }
@@ -559,11 +560,9 @@ class GuarantorViewModel extends StateNotifier<GuarantorKycFormState> {
         XFile? pickedImage =
             await picker.pickImage(source: ImageSource.gallery);
         print('image before null condition  ${pickedImage!.path.toString()}');
-        if (pickedImage != null) {
-          print('image ${pickedImage.path}');
-          state = state.copyWith(aadhaarPhotoFilePath2: pickedImage.path);
-        }
-      } catch (e) {
+        print('image ${pickedImage.path}');
+        state = state.copyWith(aadhaarPhotoFilePath2: pickedImage.path);
+            } catch (e) {
         print('Failed to pick image: $e');
       }
     }

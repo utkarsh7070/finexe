@@ -34,7 +34,7 @@ class UploadBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       height: height ?? displayHeight(context) * 0.15,
       width: width ?? displayWidth(context) * 0.40,
       decoration:  BoxDecoration(
@@ -42,7 +42,7 @@ class UploadBox extends StatelessWidget {
             dashLength: 10,
             side: BorderSide(color: isError?Colors.red:Colors.black, width: 1),
           ),
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: AppColors.boxBagGray),
       child: Center(
         child: Column(
@@ -57,6 +57,7 @@ class UploadBox extends StatelessWidget {
               height: displayHeight(context) * 0.01,
             ),
             Text(subTitle!,
+            textAlign: TextAlign.center,
                 style: AppStyles.subTextStyle.copyWith(color: subTextColor)),
 
             SizedBox(

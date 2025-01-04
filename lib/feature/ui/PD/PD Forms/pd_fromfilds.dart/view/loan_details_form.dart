@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/Submit Data Models/loan_detail_modal.dart';
 import '../view_model.dart/loan_detail_view_modal.dart';
 final isExpLoanDetailProvider = StateProvider<bool>((ref) => false);
@@ -85,17 +86,17 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
                 data: (loanData) {
                   if (LoanDetailsForm_customerDetailsController.text.isEmpty) {
                     LoanDetailsForm_approveAmountController.text =
-                        loanData.approvedAmount?.toString() ?? '';
-                    LoanDetailsForm_roiController.text = loanData.roi?.toString() ?? '';
+                        loanData?.approvedAmount?.toString() ?? '';
+                    LoanDetailsForm_roiController.text = loanData?.roi?.toString() ?? '';
                     LoanDetailsForm_tenureController.text =
-                        loanData.tenure?.toString() ?? '';
-                    LoanDetailsForm_emiController.text = loanData.emi?.toString() ?? '';
+                        loanData?.tenure?.toString() ?? '';
+                    LoanDetailsForm_emiController.text = loanData?.emi?.toString() ?? '';
                     LoanDetailsForm_customerDetailsController.text =
-                        loanData.demandLoanAmountByCustomer ?? '';
+                        loanData?.demandLoanAmountByCustomer ?? '';
                     LoanDetailsForm_finaldecisionController.text =
-                        loanData.finalDecision?.toString() ?? '';
+                        loanData?.finalDecision?.toString() ?? '';
                     LoanDetailsForm_endUseofloanController.text =
-                        loanData.endUseOfLoan ?? '';
+                        loanData?.endUseOfLoan ?? '';
                   }
                   return   Form(
                       key: _formKey,
@@ -287,33 +288,16 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
                                     .submitLoanDetails(
                                   customerId:  widget.customerId,
                                   pdType: 'creditPd',
-                                  loanDetails: loanDetails,
+                                  loanDetails: loanDetails, context: context,
                                 )
                                     .then(
                                       (value) {
                                     if (value == true) {
                                       // Show success message
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: AppColors.green,
-                                          content: Text(
-                                            'Form submitted successfully!',
-                                            style: AppStyles.whiteText16,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      // Show success message
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: AppColors.green,
-                                          content: Text(
-                                            'Faild to submit the form please try again',
-                                            style: AppStyles.whiteText16,
-                                          ),
-                                        ),
-                                      );
+                                      showCustomSnackBar(
+                                          context,'Form Saved successfully!', Colors.green);
                                     }
+
                                   },
                                 );
                               } else {
@@ -341,7 +325,7 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
                               ),
                             )
                                 : Text(
-                              'Next',
+                              'Save Form',
                               style: AppStyles.whiteText16,
                             ),
                           )

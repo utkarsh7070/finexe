@@ -1,15 +1,18 @@
 import 'dart:io';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/base/utils/widget/upload_box.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'image_view.dart';
 
@@ -41,18 +44,51 @@ class _CommonImagePickerState extends State<CommonImagePicker> {
 
     if (image != null) {
       setState(() {
-        _isLoading = true; // Start loading when image is picked
+        _isLoading = true;
         _selectedImage = image;
       });
-      await uploadImage(image.path);
+      final originalFileSize = await image.length(); // Size in bytes
+      print('Original image size: ${originalFileSize / 1024} KB');
+      // Compress the image
+      final compressedImage = await compressImage(File(image.path));
+      // print('compressedImage size:: ${compressedImage}');
+
+      if (compressedImage != null) {
+        await uploadImage(compressedImage.path);
+        final compressedImagesize = await compressedImage.length(); // Size in bytes
+
+        print('Compressed image size: ${compressedImagesize / 1024} KB');
+      } else {
+        showCustomSnackBar(context, 'Failed to compress image.', AppColors.red);
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
-  Future<void> uploadImage(String imagePath) async {
-    String? token = await SessionService.getToken();
+  Future<XFile?> compressImage(File file) async {
+    try {
+      final directory = await getTemporaryDirectory();
+      final targetPath = '${directory.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-    // String token =
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY"; // Replace with your token logic or pass it as a parameter
+      final result = await FlutterImageCompress.compressAndGetFile(
+        file.absolute.path,
+        targetPath,
+        quality: 80, // Adjust quality (1-100) as needed
+      );
+
+      return result; // Result is already a File?
+    } catch (e) {
+      print('Image compression error: $e');
+      return null;
+    }
+  }
+
+
+  Future<void> uploadImage(String imagePath) async {
+    String? token = speciality.getToken();
+
     final dio = Dio();
 
     try {
@@ -78,6 +114,7 @@ class _CommonImagePickerState extends State<CommonImagePicker> {
         setState(() {
           _uploadedImageUrl = uploadedUrl;
           _isLoading = false;
+          print('image url created');
         });
       } else {
         // _showSnackBar('Failed to upload image.');
@@ -107,21 +144,31 @@ class _CommonImagePickerState extends State<CommonImagePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.applicantImage.isEmpty && _uploadedImageUrl.isEmpty
+    return
+      _isLoading
+          ? Container(
+        height: displayHeight(context) * 0.16,
+        width: displayWidth(context) * 0.91,
+
+        // color: Colors.black.withOpacity(0.5),
+        child: const Center(child: CircularProgressIndicator()),
+      )
+          :
+          widget.applicantImage.isEmpty && _uploadedImageUrl.isEmpty
         ? GestureDetector(
-            onTap: pickImage,
-            child: UploadBox(
-              isImage: true,
-              height: displayHeight(context) * 0.16,
-              width: displayWidth(context) * 0.91,
-              color: AppColors.buttonBorderGray,
-              iconData: Icons.file_upload_outlined,
-              textColor: AppColors.gray5,
-              subTextColor: AppColors.primary,
-              title: 'Support: JPG, PNG',
-              subTitle: 'Click Image',
-            ),
-          )
+          onTap: pickImage,
+          child: UploadBox(
+            isImage: true,
+            height: displayHeight(context) * 0.16,
+            width: displayWidth(context) * 0.91,
+            color: AppColors.buttonBorderGray,
+            iconData: Icons.file_upload_outlined,
+            textColor: AppColors.gray5,
+            subTextColor: AppColors.primary,
+            title: 'Support: JPG, PNG',
+            subTitle: 'Click Image',
+          ),
+        )
         : Stack(
             children: [
               Padding(
@@ -129,28 +176,6 @@ class _CommonImagePickerState extends State<CommonImagePicker> {
                 child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child:
-                        // _isLoading
-                        //     ? Center(child: CircularProgressIndicator())
-                        // : (
-                        // _selectedImage != null
-                        //     ? GestureDetector(
-                        //         onTap: () {
-                        //           Navigator.push(
-                        //             context,
-                        //             MaterialPageRoute(
-                        //               builder: (context) => ZoomableImageWidget(
-                        //                   imageFile: _selectedImage),
-                        //             ),
-                        //           );
-                        //         },
-                        //         child: Image.file(
-                        //           File(_selectedImage!.path),
-                        //           height: displayHeight(context) * 0.16,
-                        //           width: displayWidth(context) * 0.91,
-                        //           fit: BoxFit.cover,
-                        //         ),
-                        //       )
-                        //     :
                         GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -170,7 +195,7 @@ class _CommonImagePickerState extends State<CommonImagePicker> {
                             : '${Api.baseUrl}${_uploadedImageUrl}',
                         height: displayHeight(context) * 0.16,
                         width: displayWidth(context) * 0.91,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                         placeholder: (context, url) =>
                             Center(child: CircularProgressIndicator()),
                         errorWidget: (context, url, error) => Image.asset(

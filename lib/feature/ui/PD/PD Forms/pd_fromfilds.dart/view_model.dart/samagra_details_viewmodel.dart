@@ -12,7 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+
 
 import '../model/Submit Data Models/samagra_details_model.dart';
 
@@ -99,19 +100,23 @@ class PDSubmitSamagraDetailsModel extends StateNotifier<ApplicantState> {
 
   PDSubmitSamagraDetailsModel(this._dio) : super(ApplicantState.initial());
 
-  Future<void> submitSamagraDetails({
+  Future<bool> submitSamagraDetails({
     required String customerId,
     required String pdType,
     required SamagraDetail samagraDetail,
     required List<FamilyMember> familyMembers,
     required String sssmPhoto,
     required String gasdiaryPhoto,
+    required String electPhotot,
+    required String meterPhoto,
+
     //required List<String> imagePaths,
 
     required BuildContext context,
   }) async {
+    state = state.copyWith(isLoading: true);
     print('familyMembers: ${familyMembers.length}');
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
@@ -128,10 +133,17 @@ class PDSubmitSamagraDetailsModel extends StateNotifier<ApplicantState> {
                 'relation': member.relation,
               })
           .toList(),
+      'meterPhoto': meterPhoto,
+      'electricityBillPhoto': electPhotot
     };
+    // if(state.isLoading==true){
+    //   print('click second time');
+    //   return false;
+    // }
     try {
       // Set loading to true
-      state = state.copyWith(isLoading: true);
+
+
 
       final response = await _dio.post(
         Api.updatePdReport,
@@ -144,15 +156,9 @@ class PDSubmitSamagraDetailsModel extends StateNotifier<ApplicantState> {
         if (response.data['subCode'] == 200) {
           print(
               'samagra details form submitted succesfully:: ${response.data}');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: AppColors.green,
-              content: Text(
-                'Form submitted successfully!',
-                style: AppStyles.whiteText16,
-              ),
-            ),
-          );
+          showCustomSnackBar(
+              context,'Form Saved successfully!', Colors.green);
+          return true;
         }
       } else {
         // Handle failure
@@ -160,11 +166,12 @@ class PDSubmitSamagraDetailsModel extends StateNotifier<ApplicantState> {
           SnackBar(
             backgroundColor: AppColors.red,
             content: Text(
-              'Failed to submit Samagra Details',
+              'Failed to save Samagra Details form',
               style: AppStyles.whiteText16,
             ),
           ),
         );
+        return false;
       }
     } catch (e) {
       // Handle error
@@ -180,9 +187,11 @@ class PDSubmitSamagraDetailsModel extends StateNotifier<ApplicantState> {
           ),
         ),
       );
+      return false;
     } finally {
       // Set loading to false
       state = state.copyWith(isLoading: false);
+      return false;
     }
   }
 }
@@ -226,7 +235,7 @@ class ApplicantState {
 }
 
 final samagraDetailDetailsProvider =
-    FutureProvider.autoDispose.family<SamagraDetailsItems,String>((ref,custId) async {
+    FutureProvider.autoDispose.family<SamagraDetailsModel,String>((ref,custId) async {
   final viewModel = SamagraFormDetailsProvider();
   return await viewModel.fetchSamagraFormDetails(custId);
 });
@@ -234,9 +243,9 @@ final samagraDetailDetailsProvider =
 class SamagraFormDetailsProvider {
   final Dio _dio = Dio();
 
-  Future<SamagraDetailsItems> fetchSamagraFormDetails(String custId) async {
-    String? token = await SessionService.getToken();
-
+  Future<SamagraDetailsModel> fetchSamagraFormDetails(String custId) async {
+    String? token = speciality.getToken();
+    SamagraDetailsModel details = SamagraDetailsModel();
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY"; // Replace with a secure way of managing tokens
     print('url: ${Api.getpdformdata}$custId');
@@ -251,10 +260,10 @@ class SamagraFormDetailsProvider {
         final Map<String, dynamic> responseData = response.data;
 
         // Parse the response into the GetApplicantDetailsModel
-        final details = SamagraDetailsModel.fromJson(responseData);
+         details = SamagraDetailsModel.fromJson(responseData);
         print('Samagra details:: ${details}');
         if (details.items != null) {
-          return details.items!;
+          return details;
         } else {
           throw Exception(
               "SamagraDetailsModel details not found in the response");
@@ -265,7 +274,8 @@ class SamagraFormDetailsProvider {
       }
     } catch (e) {
       print("Error fetching SamagraDetailsModel details: $e");
-      throw Exception("Error fetching SamagraDetailsModel data: $e");
+      // throw Exception("Error fetching SamagraDetailsModel data: $e");
+      return details;
     }
   }
 }
@@ -292,7 +302,7 @@ class FirstImageNotifier extends StateNotifier<ApplicantState> {
   }
 
   Future<String> uploadImage(String image) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";

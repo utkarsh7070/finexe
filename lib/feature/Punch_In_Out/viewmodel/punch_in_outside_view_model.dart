@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:finexe/feature/Punch_In_Out/view/attendance.dart';
 import 'package:finexe/feature/base/api/dio.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../base/api/api.dart';
 import '../../base/routes/routes.dart';
-import '../../base/service/session_service.dart';
 import '../../base/utils/widget/custom_snackbar.dart';
 
 final punchInOutSideViewModelProvider = StateProvider.autoDispose((ref) {
@@ -21,17 +22,22 @@ class PunchInOutSideViewModel {
   // late Timer trackingTimer;
 
   Future<void> punchInOutSideRequestWithRole(String reasonForPunch, BuildContext context) async {
-    bool isSuccess = await punchInOutSideRequest(reasonForPunch, context);
+    bool isSuccess = 
+    await punchInOutSideRequest(reasonForPunch, context);
 
     if (isSuccess) {
       // Fetch roles and handle navigation
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      List<String>? role = preferences.getStringList('roleName');
+      // SharedPreferences preferences = await SharedPreferences.getInstance();
+      List<String>? role =speciality.getRole();
       // String? name = preferences.getString('name');
        // initialiseRoamSdk(context,name??'');
 
       if (role != null && role.isNotEmpty) {
-        navigateBasedOnRole(role.first, context);
+        showAttendanceSuccessPopup(context, reasonForPunch);
+        Future.delayed(const Duration(seconds: 4),() {
+            navigateBasedOnRole(role.first, context,);
+        },);
+      
       } else {
         log('No roles found for user.');
         ScaffoldMessenger.of(context).showSnackBar(
@@ -43,7 +49,9 @@ class PunchInOutSideViewModel {
 
   Future<bool> punchInOutSideRequest(String reasonForPunch, BuildContext context) async {
     try {
-      String? token = await SessionService.getToken();
+      // String? token = speciality.getToken();
+      String? token = speciality.getToken();
+
 
       final requestData = {
         "remark": reasonForPunch,
@@ -69,8 +77,83 @@ class PunchInOutSideViewModel {
     }
   }
 
-  void navigateBasedOnRole(String role, BuildContext context) {
-    switch (role) {
+  Future<void> navigateBasedOnRole(String role, BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? roles = prefs.getStringList('roleName');
+    print('Punch In Out Side roles-$roles ');
+
+    if (roles != null) {
+      if (roles.contains('admin')) {
+        log("Navigating to admin dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.dashBoard, // Admin dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } else if (roles.contains('sales')) {
+        log("Navigating to sales dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.dashBoard, // Sales dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } else if (roles.contains('collection')) {
+        log("Navigating to collection dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.collectionHome, // Collection dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } else if (roles.contains('salesAndCollection')) {
+        log("Navigating to sales and collection dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.dashBoard, // Sales and Collection dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } else if (roles.contains('salesPdAndCollection')) {
+        log("Navigating to sales PD and collection dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.dashBoard, // Sales PD and Collection dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } else if (roles.contains('cibil')) {
+        log("Navigating to CIBIL dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.dashBoard, // CIBIL dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } 
+       else if (roles.contains('creditPd')) {
+        log("Navigating to sales dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.pdscreen, // Sales dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } 
+      else {
+        // Default role navigation
+        log('No matching role found, navigating to HRMS');
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.hrms, // Default route
+              (route) => false, // Remove all previous routes
+        );
+      }
+    } else {
+      // Handle the case where roles are null
+      log('No roles found, navigating to HRMS');
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.hrms, // Default route
+            (route) => false, // Remove all previous routes
+      );
+    }
+
+    /*switch (role) {
       case 'admin':
         log("Navigating to admin dashboard");
         Navigator.pushNamedAndRemoveUntil(
@@ -128,7 +211,7 @@ class PunchInOutSideViewModel {
               (route) => false, // Remove all previous routes
         );
         break;
-    }
+    }*/
   }
 
   // Future<void> initialiseRoamSdk(BuildContext context,String name) async {

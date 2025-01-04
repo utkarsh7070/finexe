@@ -5,12 +5,13 @@ import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/agri_work_images_model.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/bank_detail_form_model.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/gauranter_model.dart';
+import 'package:flutter/Material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 
+import '../../../../../base/utils/namespase/app_colors.dart';
+import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/Submit Data Models/agri_work_images_model.dart';
 
 class PDAgriAndWorkImagePRovdier extends StateNotifier<AppState> {
@@ -21,10 +22,12 @@ class PDAgriAndWorkImagePRovdier extends StateNotifier<AppState> {
   Future<bool> submitpdBankDetailsForm({
     required String customerId,
     required String pdType,
-    String? eastBoundaryImage,
-    String? westBoundaryImage,
-    String? northBoundaryImage,
-    String? southBoundaryImage,
+    // String? eastBoundaryImage,
+    // String? westBoundaryImage,
+    // String? northBoundaryImage,
+    // String? southBoundaryImage,
+    List<String>? foruBounadariesPhoto,
+
     String? landmarkImageUrl,
     String? latlongImageUrl,
     String? videourl,
@@ -37,22 +40,24 @@ class PDAgriAndWorkImagePRovdier extends StateNotifier<AppState> {
     final payload = {
       'customerId': customerId,
       'pdType': pdType,
-      "fourBoundaryPhotos": [
-        eastBoundaryImage,
-        westBoundaryImage,
-        northBoundaryImage,
-        southBoundaryImage
-      ],
+      // "fourBoundaryPhotos": [
+      //   eastBoundaryImage,
+      //   westBoundaryImage,
+      //   northBoundaryImage,
+      //   southBoundaryImage
+      // ],
+      "fourBoundaryPhotos": foruBounadariesPhoto?.toList(),
       "landmarkPhoto": landmarkImageUrl,
       "latLongPhoto": latlongImageUrl,
       "videoUpload": videourl,
       "workPhotos": workPhoto?.toList(), //houseInsidePhoto
     };
 
-    String? token = await SessionService.getToken();
-    // String? token =
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2OWY5MDVjNmEzMGY4OTExMzQwN2EzZSIsInJvbGVOYW1lIjpbImNyZWRpdFBkIl0sImlhdCI6MTczMzU3ODg1MH0.eEhMeH02cPzPw3gyNttXMrkC1l2yVZALYKdYGvXj0oA";
-    //vendor // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
+    String? token = speciality.getToken();
+    // if(state.isLoading==true){
+    //   print('click second time');
+    //   return false;
+    // }
     try {
       final response = await dio.post(Api.updatePdReport,
           data: payload, options: Options(headers: {"token": token}));
@@ -120,8 +125,8 @@ class AgriANdWorkFormDetailProvider {
   final Dio _dio = Dio();
 
   Future<AgriWorkItems> fetchDetails(String customerId) async {
-    String? token = await SessionService.getToken();
-
+    String? token = speciality.getToken();
+    AgriWorkItems details = AgriWorkItems();
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY"; // Replace with a secure way of managing tokens
     print('url: ${Api.getpdformdata}$customerId');
@@ -150,7 +155,8 @@ class AgriANdWorkFormDetailProvider {
       }
     } catch (e) {
       print("Error fetching AgriWorkItems details: $e");
-      throw Exception("Error fetching AgriWorkItems data: $e");
+      // throw Exception("Error fetching AgriWorkItems data: $e");
+      return details;
     }
   }
 }
@@ -176,7 +182,7 @@ class AgriImageUploadNotifier extends StateNotifier<List<File>> {
   }
 
   Future<String> uploadImage(String image) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
@@ -225,3 +231,81 @@ final workagriimageUploadProvider =
 
   return AgriImageUploadNotifier(dio);
 });
+
+
+
+final imageProvbider =
+StateNotifierProvider<ApplicantImageNotifier, XFile?>((ref) {
+  final dio = ref.read(dioProvider);
+  return ApplicantImageNotifier(dio);
+});
+
+class ApplicantImageNotifier extends StateNotifier<XFile?> {
+  final Dio _dio;
+
+  ApplicantImageNotifier(this._dio) : super(null);
+
+  Future<XFile?> pickSecondImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+
+    if (image != null) {
+      state = image;
+      // await uploadImage(image.path,context);
+
+      return image;
+
+    }
+    return null;
+  }
+
+  void removeSecondImage() {
+    state = null;
+  }
+
+  Future<String> uploadImage(String image, BuildContext context) async {
+    String? token = speciality.getToken();
+
+    // String? token =
+    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
+
+    if (token == null) {
+      throw Exception('Token is missing. Please log in again.');
+    }
+
+    // state = state.copyWith(isLoading: true);
+
+    var formData = FormData.fromMap({
+      'image':
+      await MultipartFile.fromFile(image, filename: image.split('/').last),
+    });
+
+    try {
+      final response = await _dio.post(
+        Api.uploadImageCollection,
+        data: formData,
+        options: Options(headers: {"token": token}),
+      );
+
+      if (response.statusCode == 200) {
+        VisitUpdateUploadImageResponseModel imageResponseModel =
+        VisitUpdateUploadImageResponseModel.fromJson(response.data);
+
+        // state = state.copyWith(isLoading: false);
+        return imageResponseModel.items.image;
+      } else {
+        showCustomSnackBar(context, 'Failed to upload image.', AppColors.red);
+        throw Exception(
+            'Failed to upload image. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      // state = state.copyWith(isLoading: false);
+      showCustomSnackBar(
+          context,
+          'An error occurred while uploading the image. Please try again.',
+          AppColors.red);
+      throw Exception(
+          'An error occurred while uploading the image. Please try again.');
+    }
+  }
+}

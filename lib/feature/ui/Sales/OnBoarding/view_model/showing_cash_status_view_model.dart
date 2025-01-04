@@ -1,13 +1,16 @@
 
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
-import 'package:flutter/material.dart';
+import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/model/payment_initiate_cashfree_response_model.dart';
+import 'package:flutter/Material.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../base/service/session_service.dart';
+import '../../../../base/utils/widget/custom_snackbar.dart';
 import '../../SalesOnBoardingForm/model/payment_initiate_response_model.dart';
 import '../../SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/dialog/form_completed_dialog.dart';
 import '../model/show_cashes_status_model.dart';
@@ -46,10 +49,146 @@ class ProcessStatusNotifier extends StateNotifier<AsyncValue<ProcessStatusRespon
     }
   }
 
+  /*Future<PaymentInitiateCashFreeResponseModel> cashFreePaymentInitiate(String customerId, BuildContext context) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final token = sharedPreferences.getString('token');
+    final requestData = {'customerId': customerId.toString()};
+
+    if (kDebugMode) {
+      print(customerId);
+      print(token);
+    }
+
+    print('Input requestData ${requestData.toString()}');
+
+    try {
+      final response = await _dio.post(
+        Api.cashfreePaymentAmount,
+        *//*'https://prod.fincooper.in/v1/salesMan/CashFreePaymentInitiate',*//*
+        data: requestData,
+
+        options: Options(headers: {'token': token},validateStatus: (status) => true,),
+      );
+
+      if (kDebugMode) {
+        print(response.data);
+        print(response.statusCode);
+      }
+
+      final responseMessage=response.data['message'];
+      print('response message cashfree ${responseMessage}');
+
+      if (response.statusCode == 200) {
+        return PaymentInitiateCashFreeResponseModel.fromJson(response.data);
+      } else if(response.statusCode == 400){
+        showCustomSnackBar(context, responseMessage, Colors.red);
+        throw Exception('Bad Request: $responseMessage');
+      }
+      else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response?.statusCode == 400) {
+          // Handle 400 response
+          final errorMessage = e.response?.data['message'] ?? 'Bad Request';
+          print("400 Error: $errorMessage");
+          showCustomSnackBar(context, errorMessage, Colors.red);
+        }
+        else if (e.response?.statusCode == 500) {
+          // Handle 400 response
+          final errorMessage = e.response?.data['message'] ?? 'Bad Request';
+          print("500 Error: $errorMessage");
+          showCustomSnackBar(context, errorMessage, Colors.red);
+        }else {
+          // Handle other Dio errors
+          print("DioError: ${e.message}");
+          showCustomSnackBar(
+              context, "Something went wrong. Please try again.", Colors.red);
+        }
+      } else {
+        // Handle non-Dio errors
+        print("Error submitting form: $e");
+        showCustomSnackBar(
+            context, "An unexpected error occurred.", Colors.red);
+      }
+
+      // Rethrow or return a default value to satisfy return type
+      throw Exception("Error in API call, unable to return data.");
+    }
+  }
+*/
+
+  Future<PaymentInitiateCashFreeResponseModel> cashFreePaymentInitiate(
+      String customerId, BuildContext context) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final token = sharedPreferences.getString('token');
+    final requestData = {'customerId': customerId.toString()};
+
+    if (kDebugMode) {
+      print(customerId);
+      print(token);
+    }
+
+    print('Input requestData ${requestData.toString()}');
+
+    try {
+      final response = await _dio.post(
+        Api.cashfreePaymentAmount,
+        data: requestData,
+        options: Options(
+          headers: {'token': token},
+          validateStatus: (status) => true,
+        ),
+      );
+
+      if (kDebugMode) {
+        print(response.data);
+        print(response.statusCode);
+      }
+
+      final responseMessage = response.data['message'] ?? 'Something went wrong';
+      print('response message cashfree $responseMessage');
+
+      if (response.statusCode == 200) {
+        return PaymentInitiateCashFreeResponseModel.fromJson(response.data);
+      } else if (response.statusCode == 400) {
+        // Show Snackbar and return early
+        showCustomSnackBar(context, responseMessage, Colors.red);
+        return Future.error(Exception('Bad Request: $responseMessage'));
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response?.statusCode == 400) {
+          final errorMessage = e.response?.data['message'] ?? 'Bad Request';
+          print("400 Error: $errorMessage");
+          showCustomSnackBar(context, errorMessage, Colors.red);
+        } else if (e.response?.statusCode == 500) {
+          final errorMessage = e.response?.data['message'] ?? 'Internal Server Error';
+          print("500 Error: $errorMessage");
+          showCustomSnackBar(context, errorMessage, Colors.red);
+        } else {
+          print("DioError: ${e.message}");
+          showCustomSnackBar(
+              context, "Something went wrong. Please try again.", Colors.red);
+        }
+      } else {
+        print("Error submitting form: $e");
+        showCustomSnackBar(context, "An unexpected error occurred.", Colors.red);
+      }
+
+      // Throw an exception to indicate failure
+      throw Exception("Error in API call, unable to return data.");
+    }
+  }
+
+
   Future<void> fetchProcessStatus(String customerId) async {
     try {
       // Fetch the token (assuming you have a session service for this)
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
 
       // Make the API call using Dio
       final response = await _dio.get(
@@ -91,7 +230,11 @@ class ProcessStatusNotifier extends StateNotifier<AsyncValue<ProcessStatusRespon
   Future<void> fetchProcessStatus(String customerId) async {
     try {
       // Replace with your actual API call
-      String? token = await SessionService.getToken();
+<<<<<<< HEAD
+      String? token = speciality.getToken();
+=======
+      String? token = speciality.getToken();
+>>>>>>> origin/To_merge
       // Example using Dio
       final response = await _dio.get(Api.getCaseStatus,
           queryParameters: {'customerId': customerId},

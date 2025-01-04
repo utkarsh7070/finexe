@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/Punch_In_Out/model/check_attendance_responce_model.dart';
@@ -7,15 +6,11 @@ import 'package:finexe/feature/Punch_In_Out/repository/puch_In_repository_imp.da
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
-import 'package:finexe/feature/base/service/socket_io_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:roam_flutter/roam_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/model/add_task_request_model.dart';
 import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/model/add_task_response_model.dart';
@@ -27,7 +22,7 @@ import '../model/response_model.dart';
 class AttendanceState {
   final String employeeName;
   final bool isLoading;
-  final bool punchAllowed;
+  final bool? punchAllowed;
   final bool punchStatus;
   final Position? currentPosition;
   final String? distanceMessage;
@@ -40,7 +35,7 @@ class AttendanceState {
   AttendanceState(
       {this.taskTitle = '',
         this.taskDescription = '',
-        this.punchAllowed = false,
+        this.punchAllowed ,
         this.employeeName = '',
         this.isLoading = false,
         this.punchStatus = false,
@@ -111,8 +106,10 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   }
 
   Future<void> onAddTask(BuildContext context) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
+    // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    // String? token = sharedPreferences.getString('token');
+    String? token =speciality.getToken();
+
     state = state.copyWith(isLoading: true);
     // state = const AsyncValue.loading();
     final headers = {"token": token};
@@ -162,7 +159,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
         //     "Error ${response.statusCode}: ${response.data}",
         //     StackTrace.current);
       }
-    } catch (error, stackTrace) {
+    } catch (error) {
       DioExceptions.fromDioError(error as DioException, context);
       // state = AsyncValue.error(error, stackTrace);
       print("Exception occurred: ${error.toString()}");
@@ -222,16 +219,19 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   }
 
   Future<void> getToken() async {
-    SharedPreferences preferences = await SessionService.getSession();
-    final String? name = preferences.getString('email');
+    // SharedPreferences preferences = await SessionService.getSession();
+    // final String? name = preferences.getString('email');
+    final String? name = speciality.getUserEmail();
+
+
     if (kDebugMode) {
       print('set in pinchin screen name $name');
     }
 
-    storedToken = preferences.getString('token');
+    storedToken = speciality.getToken();
     // final name = preferences.getString('email');
     state = state.copyWith(isLoading: false);
-    state = state.copyWith(employeeName: preferences.getString('email'));
+    state = state.copyWith(employeeName: speciality.getUserEmail());
     log("storedToken: $storedToken");
   }
 
@@ -253,14 +253,14 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
             state.copyWith(checkAttendanceResponse: checkAttendanceResponse);
         state =
             state.copyWith(punchStatus: checkAttendanceResponse.items.punchIn,punchAllowed: checkAttendanceResponse.items.allowed);
-        log('punchIn Status: ${checkAttendanceResponse.items.punchIn}');
+        log('punchIn Status: ${checkAttendanceResponse.items.punchIn} punchIn allowed: ${checkAttendanceResponse.items.allowed}');
         return PunchAttendanceModel(allowed: checkAttendanceResponse.items.allowed, punchIn: checkAttendanceResponse.items.punchIn);
       } on DioException catch (error) {
         if (kDebugMode) {
           print(error);
         }
         throw Exception(error);
-        state = state.copyWith(isLoading: false);
+        // state = state.copyWith(isLoading: false);
         // DioExceptions.fromDioError(error,context);
       }
     }
@@ -382,12 +382,18 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 
 
   Future<void> clickPunch(BuildContext context) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    List<String>? role = preferences.getStringList('roleName');
-    final String? employeeID = preferences.getString('employeId');
-    final String? token = preferences.getString('token');
-   final String? roamId =  preferences.getString('roamId');
-    final String? trackingMode =  preferences.getString('trackingMode');
+    // SharedPreferences preferences = await SharedPreferences.getInstance();
+    
+  //   List<String>? role = preferences.getStringList('roleName');
+  //   final String? employeeID = preferences.getString('employeId');
+  //   final String? token = preferences.getString('token');
+  //  final String? roamId =  preferences.getString('roamId');
+  //   final String? trackingMode =  preferences.getString('trackingMode');
+    List<String>? role = speciality.getRole();
+    final String? employeeID = speciality.getEmployeId();
+    final String? token = speciality.getToken();
+   final String? roamId = speciality.getRoamId();
+    final String? trackingMode =  speciality.getTrackingMode();
 
     if (kDebugMode) {
       print(role?.first);
@@ -465,6 +471,15 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
                 AppRoutes.dashBoard, // Collection dashboard route
                     (route) => false, // Remove all previous routes
               );
+              
+              break;
+                case 'creditPd':
+              log("Navigating to collection dashboard");
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.pdscreen, // Collection dashboard route
+                    (route) => false, // Remove all previous routes
+              );
               break;
             default:
               Navigator.pushNamedAndRemoveUntil(
@@ -479,15 +494,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
         }
       },
     );
-    // } else {
-    //   // await onPunchOut().then((value) async {
-    //   //   if(value!){
-    //   //     await checkPunch().then((value) {
-    //   //       state = state.copyWith(punchStatus: value);
-    //   //     },);
-    //   //   }
-    //   // },);
-    // }
+
     state = state.copyWith(isLoading: false);
   }
 
@@ -517,9 +524,11 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       );
       return true;
       // Navigator.pushNamed(context, AppRoutes.eod);
-    } on DioException catch (error) {
-      DioExceptions.fromDioError(error, context);
-      state = state.copyWith(isLoading: false);
+    } catch (error) {
+    ExceptionHandler().handleError(error);
+      
+    }finally{
+state = state.copyWith(isLoading: false);
     }
     return false;
   }
@@ -539,9 +548,8 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       var message = responseData['message'];
       // Punch punchInModel = PunchInModel.fromJson(response.data);
       if (response.statusCode == 200) {
-
         showCustomSnackBar(context, message, AppColors.green);
-        Roam.stopTracking();
+      
         // PunchInModel punchInModel = PunchInModel.fromJson(response.data);
       } else {
         showCustomSnackBar(context, message, AppColors.green);
@@ -556,12 +564,6 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   }
 }
 
-// final socketServiceProvider = Provider<SocketService>((ref) {
-//   final socketService = SocketService();
-//   socketService.connectSocket();  // Connect when the provider is created
-//   return socketService;
-// });
-
 final punchInRepositoryProvider =
 Provider.autoDispose<PunchInRepositoryImp>((ref) {
   return PunchInRepositoryImp(); // Provides instance of PunchInRepository
@@ -575,46 +577,7 @@ StateNotifierProvider<AttendanceNotifier, AttendanceState>((ref) {
   return AttendanceNotifier(ref.watch(punchInRepositoryProvider), dio);
 });
 
-//
-// class UserSession extends AsyncNotifier<String?> {
-//   @override
-//   Future<String?> build() async {
-//     final prefs = await SharedPreferences.getInstance();
-//     return prefs.getString('email'); // Loads username if available
-//   }
-//
-//   // Future<void> setUser(String username) async {
-//   //   final prefs = await SharedPreferences.getInstance();
-//   //   await prefs.setString('username', username);
-//   //   state = AsyncData(username);
-//   // }
-//   //
-//   // Future<void> clearUser() async {
-//   //   final prefs = await SharedPreferences.getInstance();
-//   //   await prefs.clear();
-//   //   state = const AsyncData(null);
-//   // }
-// }
-//
-// final userSessionProvider = AsyncNotifierProvider<UserSession, String?>(UserSession.new);
 
-// final checkCurrentLocation = FutureProvider<String>(
-//   (ref) async {
-//     SharedPreferences preferences = await SessionService.getSession();
-//     final String? name = await preferences.getString('email');
-//     print('set in punch in screen name $name');
-//     return name!;
-//   },
-// );
-//
-// Future<Position> getCurrentLocation() async {
-//   await Geolocator.requestPermission();
-//   LocationSettings locationSettings = const LocationSettings(
-//     accuracy: LocationAccuracy.high,
-//     distanceFilter: 100,
-//   );
-//   return Geolocator.getCurrentPosition(locationSettings: locationSettings);
-// }
 class PunchAttendanceModel{
   final bool allowed;
   final bool punchIn;

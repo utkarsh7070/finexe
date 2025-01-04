@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:bson/bson.dart';
 import 'package:dio/dio.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/collection_mode_response_model.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/get_mode_by_id_response_model.dart';
@@ -10,7 +12,8 @@ import 'package:finexe/feature/ui/Collection/Collection%20cases/model/update_emi
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_submit_request_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+// import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -21,11 +24,11 @@ import 'package:http/http.dart' as http;
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
 import '../../../../base/api/dio_exception.dart';
-import '../../../../base/service/session_service.dart';
 import '../model/visit_closure_submit_request_model.dart';
 import '../model/get_visit_pending_response_data.dart';
 import '../model/visit_pending_items_model.dart';
 import '../model/visit_update_upload_image_responce_model.dart';
+import 'package:path/path.dart' as path;
 
 final updateVisitDropDown = StateProvider<List<DropDownValueModel>>(
   (ref) {
@@ -95,13 +98,15 @@ final updateEmiFocusProvider =
 });
 
 final updateEmiViewModelProvider =
-    StateNotifierProvider<UpdateEmiViewModel, UpdateEmiModel>((ref) {
+    StateNotifierProvider.autoDispose<UpdateEmiViewModel, UpdateEmiModel>(
+        (ref) {
   final dio = ref.read(dioProvider);
   return UpdateEmiViewModel(dio);
 });
 
 final updateVisitViewModelProvider =
-    StateNotifierProvider<UpdateVisitViewModel, UpdateVisitModel>((ref) {
+    StateNotifierProvider.autoDispose<UpdateVisitViewModel, UpdateVisitModel>(
+        (ref) {
   final dio = ref.read(dioProvider);
 
   final position = ref.watch(currentLocationProvider);
@@ -131,11 +136,26 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     state = state.copyWith(isLoading: true);
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
-      state = state.copyWith(photoFile: pickedFile.path);
+      final isValid = _validateTransactionImage(pickedFile.path);
+      state = state.copyWith(photoFile: pickedFile.path,isPhotoFile: isValid);
+     final imagePath = await compressImage(File(pickedFile.path));
+      await uploadImage(imagePath!.path);
       return pickedFile;
     }
     return null;
   }
+
+  Future<XFile?> compressImage(File file) async {
+    String fileName = path.basename(file.path);
+    final String targetPath = '${file.parent.path}/compressed_$fileName';
+    final compressedBytes = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path, // Source path
+      targetPath, // Target path
+      quality: 10, // Compression quality (0-100)
+    );
+    return compressedBytes;
+  }
+
 
   Future<void> uploadImage(String image) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -160,6 +180,7 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
         imageApi = imageResponseModel.items.image;
         print(imageApi);
       }
+      
     } else {
       state = state.copyWith(isLoading: false);
       throw Exception('Failed to load data');
@@ -193,7 +214,7 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     } else {}
   }
 
-  bool validateForm(String value,BuildContext context) {
+  bool validateForm(String value, BuildContext context) {
     switch (value) {
       case 'CustomerWillPayEmi':
         return validateCustomerPayForm(context);
@@ -210,8 +231,14 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
 
   Future<void> visitFormSubmit(
       {required ItemsDetails datas, required BuildContext context}) async {
+    if (state.isLoading == true) {
+      return;
+    }
     state = state.copyWith(isButtonVissible: true);
+    state = state.copyWith(isLoading: true);
+
     print('image of uploaded $imageApi');
+
     final strDate = DateFormat('dd/MM/yyyy').parse(state.date);
     final date = DateFormat('yyyy-MM-dd').format(strDate);
     final requestModel = VisitUpdateSubmitRequestModel(
@@ -231,9 +258,8 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
       // longitude: data.longitude
     );
 
-
     print(requestModel);
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     try {
       final response = await dio.post(Api.visitFormSubmit,
@@ -245,7 +271,6 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
         print(response.data);
       }
       if (response.statusCode == 200) {
-        state = state.copyWith(isButtonVissible: false);
         log('updated vist test');
         showCustomSnackBar(context, response.data['message'], Colors.green);
       } else {
@@ -254,22 +279,11 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
       }
     } catch (e) {
       DioExceptions.fromDioError(e as DioException, context);
+      showCustomSnackBar(context, 'something went wrong', Colors.red);
+    } finally {
+      state = state.copyWith(isButtonVissible: false);
+      state = state.copyWith(isLoading: false);
     }
-    // position.when(
-    //   data: (data) async {
-    //     print(data);
-    //
-    //
-    //   },
-    //   error: (error, stackTrace) {
-    //     if (kDebugMode) {
-    //       print(error);
-    //     }
-    //     DioExceptions.fromDioError(error as DioException, context);
-    //     return false;
-    //   },
-    //   loading: () {},
-    // );
   }
 
   void updatePhotoValue(context) {
@@ -317,28 +331,36 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     final isPaymentAmountValid = _validatePaymentAmount(state.paymentAmount);
     final isDateValid = _validateDate(state.date);
     final isPhoto = _validateTransactionImage(state.photoFile);
-    if(state.transitionImage.isEmpty){
-      showCustomSnackBar(context, 'Image is not uploaded in server', Colors.red.shade200);
+    if (state.transitionImage.isEmpty) {
+      showCustomSnackBar(
+          context, 'Image is not uploaded in server', Colors.red.shade200);
     }
     state = state.copyWith(
         isPaymentAmountValid: isPaymentAmountValid,
         isDateValid: isDateValid,
         isPhotoFile: isPhoto);
-    return isPaymentAmountValid && isDateValid && isPhoto && state.transitionImage.isNotEmpty;
+    return isPaymentAmountValid &&
+        isDateValid &&
+        isPhoto &&
+        state.transitionImage.isNotEmpty;
   }
 
   bool validateCustomerNotContactable(BuildContext context) {
     final isDate = _validateDate(state.date);
     final isReasonValid = _validateReason(state.reason);
     final isImage = _validateTransactionImage(state.photoFile);
-    if(state.transitionImage.isEmpty){
-      showCustomSnackBar(context, 'Image is not uploaded in server', Colors.red.shade200);
+    if (state.transitionImage.isEmpty) {
+      showCustomSnackBar(
+          context, 'Image is not uploaded in server', Colors.red.shade200);
     }
     state = state.copyWith(
         isDateValid: isDate,
         isPhotoFile: isImage,
         isReasonValid: isReasonValid);
-    return isDate && isReasonValid && isImage && state.transitionImage.isNotEmpty;
+    return isDate &&
+        isReasonValid &&
+        isImage &&
+        state.transitionImage.isNotEmpty;
   }
 
   bool validateCustomerNotPay(BuildContext context) {
@@ -347,8 +369,9 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     final isSolutionValid = _validateSolution(state.solution);
     final isDateValid = _validateDate(state.date);
     final isPhoto = _validateTransactionImage(state.photoFile);
-    if(state.transitionImage.isEmpty){
-      showCustomSnackBar(context, 'Image is not uploaded in server', Colors.red.shade200);
+    if (state.transitionImage.isEmpty) {
+      showCustomSnackBar(
+          context, 'Image is not uploaded in server', Colors.red.shade200);
     }
     state = state.copyWith(
         // isPaymentStatusValid: isPaymentStatusValid,
@@ -450,15 +473,20 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final isAmount = _validateEmiAmount(state.emiAmount);
     final isTransactionId = _validateTransactionId(state.transactionId);
     final isRemark = _validateRemark(state.remark);
-    if(state.transactionImage.isEmpty){
-      showCustomSnackBar(context, 'Image is not upload in server', Colors.red.shade200);
+    if (state.transactionImage.isEmpty) {
+      showCustomSnackBar(
+          context, 'Image is not upload in server', Colors.red.shade200);
     }
     state = state.copyWith(
         isTransactionImage: isPhoto,
         isTransactionId: isTransactionId,
         isEmiAmount: isAmount,
         isRemark: isRemark);
-    return isPhoto && isAmount && isTransactionId && isRemark && state.transactionImage.isNotEmpty;
+    return isPhoto &&
+        isAmount &&
+        isTransactionId &&
+        isRemark &&
+        state.transactionImage.isNotEmpty;
   }
 
   bool validAccountDeposit(context) {
@@ -466,12 +494,14 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final isPhoto = _validateTransactionImage(state.photoFile);
     final isAmount = _validateEmiAmount(state.emiAmount);
     final isTransactionId = _validateTransactionId(state.transactionId);
-    final isMentionMail = _validateReceipt(state.receipt);
+    final isMentionMail = _validateReceipt(state.receipt ?? '');
     final isRemark = _validateRemark(state.remark);
-    if(!isBank){
-      showCustomSnackBar(context, 'Please select bank name', Colors.red.shade200);
-    }else if(state.transactionImage.isEmpty){
-      showCustomSnackBar(context, 'Image is not upload in server', Colors.red.shade200);
+    if (!isBank) {
+      showCustomSnackBar(
+          context, 'Please select bank name', Colors.red.shade200);
+    } else if (state.transactionImage.isEmpty) {
+      showCustomSnackBar(
+          context, 'Image is not upload in server', Colors.red.shade200);
     }
     state = state.copyWith(
         isReceipt: isMentionMail,
@@ -491,15 +521,14 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
   bool validCashCollection(context) {
     final isCreditPerson = creditPersonController.dropDownValue?.value != null;
     final isAmount = _validateEmiAmount(state.emiAmount);
-    final isMentionMail = _validateReceipt(state.receipt);
+    final isMentionMail = _validateReceipt(state.receipt ?? '');
     final isRemark = _validateRemark(state.remark);
-    if(!isCreditPerson){
-      showCustomSnackBar(context, 'Please select credit person', Colors.red.shade200);
+    if (!isCreditPerson) {
+      showCustomSnackBar(
+          context, 'Please select credit person', Colors.red.shade200);
     }
     state = state.copyWith(
-        isReceipt: isMentionMail,
-        isEmiAmount: isAmount,
-        isRemark: isRemark);
+        isReceipt: isMentionMail, isEmiAmount: isAmount, isRemark: isRemark);
     return isAmount && isRemark && isMentionMail && isCreditPerson;
   }
 
@@ -516,41 +545,62 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         return false;
       default:
         return false;
-    }
-    // print(modeOfCollectionController.dropDownValue?.value);
-    // print(creditPersonController.dropDownValue?.value);
-    // print(bankNameController.dropDownValue?.value);
-    // // if(state.modeTitle == 'bankName' && state.isTransactionImage){
-    // //
-    // // }else{
-    // //
-    // // }
-    // if (state.isTransactionImage && modeOfCollectionController.dropDownValue?.value!=null) {
-    //   final isPhoto = _validateTransactionImage(state.photoFile);
-    //   final isAmount = _validateEmiAmount(state.emiAmount);
-    //   // final isModeCollection = modeOfCollectionController.dropDownValue?.value!=null;
-    //   // final isCreditPerson = creditPersonController.dropDownValue?.value!=null;
-    //   // final isBank = bankNameController.dropDownValue?.value!=null;
-    //   // print('isModeCollection $isModeCollection  isCreditPerson $isCreditPerson, isBank  $isBank');
-    //   state = state.copyWith(isTransactionImage: isPhoto);
-    //   return isPhoto;
-    // } else {
-    //   return true;
-    // }
-  }
+    }}
+
+
+  //   print('Update EMI Input -${requestModel.toJson()}');
+
+  //   String? token = speciality.getToken();
+  //   final response = await dio.post(Api.updateEmiSubmit,
+  //       data: requestModel.toJson(),
+  //       options: Options(
+  //         headers: {"token": token},
+  //         validateStatus: (status) => true,
+  //       ));
+  //   if (kDebugMode) {
+  //     print(response.statusMessage);
+  //     print(response.statusCode);
+  //   }
+
+  //   var responseData = response.data;
+  //   print('Emi Paid response: $responseData');
+  //   var message = responseData['message'];
+
+  //   if (response.statusCode == 200 || responseData['status'] == true) {
+  //     showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
+  //     state = state.copyWith(isButtonVissible: false);
+  //     updatePhotoValue(context);
+  //     ref.refresh(fetchVisitPendingDataProvider);
+  //     ref.invalidate(updateEmiViewModelProvider);
+
+  //     if (kDebugMode) {
+  //       print('EmiUpdateResponse ${response.data}');
+  //     }
+  //   } else if (response.statusCode == 400 || responseData['status'] == false) {
+  //     // isLoading = false;
+  //     showCustomSnackBar(context, message, Colors.red);
+  //     print('Emi paid message ${response.statusMessage}');
+  //   } else {
+  //     throw Exception('Failed to load data');
+  //     // return false;
+    
+  
 
   Future<void> updateEmiSubmitButton(
       {required ItemsDetails detail,
       required BuildContext context,
       required WidgetRef ref}) async {
     state = state.copyWith(isButtonVissible: true);
+    if (state.isLoading == true) {
+      print('Second time click ');
+      return;
+    }
+    state = state.copyWith(isLoading: true);
     if (kDebugMode) {
       print(
-          'Ld o:-${detail.ld}, customerName:- ${detail.customerName}, mobile:- ${detail.mobile},  commonId:- ${state.commonId}, image:- ${state.transactionImage}');
+          'Ld o:-${detail.ld}, customerName:- ${detail.customerName}, mobile:- ${detail.mobile}, commonId:- ${state.commonId}, image:- ${state.transactionImage}');
     }
-
     ObjectId? result1 = parseObjectId(state.commonId);
-
     UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
         fatherName: detail.fatherName ?? '',
         ld: detail.ld ?? '',
@@ -570,39 +620,44 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
 
     print('Update EMI Input -${requestModel.toJson()}');
 
-    String? token = await SessionService.getToken();
-    final response = await dio.post(Api.updateEmiSubmit,
-        data: requestModel.toJson(),
-        options: Options(
-          headers: {"token": token},
-          validateStatus: (status) => true,
-        ));
-    if (kDebugMode) {
-      print(response.statusMessage);
-      print(response.statusCode);
-    }
-
-    var responseData = response.data;
-    print('Emi Paid response: $responseData');
-    var message = responseData['message'];
-
-    if (response.statusCode == 200 || responseData['status'] == true) {
-      showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
-      state = state.copyWith(isButtonVissible: false);
-      updatePhotoValue(context);
-      ref.refresh(fetchVisitPendingDataProvider);
-      ref.invalidate(updateEmiViewModelProvider);
-
+    String? token = speciality.getToken();
+    try {
+      final response = await dio.post(Api.updateEmiSubmit,
+          data: requestModel.toJson(),
+          options: Options(
+            headers: {"token": token},
+            validateStatus: (status) => true,
+          ));
       if (kDebugMode) {
-        print('EmiUpdateResponse ${response.data}');
+        print(response.statusMessage);
+        print(response.statusCode);
       }
-    } else if (response.statusCode == 400 || responseData['status'] == false) {
-      // isLoading = false;
-      showCustomSnackBar(context, message, Colors.red);
-      print('Emi paid message ${response.statusMessage}');
-    } else {
-      throw Exception('Failed to load data');
-      // return false;
+
+      var responseData = response.data;
+      print('Emi Paid response: $responseData');
+      var message = responseData['message'];
+
+      if (response.statusCode == 200 || responseData['status'] == true) {
+        showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
+        updatePhotoValue(context);
+        if (kDebugMode) {
+          print('EmiUpdateResponse ${response.data}');
+        }
+      } else if (response.statusCode == 400 ||
+          responseData['status'] == false) {
+// isLoading = false;
+        showCustomSnackBar(context, message, Colors.red);
+        print('Emi paid message ${response.statusMessage}');
+      } else {
+        throw Exception('Failed to load data');
+// return false;
+      }
+    } catch (e) {
+      showCustomSnackBar(context, 'Something went wrong', Colors.red);
+      rethrow;
+    } finally {
+      state = state.copyWith(isButtonVissible: false);
+      state = state.copyWith(isLoading: false);
     }
   }
 
@@ -611,10 +666,23 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       state = state.copyWith(photoFile: pickedFile.path);
+      final imagePath = await compressImage(File(pickedFile.path));
+      await uploadImage(imagePath!.path);
       return pickedFile;
     }
     state = state.copyWith(isLoading: false);
     return null;
+  }
+
+  Future<XFile?> compressImage(File file) async {
+    String fileName = path.basename(file.path);
+    final String targetPath = '${file.parent.path}/compressed_$fileName';
+    final compressedBytes = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path, // Source path
+      targetPath, // Target path
+      quality: 10, // Compression quality (0-100)
+    );
+    return compressedBytes;
   }
 
   ObjectId? parseObjectId(String? id) {
@@ -642,19 +710,18 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     final response = await dio.post(Api.uploadImageCollection,
         data: formData, options: Options(headers: {"token": token}));
     if (response.statusCode == 200) {
-      print('image url response ${response}');
+      print('image url response $response');
       VisitUpdateUploadImageResponseModel imageResponseModel =
           VisitUpdateUploadImageResponseModel.fromJson(response.data);
       state = state.copyWith(isLoading: false);
-      state =
-          state.copyWith(transactionImage: imageResponseModel.items.image);
+      state = state.copyWith(transactionImage: imageResponseModel.items.image);
       if (kDebugMode) {
         print('image url ${imageResponseModel.items.image}');
         print('image url1 ${response.data}');
-
-        imageApi = imageResponseModel.items.image;
-        print(imageApi);
       }
+
+      imageApi = imageResponseModel.items.image;
+      print(imageApi);
     } else {
       state = state.copyWith(isLoading: false);
       throw Exception('Failed to load data');
@@ -684,8 +751,10 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
           modeTitle: apiResponseList.items.dropdownDetail?.modelName,
           isExtraFormOpen: apiResponseList.items.modeDetail.extraForm,
           isEmailVisible: apiResponseList.items.modeDetail.email,
-          isTransactionImageVisible: apiResponseList.items.modeDetail.transactionImage,
-          isTransactionIdVisible: apiResponseList.items.modeDetail.transactionId);
+          isTransactionImageVisible:
+              apiResponseList.items.modeDetail.transactionImage,
+          isTransactionIdVisible:
+              apiResponseList.items.modeDetail.transactionId);
 
       if (apiResponseList.items.detail != null) {
         for (final drop in apiResponseList.items.detail ?? []) {
@@ -792,7 +861,7 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
       settlementForReason: state.reason,
     );
 
-    String? toke = await SessionService.getToken();
+    String? toke = speciality.getToken();
     /*final String token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
     */
@@ -1003,7 +1072,7 @@ class UpdateVisitModel {
     bool? isSolutionValid,
   }) {
     return UpdateVisitModel(
-      isButtonVissible: isButtonVissible??this.isButtonVissible,
+      isButtonVissible: isButtonVissible ?? this.isButtonVissible,
       transitionImage: transitionImage ?? this.transitionImage,
       isPhotoFile: isPhotoFile ?? this.isPhotoFile,
       isLoading: isLoading ?? this.isLoading,
@@ -1074,7 +1143,7 @@ class UpdateEmiModel {
   final String transactionImage;
   final String remark;
   final String bankName;
-  final String receipt;
+  final String? receipt;
   final bool isEmiAmount;
   final bool isRemark;
   final bool isBankName;
@@ -1086,9 +1155,8 @@ class UpdateEmiModel {
   final String modeTitle;
 
   UpdateEmiModel(
-      {
-        this.isButtonVissible = false,
-        this.isTransactionImageVisible = false,
+      {this.isButtonVissible = false,
+      this.isTransactionImageVisible = false,
       this.isReceiptVisible = false,
       this.isEmailVisible = false,
       this.isTransactionIdVisible = false,
@@ -1105,7 +1173,7 @@ class UpdateEmiModel {
       this.transactionImage = '',
       this.remark = '',
       this.bankName = '',
-      this.receipt = '',
+      this.receipt = null,
       this.isEmiAmount = true,
       this.isTransactionId = true,
       this.isTransactionImage = false,
@@ -1143,11 +1211,13 @@ class UpdateEmiModel {
     bool? isReceipt,
   }) {
     return UpdateEmiModel(
-      isButtonVissible: isButtonVissible?? this.isButtonVissible,
-      isEmailVisible: isEmailVisible?? this.isEmailVisible,
-        isReceiptVisible: isReceiptVisible?? this.isReceiptVisible,
-        isTransactionIdVisible: isTransactionIdVisible?? this.isTransactionIdVisible,
-        isTransactionImageVisible: isTransactionImageVisible?? this.isTransactionImageVisible,
+        isButtonVissible: isButtonVissible ?? this.isButtonVissible,
+        isEmailVisible: isEmailVisible ?? this.isEmailVisible,
+        isReceiptVisible: isReceiptVisible ?? this.isReceiptVisible,
+        isTransactionIdVisible:
+            isTransactionIdVisible ?? this.isTransactionIdVisible,
+        isTransactionImageVisible:
+            isTransactionImageVisible ?? this.isTransactionImageVisible,
         modeOfCollectionId: modeOfCollectionId ?? this.modeOfCollectionId,
         commonId: commonId ?? this.commonId,
         photoFile: photoFile ?? this.photoFile,
@@ -1319,69 +1389,84 @@ final mapControllerProvider =
 });
 
 // Provider to manage the polyline for directions
-final polylineProvider = StateProvider<List<Polyline>>((ref) => []);
+// final polylineProvider = StateProvider<List<Polyline>>((ref) => []);
 
 // Provider to fetch directions between two points
-final directionsProvider =
-    FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
-  final currentLocation = await ref.watch(currentLocationProvider.future);
+// final directionsProvider =
+//     FutureProvider.family<List<LatLng>, LatLng>((ref, destination) async {
+//   final currentLocation = await ref.watch(currentLocationProvider.future);
 
-  // final polylinePoints = PolylinePoints();
-  const apiKey =
-      'AIzaSyCiUeNk2R6jiihpsymrcQhGC586itXxAYg'; // Replace with your actual API key
-  final String url =
-      'https://maps.googleapis.com/maps/api/directions/json?origin=${currentLocation.latitude},${currentLocation.longitude}&destination=${destination.latitude},${destination.longitude}&key=$apiKey';
+//   // final polylinePoints = PolylinePoints();
+//   const apiKey =
+//       'AIzaSyCiUeNk2R6jiihpsymrcQhGC586itXxAYg'; // Replace with your actual API key
+//   final String url =
+//       'https://maps.googleapis.com/maps/api/directions/json?origin=${currentLocation.latitude},${currentLocation.longitude}&destination=${destination.latitude},${destination.longitude}&key=$apiKey';
 
-  List<LatLng> decodePolyline(String encoded) {
-    PolylinePoints polylinePoints = PolylinePoints();
-    List<PointLatLng> points = polylinePoints.decodePolyline(encoded);
+//   List<LatLng> decodePolyline(String encoded) {
+//     PolylinePoints polylinePoints = PolylinePoints();
+//     List<PointLatLng> points = polylinePoints.decodePolyline(encoded);
 
-    return points
-        .map((point) => LatLng(point.latitude, point.longitude))
-        .toList();
-  }
+//     return points
+//         .map((point) => LatLng(point.latitude, point.longitude))
+//         .toList();
+//   }
 
-  final response = await http.get(Uri.parse(url));
+//   final response = await http.get(Uri.parse(url));
 
-  if (response.statusCode == 200) {
-    final data = jsonDecode(response.body);
-    if (data['routes'].isNotEmpty) {
-      final String polyline = data['routes'][0]['overview_polyline']['points'];
+//   if (response.statusCode == 200) {
+//     final data = jsonDecode(response.body);
+//     if (data['routes'].isNotEmpty) {
+//       final String polyline = data['routes'][0]['overview_polyline']['points'];
 
-      return decodePolyline(polyline);
-    } else {
-      throw Exception('No routes found');
-    }
-  } else {
-    throw Exception('Failed to fetch directions');
-  }
+//       return decodePolyline(polyline);
+//     } else {
+//       throw Exception('No routes found');
+//     }
+//   } else {
+//     throw Exception('Failed to fetch directions');
+//   }
 
-  // final result = await polylinePoints.getRouteBetweenCoordinates(
-  //   request: PolylineRequest(
-  //     origin: PointLatLng(currentLocation.latitude, currentLocation.longitude),
-  //     destination: PointLatLng(destination.latitude, destination.longitude),
-  //     mode: TravelMode.driving,
-  //   ),
-  //   googleApiKey: apiKey,
-  // );
-  // print(result.points.isNotEmpty);
-  // if (result.points.isNotEmpty) {
-  //   // print(result.points.isNotEmpty);
-  //   // Convert the points to a list of LatLng
-  //   return result.points
-  //       .map((point) => LatLng(point.latitude, point.longitude))
-  //       .toList();
-  // } else {
-  //   return [];
-  // }
-});
+//   // final result = await polylinePoints.getRouteBetweenCoordinates(
+//   //   request: PolylineRequest(
+//   //     origin: PointLatLng(currentLocation.latitude, currentLocation.longitude),
+//   //     destination: PointLatLng(destination.latitude, destination.longitude),
+//   //     mode: TravelMode.driving,
+//   //   ),
+//   //   googleApiKey: apiKey,
+//   // );
+//   // print(result.points.isNotEmpty);
+//   // if (result.points.isNotEmpty) {
+//   //   // print(result.points.isNotEmpty);
+//   //   // Convert the points to a list of LatLng
+//   //   return result.points
+//   //       .map((point) => LatLng(point.latitude, point.longitude))
+//   //       .toList();
+//   // } else {
+//   //   return [];
+//   // }
+// });
 
 //-----------------------------end map--------------------------------------------------------
+final searchResultsProvider = StateProvider<List<ItemsDetails>>((ref) => []);
+
+
+void searchupdate(ref, String searchterm, List<ItemsDetails> listOfLists) {
+
+  final filteredResults = listOfLists.where((item) {
+    
+    return item.customerName != null &&
+       ( item.customerName!.toLowerCase().contains(searchterm.toLowerCase())|| item.ld!.toLowerCase().contains(searchterm.toLowerCase()));
+  }).toList();
+
+  ref.read(searchResultsProvider.notifier).state = filteredResults;
+}
 
 final fetchVisitPendingDataProvider =
-    FutureProvider<List<Map<String, String>>>((ref) async {
+    FutureProvider<List<ItemsDetails>>((ref) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String? token = sharedPreferences.getString('token');
+  print(token);
+
   // final String token =
   //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
   final Map<String, String> queryParam = {"status": "pending"};
@@ -1392,20 +1477,62 @@ final fetchVisitPendingDataProvider =
   print(response.statusCode);
   if (response.statusCode == 200) {
     print(response.data);
+      List<dynamic> itemsList = response.data['items'] as List;
+
+  // Now map this List<dynamic> to List<ItemsDetails>
+  List<ItemsDetails> listOfLists = itemsList.map((map) {
+    return ItemsDetails.fromJson(map);
+  }).toList();
+
+  // For debugging, print the address of the last item
+  // print(listOfLists[listOfLists.length - 1].address);
+
 
     GetVisitPendingResponseData apiResponseList =
         GetVisitPendingResponseData.fromJson(response.data);
-    // List<ItemsDetails> listOfLists = apiResponseList.items.map((map) {
+        print('>>>>>>>>>>>>> ${apiResponseList.message}');
+
+    // List<ItemsDetails> listOfLists = response.data['items']!.map((map) {
     //   return ItemsDetails.fromJson(map);
     // }).toList();
-    return apiResponseList.items;
+    // print(listOfLists[listOfLists.length-1].address);
+    ref.read(searchResultsProvider.notifier).state = listOfLists;
+print(' length of the data ${response.data['items'].length}');
+    return listOfLists;
   } else {
     throw Exception('Failed to load data');
   }
 });
 
+
+
+
+// Provider for search query state
+/*final searchQueryProvider = StateProvider<String>((ref) => '');
+
+// FutureProvider for filtered visit pending data based on search query
+final filteredVisitPendingDataProvider =
+FutureProvider<List<Map<String, String>>>((ref) async {
+  final searchQuery = ref.watch(searchQueryProvider); // No `.state` here
+  final visitPendingData = await ref.watch(fetchVisitPendingDataProvider.future);
+
+  if (searchQuery.isEmpty) {
+    return visitPendingData;
+  }
+
+  // Filter the data based on the search query
+  return visitPendingData.where((item) {
+    return item.values.any((value) =>
+        value.toLowerCase().contains(searchQuery.toLowerCase()));
+  }).toList();
+});*/
+
+//-----------------------------end map--------------------------------------------------------
+// final searchResultsProvider = StateProvider<List<ItemsDetails>>((ref) => []);
+
+
 final fetchCollectionDueDataProvider =
-    FutureProvider<List<Map<String, String>>>((ref) async {
+    FutureProvider<List<Map<dynamic, dynamic>>>((ref) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String? token = sharedPreferences.getString('token');
   // final String token =
@@ -1419,7 +1546,7 @@ final fetchCollectionDueDataProvider =
     print(response.data);
     GetVisitPendingResponseData apiResponseList =
         GetVisitPendingResponseData.fromJson(response.data);
-    return apiResponseList.items;
+    return apiResponseList.items!;
   } else {
     throw Exception('Failed to load data');
   }

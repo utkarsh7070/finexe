@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
-import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view_model/guarantor_form_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../base/utils/namespase/app_style.dart';
@@ -388,19 +386,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                         visible: paymentState.isTransactionImageVisible,
                         child: GestureDetector(
                           onTap: () {
-                            paymentViewModel.clickPhoto().then(
-                              (value) {
-                                if (value != null) {
-                                  // imagePath = value.path;
-                                  // print('imagepath ${imagePath}');
-                                  paymentViewModel.uploadImage(value.path);
-                                } else {
-                                  // ref.watch(updateEmiViewModelProvider.notifier);
-                                  // paymentState.isLoading = false;
-                                  print('elsepart');
-                                }
-                              },
-                            );
+                            paymentViewModel.clickPhoto();
                           },
                           child:
                           !paymentState.isLoading ?
@@ -453,6 +439,8 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                               paymentViewModel.updateEmiSubmitButton(
                                   detail: item!, context: context, ref: ref);
                             }
+                            ref.refresh(fetchVisitPendingDataProvider);
+                            // ref.invalidate(updateEmiViewModelProvider);
                           } else {
                             showCustomSnackBar(
                                 context,

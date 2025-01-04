@@ -1,22 +1,15 @@
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/widget/dropdown_style.dart';
 import '../model/attendance_listing_model.dart';
 import '../view_model/attendance_listing_view_model.dart';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import '../../../../base/utils/namespase/app_colors.dart';
-import '../../../../base/utils/widget/dropdown_style.dart';
-import '../model/attendance_listing_model.dart';
-import '../view_model/attendance_listing_view_model.dart';
+
 
 class AttendanceDetailsScreen extends ConsumerStatefulWidget {
   // const AttendanceDetailsScreen({Key? key}) : super(key: key);
@@ -50,88 +43,91 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
 
     final attendanceAsync = ref.watch(attendanceListingProvider(widget.employeeId));
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Attendance Details",style: TextStyle(color: Colors.white)),
-        backgroundColor: AppColors.primary,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back,color: Colors.white,),
-          onPressed: () => Navigator.pop(context),
+    return NetworkListener(
+      context: context,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Attendance Details",style: TextStyle(color: Colors.white)),
+          backgroundColor: AppColors.primary,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back,color: Colors.white,),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
-      ),
-      body: attendanceAsync.when(
-        data: (leaveData) {
-          final counters = leaveData["counters"] as AttendanceItems?;
-          final leaveRequests = leaveData["attendanceRecords"] as List<AttendanceRecord>;
-          if (counters == null) {
-            return const Center(child: Text("No attendance data available."));
-          }
-          return Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10,20,10,0),
-                  child: DropdownButtonFormField<String>(
-                    value: controllerNotifier.monthController.text.isEmpty ? null : controllerNotifier.monthController.text,
-                    onChanged: (value) {
-                      if (value != null) {
-                        controllerNotifier.monthController.text = value;
-                        ref.read(attendanceListingProvider(widget.employeeId).notifier).fetchAttendanceRequests(widget.employeeId);
-                      }
-                    },
-                    items: controllerNotifier.monthOptions.map((String option) {
-                      return DropdownMenuItem<String>(
-                        value: option,
-                        child: Text(option),
-                      );
-                    }).toList(),
-                    decoration: dropdownDecoration('Select Month'),
-
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a month';
-                      }
-                      return null;
-                    },
+        body: attendanceAsync.when(
+          data: (leaveData) {
+            final counters = leaveData["counters"] as AttendanceItems?;
+            final leaveRequests = leaveData["attendanceRecords"] as List<AttendanceRecord>;
+            if (counters == null) {
+              return const Center(child: Text("No attendance data available."));
+            }
+            return Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+      
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10,20,10,0),
+                    child: DropdownButtonFormField<String>(
+                      value: controllerNotifier.monthController.text.isEmpty ? null : controllerNotifier.monthController.text,
+                      onChanged: (value) {
+                        if (value != null) {
+                          controllerNotifier.monthController.text = value;
+                          ref.read(attendanceListingProvider(widget.employeeId).notifier).fetchAttendanceRequests(widget.employeeId);
+                        }
+                      },
+                      items: controllerNotifier.monthOptions.map((String option) {
+                        return DropdownMenuItem<String>(
+                          value: option,
+                          child: Text(option),
+                        );
+                      }).toList(),
+                      decoration: dropdownDecoration('Select Month'),
+      
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a month';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                ),
-
-                const SizedBox(height: 10),
-                // Counters at the top
-                _buildCounters(
-                  totalLeave: counters.monthDays,
-                  punchCount: counters.punchCount,
-                  sundayPresentCount: counters.sundayPresentCount,
-                  totalReject: counters.absentDays,
-                ),
-
-                const SizedBox(height: 20),
-                // Header Row
-                // _buildHeader(),
-
-                // Leave List
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: leaveRequests.length,
-                    itemBuilder: (context, index) {
-                      final leave = leaveRequests[index];
-                      return _buildLeaveCard(leave);
-                    },
+      
+                  const SizedBox(height: 10),
+                  // Counters at the top
+                  _buildCounters(
+                    totalLeave: counters.monthDays,
+                    punchCount: counters.punchCount,
+                    sundayPresentCount: counters.sundayPresentCount,
+                    totalReject: counters.absentDays,
                   ),
-                ),
-              ],
-            ),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text("Error: $err")),
+      
+                  const SizedBox(height: 20),
+                  // Header Row
+                  // _buildHeader(),
+      
+                  // Leave List
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: leaveRequests.length,
+                      itemBuilder: (context, index) {
+                        final leave = leaveRequests[index];
+                        return _buildLeaveCard(leave);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (err, stack) => Center(child: Text("Error: $err")),
+        ),
+      
       ),
-
     );
   }
 

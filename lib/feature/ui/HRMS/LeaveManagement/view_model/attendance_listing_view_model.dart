@@ -1,14 +1,13 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/Material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../base/api/api.dart';
-import '../../../../base/service/session_service.dart';
-import '../../../Collection/Collection_home_dashboard/home_collection_viewmodel/fetchUserProfile.dart';
+import '../../../../base/utils/general/pref_utils.dart';
 import '../model/attendance_listing_model.dart';
 
-final roleName = Provider<RoleListModel>(
+
+/*final roleName = Provider<RoleListModel>(
   (ref) {
     final prefs = ref.watch(sharedPreferencesHrmsProvider).asData?.value;
     List<String>? role = prefs?.getStringList('roleName');
@@ -21,7 +20,10 @@ final sharedPreferencesHrmsProvider =
     FutureProvider<SharedPreferences>((ref) async {
   final prefs = await SharedPreferences.getInstance();
   return prefs;
-});
+});*/
+
+
+
 
 class AttendanceState {
   final bool isLoading;
@@ -62,7 +64,7 @@ class AttendanceNotifier
     try {
       state = const AsyncValue.loading();
 
-      String? token = await SessionService.getToken();
+      String? token = speciality.getToken();
 
       // Check if monthController.text is empty (no month selected)
       if (monthController.text.isEmpty) {

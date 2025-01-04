@@ -1,8 +1,7 @@
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../view_model/visit_pending_view_model.dart';
-import 'CollectionDue/collection_due_screen.dart';
 import 'visitPending/visit_pending_screen.dart';
 
 class CollectionCasesScreen extends ConsumerWidget {
@@ -15,39 +14,42 @@ class CollectionCasesScreen extends ConsumerWidget {
       //   initialIndex: 0,
       //   length: 2,
       //   child:
-        Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: const Text('Visit Details'),leading: BackButton(onPressed: () {
-              Navigator.pop(context);
-              ref.invalidate(fetchVisitPendingDataProvider);
-            },),
-
-            // bottom: const TabBar(
-            //   tabs: <Widget>[
-            //     Tab(
-            //       text: 'Visit Pending',
+        NetworkListener(
+      context: context,
+          child: Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              title: const Text('Visit Details'),leading: BackButton(onPressed: () {
+                Navigator.pop(context);
+                ref.invalidate(fetchVisitPendingDataProvider);
+              },),
+          
+              // bottom: const TabBar(
+              //   tabs: <Widget>[
+              //     Tab(
+              //       text: 'Visit Pending',
+              //     ),
+              //     Tab(
+              //       text: '',
+              //       // icon: Icon(Icons),
+              //     ),
+              //   ],
+              // ),
+            ),
+            body: const VisitPendingScreen()
+            // const TabBarView(
+            //   key: Key('Key1'),
+            //   children: <Widget>[
+            //     Center(
+            //       child: VisitPendingScreen(),
             //     ),
-            //     Tab(
-            //       text: '',
-            //       // icon: Icon(Icons),
+            //     Center(
+            //       child: CollectionDue(),
             //     ),
             //   ],
             // ),
-          ),
-          body: const VisitPendingScreen()
-          // const TabBarView(
-          //   key: Key('Key1'),
-          //   children: <Widget>[
-          //     Center(
-          //       child: VisitPendingScreen(),
-          //     ),
-          //     Center(
-          //       child: CollectionDue(),
-          //     ),
-          //   ],
-          // ),
-        // )
-    );
+          // )
+              ),
+        );
   }
 }

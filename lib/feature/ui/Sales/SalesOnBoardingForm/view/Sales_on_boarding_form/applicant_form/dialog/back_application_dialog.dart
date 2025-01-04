@@ -18,7 +18,7 @@ class ConfirmBackDialog{
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10))),
           actions: const [ConfirmBackToDashBoard()],
-          content: Container(
+          content: SizedBox(
             height: displayHeight(context) * 0.19,
             child: Column(
               children: [

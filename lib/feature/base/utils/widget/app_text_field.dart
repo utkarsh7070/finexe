@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../namespase/app_colors.dart';
+import '../namespase/display_size.dart';
+
 class AppTextField extends StatelessWidget {
   final String? hint;
   final String? errorText;
@@ -23,30 +26,31 @@ class AppTextField extends StatelessWidget {
 
   const AppTextField(
       {super.key,
-        this.maximumLines,
-        this.hint,
-        this.obscureText = false,
-        this.errorText,
-        this.controller,
-        this.suffixIcon,
-        this.onFiledSubmitted,
-        required this.onChange,
-        this.isError = false,
-        this.suffixOnTap,
-        this.onTap,
-        this.isSuffix = false,
-        this.textInputAction = TextInputAction.done,
-        this.textInputType = TextInputType.text,
-        this.prefixIcon,
-        this.prefixOnTap,
-        this.onValidate,
-        this.height, this.isPrefix = false});
+      this.maximumLines,
+      this.hint,
+      this.obscureText = false,
+      this.errorText,
+      this.controller,
+      this.suffixIcon,
+      this.onFiledSubmitted,
+      required this.onChange,
+      this.isError = false,
+      this.suffixOnTap,
+      this.onTap,
+      this.isSuffix = false,
+      this.textInputAction = TextInputAction.done,
+      this.textInputType = TextInputType.text,
+      this.prefixIcon,
+      this.prefixOnTap,
+      this.onValidate,
+      this.height,
+      this.isPrefix = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       // decoration: const BoxDecoration(color: AppColors.white),
-      height: height ?? 60,
+      height: height ?? displayHeight(context) * 0.06,
       alignment: Alignment.center,
       child: Center(
         child: TextFormField(
@@ -62,19 +66,25 @@ class AppTextField extends StatelessWidget {
           keyboardType: textInputType,
           onFieldSubmitted: onFiledSubmitted,
           decoration: InputDecoration(
-              floatingLabelBehavior:FloatingLabelBehavior.always,
-              labelStyle:  TextStyle(color: isError!? Colors.red:null ),
-              prefixIcon: isPrefix! ?InkWell(
-                  onTap: prefixOnTap,
-                  child: Icon(prefixIcon, color: Colors.blue)):null,
+            isDense: true,
+              enabledBorder: OutlineInputBorder(
+                
+                  borderSide: BorderSide(color: AppColors.subgraytext)),
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              labelStyle: TextStyle(color: isError! ? Colors.red : null),
+              prefixIcon: isPrefix!
+                  ? InkWell(
+                      onTap: prefixOnTap,
+                      child: Icon(prefixIcon, color: Colors.blue))
+                  : null,
               labelText: hint,
               // hintText: hint,
               errorText: isError! ? errorText : null,
               suffixIcon: isSuffix!
                   ? InkWell(
-                onTap: suffixOnTap,
-                child: Icon(suffixIcon, color: Colors.blue),
-              )
+                      onTap: suffixOnTap,
+                      child: Icon(suffixIcon, color: Colors.blue),
+                    )
                   : null,
               filled: true,
               fillColor: Colors.white12,
@@ -87,15 +97,15 @@ class AppTextField extends StatelessWidget {
                 // ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                // borderRadius: const BorderRadius.all(Radius.circular(10)),
                 borderSide: BorderSide(
                     color: isError! ? Colors.red : Colors.blue,
                     width: isError! ? 2 : 1),
               ),
               focusedErrorBorder: isError!
                   ? const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  borderSide: BorderSide(color: Colors.red, width: 2))
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      borderSide: BorderSide(color: Colors.red, width: 2))
                   : null),
         ),
       ),

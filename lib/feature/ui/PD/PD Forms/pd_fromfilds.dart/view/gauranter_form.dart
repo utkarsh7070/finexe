@@ -15,6 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../../../common imagePicker/image_picker.dart';
 import '../view_model.dart/garaunter_view_model.dart';
 final isExpGaurantProvider = StateProvider<bool>((ref) => false);
@@ -105,33 +106,33 @@ class _GauranterFormScreenState extends ConsumerState<GauranterFormScreen> {
                 data: (gauranterItems) {
                   if (_gauranterform_occupationController.text.isEmpty) {
                     _gauranterform_occupationController.text =
-                        gauranterItems.guarantor!.occupation ?? '';
+                        gauranterItems?.items?.guarantor?.occupation ?? '';
                     _gauranterform_gauranterTypeController.text =
-                        gauranterItems.guarantor!.guarantorType ?? '';
+                        gauranterItems?.items?.guarantor?.guarantorType ?? '';
                     _gauranterform_bussController.text =
-                        gauranterItems.guarantor!.businessType ?? '';
+                        gauranterItems?.items?.guarantor?.businessType ?? '';
                     // occupationController.text = applicant.occupation ?? '';
                     _gauranterform_nationController.text =
-                        gauranterItems.guarantor!.nationality ?? '';
+                        gauranterItems?.items?.guarantor?.nationality ?? '';
                     _gauranterform_religionController.text =
-                        gauranterItems.guarantor!.religion ?? '';
+                        gauranterItems?.items?.guarantor?.religion ?? '';
                     _gauranterform_casteController.text =
-                        gauranterItems.guarantor!.caste ?? '';
+                        gauranterItems?.items?.guarantor?.caste ?? '';
                     _gauranterform_categoryController.text =
-                        gauranterItems.guarantor!.category ?? '';
+                        gauranterItems?.items?.guarantor?.category ?? '';
                     _gauranterform_altermobileController.text =
-                        gauranterItems.guarantor!.alternateMobileNo ?? '';
+                        gauranterItems?.items?.guarantor?.alternateMobileNo ?? '';
                     _gauranterform_houselandmarkController.text =
-                        gauranterItems.guarantor!.houseLandMark ?? '';
+                        gauranterItems?.items?.guarantor?.houseLandMark ?? '';
                     _gauranterform_emailController.text =
-                        gauranterItems.guarantor!.emailId ?? '';
+                        gauranterItems?.items?.guarantor?.emailId ?? '';
                     _gauranterform_yearsAtcurrentAddress.text =
-                        gauranterItems.guarantor!.noOfyearsAtCurrentAddress ?? '';
+                        gauranterItems?.items?.guarantor?.noOfyearsAtCurrentAddress ?? '';
                     _gauranterform_educationController.text =
-                        gauranterItems.guarantor!.educationalDetails ?? '';
+                        gauranterItems?.items?.guarantor?.educationalDetails ?? '';
                     // _gauranterform_casteController.text = gauranter.noOfDependentWithCustomer ?? '';
                     _gauranterform_residancetypeController.text =
-                        gauranterItems.guarantor!.residenceType ?? '';
+                        gauranterItems?.items?.guarantor?.residenceType ?? '';
                   }
                   return Form(
                       key: _formKey,
@@ -152,14 +153,17 @@ class _GauranterFormScreenState extends ConsumerState<GauranterFormScreen> {
                           ),
 
                           CommonImagePicker(
-                            applicantImage: gauranterItems.guarantorImage ?? '',
+                            applicantImage: gauranterItems?.items?.guarantorImage ?? '',
                             onImageUploaded: (imageUrl) {
                               setState(() {
-                                gauranterItems.guarantorImage!.isNotEmpty
-                                    ? gauranterItems.guarantorImage = imageUrl
-                                    : // Update the image URL
-                                gauranterUrl = imageUrl;
-                                print('gauranterUrl:: $gauranterUrl');
+                                if( gauranterItems?.items?.guarantorImage != null){
+                                  gauranterItems!.items!.guarantorImage!.isNotEmpty
+                                      ? gauranterItems.items!.guarantorImage = imageUrl
+                                      : // Update the image URL
+                                  gauranterUrl = imageUrl;
+                                  print('gauranterUrl:: $gauranterUrl');
+                                }
+
                               });
                             },
                           ),
@@ -449,6 +453,7 @@ class _GauranterFormScreenState extends ConsumerState<GauranterFormScreen> {
                                   ref
                                       .read(pdsubmitgauranterProvider.notifier)
                                       .submitpdGarunterForm(
+                                    context: context,
                                       gauranterImg: gauranterUrl,
                                       customerId:  widget.customerId,
                                       pdType: 'creditPd',
@@ -480,42 +485,15 @@ class _GauranterFormScreenState extends ConsumerState<GauranterFormScreen> {
                                       .then(
                                         (value) {
                                       if (value) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            backgroundColor: AppColors.green,
-                                            content: Text(
-                                              'Form submitted successfully!',
-                                              style: AppStyles.whiteText16,
-                                            ),
-                                          ),
-                                        );
-                                      } else {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            backgroundColor: AppColors.red,
-                                            content: Text(
-                                              'Faild to submit the form please try again',
-                                              style: AppStyles.whiteText16,
-                                            ),
-                                          ),
-                                        );
+                                        showCustomSnackBar(
+                                            context,'Form Saved successfully!', Colors.green);
                                       }
-                                    },
+                                    }
                                   );
                                 } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      backgroundColor: AppColors.red,
-                                      content: Text(
-                                        'Please fill all required details!',
-                                        style: AppStyles.whiteText16,
-                                      ),
-                                    ),
-                                  );
+                                  showCustomSnackBar(
+                                      context,'Please fill all required details!', Colors.red);
                                 }
-                                // print(applicantTypeController.text);
-                                // print(businessTypeController.text);
-                                // print(residenceTypeController.text);
                               },
                               child: appState.isLoading == true
                                   ? const SizedBox(
@@ -529,7 +507,7 @@ class _GauranterFormScreenState extends ConsumerState<GauranterFormScreen> {
                                 ),
                               )
                                   : Text(
-                                'Next',
+                                'Save Form',
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),

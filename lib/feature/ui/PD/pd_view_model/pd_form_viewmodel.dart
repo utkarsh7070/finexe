@@ -9,6 +9,6 @@ class SegmentNotifier extends StateNotifier<int> {
 }
 
 // Provide the notifier
-final segmentProvider = StateNotifierProvider<SegmentNotifier, int>(
+final segmentProvider = StateNotifierProvider.autoDispose<SegmentNotifier, int>(
       (ref) => SegmentNotifier(),
 );

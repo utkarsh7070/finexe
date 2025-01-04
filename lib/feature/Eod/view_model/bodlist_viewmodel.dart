@@ -9,7 +9,6 @@ import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart';
 
 class EODState {
@@ -58,12 +57,12 @@ class EODState {
     return EODState(
       isLoading: isLoading ?? this.isLoading,
       bodList: bodList ?? this.bodList,
-      bodFilterList: bodfilterList ?? this.bodFilterList,
+      bodFilterList: bodfilterList ?? bodFilterList,
       dropDownList: dropDownList ?? this.dropDownList,
       dropDownFilterList: dropDownFilterList ?? this.dropDownFilterList,
       dropDownDateFilterList:
           dropDownDateFilterList ?? this.dropDownDateFilterList,
-      dropDownValue: dropdownv ?? this.dropDownValue,
+      dropDownValue: dropdownv ?? dropDownValue,
       selectedDate: selectedDate ?? this.selectedDate,
     );
   }
@@ -83,8 +82,8 @@ class EODController extends StateNotifier<EODState> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     token = sharedPreferences.getString('token');
     emp = sharedPreferences.getString('employeId'); // Replace with actual token
-    log('token: ' + token.toString());
-    log('employeId: ' + emp.toString());
+    log('token: $token');
+    log('employeId: $emp');
 
     if (emp != null && token != null) {
       print('>>>>>>>???? calling');
@@ -98,11 +97,11 @@ class EODController extends StateNotifier<EODState> {
   void addStatusValue() {
     for (int i = 0; i < state.bodList.length; i++) {
       if (state.bodList[i].status == 'pending') {
-        state.dropDownValue?.add(state.dropDownList[1].toString());
+        state.dropDownValue.add(state.dropDownList[1].toString());
       } else if (state.bodList[i].status == 'completed') {
-        state.dropDownValue?.add(state.dropDownList[0].toString());
+        state.dropDownValue.add(state.dropDownList[0].toString());
       } else if (state.bodList[i].status == 'processing') {
-        state.dropDownValue?.add(state.dropDownList[2].toString());
+        state.dropDownValue.add(state.dropDownList[2].toString());
       }
     }
     dropDownFilterValue = state.dropDownFilterList.first;
@@ -117,7 +116,7 @@ class EODController extends StateNotifier<EODState> {
       final response = await _workTaskRepository.getBodTask(emp, sttoken);
       print(response);
       if (response != null) {
-        print('getAllBOD list: ${response}');
+        print('getAllBOD list: $response');
         final getAllTaskResponseModel =
             GetAllTaskResponseModel.fromJson(response.data);
         state = state.copyWith(
@@ -160,12 +159,12 @@ class EODController extends StateNotifier<EODState> {
 
   Future<void> updateStatusTask(String taskId, String storedToken,
       String status, BuildContext context) async {
-    Map<String, String> token = {"token": "$storedToken"};
+    Map<String, String> token = {"token": storedToken};
     print('?////////employeeId $emp , status $status');
     UpdateStatusRequestModel updateStatusRequestModel =
         UpdateStatusRequestModel(taskId: taskId, status: status);
     await _workTaskRepository
-        .updateStatusTask(updateStatusRequestModel!, token)
+        .updateStatusTask(updateStatusRequestModel, token)
         .onError((error, stackTrace) {
       if (kDebugMode) {
         print('error $error');

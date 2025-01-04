@@ -3,20 +3,15 @@ import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view/Income%20Details/view/Others/other_model/other_income_model.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_update_data/view/Income%20Details/view/Others/other_model/other_income_model.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_update_data/view/Income%20Details/view/Salary%20Income/salary_model/salary_income_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../../../../../base/api/dio_exception.dart';
 import 'other_model/other_income_model.dart';
-
-// import '../../../../../../../../../../base/api/api.dart';
-// import '../../../../../../../../../../base/service/session_service.dart';
-// import '../../../../../../../../../../base/utils/widget/custom_snackbar.dart';
 
 // ---------- Image Upload Notifier (Optional) ---------
 // class OtherImageUploadNotifier extends StateNotifier<List<File>> {
@@ -66,7 +61,7 @@ class OtherDetailsFormView {
         'pdType': 'creditPd',
       };
 
-      final token = await SessionService.getToken();
+      final token = speciality.getToken();
 
       final response = await _dio.post(
         Api.updatePdReport, // Replace with your API endpoint
@@ -76,20 +71,18 @@ class OtherDetailsFormView {
       print('Response  post other--: ${response.data}');
 
       if (response.statusCode == 200) {
-        showCustomSnackBar(context, 'other Details Submitted', Colors.green);
-      } else {
-        print('Error response: ${response.data}');
-        throw Exception('Failed to submit salary details');
+        showCustomSnackBar(context, 'other Details form saved', Colors.green);
       }
     } catch (e) {
       print('Error submitting salary details: $e');
-      showCustomSnackBar(context, 'Form Submission Failed', Colors.red);
+      DioExceptions.fromDioError(e as DioException, context);
+
     }
   }
 }
 
 // ---------- Fetch API Provider ----------
-final salaryDetailsProvider = FutureProvider.autoDispose.family<OtherIncomeData,String>((ref,custId) async {
+final salaryDetailsProvider = FutureProvider.autoDispose.family<OtherIncomeDataModel?,String>((ref,custId) async {
   final apiService = OtherApiService();
   return apiService.fetchOtherDetails(custId);
 });
@@ -97,8 +90,8 @@ final salaryDetailsProvider = FutureProvider.autoDispose.family<OtherIncomeData,
 class OtherApiService {
   final Dio _dio = Dio();
 
-  Future<OtherIncomeData> fetchOtherDetails(String custId) async {
-    final token = await SessionService.getToken();
+  Future<OtherIncomeDataModel?> fetchOtherDetails(String custId) async {
+    final token = speciality.getToken();
 
     try {
       // Make the API request
@@ -112,10 +105,18 @@ class OtherApiService {
       if (response.statusCode == 200) {
         final items = response.data['items'] as Map<String, dynamic>? ?? {};
         final incomeSource = items['incomeSource'];
-
-        if (incomeSource == null) {
-          throw Exception('Error: "incomeSource" field is missing in response');
+        if (items.isEmpty) {
+          print('Error: "items" field is missing in response');
+          // throw Exception('Error: "incomeSource" field is missing in response');
+          return null;
         }
+        if (incomeSource == null) {
+          print('Error: "incomeSource" field is missing in response');
+          // throw Exception('Error: "incomeSource" field is missing in response');
+          return null;
+        }
+
+
 
         // Safely parse `incomeSource` to ensure it's not null or of invalid type
         if (incomeSource is List) {
@@ -129,9 +130,10 @@ class OtherApiService {
                 print('ohterBusiness: $ohterBusiness');
 
                 if (ohterBusiness != null) {
-                  return OtherIncomeData.fromJson(ohterBusiness);
+                  return OtherIncomeDataModel.fromJson(ohterBusiness);
                 } else {
-                  throw Exception('Error: "ohterBusiness" data is missing in the entry');
+                  // throw Exception('Error: "ohterBusiness" data is missing in the entry');
+                  print('Error: "ohterBusiness" data is missing in the entry');
                 }
               } else {
                 print('Skipping entry without "ohterBusiness": $source');
@@ -141,12 +143,16 @@ class OtherApiService {
             }
           }
           // If no entry contains "milkBusiness"
-          throw Exception('Error: "milkBusiness" data not found in any income source entry');
+          // throw Exception('Error: "milkBusiness" data not found in any income source entry');
+          print('Error: "ohterBusiness" data is missing in the entry');
         } else {
-          throw Exception('Error: "incomeSource" is not a valid List');
+          // throw Exception('Error: "incomeSource" is not a valid List');
+          print('Error: "incomeSource" is not a valid List');
+
         }
       } else {
-        throw Exception('Failed to fetch data. Status code: ${response.statusCode}');
+        // throw Exception('Failed to fetch data. Status code: ${response.statusCode}');
+        print('Failed to fetch data. Status code: ${response.statusCode}');
       }
     } catch (e) {
       print('Error occurred: $e');
@@ -177,7 +183,7 @@ class AnimalImageUploadNotifier extends StateNotifier<List<File>> {
   }
 
   Future<String> uploadImage(String image) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";

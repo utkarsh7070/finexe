@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/Submit Data Models/total_income_modal.dart';
 import '../view_model.dart/total_income_view_modal.dart';
 final isExpTotalIncomeProvider = StateProvider<bool>((ref) => false);
@@ -70,13 +71,13 @@ class _TotalIncomeDetailsFormState
                 data: (incomeData) {
                   if (totalincomeForm_yearlyIncomeController.text.isEmpty) {
                     totalincomeForm_expensesYearlyController.text =
-                        incomeData.totalExpensesYearly ?? '';
+                        incomeData.totalIncomeDetails?.totalExpensesYearly ?? '';
                     totalincomeForm_expensesMonthlyController.text =
-                        incomeData.totalExpensesMonthly ?? '';
+                        incomeData.totalIncomeDetails?.totalExpensesMonthly ?? '';
                     totalincomeForm_yearlyIncomeController.text =
-                        incomeData.totalYearlyIncome ?? '';
+                        incomeData.totalIncomeDetails?.totalYearlyIncome ?? '';
                     totalincomeForm_monthlyIncomeController.text =
-                        incomeData.totalMonthlyIncome ?? '';
+                        incomeData.totalIncomeDetails?.totalMonthlyIncome ?? '';
                   }
                   return  Form(
                       key: _formKey,
@@ -179,31 +180,25 @@ class _TotalIncomeDetailsFormState
                                 await ref
                                     .read(pdIncomeDetailsProvider.notifier)
                                     .submitIncomeDetails(
+                                  context: context,
                                   customerId:  widget.customerId,
                                   pdType: 'creditPd',
                                   incomeDetails:
                                   incomeDetails, // Pass the object here
+                                ).then(
+                                  (value) {
+                                    if(value==true){
+                                      showCustomSnackBar(
+                                          context,'Form Saved successfully!', Colors.green);
+                                    }
+
+                                  },
                                 );
 
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: AppColors.green,
-                                    content: Text(
-                                      'Form submitted successfully!',
-                                      style: AppStyles.whiteText16,
-                                    ),
-                                  ),
-                                );
+
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: AppColors.red,
-                                    content: Text(
-                                      'Please fill all required details!',
-                                      style: AppStyles.whiteText16,
-                                    ),
-                                  ),
-                                );
+                                showCustomSnackBar(
+                                    context,'Please fill all required details!', Colors.green);
                               }
                             },
                             child: appState.isLoading == true
@@ -218,7 +213,7 @@ class _TotalIncomeDetailsFormState
                               ),
                             )
                                 : Text(
-                              'Next',
+                              'Save Form',
                               style: AppStyles.whiteText16,
                             ),
                           ),

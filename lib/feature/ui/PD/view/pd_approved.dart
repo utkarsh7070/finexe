@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:finexe/feature/base/api/api.dart';
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
@@ -66,49 +67,52 @@ class _PdApprovedScreen extends ConsumerState<PdApprovedScreen> {
   Widget build(BuildContext context) {
     // final asyncData = ref.watch(paginatedApprovedDataProvider);
     // final pdrejectitems = ref.watch(pdrejectViewModel);
-    return Scaffold(
-        appBar: AppBar(
-          flexibleSpace: Container(
-            color: Colors.white,
+    return NetworkListener(
+      context: context,
+      child: Scaffold(
+          appBar: AppBar(
+            flexibleSpace: Container(
+              color: Colors.white,
+            ),
+            backgroundColor: AppColors.white,
+            title: const Text('Approved PD'),
+            centerTitle: true,
           ),
-          backgroundColor: AppColors.white,
-          title: const Text('Approved PD'),
-          centerTitle: true,
-        ),
-        body: FutureBuilder<List<ApproveItem>>(
-            future: ref.read(
-                paginatedApprovedDataProvider(_currentPage).future),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting &&
-                  _data.isEmpty) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else {
-                return RefreshIndicator(
-                  onRefresh: _fetchInitialData,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          scrollDirection: Axis.vertical,
-                          itemCount: _data.length,
-                          itemBuilder: (context, index) {
-                            final items = _data[index];
-                            //   return _buildApplicantDetails(context, applicant);
-                            return itemCard(context, items);
-                          },
+          body: FutureBuilder<List<ApproveItem>>(
+              future: ref.read(
+                  paginatedApprovedDataProvider(_currentPage).future),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting &&
+                    _data.isEmpty) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  return RefreshIndicator(
+                    onRefresh: _fetchInitialData,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            scrollDirection: Axis.vertical,
+                            itemCount: _data.length,
+                            itemBuilder: (context, index) {
+                              final items = _data[index];
+                              //   return _buildApplicantDetails(context, applicant);
+                              return itemCard(context, items);
+                            },
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-            })
-
-
+                      ],
+                    ),
+                  );
+                }
+              })
+      
+      
+      ),
     );
   }
 

@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../view_model.dart/bankdetails_view_model.dart';
 final isExpbankProvider = StateProvider<bool>((ref) => false);
 
@@ -70,15 +71,15 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
             bankDetails.when(
                 data: (bankData) {
                   if (bankdetailsform_ifscCodeController.text.isEmpty) {
-                    bankdetailsform_branchController.text = bankData.branchName ?? '';
+                    bankdetailsform_branchController.text =bankData?.items?.bankDetail?.branchName ?? '';
                     bankdetailsform_accountholdernameController.text =
-                        bankData.accountHolderName ?? '';
+                        bankData?.items?.bankDetail?.accountHolderName ?? '';
                     bankdetailsform_accounttypeController.text =
-                        bankData.accountType ?? '';
+                        bankData?.items?.bankDetail?.accountType ?? '';
                     bankdetailsform_accountnumberController.text =
-                        bankData.accountNo ?? '';
-                    bankdetailsform_banknameController.text = bankData.nameOfBank ?? '';
-                    bankdetailsform_ifscCodeController.text = bankData.iFSCCode ?? '';
+                        bankData?.items?.bankDetail?.accountNo ?? '';
+                    bankdetailsform_banknameController.text = bankData?.items?.bankDetail?.nameOfBank ?? '';
+                    bankdetailsform_ifscCodeController.text = bankData?.items?.bankDetail?.iFSCCode ?? '';
                   }
                   return Form(
                       key: _formKey,
@@ -213,6 +214,7 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
                                 ref
                                     .read(pdsubmitbankdetailsProvider.notifier)
                                     .submitpdBankDetailsForm(
+                                  context: context,
                                     customerId:  widget.customerId,
                                     pdType: 'creditPd',
                                     accountholerdName:
@@ -232,25 +234,17 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
                                     .then(
                                       (value) {
                                     if (value) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: AppColors.green,
-                                          content: Text(
-                                            'Form submitted successfully!',
-                                            style: AppStyles.whiteText16,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: AppColors.red,
-                                          content: Text(
-                                            'Faild to submit the form please try again',
-                                            style: AppStyles.whiteText16,
-                                          ),
-                                        ),
-                                      );
+                                      // ScaffoldMessenger.of(context).showSnackBar(
+                                      //   SnackBar(
+                                      //     backgroundColor: AppColors.green,
+                                      //     content: Text(
+                                      //       'Form save successfully!',
+                                      //       style: AppStyles.whiteText16,
+                                      //     ),
+                                      //   ),
+                                      // );
+                                      showCustomSnackBar(
+                                          context,'Form Saved successfully!', Colors.green);
                                     }
                                   },
                                 );
@@ -277,7 +271,7 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
                               ),
                             )
                                 : Text(
-                              'Next',
+                              'Save Form',
                               style: TextStyle(color: Colors.white),
                             ),
                           )

@@ -25,7 +25,7 @@ class LeadApprovedModelData {
 
   factory LeadApprovedModelData.fromJson(Map<String, dynamic> json) {
     // Helper function to handle empty or null values with customizable default value
-    String? handleBlank(String? value, {String? defaultValue = null}) {
+    String? handleBlank(String? value, {String? defaultValue}) {
       return (value == null || value.trim().isEmpty) ? defaultValue : value;
     }
 

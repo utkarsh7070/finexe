@@ -2,11 +2,15 @@ import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import '../../../../../../../base/api/api.dart';
 // import '../../../../../../../base/api/dio.dart';
 // import '../../../../../../../base/service/session_service.dart';
+import '../../../../../base/api/dio_exception.dart';
 import '../model/Submit Data Models/police_station_model.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+
 
 class PDPoliceModel extends StateNotifier<ApplicantState> {
   final Dio dio;
@@ -16,6 +20,7 @@ class PDPoliceModel extends StateNotifier<ApplicantState> {
   Future<bool> submitpdPoloiceForm({
     required String customerId,
     required String pdType,
+    required BuildContext context,
     String? policeStaionname,
     String? policeStaionaddress,
   }) async {
@@ -30,8 +35,11 @@ class PDPoliceModel extends StateNotifier<ApplicantState> {
       'customerId': customerId,
       'pdType': pdType,
     };
-
-    final token = await SessionService.getToken();
+    // if(state.isLoading==true){
+    //   print('click second time');
+    //   return false;
+    // }
+    final token = speciality.getToken();
     try {
       final response = await dio.post(Api.updatePdReport,
           data: payload, options: Options(headers: {"token": token}));
@@ -46,10 +54,15 @@ class PDPoliceModel extends StateNotifier<ApplicantState> {
         print('Error while submitting applicant form');
         return false;
       }
-    } catch (e) {
+    }
+    catch (error) {
+      print(error);
       state = state.copyWith(isLoading: false);
-      print('Exception: $e');
-      throw Exception(e);
+      DioExceptions.fromDioError(error as DioException, context);
+      // Handle exceptions and set state to error
+      // state = AsyncValue.error(error, stackTrace);
+      print('response.data.message ${error}');
+      return false;
     }
   }
 }
@@ -62,7 +75,7 @@ final pdPoliceSubmitDataProvider =
 
 // ------------ Get api -------------
 final policeDetailsProvider =
-    FutureProvider.autoDispose.family<PoliceStation,String>((ref,customerId) async {
+    FutureProvider.autoDispose.family<PoliceStationModel,String>((ref,customerId) async {
   // modal class name
   final viewModel = PoliceFormDetailsProvider(); //Class name
   return await viewModel.fetchPoliceDetails(customerId);
@@ -71,9 +84,9 @@ final policeDetailsProvider =
 class PoliceFormDetailsProvider {
   final Dio _dio = Dio();
 
-  Future<PoliceStation> fetchPoliceDetails(String customerId) async {
-    final token = await SessionService.getToken();
-
+  Future<PoliceStationModel> fetchPoliceDetails(String customerId) async {
+    final token = speciality.getToken();
+    PoliceStationModel details = PoliceStationModel();
     try {
       final response = await _dio.get(
         '${Api.getpdformdata}$customerId',
@@ -82,11 +95,11 @@ class PoliceFormDetailsProvider {
 
       if (response.statusCode == 200 && response.data != null) {
         // print('API Response: ${response.data}');
-        final details = PoliceStationModel.fromJson(response.data);
+         details = PoliceStationModel.fromJson(response.data);
 
         if (details.items?.policeStation != null) {
           print('Parsed PoliceStation: ${details.items!.policeStation}');
-          return details.items!.policeStation!; // Return the parsed object
+          return details; // Return the parsed object
         } else {
           throw Exception(
               "Failed to load application data: ${response.statusCode}"); // Return null if no data found
@@ -96,7 +109,8 @@ class PoliceFormDetailsProvider {
       }
     } catch (e) {
       print("Error fetching applicant details: $e");
-      throw Exception("Error fetching application data: $e");
+      // throw Exception("Error fetching application data: $e");
+      return details;
     }
   }
 }

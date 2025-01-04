@@ -38,6 +38,8 @@ class SamagraDetailsItems {
   String? sId;
   String? customerId;
   String? pdId;
+  String? meterPhoto;
+  String? electricityBillPhoto;
   List<FamilyMember>? familyMember;
   SamagraDetail? samagraDetail;
 
@@ -49,7 +51,9 @@ class SamagraDetailsItems {
       this.customerId,
       this.pdId,
       this.familyMember,
-      this.samagraDetail});
+      this.samagraDetail,
+        this.meterPhoto, this.electricityBillPhoto
+      });
 
   SamagraDetailsItems.fromJson(Map<String, dynamic> json) {
     pdType = json['pdType'];
@@ -58,6 +62,8 @@ class SamagraDetailsItems {
     sId = json['_id'];
     customerId = json['customerId'];
     pdId = json['pdId'];
+    meterPhoto = json['meterPhoto'];
+    electricityBillPhoto = json['electricityBillPhoto'];
     if (json['familyMember'] != null) {
       familyMember = <FamilyMember>[];
       json['familyMember'].forEach((v) {
@@ -77,6 +83,8 @@ class SamagraDetailsItems {
     data['_id'] = this.sId;
     data['customerId'] = this.customerId;
     data['pdId'] = this.pdId;
+    data['meterPhoto'] = this.meterPhoto;
+    data['electricityBillPhoto'] = this.electricityBillPhoto;
     if (this.familyMember != null) {
       data['familyMember'] = this.familyMember!.map((v) => v.toJson()).toList();
     }

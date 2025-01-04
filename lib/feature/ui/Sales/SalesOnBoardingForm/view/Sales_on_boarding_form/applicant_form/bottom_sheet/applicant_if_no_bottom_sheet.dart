@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:finexe/feature/base/utils/widget/upload_box.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../../../base/utils/namespase/app_colors.dart';
@@ -11,7 +9,6 @@ import '../../../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../../../base/utils/namespase/display_size.dart';
 import '../../../../../../../base/utils/namespase/font_size.dart';
 import '../../../../../../../base/utils/widget/app_button.dart';
-import '../../../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../../view_model/application_form_view_model.dart';
 
 class ApplicationPhotoBottomSheet extends ConsumerWidget {

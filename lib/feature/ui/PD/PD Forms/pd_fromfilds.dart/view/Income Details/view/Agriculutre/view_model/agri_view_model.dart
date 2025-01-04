@@ -3,18 +3,17 @@ import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
-import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view/Income%20Details/view/Agriculutre/agri_mode/agriculture_income_form_model.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_update_data/view/Income%20Details/view/Agriculutre/agri_mode/agriculture_income_form_model.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/Material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../../../../../../base/api/dio_exception.dart';
+import '../../../../../../../../../base/utils/namespase/app_colors.dart';
+import '../../../../../../../../../base/utils/namespase/app_style.dart';
+import '../../../../../../../../../base/utils/widget/custom_snackbar.dart';
 import '../agri_mode/agriculture_income_form_model.dart';
-
-// import '../../../../../../../../../../../base/service/session_service.dart';
-// import '../../../../../../../../../../../base/utils/widget/custom_snackbar.dart';
 
 // class ImageUploadNotifier extends StateNotifier<List<File>> {
 //   ImageUploadNotifier() : super([]);
@@ -62,7 +61,7 @@ class ImageUploadNotifier extends StateNotifier<List<File>> {
   }
 
   Future<String> uploadImage(String image) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
@@ -121,9 +120,10 @@ class AgricultureBusinessForm {
   final Dio _dio = Dio();
 
   Future<void> submitAgricultureForm(
-    AgricultureDataModel formData,
+      AgricultreItems formData,
     BuildContext context,
-    String customerId
+    String customerId,
+
   ) async {
     try {
       // Create the payload for the API request
@@ -133,7 +133,7 @@ class AgricultureBusinessForm {
         'pdType': 'creditPd',
       };
 
-      final token = await SessionService.getToken();
+      final token =  speciality.getToken();
       // Update this with a dynamic token retrieval process
 
       final response = await _dio.post(
@@ -148,21 +148,44 @@ class AgricultureBusinessForm {
             'Updated agricultur business data: ${updatedData['incomeSource'][0]['agricultureBusiness']}');
 
         showCustomSnackBar(
-            context, 'Milk Business Form Submitted', Colors.green);
-      } else {
+            context, 'Milk Business Form Saved', Colors.green);
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     backgroundColor: AppColors.green,
+        //     content: Text(
+        //       'Form Details Saved successfully!',
+        //       style: AppStyles.whiteText16,
+        //     ),
+        //   ),
+        // );
+      }
+      else {
         // Log the error response for debugging
         print('Error response: ${response.data}');
-        throw Exception('Failed to submit milk business form');
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     backgroundColor: AppColors.red,
+        //     content: Text(
+        //       'Failed to save form details',
+        //       style: AppStyles.whiteText16,
+        //     ),
+        //   ),
+        // );
+        showCustomSnackBar(
+            context, 'Failed to save form details', Colors.green);
+        // throw Exception('Failed to submit milk business form');
       }
     } catch (e) {
       print("Error submitting milk business form: $e");
-      showCustomSnackBar(context, 'Form Submission Failed', Colors.red);
+      // showCustomSnackBar(context, 'Form Submission Failed', Colors.red);
+      DioExceptions.fromDioError(e as DioException, context);
+
     }
   }
 }
 
 //  -------------- get api
-final agriBusinessProvider = FutureProvider.autoDispose.family<AgricultureData,String>((ref,custId) async {
+final agriBusinessProvider = FutureProvider.autoDispose.family<AgricultureDataModel?,String>((ref,custId) async {
   final apiService = ApiService();
   return apiService.fetchAgricultureBusiness(custId);
 });
@@ -170,9 +193,10 @@ final agriBusinessProvider = FutureProvider.autoDispose.family<AgricultureData,S
 class ApiService {
   final Dio _dio = Dio();
 
-  Future<AgricultureData> fetchAgricultureBusiness(String customerId) async {
-    String? token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY';
+  Future<AgricultureDataModel?> fetchAgricultureBusiness(String customerId) async {
+    // String? token =
+    //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY';
+    String? token =speciality.getToken();
 
     try {
       // Make the API request
@@ -187,11 +211,19 @@ class ApiService {
       // Validate response status
       if (response.statusCode == 200) {
         final items = response.data['items'] as Map<String, dynamic>? ?? {};
+        print('items in agri:: $items');
+        // Handle case when items is empty
+        if (items.isEmpty) {
+          print('Warning: "items" is empty in the response');
+          return null; // Return null or handle as needed
+        }
         final incomeSource = items['incomeSource'];
 
         // Validate incomeSource existence
         if (incomeSource == null) {
-          throw Exception('Error: "incomeSource" field is missing in response');
+          print('Error: "incomeSource" field is missing in response');
+          //throw Exception('Error: "incomeSource" field is missing in response');
+          return null;
         }
 
         // Handle incomeSource if it's a List
@@ -204,10 +236,12 @@ class ApiService {
           if (agriBusinessSource != null) {
             final agriBusiness = agriBusinessSource['agricultureBusiness'];
             if (agriBusiness != null) {
-              return AgricultureData.fromJson(agriBusiness);
+              return AgricultureDataModel.fromJson(agriBusiness);
             } else {
-              throw Exception(
-                  'Error: "agricultureBusiness" data is missing in list');
+              print('Error: "agricultureBusiness" data is missing in list');
+              // throw Exception(
+              //     'Error: "agricultureBusiness" data is missing in list');
+              return null;
             }
           }
         }
@@ -215,16 +249,19 @@ class ApiService {
         else if (incomeSource is Map) {
           final agriData = incomeSource['agricultureBusiness'];
           if (agriData != null) {
-            return AgricultureData.fromJson(agriData);
+            return AgricultureDataModel.fromJson(agriData);
           }
         }
 
         // If no valid agriculture business data is found
-        throw Exception(
-            'Error: "agricultureBusiness" data not found in response');
+        // throw Exception(
+        //     'Error: "agricultureBusiness" data not found in response');
+        print('Error: "agricultureBusiness" data not found in response');
       } else {
-        throw Exception(
-            'Failed to fetch data. Status code: ${response.statusCode}');
+        // throw Exception(
+        //     'Failed to fetch data. Status code: ${response.statusCode}');
+        print('Failed to fetch data. Status code: ${response.statusCode}');
+        return null;
       }
     } catch (e) {
       print('Error occurred: $e');
@@ -243,7 +280,7 @@ class ApiOtherService {
   final Dio _dio = Dio();
 
   Future<OtherDropData> fetchOtherData(String customerId) async {
-    final token = await SessionService.getToken();
+    final token = speciality.getToken();
 
     try {
       final response = await _dio.get(

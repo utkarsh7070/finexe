@@ -17,6 +17,8 @@ import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../base/utils/widget/custom_snackbar.dart';
+import '../../../Common Widgets/CustomDropdownWithCross.dart';
 import '../../../Common Widgets/simple_dropdown.dart';
 import '../../../common imagePicker/dynamic_listing_images.dart';
 import '../../../common imagePicker/image_picker.dart';
@@ -83,6 +85,9 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
   late TextEditingController propertyDetailForm_localityClass;
   late TextEditingController propertyDetailForm_localityType;
   late TextEditingController typeOfPropertyPaper;
+  //assetseenAtResidenace
+  late TextEditingController assetseenAtResidenace;
+
 
   // Property Status
   late TextEditingController propertyDetailForm_landflatStatus;
@@ -179,6 +184,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
     propertyDetailForm_totalCons = TextEditingController();
     typeOfPropertyPaper= TextEditingController();
     actualUsageoFProperty= TextEditingController();
+    assetseenAtResidenace= TextEditingController();
   }
 
   @override
@@ -238,6 +244,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
     propertyDetailForm_totalCons.dispose();
     typeOfPropertyPaper.dispose();
     actualUsageoFProperty.dispose();
+    assetseenAtResidenace.dispose();
     super.dispose();
   }
 
@@ -258,6 +265,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
   String interirorUrl = '';
   String approachRoadImgUrl = '';
   String otherPhotosUrl = '';
+  List<String> assetsatResidence = [];
 
   @override
   Widget build(BuildContext context) {
@@ -272,6 +280,8 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
     final imageNotifier = ref.read(otherPhototsimageUploadProvider.notifier);
 
     final appState = ref.watch(pdsubmitpropertyFormProvider);
+    print('assetseenAtResidenace ${assetsatResidence.length}');
+
     return ExpansionTile(
           backgroundColor: Colors.white,
           childrenPadding: const EdgeInsets.only(left: 16, bottom: 10),
@@ -288,137 +298,209 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
           children: <Widget>[
             propertyForm.when(
                 data: (propertyFormData) {
-
                   if (propertyDetailForm_documentHolderName.text.isEmpty) {
-                    //outside
-                    // typeOfPropertyPaper.text=propertyFormData.property. ?? '';
-                    propertyDetailForm_landRate.text =
-                        propertyFormData.property!.landRatePerSQFT ?? '';
-                    propertyDetailForm_propertyMaintain.text =
-                        propertyFormData.property!.maintenanceOfTheProperty ?? '';
-                    propertyDetailForm_constructionType.text =
-                        propertyFormData.property!.typeOfContruction ?? '';
-                    propertyDetailForm_totalCons.text =
-                        propertyFormData.property!.totalConstruction ?? '';
-                    propertyDetailForm_totalBuiltUpArea.text =
-                        propertyFormData.property!.totalBuilUpArea ?? '';
-
-                    propertyDetailForm_landRate.text =
-                        propertyFormData.property!.landRatePerSQFT ?? '';
-                    propertyDetailForm_projectLifeYear.text =
-                        propertyFormData.property!.projectedLifeYear ?? '';
-                    propertyDetailForm_propertyAge.text =
-                        propertyFormData.property!.ageOfProperty ?? '';
-                    propertyDetailForm_tehsilName.text =
-                        propertyFormData.property!.tehsil ?? '';
-                    propertyDetailForm_relationApplicant.text =
-                        propertyFormData.property!.relationWithApplicant ?? '';
-                    propertyDetailForm_fatherName.text =
-                        propertyFormData.property!.fatherName ?? '';
-                    propertyDetailForm_villageName.text =
-                        propertyFormData.property!.villageName ?? '';
-                    propertyDetailForm_panchayatName.text =
-                        propertyFormData.property!.gramPanchayat ?? '';
-                    propertyDetailForm_patwariNo.text =
-                        propertyFormData.property!.patwariHalkaNo ?? '';
-                    propertyDetailForm_stateName.text =
-                        propertyFormData.property!.state ?? '';
-                    propertyDetailForm_districtName.text =
-                        propertyFormData.property!.district ?? '';
-                    propertyDetailForm_districtName.text =
-                        propertyFormData.property!.district ?? '';
-                    propertyDetailForm_houseNo.text =
-                        propertyFormData.property!.houseNo ?? '';
-                    propertyDetailForm_surveyNo.text =
-                        propertyFormData.property!.surveyNo ?? '';
-                    propertyDetailForm_wardNo.text =
-                        propertyFormData.property!.wardNo ?? '';
-                    propertyDetailForm_doorAndWindow.text =
-                        propertyFormData.property!.doorsAndWindowsAreAvailable ?? '';
-                    propertyDetailForm_kitchenAndLat.text =
-                        propertyFormData.property!.kitchenAndLatBathAvailable ?? '';
-                    propertyDetailForm_propertyLatitude.text =
-                        propertyFormData.property!.latitudeOfTheProrty ?? '';
-                    propertyDetailForm_fatherName.text =
-                        propertyFormData.property!.fatherName ?? '';
-                    //property-colaterall details
-                    propertyDetailForm_documentHolderName.text = propertyFormData
-                        .property!.collateralsDetails?.nameOfTheDocumentHolder ??
-                        '';
+                    // Outside
+                    assetsatResidence = propertyFormData.property?.assetSeenAtResidence ?? [];
+                    propertyDetailForm_landRate.text = propertyFormData.property?.landRatePerSQFT ?? '';
+                    propertyDetailForm_propertyMaintain.text = propertyFormData.property?.maintenanceOfTheProperty ?? '';
+                    propertyDetailForm_constructionType.text = propertyFormData.property?.typeOfContruction ?? '';
+                    propertyDetailForm_totalCons.text = propertyFormData.property?.totalConstruction ?? '';
+                    propertyDetailForm_totalBuiltUpArea.text = propertyFormData.property?.totalBuilUpArea ?? '';
+                    propertyDetailForm_projectLifeYear.text = propertyFormData.property?.projectedLifeYear ?? '';
+                    propertyDetailForm_propertyAge.text = propertyFormData.property?.ageOfProperty ?? '';
+                    propertyDetailForm_tehsilName.text = propertyFormData.property?.tehsil ?? '';
+                    propertyDetailForm_relationApplicant.text = propertyFormData.property?.relationWithApplicant ?? '';
+                    propertyDetailForm_fatherName.text = propertyFormData.property?.fatherName ?? '';
+                    propertyDetailForm_villageName.text = propertyFormData.property?.villageName ?? '';
+                    propertyDetailForm_panchayatName.text = propertyFormData.property?.gramPanchayat ?? '';
+                    propertyDetailForm_patwariNo.text = propertyFormData.property?.patwariHalkaNo ?? '';
+                    propertyDetailForm_stateName.text = propertyFormData.property?.state ?? '';
+                    propertyDetailForm_districtName.text = propertyFormData.property?.district ?? '';
+                    propertyDetailForm_houseNo.text = propertyFormData.property?.houseNo ?? '';
+                    propertyDetailForm_surveyNo.text = propertyFormData.property?.surveyNo ?? '';
+                    propertyDetailForm_wardNo.text = propertyFormData.property?.wardNo ?? '';
+                    propertyDetailForm_doorAndWindow.text = propertyFormData.property?.doorsAndWindowsAreAvailable ?? '';
+                    propertyDetailForm_kitchenAndLat.text = propertyFormData.property?.kitchenAndLatBathAvailable ?? '';
+                    propertyDetailForm_propertyLatitude.text = propertyFormData.property?.latitudeOfTheProrty ?? '';
+                    // Property-collateral details
+                    propertyDetailForm_documentHolderName.text =
+                        propertyFormData.property?.collateralsDetails?.nameOfTheDocumentHolder ?? '';
                     propertyDetailForm_propertyType.text =
-                        propertyFormData.property!.collateralsDetails?.typeOfProperty ??
-                            '';
-                    //       propertyDetailForm_.text =
-                    // propertyFormData.collateralsDetails?. ??
-                    //     '';
-                    propertyDetailForm_boundariesPatta.text = propertyFormData
-                        .property!.collateralsDetails?.boundariesMatching ??
-                        '';
+                        propertyFormData.property?.collateralsDetails?.typeOfProperty ?? '';
+                    propertyDetailForm_boundariesPatta.text =
+                        propertyFormData.property?.collateralsDetails?.boundariesMatching ?? '';
                     propertyDetailForm_eastName.text =
-                        propertyFormData.property!.collateralsDetails?.boundariesEast ??
-                            '';
+                        propertyFormData.property?.collateralsDetails?.boundariesEast ?? '';
                     propertyDetailForm_westName.text =
-                        propertyFormData.property!.collateralsDetails?.boundariesWest ??
-                            '';
+                        propertyFormData.property?.collateralsDetails?.boundariesWest ?? '';
                     propertyDetailForm_northName.text =
-                        propertyFormData.property!.collateralsDetails!.boundariesNorth ??
-                            '';
+                        propertyFormData.property?.collateralsDetails?.boundariesNorth ?? '';
                     propertyDetailForm_southName.text =
-                        propertyFormData.property!.collateralsDetails!.boundariesSouth ??
-                            '';
+                        propertyFormData.property?.collateralsDetails?.boundariesSouth ?? '';
                     propertyDetailForm_landMark.text =
-                        propertyFormData.property!.collateralsDetails!.landmark ?? '';
-                    propertyDetailForm_documentProvided.text = propertyFormData
-                        .property!.collateralsDetails!.documentsProvided ??
-                        '';
+                        propertyFormData.property?.collateralsDetails?.landmark ?? '';
+                    propertyDetailForm_documentProvided.text =
+                        propertyFormData.property?.collateralsDetails?.documentsProvided ?? '';
                     propertyDetailForm_propertyAddress.text =
-                        propertyFormData.property!.collateralsDetails!.propertyAddress ??
-                            '';
+                        propertyFormData.property?.collateralsDetails?.propertyAddress ?? '';
                     propertyDetailForm_locaZone.text =
-                        propertyFormData.property!.collateralsDetails!.locationZone ?? '';
-                    propertyDetailForm_localTransport.text = propertyFormData
-                        .property!.collateralsDetails!.availabilityOfLocalTransport ??
-                        '';
+                        propertyFormData.property?.collateralsDetails?.locationZone ?? '';
+                    propertyDetailForm_localTransport.text =
+                        propertyFormData.property?.collateralsDetails?.availabilityOfLocalTransport ?? '';
                     propertyDetailForm_localityClass.text =
-                        propertyFormData.property!.collateralsDetails!.classOfLocality ??
-                            '';
+                        propertyFormData.property?.collateralsDetails?.classOfLocality ?? '';
                     propertyDetailForm_localityType.text =
-                        propertyFormData.property!.collateralsDetails!.typeOfLocality ??
-                            '';
-                    propertyDetailForm_landflatStatus.text = propertyFormData
-                        .property!.collateralsDetails!.statusOfTheLandFlat ??
-                        '';
-                    //  propertyDetailForm_pers.text =
-                    // propertyFormData.collateralsDetails!.asPerSite ?? '';
-                    propertyDetailForm_landflatStatus.text = propertyFormData
-                        .property!.collateralsDetails!.statusOfTheLandFlat ??
-                        '';
-
-                    //*************accommodationDetails***************** */
-                    //  propertyDetailForm_ua.text =
-                    // propertyFormData.accommodationDetails!.actualUsageOfProperty ?? '';
+                        propertyFormData.property?.collateralsDetails?.typeOfLocality ?? '';
+                    propertyDetailForm_landflatStatus.text =
+                        propertyFormData.property?.collateralsDetails?.statusOfTheLandFlat ?? '';
+                    // Accommodation details
                     propertyDetailForm_builtUpArea.text =
-                        propertyFormData.property!.accommodationDetails!.builtUpAreaSft ??
-                            '';
-                    propertyDetailForm_surroundingAreaDevelopment.text = propertyFormData
-                        .property!
-                        .accommodationDetails!
-                        .developmentOfSurroundingArea ??
-                        '';
-                    propertyDetailForm_electricityAndGas.text = propertyFormData.property!
-                        .accommodationDetails!.electricityAndGasConnection ??
-                        '';
+                        propertyFormData.property?.accommodationDetails?.builtUpAreaSft ?? '';
+                    propertyDetailForm_surroundingAreaDevelopment.text =
+                        propertyFormData.property?.accommodationDetails?.developmentOfSurroundingArea ?? '';
+                    propertyDetailForm_electricityAndGas.text =
+                        propertyFormData.property?.accommodationDetails?.electricityAndGasConnection ?? '';
                     propertyDetailForm_groundfloor.text =
-                        propertyFormData.property!.accommodationDetails!.groundFloor ??
-                            '';
+                        propertyFormData.property?.accommodationDetails?.groundFloor ?? '';
                     propertyDetailForm_firstfloor.text =
-                        propertyFormData.property!.accommodationDetails!.firstFloor ?? '';
+                        propertyFormData.property?.accommodationDetails?.firstFloor ?? '';
                     propertyDetailForm_structureOccupancy.text =
-                        propertyFormData.property!.accommodationDetails!.occupancy ?? '';
-                    propertyDetailForm_structureType.text = propertyFormData
-                        .property!.accommodationDetails!.typeOfStructure ??
-                        '';
+                        propertyFormData.property?.accommodationDetails?.occupancy ?? '';
+                    propertyDetailForm_structureType.text =
+                        propertyFormData.property?.accommodationDetails?.typeOfStructure ?? '';
                   }
+
+                  // if (propertyDetailForm_documentHolderName.text.isEmpty) {
+                  //   //outside
+                  //   // typeOfPropertyPaper.text=propertyFormData.property. ?? '';
+                  //   assetsatResidence= propertyFormData.property?.assetSeenAtResidence?? [];
+                  //   propertyDetailForm_landRate.text =
+                  //       propertyFormData.property?.landRatePerSQFT ?? '';
+                  //   propertyDetailForm_propertyMaintain.text =
+                  //       propertyFormData.property?.maintenanceOfTheProperty ?? '';
+                  //   propertyDetailForm_constructionType.text =
+                  //       propertyFormData.property?.typeOfContruction ?? '';
+                  //   propertyDetailForm_totalCons.text =
+                  //       propertyFormData.property?.totalConstruction ?? '';
+                  //   propertyDetailForm_totalBuiltUpArea.text =
+                  //       propertyFormData.property?.totalBuilUpArea ?? '';
+                  //
+                  //   propertyDetailForm_landRate.text =
+                  //       propertyFormData.property?.landRatePerSQFT ?? '';
+                  //   propertyDetailForm_projectLifeYear.text =
+                  //       propertyFormData.property?.projectedLifeYear ?? '';
+                  //   propertyDetailForm_propertyAge.text =
+                  //       propertyFormData.property?.ageOfProperty ?? '';
+                  //   propertyDetailForm_tehsilName.text =
+                  //       propertyFormData.property?.tehsil ?? '';
+                  //   propertyDetailForm_relationApplicant.text =
+                  //       propertyFormData.property?.relationWithApplicant ?? '';
+                  //   propertyDetailForm_fatherName.text =
+                  //       propertyFormData.property!.fatherName ?? '';
+                  //   propertyDetailForm_villageName.text =
+                  //       propertyFormData.property!.villageName ?? '';
+                  //   propertyDetailForm_panchayatName.text =
+                  //       propertyFormData.property!.gramPanchayat ?? '';
+                  //   propertyDetailForm_patwariNo.text =
+                  //       propertyFormData.property!.patwariHalkaNo ?? '';
+                  //   propertyDetailForm_stateName.text =
+                  //       propertyFormData.property!.state ?? '';
+                  //   propertyDetailForm_districtName.text =
+                  //       propertyFormData.property!.district ?? '';
+                  //   propertyDetailForm_districtName.text =
+                  //       propertyFormData.property!.district ?? '';
+                  //   propertyDetailForm_houseNo.text =
+                  //       propertyFormData.property!.houseNo ?? '';
+                  //   propertyDetailForm_surveyNo.text =
+                  //       propertyFormData.property!.surveyNo ?? '';
+                  //   propertyDetailForm_wardNo.text =
+                  //       propertyFormData.property!.wardNo ?? '';
+                  //   propertyDetailForm_doorAndWindow.text =
+                  //       propertyFormData.property!.doorsAndWindowsAreAvailable ?? '';
+                  //   propertyDetailForm_kitchenAndLat.text =
+                  //       propertyFormData.property!.kitchenAndLatBathAvailable ?? '';
+                  //   propertyDetailForm_propertyLatitude.text =
+                  //       propertyFormData.property!.latitudeOfTheProrty ?? '';
+                  //   propertyDetailForm_fatherName.text =
+                  //       propertyFormData.property!.fatherName ?? '';
+                  //   //property-colaterall details
+                  //   propertyDetailForm_documentHolderName.text = propertyFormData
+                  //       .property!.collateralsDetails?.nameOfTheDocumentHolder ??
+                  //       '';
+                  //   propertyDetailForm_propertyType.text =
+                  //       propertyFormData.property!.collateralsDetails?.typeOfProperty ??
+                  //           '';
+                  //   //       propertyDetailForm_.text =
+                  //   // propertyFormData.collateralsDetails?. ??
+                  //   //     '';
+                  //   propertyDetailForm_boundariesPatta.text = propertyFormData
+                  //       .property!.collateralsDetails?.boundariesMatching ??
+                  //       '';
+                  //   propertyDetailForm_eastName.text =
+                  //       propertyFormData.property!.collateralsDetails?.boundariesEast ??
+                  //           '';
+                  //   propertyDetailForm_westName.text =
+                  //       propertyFormData.property!.collateralsDetails?.boundariesWest ??
+                  //           '';
+                  //   propertyDetailForm_northName.text =
+                  //       propertyFormData.property!.collateralsDetails!.boundariesNorth ??
+                  //           '';
+                  //   propertyDetailForm_southName.text =
+                  //       propertyFormData.property!.collateralsDetails!.boundariesSouth ??
+                  //           '';
+                  //   propertyDetailForm_landMark.text =
+                  //       propertyFormData.property!.collateralsDetails!.landmark ?? '';
+                  //   propertyDetailForm_documentProvided.text = propertyFormData
+                  //       .property!.collateralsDetails!.documentsProvided ??
+                  //       '';
+                  //   propertyDetailForm_propertyAddress.text =
+                  //       propertyFormData.property!.collateralsDetails!.propertyAddress ??
+                  //           '';
+                  //   propertyDetailForm_locaZone.text =
+                  //       propertyFormData.property!.collateralsDetails!.locationZone ?? '';
+                  //   propertyDetailForm_localTransport.text = propertyFormData
+                  //       .property!.collateralsDetails!.availabilityOfLocalTransport ??
+                  //       '';
+                  //   propertyDetailForm_localityClass.text =
+                  //       propertyFormData.property!.collateralsDetails!.classOfLocality ??
+                  //           '';
+                  //   propertyDetailForm_localityType.text =
+                  //       propertyFormData.property!.collateralsDetails!.typeOfLocality ??
+                  //           '';
+                  //   propertyDetailForm_landflatStatus.text = propertyFormData
+                  //       .property!.collateralsDetails!.statusOfTheLandFlat ??
+                  //       '';
+                  //   //  propertyDetailForm_pers.text =
+                  //   // propertyFormData.collateralsDetails!.asPerSite ?? '';
+                  //   propertyDetailForm_landflatStatus.text = propertyFormData
+                  //       .property!.collateralsDetails!.statusOfTheLandFlat ??
+                  //       '';
+                  //
+                  //   //*************accommodationDetails***************** */
+                  //   //  propertyDetailForm_ua.text =
+                  //   // propertyFormData.accommodationDetails!.actualUsageOfProperty ?? '';
+                  //   propertyDetailForm_builtUpArea.text =
+                  //       propertyFormData.property!.accommodationDetails!.builtUpAreaSft ??
+                  //           '';
+                  //   propertyDetailForm_surroundingAreaDevelopment.text = propertyFormData
+                  //       .property!
+                  //       .accommodationDetails!
+                  //       .developmentOfSurroundingArea ??
+                  //       '';
+                  //   propertyDetailForm_electricityAndGas.text = propertyFormData.property!
+                  //       .accommodationDetails!.electricityAndGasConnection ??
+                  //       '';
+                  //   propertyDetailForm_groundfloor.text =
+                  //       propertyFormData.property!.accommodationDetails!.groundFloor ??
+                  //           '';
+                  //   propertyDetailForm_firstfloor.text =
+                  //       propertyFormData.property!.accommodationDetails!.firstFloor ?? '';
+                  //   propertyDetailForm_structureOccupancy.text =
+                  //       propertyFormData.property!.accommodationDetails!.occupancy ?? '';
+                  //   propertyDetailForm_structureType.text = propertyFormData
+                  //       .property!.accommodationDetails!.typeOfStructure ??
+                  //       '';
+                  // }
                   return  Form(
                     key: _formKey,
                     child: Column(
@@ -860,23 +942,39 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                             textInputType: TextInputType.name,
                           ),
                         ),
-                        // sizedBoxWithContext(context, 0.03),
-                        //
-                        // // dropdown asset seen at Residence
-                        // Padding(
-                        //   padding: const EdgeInsets.only(right: 18),
-                        //   child: CustomDropDownTextField(
-                        //     labelText: 'Income Source Type',
-                        //     items: [
-                        //       DropDownValueModel(name: 'Option 1', value: '1'),
-                        //       DropDownValueModel(name: 'Option 2', value: '2'),
-                        //       DropDownValueModel(name: 'Option 3', value: '3'),
-                        //       DropDownValueModel(name: 'Option 4', value: '4'),
-                        //       DropDownValueModel(name: 'Option 5', value: '5'),
-                        //     ],
-                        //     controller: incomeSourceTypecontroller,
-                        //   ),
-                        // ),
+                        sizedBoxWithContext(context, 0.03),
+                        // assetsatResidence.length==0?
+                        // SizedBox.shrink():
+                            Text('Asset seen at residance'),
+
+                        Padding(
+                          padding: const EdgeInsets.only(right: 18),
+                          child: CustomDropdownWithCross(
+                            items: [
+                              "Agricultural Equipment",
+                              "Grain Storage",
+                              "Solar panel",
+                              "Livestock",
+                              "Water Pump",
+                              "Bicycle",
+                              "Tractor",
+                              "Bullock Cart",
+                              "Television",
+                              "Bed",
+                            ],
+                            initialSelectedItems: assetsatResidence,
+                            placeholder: assetseenAtResidenace.text.isNotEmpty
+                                ? '' // No placeholder when there's content
+                                : "Asset seen at residance",
+                            onSelectionChanged: (List<String> crops) {
+                              setState(() {
+                                assetsatResidence = crops;
+                                assetseenAtResidenace.text = crops.join(", ");
+                              });
+                            },
+                          ),
+                        ),
+
                         // Surrounding Area & Transport
                         sizedBoxWithContext(context, 0.03),
                         Text('Surrounding Area & Transport',
@@ -944,19 +1042,17 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                           ),
                         ),
                         sizedBoxWithContext(context, 0.03),
+
                         Padding(
-                          padding: const EdgeInsets.only(right: 15),
-                          child: CustomTextFormField(
-                            inerHint: "Availability Local Transport",
-                            onValidate: (value) {
-                              if (value!.trim().isEmpty) {
-                                return "This is a required field";
-                              }
-                              return null;
-                            },
+                          padding: const EdgeInsets.only(right: 18),
+                          child: CustomDropDownTextField(
                             controller: propertyDetailForm_localTransport,
-                            textInputAction: TextInputAction.next,
-                            textInputType: TextInputType.name,
+                            labelText: 'Availability Local Transport',
+                            items: [
+                              DropDownValueModel(name: 'Yes', value: '1'),
+                              DropDownValueModel(name: 'No', value: '2'),
+                              // DropDownValueModel(name: 'Semi Urban', value: '3'),
+                            ],
                           ),
                         ),
                         sizedBoxWithContext(context, 0.03),
@@ -1742,6 +1838,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                             ref
                                 .read(pdsubmitpropertyFormProvider.notifier)
                                 .submitpdpropertyForm(
+                                context: context,
                                 customerId:  widget.customerId,
                                 pdType: 'creditPd',
                                 properttyItems: propertyDetails,
@@ -1780,28 +1877,20 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                                 propertyFormData.houseInsidePhoto)
                                 .then((value) {
                               if (value) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: Colors.green,
-                                    content: Text(
-                                      'Changes saved succesfully',
-                                      style: TextStyle(
-                                          fontSize: 14, color: Colors.white),
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: Colors.red,
-                                    content: Text(
-                                      'Form not saved please try again',
-                                      style: TextStyle(
-                                          fontSize: 14, color: Colors.white),
-                                    ),
-                                  ),
-                                );
+                                // ScaffoldMessenger.of(context).showSnackBar(
+                                //   SnackBar(
+                                //     backgroundColor: Colors.green,
+                                //     content: Text(
+                                //       'Changes saved succesfully',
+                                //       style: TextStyle(
+                                //           fontSize: 14, color: Colors.white),
+                                //     ),
+                                //   ),
+                                // );
+                                showCustomSnackBar(
+                                    context,'Form Saved successfully!', Colors.green);
                               }
+
                             });
                             // PropertyItems propertyItems = PropertyItems(
                             //     front: frontImageUrl,
@@ -1812,7 +1901,7 @@ class _PropertycollateralState extends ConsumerState<Propertycollateral> {
                             // Call the provider method with the populated Property object
                           },
                           child: Text(
-                            'Next',
+                            'Save Form',
                             style: AppStyles.whiteText16,
                           ),
                         ),

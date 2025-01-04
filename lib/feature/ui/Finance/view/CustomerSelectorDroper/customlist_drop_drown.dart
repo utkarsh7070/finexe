@@ -6,7 +6,7 @@ class CustomList_Dropdown extends StatefulWidget {
   final Function(String) onSelectionChanged; // Callback when selection changes
   final String label;
 
-  CustomList_Dropdown({
+  const CustomList_Dropdown({super.key, 
     required this.availableOptions,
     required this.selectedOption,
     required this.onSelectionChanged,
@@ -28,16 +28,16 @@ class _CustomList_DropdownState extends State<CustomList_Dropdown> {
         // Label
         Text(
           widget.label,
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         // Dropdown display with selected option
         InkWell(
           onTap: () => setState(() {
             isDropdownOpen = !isDropdownOpen; // Toggle dropdown visibility
           }),
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
             decoration: BoxDecoration(
               border: Border.all(
                 color: Colors.grey,
@@ -70,7 +70,7 @@ class _CustomList_DropdownState extends State<CustomList_Dropdown> {
 
         // Dropdown options
         if (isDropdownOpen) ...[
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
@@ -87,7 +87,7 @@ class _CustomList_DropdownState extends State<CustomList_Dropdown> {
                     });
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                     child: Row(
                       children: [
                         Text(option),

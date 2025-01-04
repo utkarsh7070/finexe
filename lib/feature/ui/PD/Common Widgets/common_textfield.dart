@@ -1,6 +1,5 @@
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
-import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextFormField extends StatelessWidget {
@@ -59,11 +58,13 @@ class CustomTextFormField extends StatelessWidget {
       this.focusNode,
       this.currentState = false,
       this.length,
-      this.initialValue});
+      this.initialValue,
+      });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+
       maxLength: length,
       readOnly: isReadOnly,
       initialValue: initialValue,
@@ -71,7 +72,6 @@ class CustomTextFormField extends StatelessWidget {
       focusNode: focusNode,
       onFieldSubmitted: onFiledSubmitted,
       validator: onValidate,
-      // autofocus: true,
       obscureText: obscureText,
       onTap: onTap,
       onChanged: onChange,
@@ -81,18 +81,21 @@ class CustomTextFormField extends StatelessWidget {
       keyboardType: textInputType,
       style: AppStyles.headingTextStyle,
 
-      textAlignVertical: TextAlignVertical.center, // Add this property
+      textAlignVertical: TextAlignVertical.top, // Add this property
       decoration: InputDecoration(
         isDense: false,
-        // hintText: inerHint,
+         hintText: hint,
         hintStyle: const TextStyle(color: AppColors.textGray),
         floatingLabelStyle: currentState!
             ? AppStyles.subHeading.copyWith(color: AppColors.primary)
             : AppStyles.subHeading,
-        label: Text('$inerHint',
-            style:
-                // const TextStyle(fontSize: 14, color: AppColors.buttonBorderGray),
-                AppStyles.subHeading),
+        label: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text('$inerHint',
+              style:
+                  // const TextStyle(fontSize: 14, color: AppColors.buttonBorderGray),
+                  AppStyles.subHeading),
+        ),
         prefixIcon: isPrefix!
             ? InkWell(
                 onTap: prefixOnTap, child: Icon(prefixIcon, color: Colors.blue))

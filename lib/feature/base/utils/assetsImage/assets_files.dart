@@ -1,0 +1,1 @@
+String docs_loading_lottie = 'assets/lottie/load.json';

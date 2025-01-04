@@ -4,7 +4,6 @@ import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/extentions/capital_letter.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_pending_items_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../base/utils/namespase/app_style.dart';
@@ -12,7 +11,6 @@ import '../../../../../base/utils/namespase/display_size.dart';
 import '../../../../../base/utils/namespase/font_size.dart';
 import '../../../../../base/utils/widget/app_button.dart';
 import '../../../../../base/utils/widget/app_text_filed_login.dart';
-import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../../../Collection cases/view_model/visit_pending_view_model.dart';
 
 class UpdateVisitDialogContent extends ConsumerWidget {
@@ -300,20 +298,21 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      paymentViewModel.clickPhoto().then(
-                        (value) {
-                          if (value != null) {
-                            imagePath = value.path;
-
-                            paymentViewModel.updateTransactionImage(imagePath!);
-
-                            print('imagepath ${imagePath}');
-                            paymentViewModel.uploadImage(value.path);
-                          } else {
-                            print('elsepart');
-                          }
-                        },
-                      );
+                      paymentViewModel.clickPhoto();
+                      //     .then(
+                      //   (value) {
+                      //     if (value != null) {
+                      //       imagePath = value.path;
+                      //
+                      //       // paymentViewModel.updateTransactionImage(imagePath!);
+                      //
+                      //       print('imagepath $imagePath');
+                      //
+                      //     } else {
+                      //       print('elsepart');
+                      //     }
+                      //   },
+                      // );
                     },
                     child: !paymentState.isLoading
                         ? Visibility(
@@ -336,7 +335,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                         : SizedBox(
                             height: displayHeight(context) * 0.04,
                             width: displayWidth(context) * 0.10,
-                            child: CircularProgressIndicator()),
+                            child: const CircularProgressIndicator()),
                   ),
                   SizedBox(
                     height: displayHeight(context) * 0.02,
@@ -359,7 +358,7 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                             (value) {
 
                               paymentViewModel.updatePhotoValue(context);
-                              ref.invalidate(updateVisitViewModelProvider);
+                              // ref.invalidate(updateVisitViewModelProvider);
                             },
                           );
                           // paymentViewModel.updatePhotoValue('',context);

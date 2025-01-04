@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:finexe/feature/base/api/api.dart';
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
@@ -9,7 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../base/utils/widget/custom_snackbar.dart';
-import '../dialog/pd_request_dialog.dart';
+import '../dialog/AcceptPDFile/pd_request_dialog.dart';
+import '../dialog/RivertPDFile/rivert_pd_dialogue.dart';
+import '../dialog/RivertPDFile/rivert_pd_dialogue_content.dart';
 import '../pd_view_model/pd_dash_viewmodel.dart';
 
 class PdRequestScreen extends ConsumerWidget {
@@ -19,58 +22,64 @@ class PdRequestScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pditems = ref.watch(fetchpdRefuseandAcceptListProvider);
     final pdRequestViewModel = ref.watch(pdRequestProvider);
-    return Scaffold(
-        appBar: AppBar(
-          flexibleSpace: Container(
-            color: Colors.white,
+
+    return NetworkListener(
+      context: context,
+      child: Scaffold(
+          appBar: AppBar(
+            flexibleSpace: Container(
+              color: Colors.white,
+            ),
+            backgroundColor: AppColors.white,
+            title: const Text('PD Request'),
+            centerTitle: true,
           ),
-          backgroundColor: AppColors.white,
-          title: const Text('PD Request'),
-          centerTitle: true,
-        ),
-        body: pditems.when(
-          data: (pdDataItems) {
-            return Column(
-              children: [
-                Expanded(
-                  child:
-                      // pditems == null // Check for loading state
-                      //     ? Center(child: CircularProgressIndicator())
-                      //     :
-                      pditems.value!.isEmpty // Check for empty state
-                          ? const Center(
-                              child: Text(
-                                'No PD Requests found',
-                                style:
-                                    TextStyle(fontSize: 16, color: Colors.grey),
+          body: pditems.when(
+            data: (pdDataItems) {
+              return Column(
+                children: [
+                  // Text('data'),
+                  Expanded(
+                    child:
+                        // pditems == null // Check for loading state
+                        //     ? Center(child: CircularProgressIndicator())
+                        //     :
+                        pditems.value!.isEmpty // Check for empty state
+                            ? const Center(
+                                child: Text(
+                                  'No PD Requests found',
+                                  style:
+                                      TextStyle(fontSize: 16, color: Colors.grey),
+                                ),
+                              )
+                            : ListView.builder(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                itemCount: pdDataItems.length,
+                                itemBuilder: (context, index) {
+                                  final applicant = pdDataItems[index];
+                                  return itemCard(context, applicant,
+                                      pdRequestViewModel, ref);
+                                },
                               ),
-                            )
-                          : ListView.builder(
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              itemCount: pdDataItems.length,
-                              itemBuilder: (context, index) {
-                                final applicant = pdDataItems[index];
-                                return itemCard(context, applicant,
-                                    pdRequestViewModel, ref);
-                              },
-                            ),
-                ),
-              ],
-            );
-          },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stackTrace) => Center(child: Text('Error: $error')),
-          // error: (error, stackTrace) {
-          //   print('Error: $error');
-          //   return Center(
-          //     child: Text('Data not found'),
-          //   );
-          // },
-        ));
+                  ),
+                ],
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stackTrace) => Center(child: Text('Error: $error')),
+            // error: (error, stackTrace) {
+            //   print('Error: $error');
+            //   return Center(
+            //     child: Text('Data not found'),
+            //   );
+            // },
+          )),
+    );
   }
 
   itemCard(BuildContext context, PDReqItems pdreitem,
       RequestApiService pdRequestViewModel, ref) {
+
     return Column(
       children: [
         Container(
@@ -170,20 +179,26 @@ class PdRequestScreen extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+
+                  //Refuse PD
                   GestureDetector(
                     onTap: () {
-                      pdRequestViewModel.pdRequestDefuse(pdreitem.sId!).then(
-                        (value) {
-                          if (value!) {
 
-                            ref.refresh(fetchpdRefuseandAcceptListProvider);
-                            ref.refresh(fetchPdRequestListProvider);
-                            showCustomSnackBar(
-                                context, 'Request Rejected', AppColors.green);
-                          }
-                        },
-                      );
-                      // PdRequestDialogue.requestAcceptDialogue(context: context);
+                      // pdRequestViewModel.pdRequestDefuse(pdreitem.customerId!).then(
+                      //   (value) {
+                      //     if (value!) {
+                      //
+                      //       ref.refresh(fetchpdRefuseandAcceptListProvider);
+                      //       ref.refresh(fetchPdRequestListProvider);
+                      //       // ref.re
+                      //       showCustomSnackBar(
+                      //           context, 'Request Rejected', AppColors.green);
+                      //     }
+                      //   },
+                      // );
+                      //  PdRequestDialogue.requestAcceptDialogue(context: context);
+                       PdRivertDialogue.requestRivertDialogue(context: context, id: pdreitem.sId?? '',
+                          ref: ref );
                     },
                     child: Container(
                       padding: const EdgeInsets.only(top: 10),
@@ -199,8 +214,11 @@ class PdRequestScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
+
+                 //Accept PD
                   GestureDetector(
                     onTap: () {
+
                       PdRequestDialogue.requestAcceptDialogue(
                           context: context, id: pdreitem.sId ?? '');
                     },

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart'; // Adjust the path
 // import '../../../../../../../base/utils/namespase/app_colors.dart';
+import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/Submit Data Models/police_station_model.dart';
 import '../view_model.dart/applicant_view_model.dart';
 import '../view_model.dart/police_view_modal.dart';
@@ -64,11 +65,11 @@ class _PoliceStationFormState extends ConsumerState<PoliceStationForm> {
             policeDetails.when(
                 data: (policeData) {
                   if (policestationFormNameController.text.isEmpty) {
-                    policestationFormNameController.text = policeData.stationName ?? '';
+                    policestationFormNameController.text = policeData.items?.policeStation?.stationName ?? '';
                     policestationFormAddressController.text =
-                        policeData.stationAddress ?? '';
+                        policeData.items?.policeStation?.stationAddress ?? '';
                   }
-                  return  Form(
+                  return Form(
                     key: _formKey,
                     child: Column(
                       children: [
@@ -111,6 +112,7 @@ class _PoliceStationFormState extends ConsumerState<PoliceStationForm> {
                             ref
                                 .read(pdPoliceSubmitDataProvider.notifier)
                                 .submitpdPoloiceForm(
+                              context:  context,
                               customerId:  widget.customerId,
                               pdType: 'creditPd',
                               //  policeStation: policeStation,
@@ -121,25 +123,8 @@ class _PoliceStationFormState extends ConsumerState<PoliceStationForm> {
                             ).then(
                               (value) {
                                 if (value) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      backgroundColor: AppColors.green,
-                                      content: Text(
-                                        'Form submitted successfully!',
-                                        style: AppStyles.whiteText16,
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      backgroundColor: AppColors.red,
-                                      content: Text(
-                                        'Faild to submit the form please try again',
-                                        style: AppStyles.whiteText16,
-                                      ),
-                                    ),
-                                  );
+                                  showCustomSnackBar(
+                                      context,'Form Saved successfully!', Colors.green);
                                 }
                               },
                             );
@@ -156,7 +141,7 @@ class _PoliceStationFormState extends ConsumerState<PoliceStationForm> {
                             ),
                           )
                               : Text(
-                            'Next',
+                            'Save Form',
                             style: AppStyles.whiteText16,
                           ),
                         ),

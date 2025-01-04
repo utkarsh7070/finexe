@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../../base/utils/namespase/app_colors.dart';
@@ -35,185 +36,188 @@ class ApplicationDetails extends ConsumerWidget {
     print('Phone Number: $phoneNumber');
     //
     // Access specific argument
-    return Scaffold(
-        body: Container(
-      width: displayWidth(context),
-      height: displayHeight(context),
-      color: AppColors.primary,
-      padding: const EdgeInsets.only(top: 80),
-      child: Container(
+    return NetworkListener(
+      context: context,
+      child: Scaffold(
+          body: Container(
+        width: displayWidth(context),
         height: displayHeight(context),
-        padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30), topRight: Radius.circular(30))),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                    onPressed: () {
-                      ConfirmBackDialog().confirmBackToForm(context: context);
-                    },
-                    icon: const Icon(Icons.arrow_back)),
-                const Text(
-                  textAlign: TextAlign.center,
-                  'Applicant Details',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(
-                  width: displayWidth(context) * 0.10,
-                )
-              ],
-            ),
-            SizedBox(
-              height: displayHeight(context) * 0.01,
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  verticalDirection: VerticalDirection.down,
-                  runSpacing: displayHeight(context) * 0.04,
-                  clipBehavior: Clip.none,
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        await personalFormViewModel.pickImages();
+        color: AppColors.primary,
+        padding: const EdgeInsets.only(top: 80),
+        child: Container(
+          height: displayHeight(context),
+          padding: const EdgeInsets.all(20),
+          decoration: const BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        ConfirmBackDialog().confirmBackToForm(context: context);
                       },
-                      child: Visibility(
-                        visible: personalFormState.applicantPhotoFilePath == '',
-                        replacement: SizedBox(
-                          height: displayHeight(context) * 0.16,
-                          width: displayWidth(context),
-                          child: Image.file(
-                              File(personalFormState.applicantPhotoFilePath)),
-                        ),
-                        child: UploadBox(
-                          isError: !personalFormState.isApplicantPhoto,
-                          isImage: true,
-                          height: displayHeight(context) * 0.16,
-                          width: displayWidth(context),
-                          color: AppColors.buttonBorderGray,
-                          iconData: Icons.file_upload_outlined,
-                          textColor: AppColors.gray5,
-                          subTextColor: AppColors.primary,
-                          title: 'Support: JPG, PNG',
-                          subTitle: 'Click Applicant Image',
+                      icon: const Icon(Icons.arrow_back)),
+                  const Text(
+                    textAlign: TextAlign.center,
+                    'Applicant Details',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(
+                    width: displayWidth(context) * 0.10,
+                  )
+                ],
+              ),
+              SizedBox(
+                height: displayHeight(context) * 0.01,
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    verticalDirection: VerticalDirection.down,
+                    runSpacing: displayHeight(context) * 0.04,
+                    clipBehavior: Clip.none,
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          await personalFormViewModel.pickImages();
+                        },
+                        child: Visibility(
+                          visible: personalFormState.applicantPhotoFilePath == '',
+                          replacement: SizedBox(
+                            height: displayHeight(context) * 0.16,
+                            width: displayWidth(context),
+                            child: Image.file(
+                                File(personalFormState.applicantPhotoFilePath)),
+                          ),
+                          child: UploadBox(
+                            isError: !personalFormState.isApplicantPhoto,
+                            isImage: true,
+                            height: displayHeight(context) * 0.16,
+                            width: displayWidth(context),
+                            color: AppColors.buttonBorderGray,
+                            iconData: Icons.file_upload_outlined,
+                            textColor: AppColors.gray5,
+                            subTextColor: AppColors.primary,
+                            title: 'Support: JPG, PNG',
+                            subTitle: 'Click Applicant Image',
+                          ),
                         ),
                       ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Customer Mobile No. Is Must Be Linked With Aadhaar.',
-                          maxLines: 2,
-                        ),
-                        SizedBox(
-                          height: displayHeight(context) * 0.02,
-                        ),
-                        Column(
-                          children: [
-                            AppFloatTextField(
-                              focusNode:
-                                  personalFocusViewModel.aadhaarFocusNode,
-                              currentState:
-                                  personalFocusStates['aadhaarFocusNode'],
-                              onChange: (value) {
-                                personalFormViewModel.updateAadhaar(value);
-                              },
-                              height: !personalFormState.isAadhaarValid
-                                  ? displayHeight(context) * 0.09
-                                  : null,
-                              inerHint: 'Enter Aadhaar Number',
-                              errorText: "Aadhaar Number is a required field",
-                              isError: !personalFormState.isAadhaarValid,
-                              textInputType: TextInputType.number,
-                              textInputAction: TextInputAction.done,
-                            ),
-                            SizedBox(
-                              height: displayHeight(context) * 0.02,
-                            ),
-                            AppFloatTextField(
-                              focusNode: personalFocusViewModel.panFocusNode,
-                              currentState: personalFocusStates['panFocusNode'],
-                              onChange: (value) {
-                                personalFormViewModel.updatePan(value);
-                              },
-                              height: !personalFormState.isPanValid
-                                  ? displayHeight(context) * 0.09
-                                  : null,
-                              inerHint: 'Enter Pan No',
-                              errorText: "Id is a required field",
-                              isError: !personalFormState.isPanValid,
-                              textCapitalize: TextCapitalization.characters,
-                              textInputType: TextInputType.text,
-                              textInputAction: TextInputAction.next,
-                            ),
-                            Row(
-                              children: [
-                                Checkbox(
-                                  side: const BorderSide(
-                                      color: AppColors.boxBorderGray,
-                                      width: 1.5),
-                                  // semanticLabel: 'jkdhsjk',
-                                  value: personalFormState
-                                      .checkBoxTermsConditionApplicant,
-                                  onChanged: (value) {
-                                    if (value != null) {
-                                      personalFormViewModel
-                                          .updateCheckBox(value);
-                                    }
-                                  },
-                                ),
-                                SizedBox(
-                                  height: displayHeight(context) * 0.02,
-                                ),
-                                SizedBox(
-                                    width: displayWidth(context) * 0.68,
-                                    child: Text(
-                                      'I have read the Terms and Conditions and give my consent for the same.',
-                                      style: AppStyles.termsConditionText,
-                                    )),
-                              ],
-                            ),
-                            SizedBox(
-                              height: displayHeight(context) * 0.02,
-                            ),
-                            personalFormState.isLoading
-                                ? const CircularProgressIndicator()
-                                : AppButton(
-                                    textStyle:
-                                        const TextStyle(color: AppColors.white),
-                                    onTap: () async {
-                                      personalFormViewModel.onClickGetOtpButton(
-                                          context: context,
-                                          phoneNumber: phoneNumber);
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Customer Mobile No. Is Must Be Linked With Aadhaar.',
+                            maxLines: 2,
+                          ),
+                          SizedBox(
+                            height: displayHeight(context) * 0.02,
+                          ),
+                          Column(
+                            children: [
+                              AppFloatTextField(
+                                focusNode:
+                                    personalFocusViewModel.aadhaarFocusNode,
+                                currentState:
+                                    personalFocusStates['aadhaarFocusNode'],
+                                onChange: (value) {
+                                  personalFormViewModel.updateAadhaar(value);
+                                },
+                                height: !personalFormState.isAadhaarValid
+                                    ? displayHeight(context) * 0.09
+                                    : null,
+                                inerHint: 'Enter Aadhaar Number',
+                                errorText: "Aadhaar Number is a required field",
+                                isError: !personalFormState.isAadhaarValid,
+                                textInputType: TextInputType.number,
+                                textInputAction: TextInputAction.done,
+                              ),
+                              SizedBox(
+                                height: displayHeight(context) * 0.02,
+                              ),
+                              AppFloatTextField(
+                                focusNode: personalFocusViewModel.panFocusNode,
+                                currentState: personalFocusStates['panFocusNode'],
+                                onChange: (value) {
+                                  personalFormViewModel.updatePan(value);
+                                },
+                                height: !personalFormState.isPanValid
+                                    ? displayHeight(context) * 0.09
+                                    : null,
+                                inerHint: 'Enter Pan No',
+                                errorText: "Id is a required field",
+                                isError: !personalFormState.isPanValid,
+                                textCapitalize: TextCapitalization.characters,
+                                textInputType: TextInputType.text,
+                                textInputAction: TextInputAction.next,
+                              ),
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    side: const BorderSide(
+                                        color: AppColors.boxBorderGray,
+                                        width: 1.5),
+                                    // semanticLabel: 'jkdhsjk',
+                                    value: personalFormState
+                                        .checkBoxTermsConditionApplicant,
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        personalFormViewModel
+                                            .updateCheckBox(value);
+                                      }
                                     },
-                                    label: 'Get OTP',
-                                    width: displayWidth(context),
                                   ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+                                  SizedBox(
+                                    height: displayHeight(context) * 0.02,
+                                  ),
+                                  SizedBox(
+                                      width: displayWidth(context) * 0.68,
+                                      child: Text(
+                                        'I have read the Terms and Conditions and give my consent for the same.',
+                                        style: AppStyles.termsConditionText,
+                                      )),
+                                ],
+                              ),
+                              SizedBox(
+                                height: displayHeight(context) * 0.02,
+                              ),
+                              personalFormState.isLoading
+                                  ? const CircularProgressIndicator()
+                                  : AppButton(
+                                      textStyle:
+                                          const TextStyle(color: AppColors.white),
+                                      onTap: () async {
+                                        personalFormViewModel.onClickGetOtpButton(
+                                            context: context,
+                                            phoneNumber: phoneNumber);
+                                      },
+                                      label: 'Get OTP',
+                                      width: displayWidth(context),
+                                    ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    ));
+      )),
+    );
   }
 
   // Widget aadhaarLinkRadios(

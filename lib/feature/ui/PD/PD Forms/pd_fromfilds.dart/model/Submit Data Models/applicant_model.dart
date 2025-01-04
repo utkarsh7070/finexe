@@ -43,7 +43,7 @@ class ApplicantItems {
   String? pendingReason;
   String? applicantImage;
   String? guarantorImage;
-  List<String>? coApplicantImage;
+  // List<String>? coApplicantImage;
   String? landmarkPhoto;
   String? latLongPhoto;
   List<String>? fourBoundaryPhotos;
@@ -86,7 +86,7 @@ class ApplicantItems {
       this.pendingReason,
       this.applicantImage,
       this.guarantorImage,
-      this.coApplicantImage,
+      // this.coApplicantImage,
       this.landmarkPhoto,
       this.latLongPhoto,
       this.fourBoundaryPhotos,
@@ -131,7 +131,7 @@ class ApplicantItems {
     pendingReason = json['pendingReason'];
     applicantImage = json['applicantImage'];
     guarantorImage = json['guarantorImage'];
-    coApplicantImage = json['coApplicantImage'].cast<String>();
+    // coApplicantImage = json['coApplicantImage'].cast<String>();
     landmarkPhoto = json['landmarkPhoto'];
     latLongPhoto = json['latLongPhoto'];
     fourBoundaryPhotos = json['fourBoundaryPhotos'].cast<String>();
@@ -178,7 +178,7 @@ class ApplicantItems {
     data['pendingReason'] = this.pendingReason;
     data['applicantImage'] = this.applicantImage;
     data['guarantorImage'] = this.guarantorImage;
-    data['coApplicantImage'] = this.coApplicantImage;
+    // data['coApplicantImage'] = this.coApplicantImage;
     data['landmarkPhoto'] = this.landmarkPhoto;
     data['latLongPhoto'] = this.latLongPhoto;
     data['fourBoundaryPhotos'] = this.fourBoundaryPhotos;

@@ -22,6 +22,11 @@ class ImageListWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
+
+
+    bool _isLoading = false; // Track loading state
+
     return Column(
       children: [
         // Display all images in the list

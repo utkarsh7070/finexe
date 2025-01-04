@@ -22,8 +22,6 @@ VisitUpdateSubmitRequestModel _$VisitUpdateSubmitRequestModelFromJson(
           json['reasonForCustomerNotContactable'] as String,
       visitSelfie: json['visitSelfie'] as String,
       address: json['address'] as String,
-      // latitude: (json['latitude'] as num).toDouble(),
-      // longitude: (json['longitude'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$VisitUpdateSubmitRequestModelToJson(
@@ -42,6 +40,4 @@ Map<String, dynamic> _$VisitUpdateSubmitRequestModelToJson(
           instance.reasonForCustomerNotContactable,
       'visitSelfie': instance.visitSelfie,
       'address': instance.address,
-      // 'latitude': instance.latitude,
-      // 'longitude': instance.longitude,
     };

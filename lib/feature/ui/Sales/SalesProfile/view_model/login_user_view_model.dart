@@ -1,20 +1,19 @@
 // user_profile_view_model.dart
 import 'dart:async';
 
+import 'package:finexe/feature/base/api/dio_exception.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/model/hrmsUserProfile.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../Punch_In_Out/model/check_attendance_responce_model.dart';
 import '../../../../Punch_In_Out/repository/puch_In_repository_imp.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../../../../base/api/api.dart';
-import '../../../../base/api/dio_exception.dart';
-import '../../../../base/service/session_service.dart';
-import '../../../Collection/Collection_home_dashboard/home_collection_viewmodel/fetchUserProfile.dart';
-import '../model/login_user_profile.dart';
 
 /*final loginUserProfileProvider = StateNotifierProvider<UserProfileNotifier, AsyncValue<LoginUserProfile>>((ref) {
   return UserProfileNotifier();
@@ -25,7 +24,11 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<LoginUserProfile>> {
 
   Future<void> fetchLoginUserProfile() async {
     try {
-      String? token = await SessionService.getToken();
+<<<<<<< HEAD
+      String? token = speciality.getToken();
+=======
+      String? token = speciality.getToken();
+>>>>>>> origin/To_merge
       final response = await Dio().get(
         Api.getEmployeeDetails,
         options: Options(headers: {"token": token}),
@@ -91,7 +94,7 @@ Future<List<String>> checkPunchStatus(PunchInRepositoryImp punch) async {
   print(position.longitude);
   // log('stored token:: ' + tokens.toString());
   // log('stored role:: ' + role!.first??'');
-  if (position != null && tokens != null) {
+  if (tokens != null) {
     Map<String, String> token = {"token": tokens};
     Map<String, double> location = {
       "latitude": position.latitude,
@@ -106,21 +109,56 @@ Future<List<String>> checkPunchStatus(PunchInRepositoryImp punch) async {
         checkAttendanceResponse.items.punchOutTime.toString()
       ];
       return responseData;
-    } on DioException catch (error) {
+    } on DioException {
       // DioExceptions.fromDioError(error, context);
     }
   }
   return [];
 }
 
+String formatTime(String time) {
+  print(time);
+  try {
+    if (time.isEmpty) return 'N/A';
+    DateFormat format = DateFormat("yyyy-MM-dd'T'hh:mm:ss a");
+    DateTime dateTime = format.parse(time);// Handle empty strings
+    // final parsedTime = DateTime.parse(time);
+    print('parse time $dateTime');
+    return DateFormat.jm()
+        .format(dateTime); // Format as 09:30 AM/PM
+  } catch (e) {
+    // Log or handle invalid date format
+    // debugPrint("Error parsing date: $e");
+    return 'Invalid Time';
+  }
+}
+
+String formatDate(String time) {
+  print(time);
+  try {
+    if (time.isEmpty) return 'N/A';
+    DateFormat format = DateFormat("yyyy-MM-dd'T'hh:mm:ss a");
+    DateTime dateTime = format.parse(time);// Handle empty strings
+    // final parsedTime = DateTime.parse(time);
+    print('parse time $dateTime');
+    return DateFormat.yMMMMd()
+        .format(dateTime); // Format as 09:30 AM/PM
+  } catch (e) {
+    // Log or handle invalid date format
+    // debugPrint("Error parsing date: $e");
+    return 'Invalid Time';
+  }
+}
+
+
 final loginUserProfileProvider =
     FutureProvider.autoDispose<HRMSUserProfile>((ref) async {
-  final _punchInRepository = ref.watch(punchInRepositoryProvider);
-  List<String> punchTime = await checkPunchStatus(_punchInRepository);
+  final punchInRepository = ref.watch(punchInRepositoryProvider);
+  List<String> punchTime = await checkPunchStatus(punchInRepository);
 
   try {
     // Fetch the token
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // Make the API call
     final response = await Dio().get(
@@ -131,10 +169,10 @@ final loginUserProfileProvider =
     // Log the full response to debug
     print('Response user login: ${response.data}');
 
-    if (response.statusCode == 200) {
+    // if (response.statusCode == 200) {
       // Parse the response and return the data
       final data = HRMSUserProfile.fromJson(response.data['items']);
-      final returnData = HRMSUserProfile(
+      final returnData = HRMSUserProfile(designationId: data.designationId,
           punchInTime: punchTime.first,
           punchOutTime: punchTime.last,
           mobileNo: data.mobileNo,
@@ -148,12 +186,12 @@ final loginUserProfileProvider =
           employeUniqueId: data.employeUniqueId);
       print('Login User data response: $data');
       return returnData;
-    } else {
-      throw Exception('Failed to load user profile');
-    }
+  
   } catch (error) {
+    ExceptionHandler().handleError(error);
+    
     // Log the error for debugging
     print('Error: $error');
-    throw error; // The FutureProvider will handle this as an AsyncError
+    rethrow; // The FutureProvider will handle this as an AsyncError
   }
 });

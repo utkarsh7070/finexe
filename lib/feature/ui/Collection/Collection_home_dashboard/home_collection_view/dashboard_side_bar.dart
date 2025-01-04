@@ -1,17 +1,12 @@
-import 'package:finexe/feature/base/dialog/logout_dialog.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/Widget/dialog/collection_logout_dialog.dart';
-import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/home_collection_view/DashboardScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../base/routes/routes.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../HRMS/LeaveManagement/view/hrms_dashboard_screen.dart';
 import '../../../Sales/DashBoard/view/dash_board.dart';
-import '../home_collection_model/user_profile_model.dart';
 import '../home_collection_viewmodel/fetchUserProfile.dart';
 
 class DashBoardSideBar extends ConsumerWidget {
@@ -21,7 +16,7 @@ class DashBoardSideBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // final sessionOut = ref.read(apiResponseProvider.notifier);
     final role = ref.watch(roleName);
-    print('role ${role}');
+    print('role $role');
     return SafeArea(
       child: Container(
         height: role.role.contains('collection') || role.role.contains('pd') || role.role.contains('admin')
@@ -163,7 +158,7 @@ class DashBoardSideBar extends ConsumerWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>  HRMSDashboardScreen(),
+                          builder: (context) =>  const HRMSDashboardScreen(),
                         ),
                       );
                     },

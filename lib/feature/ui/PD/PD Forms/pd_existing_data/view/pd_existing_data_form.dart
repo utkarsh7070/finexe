@@ -84,7 +84,7 @@ class PdFilledForm extends ConsumerWidget {
   ) {
     final sectionWidgets = {
       "Loan Detail's": loanDetailsAsync.when(
-        data: (details) => _buildLoanDetails(context, details),
+        data: (details) => _buildLoanDetails(context, details,),
         loading: () =>
             SizedBox.shrink(), // Don't show loading inside each section
         error: (err, stack) => Text('Error: $err'),
@@ -110,11 +110,11 @@ class PdFilledForm extends ConsumerWidget {
         loading: () => SizedBox.shrink(),
         error: (err, stack) => Text('Error: $err'),
       ),
-      "Guarantor Detail's": guarantorDetails.when(
-        data: (details) => _buildGuarantorDetails(context, details),
-        loading: () => SizedBox.shrink(),
-        error: (err, stack) => Text('Error: $err'),
-      ),
+      // "Guarantor Detail's": guarantorDetails.when(
+      //   data: (details) => _buildGuarantorDetails(context, details),
+      //   loading: () => SizedBox.shrink(),
+      //   error: (err, stack) => Text('Error: $err'),
+      // ),
       "Cibil Detail's": cibilDetails.when(
         data: (details) => _buildCibilDetails(context, details),
         loading: () => SizedBox.shrink(),
@@ -163,6 +163,8 @@ class PdFilledForm extends ConsumerWidget {
 
   Widget _buildApplicationDetails(
       BuildContext context, ApplicationDetails details) {
+    //${Api.baseUrl}${widget.applicantImage}
+    print('${details.applicantPhotos.isNotEmpty == true ? '${Api.imageUrl}${details.applicantPhotos[0]}' : 'https://picsum.photos/id/237/200/300'}');
     return ExpansionTile(
       shape: const BeveledRectangleBorder(side: BorderSide.none),
       title: Text(
@@ -177,7 +179,7 @@ class PdFilledForm extends ConsumerWidget {
             children: [
               _rowImage(context,
                   imageUrl:
-                      '${details.applicantPhotos?.isNotEmpty == true ? '${Api.imageUrl}${details.applicantPhotos[0]}' : 'https://picsum.photos/id/237/200/300'}',
+                      '${details.applicantPhotos.isNotEmpty == true ? '${Api.imageUrl}${details.applicantPhotos[0]}' : 'https://picsum.photos/id/237/200/300'}',
                   text: 'Applicant Photos'),
               _textData(context,
                   text1: 'Applicant Name', text2: details.applicantName),
@@ -390,71 +392,78 @@ class PdFilledForm extends ConsumerWidget {
       shape: const BeveledRectangleBorder(side: BorderSide.none),
       title: Text("Guarantor Details", style: AppStyles.TitleStyle),
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _rowImage(
-                context,
-                imageUrl: guarantorDetails.guarantorPhoto.isNotEmpty
-                    ? '${Api.imageUrl}${guarantorDetails.guarantorPhoto}'
-                    : 'https://picsum.photos/id/237/200/300',
-                text: 'Guarantor Photos',
-              ),
-              _textData(context,
-                  text1: 'Type', text2: guarantorDetails.docType),
-              _textData(context,
-                  text1: 'Name', text2: guarantorDetails.fullName),
-              _textData(context,
-                  text1: 'APL Father/Spouse Name',
-                  text2: guarantorDetails.fatherName),
-              _textData(context,
-                  text1: 'APL Mother Name', text2: guarantorDetails.motherName),
-              _textData(context,
-                  text1: 'Relationship',
-                  text2: guarantorDetails.relationWithApplicant),
-              _textData(context, text1: 'Age', text2: guarantorDetails.age),
-              _textData(context,
-                  text1: 'Gender', text2: guarantorDetails.gender),
-              _textData(context, text1: 'Email', text2: guarantorDetails.email),
-              _textData(context,
-                  text1: 'Marital Status',
-                  text2: guarantorDetails.maritalStatus),
-              _textData(context,
-                  text1: 'Education', text2: guarantorDetails.education),
-              _textData(context, text1: 'Caste', text2: guarantorDetails.caste),
-              _textData(context,
-                  text1: 'Aadhar No.', text2: guarantorDetails.aadharNo),
-              _textData(context,
-                  text1: 'PAN No.', text2: guarantorDetails.docNo),
-              _textData(context,
-                  text1: 'Document Type', text2: guarantorDetails.docType),
-              _textData(context,
-                  text1: 'Document No.', text2: guarantorDetails.docNo),
-              _photoGrid(
-                title: "Upload Photos",
-                imageUrls: [
-                  guarantorDetails
-                          .guarantorKycUpload.aadharFrontImage.isNotEmpty
-                      ? '${Api.imageUrl}${guarantorDetails.guarantorKycUpload.aadharFrontImage}'
-                      : '',
-                  guarantorDetails.guarantorKycUpload.aadharBackImage.isNotEmpty
-                      ? '${Api.imageUrl}${guarantorDetails.guarantorKycUpload.aadharBackImage}'
-                      : '',
-                  guarantorDetails.guarantorKycUpload.docImage.isNotEmpty
-                      ? '${Api.imageUrl}${guarantorDetails.guarantorKycUpload.docImage}'
-                      : '',
-                ],
-              ),
-            ],
-          ),
-        ),
-        Container(
-          height: 1,
-          color: Color(0xFF0082C6),
-          width: MediaQuery.of(context).size.width * 0.9,
-        ),
+        guarantorDetails==null ?
+       Column(
+         children: [
+           
+           Padding(
+             padding: const EdgeInsets.all(8.0),
+             child: Column(
+               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+               children: [
+                 _rowImage(
+                   context,
+                   imageUrl: guarantorDetails.guarantorPhoto.isNotEmpty
+                       ? '${Api.imageUrl}${guarantorDetails.guarantorPhoto}'
+                       : 'https://picsum.photos/id/237/200/300',
+                   text: 'Guarantor Photos',
+                 ),
+                 _textData(context,
+                     text1: 'Type', text2: guarantorDetails.docType),
+                 _textData(context,
+                     text1: 'Name', text2: guarantorDetails.fullName),
+                 _textData(context,
+                     text1: 'APL Father/Spouse Name',
+                     text2: guarantorDetails.fatherName),
+                 _textData(context,
+                     text1: 'APL Mother Name', text2: guarantorDetails.motherName),
+                 _textData(context,
+                     text1: 'Relationship',
+                     text2: guarantorDetails.relationWithApplicant),
+                 _textData(context, text1: 'Age', text2: guarantorDetails.age),
+                 _textData(context,
+                     text1: 'Gender', text2: guarantorDetails.gender),
+                 _textData(context, text1: 'Email', text2: guarantorDetails.email),
+                 _textData(context,
+                     text1: 'Marital Status',
+                     text2: guarantorDetails.maritalStatus),
+                 _textData(context,
+                     text1: 'Education', text2: guarantorDetails.education),
+                 _textData(context, text1: 'Caste', text2: guarantorDetails.caste),
+                 _textData(context,
+                     text1: 'Aadhar No.', text2: guarantorDetails.aadharNo),
+                 _textData(context,
+                     text1: 'PAN No.', text2: guarantorDetails.docNo),
+                 _textData(context,
+                     text1: 'Document Type', text2: guarantorDetails.docType),
+                 _textData(context,
+                     text1: 'Document No.', text2: guarantorDetails.docNo),
+                 _photoGrid(
+                   title: "Upload Photos",
+                   imageUrls: [
+                     guarantorDetails
+                         .guarantorKycUpload.aadharFrontImage.isNotEmpty
+                         ? '${Api.imageUrl}${guarantorDetails.guarantorKycUpload.aadharFrontImage}'
+                         : '',
+                     guarantorDetails.guarantorKycUpload.aadharBackImage.isNotEmpty
+                         ? '${Api.imageUrl}${guarantorDetails.guarantorKycUpload.aadharBackImage}'
+                         : '',
+                     guarantorDetails.guarantorKycUpload.docImage.isNotEmpty
+                         ? '${Api.imageUrl}${guarantorDetails.guarantorKycUpload.docImage}'
+                         : '',
+                   ],
+                 ),
+               ],
+             ),
+           ),
+           Container(
+             height: 1,
+             color: Color(0xFF0082C6),
+             width: MediaQuery.of(context).size.width * 0.9,
+           ),
+         ],
+       ):
+            Text('No data found')
       ],
     );
   }
@@ -507,6 +516,7 @@ class PdFilledForm extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(
                               8.0), // Optional: rounded corners
                           boxShadow: [
+
                             BoxShadow(
                               color: Colors.white70
                                   .withOpacity(0.3), // Shadow color and opacity
@@ -520,6 +530,7 @@ class PdFilledForm extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Text('data'),
                             _textData(context,
                                 text1: 'Loan Type',
                                 text2: detail.loanType ?? 'N/A'),

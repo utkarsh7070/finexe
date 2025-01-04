@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,9 +9,8 @@ import '../../SalesOnBoardingForm/view/Sales_on_boarding_form/applicant_form/app
 import '../../SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_screen.dart';
 import '../../SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/dialog/form_completed_dialog.dart';
 import '../../SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/guarantor_form_1.dart';
-
-import '../../SalesOnBoardingForm/view_model/guarantor_form_view_model.dart';
 import '../model/show_cashes_status_model.dart';
+import '../view_model/cashfree_payment_view_model.dart';
 import '../view_model/showing_cash_status_view_model.dart';
 
 /*class CasesDetails extends ConsumerWidget{
@@ -25,7 +23,7 @@ class CasesDetails extends ConsumerStatefulWidget {
   ConsumerState<CasesDetails> createState() => _CasesDetailsState();
   final String customerId;
   final String customerName;
-  CasesDetails({required this.customerId, required this.customerName});
+  const CasesDetails({super.key, required this.customerId, required this.customerName});
 }
 
 class _CasesDetailsState extends ConsumerState<CasesDetails> {
@@ -63,66 +61,71 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
   Widget build(BuildContext context) {
     final processStatus = ref.watch(processStatusProvider);
     final processStatusViewModel = ref.read(processStatusProvider.notifier);
-    final goPayment = ref.read(paymentCaseProvider((context)).notifier);
+    // final goPayment = ref.read(paymentCaseProvider((context)).notifier);
+    // final paymentNotifier = ref.read(cashfreePaymentProvider.notifier);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.customerName, style: TextStyle(color: Colors.white)),
-        backgroundColor: AppColors.primary,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Container(
-        width: displayWidth(context),
-        height: displayHeight(context),
-        color: AppColors.primary,
-        padding: const EdgeInsets.only(top: 30),
-        child: Container(
-          height: displayHeight(context),
-          padding: const EdgeInsets.all(20),
-          decoration: const BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
-            ),
+    return NetworkListener(
+      context: context,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.customerName, style: const TextStyle(color: Colors.white)),
+          backgroundColor: AppColors.primary,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
           ),
-          child: processStatus.when(
-            data: (data) {
-              if (data == null) {
-                return Center(child: Text('No data available'));
-              }
-
-              // Map sections with their corresponding data
-              final sections = {
-                'Sales': data.sales,
-                'Cibil': data.cibil,
-                'Branch Pendancy': data.branchPendancy,
-                /* 'Vendor Details': data.vendorDetails,*/
-                'PD': data.pd,
-              };
-
-              // Build a collapsible list view
-              return ListView(
-                children: sections.entries.map((entry) {
-                  final sectionName = entry.key;
-                  final sectionData = entry.value;
-
-                  return _buildSection(
-                    processStatusViewModel: processStatusViewModel,
-                    sectionName: sectionName,
-                    sectionData: sectionData,
-                    ref: ref,
-                    goPayment: goPayment,
-                  );
-                }).toList(),
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Center(child: Text('Error: $error')),
+        ),
+        body: Container(
+          width: displayWidth(context),
+          height: displayHeight(context),
+          color: AppColors.primary,
+          padding: const EdgeInsets.only(top: 30),
+          child: Container(
+            height: displayHeight(context),
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
+              ),
+            ),
+            child: processStatus.when(
+              data: (data) {
+                if (data == null) {
+                  return const Center(child: Text('No data available'));
+                }
+      
+                // Map sections with their corresponding data
+                final sections = {
+                  'Sales': data.sales,
+                  'Cibil': data.cibil,
+                  'Branch Pendancy': data.branchPendancy,
+                  /* 'Vendor Details': data.vendorDetails,*/
+                  'PD': data.pd,
+                };
+      
+                // Build a collapsible list view
+                return ListView(
+                  children: sections.entries.map((entry) {
+                    final sectionName = entry.key;
+                    final sectionData = entry.value;
+      
+                    return _buildSection(
+                      processStatusViewModel: processStatusViewModel,
+                      sectionName: sectionName,
+                      sectionData: sectionData,
+                      ref: ref,
+                      goPayment: '',
+                      paymentNotifier: '',
+                    );
+                  }).toList(),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
+            ),
           ),
         ),
       ),
@@ -135,6 +138,7 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
       required dynamic sectionData,
       required WidgetRef ref,
       required dynamic goPayment,
+        required dynamic paymentNotifier,
       required dynamic processStatusViewModel}) {
     final isExpanded = ref.watch(sectionExpansionProvider(sectionName));
 
@@ -166,14 +170,14 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: _buildSectionContent(
-                sectionData, goPayment, processStatusViewModel),
+                sectionData, goPayment,paymentNotifier, processStatusViewModel),
           ),
       ],
     );
   }
 
   Widget _buildSectionContent(
-      dynamic sectionData, dynamic goPayment, dynamic processStatusViewModel) {
+      dynamic sectionData, dynamic goPayment,dynamic paymentNotifier, dynamic processStatusViewModel) {
     if (sectionData == null) {
       return const Text('No data available');
     }
@@ -187,54 +191,83 @@ class _CasesDetailsState extends ConsumerState<CasesDetails> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: () {
+            onTap: () async {
               // Check if any field is 'pending' and navigate accordingly
               if (sectionData.isApplicationPending()) {
                 // Navigate to Screen 1 if applicationStatus is pending
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ApplicationDetails({})),
+                  MaterialPageRoute(builder: (context) => const ApplicationDetails({})),
                 );
               } else if (sectionData.isCoApplicationPending()) {
                 // Navigate to Screen 2 if coApplicationStatus is pending
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CoApplicantScreen()),
+                  MaterialPageRoute(builder: (context) => const CoApplicantScreen()),
                 );
               } else if (sectionData.isGuarantorPending()) {
                 // Navigate to Screen 3 if guarantorStatus is pending
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => GuarantorDetails()),
+                  MaterialPageRoute(builder: (context) => const GuarantorDetails()),
                 );
               } else if (sectionData.isPaymentPending()) {
-                /* final goPayment = ref.read(paymentProvider((context)).notifier);
 
-                goPayment.payWithRazorPay( amount: sectionData.paymentAmount,
-                    mobile: sectionData.cutomerNumber.toString(),
-                    orderId: '');*/
+              /*  String? paymentMode = await SessionService.getPaymentMode();
+                print('payment mode on cashes screen ${paymentMode}');*/
+               // if(paymentMode=='Razorpay' || paymentMode==null) {
+                      processStatusViewModel.paymentInitiate2(widget.customerId)
+                          .then(
+                            (value) {
+                          Navigator.pop(context);
+                          /*if (kDebugMode) {
+                          print(getMobileNo.phoneNumber);
+                        }*/
+                          print(
+                              'Login fees ${value.items.customerDetail.loginFees}');
+                          if (value.items.customerDetail.loginFees != 0) {
+                            goPayment.payWithRazorPay(
+                                amount: value.items.customerDetail.loginFees,
+                                mobile: sectionData.cutomerNumber.toString(),
+                                orderId: value.items.customerDetail.orderId);
+                            // FormSubmitDialog().formSubmitDialog(context: context);
+                          } else {
+                            FormSubmitDialog().formSubmitDialog(context: context);
+                          }
+                        },
+                      );
+               // }
+                /*else {
 
-                // final personalFormViewModel = ref.read(guarantorViewModelProvider.notifier);
-                // final goPayment = ref.read(paymentProvider((context)).notifier);
+                  processStatusViewModel.cashFreePaymentInitiate(widget.customerId,context)
+                      .then(
+                        (value) {
+                      Navigator.pop(context);
+                      *//*if (kDebugMode) {
+                          print(getMobileNo.phoneNumber);
+                        }*//*
+                      int loginFees = value.items.amount;
+                      String orderId = value.items.orderId;
+                      String sessionId = value.items.sessionId;
 
-                processStatusViewModel.paymentInitiate2(widget.customerId).then(
-                  (value) {
-                    Navigator.pop(context);
-                    /*if (kDebugMode) {
-                      print(getMobileNo.phoneNumber);
-                    }*/
-                    print('Login fees ${value.items.customerDetail.loginFees}');
-                    if (value.items.customerDetail.loginFees != 0) {
-                      goPayment.payWithRazorPay(
-                          amount: value.items.customerDetail.loginFees,
-                          mobile: sectionData.cutomerNumber.toString(),
-                          orderId: value.items.customerDetail.orderId);
-                      // FormSubmitDialog().formSubmitDialog(context: context);
-                    } else {
-                      FormSubmitDialog().formSubmitDialog(context: context);
-                    }
-                  },
-                );
+                     // paymentNotifier.initiateSession(orderId, sessionId);
+
+                      print('Login fees: $loginFees');
+                      if (sessionId != '') {
+                        paymentNotifier.startPayment('PRODUCTION', orderId, sessionId,context);
+                      //  paymentNotifier.startPayment(value.items.orderId, context);
+                        // FormSubmitDialog().formSubmitDialog(context: context);
+                      } else {
+                       // FormSubmitDialog().formSubmitDialog(context: context);
+                      }
+
+
+                    },
+                  );
+
+
+                }*/
+
               }
             },
             child: Column(

@@ -1,13 +1,7 @@
-import 'dart:async';
-import 'dart:ui';
-import 'package:flutter/Material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_background_service_android/flutter_background_service_android.dart';
+import 'package:finexe/feature/base/api/api.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class SocketService {
   // Singleton pattern
@@ -21,7 +15,7 @@ class SocketService {
 
   void connectSocket() {
     socket = IO.io(
-      'https://stageapi.fincooper.in', // Replace with your server URL
+      Api.baseUrl, // Replace with your server URL
       IO.OptionBuilder()
           .setTransports(['websocket']) // Specify transport protocol
           .disableAutoConnect() // Disable auto-connect if you prefer manual connect
@@ -56,7 +50,7 @@ class SocketService {
 
   void startTracking(String userId) async {
     print('startTracking fun');
-    if (socket != null && socket.connected) {
+    if (socket.connected) {
       print('socket is connected and start tracking');
       await Geolocator.requestPermission();
       Geolocator.getPositionStream(
@@ -64,7 +58,7 @@ class SocketService {
                   accuracy: LocationAccuracy.high, distanceFilter: 1))
           .listen((Position position) {
         print("Sending Location: ${position.latitude}, ${position.longitude}");
-        socket!.emit('send_location', {
+        socket.emit('send_location', {
           'lat': position.latitude,
           'long': position.longitude,
           'userId': userId

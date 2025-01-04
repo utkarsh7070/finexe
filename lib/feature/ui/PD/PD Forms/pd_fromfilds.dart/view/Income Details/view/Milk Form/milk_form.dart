@@ -5,6 +5,7 @@ import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
+import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/base/utils/widget/upload_box.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 // import 'package:finexe/feature/ui/PD/view/common%20imagePicker/dynamic_listing_images.dart';
@@ -82,29 +83,29 @@ class _MilkFormState extends ConsumerState<MilkForm> {
       data: (milkBusiness) {
         if (milkForm_numberofyearesDoing.text.isEmpty) {
           milkForm_numberofyearesDoing.text =
-              milkBusiness.doingFromNoOfYears.toString();
+              milkBusiness?.items?.data.doingFromNoOfYears.toString() ?? '';
           milkform_numberofcattelsController.text =
-              milkBusiness.numberOfCattrels.toString();
+              milkBusiness?.items?.data.numberOfCattrels.toString() ?? '';
           milkform_milkGivingCattlesController.text =
-              milkBusiness.noOfMilkGivingCattles.toString();
+              milkBusiness?.items?.data.noOfMilkGivingCattles.toString()?? '';
           currentform_milkUtilizatinController.text =
-              milkBusiness.currentMilkUtilization ?? '';
+              milkBusiness?.items?.data.currentMilkUtilization ?? '';
           currentform_observeddesignatedController.text =
-              milkBusiness.observedDesignatedCattleTyingArea ?? '';
+              milkBusiness?.items?.data.observedDesignatedCattleTyingArea ?? '';
           currentform_milkSupplyperDayController.text =
-              milkBusiness.totalMilkSupplyPerDay.toString();
+              milkBusiness?.items?.data.totalMilkSupplyPerDay.toString()??'';
           currentform_nameOfDiaryController.text =
-              milkBusiness.nameOfDairy ?? '';
+              milkBusiness?.items?.data.nameOfDairy ?? '';
           currentform_ownerMobNoController.text =
-              milkBusiness.dairyOwnerMobNo ?? '';
+              milkBusiness?.items?.data.dairyOwnerMobNo ?? '';
           currentform_milkProvideSinceyearController.text =
-              milkBusiness.milkProvideFromSinceYear.toString();
+              milkBusiness?.items?.data.milkProvideFromSinceYear.toString()??'';
           currentform_monthlyIncomefromMilkController.text =
-              milkBusiness.monthlyIncomeMilkBusiness ?? '';
+              milkBusiness?.items?.data.monthlyIncomeMilkBusiness ?? '';
           currentform_expensesOfMilkController.text =
-              milkBusiness.expensesOfMilkBusiness ?? '';
+              milkBusiness?.items?.data.expensesOfMilkBusiness ?? '';
           currentform_diaryAddressController.text =
-              milkBusiness.dairyAddress ?? '';
+              milkBusiness?.items?.data.dairyAddress ?? '';
         }
 
         return SingleChildScrollView(
@@ -289,11 +290,12 @@ class _MilkFormState extends ConsumerState<MilkForm> {
                 // constSizedbox(context),
 
                 // Display uploaded images
-                ...milkBusiness.animalPhotos.asMap().entries.map((entry) {
+                if(milkBusiness?.items?.data.animalPhotos !=null)
+                ...milkBusiness!.items!.data.animalPhotos.asMap().entries.map((entry) {
                   final int index = entry.key;
                   final String image = entry.value;
-                  print(
-                      'agriBusinessData.agriculturePhotos from server:: ${milkBusiness.animalPhotos.length}');
+                  // print(
+                  //     'agriBusinessData.agriculturePhotos from server:: ${milkBusiness.animalPhotos?.length}');
                   print('image:: $image');
                   return Stack(
                     children: [
@@ -325,9 +327,10 @@ class _MilkFormState extends ConsumerState<MilkForm> {
                         child: GestureDetector(
                           onTap: () {
                             setState(() {
-                              milkBusiness.animalPhotos.removeAt(index);
+
+                                milkBusiness.items?.data.animalPhotos.removeAt(index);
                               print(
-                                  'agriBusinessData.agriculturePhotos:: ${milkBusiness.animalPhotos.length}');
+                                  'agriBusinessData.agriculturePhotos:: ${milkBusiness.items?.data.animalPhotos.length}');
                             });
                           },
                           child: Image.asset(
@@ -353,11 +356,11 @@ class _MilkFormState extends ConsumerState<MilkForm> {
                             setState(() {
                               // print('workphotoUrl: $value');
                               // workPhotosList.add(value);
-                              milkBusiness.animalPhotos.add(value);
+                              milkBusiness?.items?.data.animalPhotos.add(value);
                               // print(
                               //     'workPhotosList url length:: ${workPhotosList.length}');
                               print(
-                                  'milkBusiness.animalPhotos:: ${milkBusiness.animalPhotos.length}');
+                                  'milkBusiness.animalPhotos:: ${milkBusiness?.items?.data.animalPhotos.length}');
                             });
                           },
                         );
@@ -390,10 +393,10 @@ class _MilkFormState extends ConsumerState<MilkForm> {
                 // constSizedbox(context),
 
                 ImageListWidget(
-                  imageUrls: milkBusiness.milkPhotos,
+                  imageUrls: milkBusiness?.items?.data.milkPhotos??[''],
                   onRemove: (index) {
                     setState(() {
-                      milkBusiness.milkPhotos.removeAt(index);
+                      milkBusiness?.items?.data.milkPhotos.removeAt(index);
                     });
                   },
                   onAddImage: () async {
@@ -409,11 +412,11 @@ class _MilkFormState extends ConsumerState<MilkForm> {
                             setState(() {
                               // print('workphotoUrl: $value');
                               // workPhotosList.add(value);
-                              milkBusiness.milkPhotos.add(value);
+                              milkBusiness?.items?.data.milkPhotos.add(value);
                               // print(
                               //     'workPhotosList url length:: ${workPhotosList.length}');
                               print(
-                                  'milkBusiness.animalPhotos:: ${milkBusiness.milkPhotos.length}');
+                                  'milkBusiness.animalPhotos:: ${milkBusiness?.items?.data.milkPhotos.length}');
                             });
                           },
                         );
@@ -484,10 +487,10 @@ class _MilkFormState extends ConsumerState<MilkForm> {
                                     : '0',
                             // Default value
                             // milkPhotos: ["/uploads/default_milk_photo.png"],
-                            milkPhotos: milkBusiness.milkPhotos,
+                            milkPhotos: milkBusiness?.items?.data.milkPhotos ??[''],
                             // Default value for photos
                             // animalPhotos: ["/uploads/default_animal_photo.png"],
-                            animalPhotos: milkBusiness.animalPhotos,
+                            animalPhotos: milkBusiness?.items?.data.animalPhotos?? [''],
                             currentMilkUtilization:
                                 currentform_milkUtilizatinController
                                         .text.isNotEmpty
@@ -507,15 +510,9 @@ class _MilkFormState extends ConsumerState<MilkForm> {
 
                         await viewModel.submitMilkBusinessForm(
                             formData, context,widget.customerId);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              backgroundColor: AppColors.red,
-                              content: Text(
-                                'Please fill all requred details!',
-                                style: AppStyles.whiteText16,
-                              )),
-                        );
+                      }
+                      else {
+                        showCustomSnackBar(context, 'Please fill all requred details!', AppColors.red);
                       }
                     },
                     child: Text(

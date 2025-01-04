@@ -1,8 +1,16 @@
 class Api {
   static const String baseUrlProduction = 'https://stageapi.fincooper.in';
+
+
+//  static const String baseUrl ='https://stageapi.fincooper.in/';// Stage URL
   static const String baseUrl ='https://prod.fincooper.in/';// Production URL
+
+  //  static const String baseUrl = 'https://stageapi.fincooper.in/';// Production URL
+    // static const String baseUrl = 'https://prod.fincooper.in/';// Production URL
+  
   static const String imageBaseUrl = 'https://stageapi.fincooper.in';  // Production URL
   static const String imageBaseProUrl = 'https://prod.fincooper.in';  // Production URL
+
   static const String baseUrlStageCollection = 'https://stageapi.fincooper.in/';
   static const String baseUrlStageProduction ='https://prod.fincooper.in/';
   static const String login = '${baseUrl}v1/login/newEmployeeLogin';
@@ -61,7 +69,7 @@ class Api {
   static const String getAllocationDashboard =
       '${baseUrl}v1/googleSheet/getAllocationDashboard';
 
-  static const String imageUrl = '${baseUrl}';
+  static const String imageUrl = baseUrl;
 
   static const String getVisitDetail = '${baseUrl}v1/googleSheet/visitDetail';
 
@@ -75,6 +83,9 @@ class Api {
   static const String updateProfile = '${baseUrl}v1/adminMaster/employe/update';
   static const String updatePassword = '${baseUrl}v1/login/updatePassword';
   static const String paymentAmount = '${baseUrl}v1/salesMan/paymentInitiate';
+
+  static const String cashfreePaymentAmount = '${baseUrl}v1/salesMan/CashFreePaymentInitiate';
+
   static const String allCases = '${baseUrl}v1/calculator/getCustomer';
   // static const String salesNew = '${baseUrl}v1/calculator/getCustomer?employeeRole=sales&status=salesNew';
   // static const String salesToCibil = '${baseUrl}v1/calculator/getCustomer?status=salesToCibil';
@@ -93,6 +104,16 @@ class Api {
 
   static const String getLeaveDetails = '${baseUrl}v1/hrms/leave/getLeaveForEmployee';
   static const String getAttendanceDetails = '${baseUrl}v1/adminMaster/employe/monthlyAttendance';
+
+
+  static const String getReportingManager = '${baseUrl}v1/dashboard/getAllReportingManager';
+  static const String getEmployeeList = '${baseUrl}v1/adminMaster/employe/getAllEmploye';
+
+  static const String expenseSubmitForm = baseUrl;
+
+  static const String getAllLeaveType = '${baseUrl}v1/leaveType/getAllLeaveType';
+
+
   // http://localhost:5500/v1/calculator/getCustomer?employeeRole=sales&status=all__
 //----------------------------------EOD/BOD--------------------------------------------------
   static const String addTask = '${baseUrl}v1/bodEod/add';

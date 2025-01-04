@@ -32,13 +32,13 @@ class Items {
   @JsonKey(name: "employeId")
   String employeId;
   @JsonKey(name: "userName")
-  String userName;
+  var userName;
   @JsonKey(name: "roleName")
   List<String> roleName;
   @JsonKey(name: "token")
   String token;
   @JsonKey(name: "roamId")
-  String roamId;
+  String? roamId;
   @JsonKey(name: "trackingMode")
   String trackingMode;
 
@@ -47,7 +47,7 @@ class Items {
     required this.userName,
     required this.roleName,
     required this.token,
-    required this.roamId,
+      required this.roamId,
     required this.trackingMode,
   });
 

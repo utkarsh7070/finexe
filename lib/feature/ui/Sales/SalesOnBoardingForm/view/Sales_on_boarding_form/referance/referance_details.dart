@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../../base/utils/namespase/app_colors.dart';
@@ -9,6 +8,8 @@ import '../../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../view_model/referance_details_view_model.dart';
 
 class ReferenceDetails extends ConsumerWidget {
+  const ReferenceDetails({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final personalFormState = ref.watch(referenceViewModelProvider);
@@ -52,7 +53,7 @@ class ReferenceDetails extends ConsumerWidget {
             ),
             Expanded(
               child: SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
+                physics: const AlwaysScrollableScrollPhysics(),
                 child:
                     Wrap(runSpacing: displayHeight(context) * 0.04, children: [
                   const Text('Reference -01'),

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:finexe/feature/base/api/api.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+// import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../base/service/session_service.dart';
@@ -56,10 +58,20 @@ class _CommonVideoPickerState extends State<CommonVideoPicker> {
         _selectedVideo = video;
         print('video.path: ${video.path}');
       });
-      // await initializeVideoPlayer(video.path);
-      await uploadImage(video.path);
+      await initializeVideoPlayer(video.path);
+      // final compressedFile = await compressVideo(video.path);
+
+      // await uploadImage(compressedFile!.path);
     }
   }
+  // Future<File?> compressVideo(String videoPath) async {
+  //   final compressedVideo = await VideoCompress.compressVideo(
+  //     videoPath,
+  //     quality: VideoQuality.MediumQuality,
+  //     deleteOrigin: false, // Keep the original file
+  //   );
+  //   return compressedVideo?.file;
+  // }
 
   Future<void> initializeVideoPlayer(String videoPath) async {
     // Dispose of the previous controller if it exists
@@ -91,7 +103,7 @@ class _CommonVideoPickerState extends State<CommonVideoPicker> {
   }
 
   Future<void> uploadImage(String imagePath) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String token =l
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY"; // Replace with your token logic or pass it as a parameter
@@ -136,8 +148,8 @@ class _CommonVideoPickerState extends State<CommonVideoPicker> {
     } catch (e) {
       // _showSnackBar('An error occurred while uploading the image.');
       showCustomSnackBar(context,
-          'An error occurred while uploading the image.', AppColors.red);
-
+          'Faild to upload the video try again', AppColors.red);
+      print('error uploading image:: $e');
       setState(() {
         _isLoading = false; // Stop loading on failure
         print('_isLoading false');

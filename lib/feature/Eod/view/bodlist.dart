@@ -1,4 +1,5 @@
 import 'package:finexe/feature/Eod/view_model/bodlist_viewmodel.dart';
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
@@ -12,182 +13,187 @@ import '../AddBOD_dialogue/AddBOD_dialogue/view/add_bod._dialogue.dart';
 
 
 class BODScreen extends ConsumerWidget {
+  const BODScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(eodControllerProvider);
     if (kDebugMode) {
       print(state.bodList);
     }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("BOD Tasks"),
-        centerTitle: true,
-      ),
-      body: state.isLoading
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.80,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(8),
-                      shrinkWrap: true,
-                      itemCount: state.bodList.length + 1,
-                      //  itemCount: controller.bodList.length,
-                      itemBuilder: (context, index) {
-                        // final task = state.bodList[index];
-                        print('index $index');
-                        if (index == 0) {
-                          return AppButton(
-                            width: 40,
-                            label: 'Add BOD Task',
-                            textStyle: const TextStyle(color: Colors.white),
+    return NetworkListener(
+      context: context,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("BOD Tasks"),
+          centerTitle: true,
+        ),
+        body: state.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.80,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(8),
+                        shrinkWrap: true,
+                        itemCount: state.bodList.length + 1,
+                        //  itemCount: controller.bodList.length,
+                        itemBuilder: (context, index) {
+                          // final task = state.bodList[index];
+                          print('index $index');
+                          if (index == 0) {
+                            return AppButton(
+                              width: 40,
+                              label: 'Add BOD Task',
+                              textStyle: const TextStyle(color: Colors.white),
+                              onTap: () {
+                                AddBodDialog().addAlbumDialog(context);
+      
+                                // controller.onTapAddButton(context);
+                              },
+                            );
+                          }
+      
+                          return InkWell(
                             onTap: () {
-                              AddBodDialog().addAlbumDialog(context);
-
-                              // controller.onTapAddButton(context);
+                              bottomSheet(context, index - 1, ref);
                             },
+                            child: Column(
+                              children: [
+                                Card(
+                                    elevation: 0,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(10)),
+                                        border: Border.all(
+                                            color: AppColors.boxBorderGray),
+                                      ),
+                                      padding: const EdgeInsets.all(16),
+                                      // height: MediaQuery.of(context).size.height * 0.10,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Flexible(
+                                                child: Text(
+                                                  maxLines: 2,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  state.bodList[index - 1].task,
+                                                  style: AppStyles
+                                                      .headingTextStyle
+                                                      .copyWith(
+                                                          fontSize:
+                                                              FontSize.fontSize16,
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                ),
+                                              ),
+                                              Text(
+                                                state.bodList[index - 1].status,
+                                                style: TextStyle(
+                                                    color: state
+                                                                .bodList[
+                                                                    index - 1]
+                                                                .status
+                                                                .toString() ==
+                                                            'pending'
+                                                        ? Colors.red
+                                                        : state.bodList[index - 1]
+                                                                    .status
+                                                                    .toString() ==
+                                                                'completed'
+                                                            ? Colors.green
+                                                            : Colors.orange),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.01,
+                                          ),
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Flexible(
+                                                child: Text(
+                                                  state.bodList[index - 1]
+                                                      .description,
+                                                  style: const TextStyle(),
+                                                ),
+                                              ),
+                                              state.bodList[index - 1]
+                                                          .startDate !=
+                                                      ''
+                                                  ? Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment.end,
+                                                      children: [
+                                                        Text(
+                                                          DateFormat.yMMMd()
+                                                              .format(DateFormat(
+                                                                      "yyyy-MM-dd'T'h:mm:ss a")
+                                                                  .parse(state
+                                                                      .bodList[
+                                                                          index -
+                                                                              1]
+                                                                      .startDate)),
+                                                          style:
+                                                              const TextStyle(),
+                                                        ),
+                                                        Text(
+                                                          DateFormat.jm().format(
+                                                              DateFormat(
+                                                                      "yyyy-MM-dd'T'h:mm:ss a")
+                                                                  .parse(state
+                                                                      .bodList[
+                                                                          index -
+                                                                              1]
+                                                                      .startDate)),
+                                                          style:
+                                                              const TextStyle(),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : const SizedBox(),
+                                            ],
+                                          ),
+                                          employeeDetailsText(context,
+                                              heading: 'ManagerBodStatus',
+                                              data: state.bodList[index - 1]
+                                                  .managerBodStatus),
+                                        ],
+                                      ),
+                                    )),
+                                // SizedBox(
+                                //   height:
+                                //       MediaQuery.of(context).size.height * 0.01,
+                                // ),
+                              ],
+                            ),
                           );
-                        }
-
-                        return InkWell(
-                          onTap: () {
-                            bottomSheet(context, index - 1, ref);
-                          },
-                          child: Column(
-                            children: [
-                              Card(
-                                  elevation: 0,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                      border: Border.all(
-                                          color: AppColors.boxBorderGray),
-                                    ),
-                                    padding: const EdgeInsets.all(16),
-                                    // height: MediaQuery.of(context).size.height * 0.10,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Flexible(
-                                              child: Text(
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                state.bodList[index - 1].task,
-                                                style: AppStyles
-                                                    .headingTextStyle
-                                                    .copyWith(
-                                                        fontSize:
-                                                            FontSize.fontSize16,
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                              ),
-                                            ),
-                                            Text(
-                                              state.bodList[index - 1].status,
-                                              style: TextStyle(
-                                                  color: state
-                                                              .bodList[
-                                                                  index - 1]
-                                                              .status
-                                                              .toString() ==
-                                                          'pending'
-                                                      ? Colors.red
-                                                      : state.bodList[index - 1]
-                                                                  .status
-                                                                  .toString() ==
-                                                              'completed'
-                                                          ? Colors.green
-                                                          : Colors.orange),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.01,
-                                        ),
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Flexible(
-                                              child: Text(
-                                                state.bodList[index - 1]
-                                                    .description,
-                                                style: const TextStyle(),
-                                              ),
-                                            ),
-                                            state.bodList[index - 1]
-                                                        .startDate !=
-                                                    ''
-                                                ? Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.end,
-                                                    children: [
-                                                      Text(
-                                                        DateFormat.yMMMd()
-                                                            .format(DateFormat(
-                                                                    "yyyy-MM-dd'T'h:mm:ss a")
-                                                                .parse(state
-                                                                    .bodList[
-                                                                        index -
-                                                                            1]
-                                                                    .startDate)),
-                                                        style:
-                                                            const TextStyle(),
-                                                      ),
-                                                      Text(
-                                                        DateFormat.jm().format(
-                                                            DateFormat(
-                                                                    "yyyy-MM-dd'T'h:mm:ss a")
-                                                                .parse(state
-                                                                    .bodList[
-                                                                        index -
-                                                                            1]
-                                                                    .startDate)),
-                                                        style:
-                                                            const TextStyle(),
-                                                      ),
-                                                    ],
-                                                  )
-                                                : const SizedBox(),
-                                          ],
-                                        ),
-                                        employeeDetailsText(context,
-                                            heading: 'ManagerBodStatus',
-                                            data: state.bodList[index - 1]
-                                                .managerBodStatus),
-                                      ],
-                                    ),
-                                  )),
-                              // SizedBox(
-                              //   height:
-                              //       MediaQuery.of(context).size.height * 0.01,
-                              // ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                ],
+                        },
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 
@@ -280,7 +286,7 @@ class BODScreen extends ConsumerWidget {
             children: [
               detailsText(context,
                   heading: 'Task ', data: state.bodList[index].task),
-              Divider(
+              const Divider(
                 thickness: 1,
                 color: AppColors.gray,
               ),

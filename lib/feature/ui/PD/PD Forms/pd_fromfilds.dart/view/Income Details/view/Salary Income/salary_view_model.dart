@@ -3,18 +3,15 @@ import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/service/session_service.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/Income%20Details/view/Salary%20Income/salary_model/salary_income_model.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view/Income%20Details/view/Salary%20Income/salary_model/salary_income_model.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_update_data/view/Income%20Details/view/Salary%20Income/salary_model/salary_income_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-// import '../../../../../../../../../../base/api/api.dart';
-// import '../../../../../../../../../../base/service/session_service.dart';
-// import '../../../../../../../../../../base/utils/widget/custom_snackbar.dart';
+import '../../../../../../../../base/api/dio_exception.dart';
 
 // ---------- Image Upload Notifier (Optional) ---------
 class SalaryImageUploadNotifier extends StateNotifier<List<File>> {
@@ -62,7 +59,7 @@ class SalaryDetailsFormViewModel {
         'customerId': '66f53ffbd7011eb65160f292',
         'pdType': 'creditPd',
       };
-      final token = await SessionService.getToken();
+      final token = speciality.getToken();
 
       final response = await _dio.post(
         Api.updatePdReport, // Replace with your API endpoint
@@ -71,20 +68,19 @@ class SalaryDetailsFormViewModel {
       );
 
       if (response.statusCode == 200) {
-        showCustomSnackBar(context, 'Salary Details Submitted', Colors.green);
-      } else {
-        print('Error response: ${response.data}');
-        throw Exception('Failed to submit salary details');
+        showCustomSnackBar(context, 'Salary Details Saved', Colors.green);
       }
     } catch (e) {
       print('Error submitting salary details: $e');
-      showCustomSnackBar(context, 'Form Submission Failed', Colors.red);
+      DioExceptions.fromDioError(e as DioException, context);
+
+
     }
   }
 }
 
 // ---------- Fetch API Provider ----------
-final salaryDetailsProvider = FutureProvider.autoDispose.family<SalaryDetailsData,String>((ref,custId) async {
+final salaryDetailsProvider = FutureProvider.autoDispose.family<SalaryIncomeModel?,String>((ref,custId) async {
   final apiService = SalaryApiService();
   return apiService.fetchSalaryDetails(custId);
 });
@@ -92,8 +88,8 @@ final salaryDetailsProvider = FutureProvider.autoDispose.family<SalaryDetailsDat
 class SalaryApiService {
   final Dio _dio = Dio();
 
-  Future<SalaryDetailsData> fetchSalaryDetails(String custId) async {
-    final token = await SessionService.getToken();
+  Future<SalaryIncomeModel?> fetchSalaryDetails(String custId) async {
+    final token = speciality.getToken();
 
     try {
       // Make the API request
@@ -107,9 +103,15 @@ class SalaryApiService {
       if (response.statusCode == 200) {
         final items = response.data['items'] as Map<String, dynamic>? ?? {};
         final incomeSource = items['incomeSource'] as dynamic;
-
+        if (items.isEmpty) {
+          print('Error: "items" is null');
+          return null;
+          // throw Exception('Error: "incomeSource" is null');
+        }
         if (incomeSource == null) {
-          throw Exception('Error: "incomeSource" is null');
+          print('Error: "incomeSource" is null');
+          return null;
+          // throw Exception('Error: "incomeSource" is null');
         }
 
         if (incomeSource is List) {
@@ -120,12 +122,12 @@ class SalaryApiService {
 
           if (salarySource != null) {
             final salaryData = salarySource['salaryIncome'];
-            return SalaryDetailsData.fromJson(salaryData);
+            return SalaryIncomeModel.fromJson(salaryData);
           }
         } else if (incomeSource is Map) {
           final salaryData = incomeSource['salaryIncome'];
           if (salaryData != null) {
-            return SalaryDetailsData.fromJson(salaryData);
+            return SalaryIncomeModel.fromJson(salaryData);
           }
         }
 
@@ -162,7 +164,7 @@ class AnimalImageUploadNotifier extends StateNotifier<List<File>> {
   }
 
   Future<String> uploadImage(String image) async {
-    String? token = await SessionService.getToken();
+    String? token = speciality.getToken();
 
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";

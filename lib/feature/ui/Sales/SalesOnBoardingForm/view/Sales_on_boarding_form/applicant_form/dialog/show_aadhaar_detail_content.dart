@@ -1,6 +1,5 @@
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AadhaarDetailsContent extends ConsumerWidget {
@@ -14,7 +13,7 @@ class AadhaarDetailsContent extends ConsumerWidget {
       child:
       Column(
         children: [
-          Text('Aadhaar Details'),
+          const Text('Aadhaar Details'),
           commonText(context: context,heading: 'Name',value:'' )
         ],
       ),

@@ -2,12 +2,11 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/extentions/capital_letter.dart';
+import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/VisitItemClosureModelData.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,7 +26,7 @@ class CollectionMoreInfoScreen extends ConsumerStatefulWidget {
   _MoreInfoScreen createState() => _MoreInfoScreen();
 
   final int index;
-  CollectionMoreInfoScreen({required int this.index});
+  const CollectionMoreInfoScreen({super.key, required this.index});
 
 }
 class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with SingleTickerProviderStateMixin {
@@ -88,11 +87,12 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
     return data.when(
 
       data: (data) {
-        List<ItemsDetails> listOfLists = data.map((map) {
-          return ItemsDetails.fromJson(map);
-        }).toList();
+        List<ItemsDetails> listOfLists = data;
+        // data.map((map) {
+        //   return ItemsDetails.fromJson(map);
+        // }).toList();
 
-        final safeIndex = widget.index != null && widget.index < listOfLists.length ? widget.index : 0;
+        final safeIndex = widget.index < listOfLists.length ? widget.index : 0;
         ItemsDetails item = listOfLists[safeIndex];
 
         // Extract the LD number from the item
@@ -116,134 +116,137 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
         // Fetch collection details data
         final closureData = ref.watch(fetchVisitClosureProvider(ldNumber));
 
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('More Info'),
-          ),
-          body: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: SizedBox(
-              height: displayHeight(context),
-              child: Column(
-                children: [
-                  // First Section: Applicant Details, Co-Applicant Details, Guarantor, Payment Summary
-                  _buildApplicantDetails(item),
-                  _buildCoApplicantDetails(item),
-                  _buildGuarantorDetails(item),
-                  _buildPaymentSummary(item),
-
-                  // Spacer or separator (optional)
-                  SizedBox(height: displayHeight(context) * 0.03),
-
-                  // Tabs Section: Visit, Collection, Calling, Notice, Closure
-                  Container(
-                    color: AppColors.primaryLight1, // Optional: style background color of tab section
-                    child: TabBar(
-                      controller: _tabController,
-                      isScrollable: true,
-                      tabs: const [
-                        Tab(text: 'Visit'),
-                        Tab(text: 'Collection'),
-                        Tab(text: 'Calling'),
-                        Tab(text: 'Notice'),
-                        Tab(text: 'Closure'),
-                      ],
+        return NetworkListener(
+      context: context,
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('More Info'),
+            ),
+            body: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: displayHeight(context),
+                child: Column(
+                  children: [
+                    // First Section: Applicant Details, Co-Applicant Details, Guarantor, Payment Summary
+                    _buildApplicantDetails(item),
+                    _buildCoApplicantDetails(item),
+                    _buildGuarantorDetails(item),
+                    _buildPaymentSummary(item),
+          
+                    // Spacer or separator (optional)
+                    SizedBox(height: displayHeight(context) * 0.03),
+          
+                    // Tabs Section: Visit, Collection, Calling, Notice, Closure
+                    Container(
+                      color: AppColors.primaryLight1, // Optional: style background color of tab section
+                      child: TabBar(
+                        controller: _tabController,
+                        isScrollable: true,
+                        tabs: const [
+                          Tab(text: 'Visit'),
+                          Tab(text: 'Collection'),
+                          Tab(text: 'Calling'),
+                          Tab(text: 'Notice'),
+                          Tab(text: 'Closure'),
+                        ],
+                      ),
                     ),
-                  ),
-                  /* Container(
-                    color: AppColors.primaryLight1, // Background color of the tab section
-                    child: TabBar(
-                      controller: _tabController,
-                      isScrollable: true,
-                      indicatorColor: Colors.blue, // Color of the selected tab indicator
-                      labelColor: Colors.white, // Color of the selected tab text
-                      unselectedLabelColor: Colors.grey, // Color of the unselected tab text
-                      tabs: const [
-                        Tab(text: 'Visit'),
-                        Tab(text: 'Collection'),
-                        Tab(text: 'Calling'),
-                        Tab(text: 'Notice'),
-                        Tab(text: 'Closure'),
-                      ],
+                    /* Container(
+                      color: AppColors.primaryLight1, // Background color of the tab section
+                      child: TabBar(
+                        controller: _tabController,
+                        isScrollable: true,
+                        indicatorColor: Colors.blue, // Color of the selected tab indicator
+                        labelColor: Colors.white, // Color of the selected tab text
+                        unselectedLabelColor: Colors.grey, // Color of the unselected tab text
+                        tabs: const [
+                          Tab(text: 'Visit'),
+                          Tab(text: 'Collection'),
+                          Tab(text: 'Calling'),
+                          Tab(text: 'Notice'),
+                          Tab(text: 'Closure'),
+                        ],
+                      ),
+                    ),*/
+          
+          
+          
+                    // TabBarView with disabled swipe
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        physics: const NeverScrollableScrollPhysics(), // Disable swipe gestures
+                        children: [
+                          visitData.when(
+                            data: (visitDetails) {
+                              return _buildVisitTab(visitDetails); // Pass the visit data here
+                            },
+                            error: (error, stackTrace) {
+                              return const Text('Error loading visit details');
+                            },
+                            loading: () {
+                              return const Center(child: CircularProgressIndicator());
+                            },
+                          ),
+          
+                          collectionData.when(
+                            data: (collectionDetails) {
+                              debugPrint('Collection data loaded successfully');
+                              return _buildCollectionTab(collectionDetails);
+                            },
+                            error: (error, stackTrace) {
+                              debugPrint('Error loading collection details: $error');
+                              return const Text('Error loading collection details');
+                            },
+                            loading: () {
+                              debugPrint('Collection data loading...');
+                              return const Center(child: CircularProgressIndicator());
+                            },
+                          ),
+          
+          
+                          callingData.when(
+                            data: (visitCalling) {
+                              return _buildCallingTab(visitCalling); // Pass the visit data here
+                            },
+                            error: (error, stackTrace) {
+                              return const Text('Error loading visit Calling');
+                            },
+                            loading: () {
+                              return const Center(child: CircularProgressIndicator());
+                            },
+                          ),
+          
+                          noticeData.when(
+                            data: (visitNotice) {
+                              return _buildNoticeTab(visitNotice); // Pass the visit data here
+                            },
+                            error: (error, stackTrace) {
+                              return const Center(child: Text('No data available'));
+                            },
+                            loading: () {
+                              return const Center(child: CircularProgressIndicator());
+                            },
+                          ),
+          
+                          closureData.when(
+                            data: (closureDetails) {
+                              return _buildClosureTab(closureDetails); // Pass the visit data here
+                            },
+                            error: (error, stackTrace) {
+                              return const Text('Error loading visit Closure');
+                            },
+                            loading: () {
+                              return const Center(child: CircularProgressIndicator());
+                            },
+                          ),
+          
+                        ],
+                      ),
                     ),
-                  ),*/
-
-
-
-                  // TabBarView with disabled swipe
-                  Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      physics: const NeverScrollableScrollPhysics(), // Disable swipe gestures
-                      children: [
-                        visitData.when(
-                          data: (visitDetails) {
-                            return _buildVisitTab(visitDetails); // Pass the visit data here
-                          },
-                          error: (error, stackTrace) {
-                            return const Text('Error loading visit details');
-                          },
-                          loading: () {
-                            return const Center(child: CircularProgressIndicator());
-                          },
-                        ),
-
-                        collectionData.when(
-                          data: (collectionDetails) {
-                            debugPrint('Collection data loaded successfully');
-                            return _buildCollectionTab(collectionDetails);
-                          },
-                          error: (error, stackTrace) {
-                            debugPrint('Error loading collection details: $error');
-                            return const Text('Error loading collection details');
-                          },
-                          loading: () {
-                            debugPrint('Collection data loading...');
-                            return const Center(child: CircularProgressIndicator());
-                          },
-                        ),
-
-
-                        callingData.when(
-                          data: (visitCalling) {
-                            return _buildCallingTab(visitCalling); // Pass the visit data here
-                          },
-                          error: (error, stackTrace) {
-                            return const Text('Error loading visit Calling');
-                          },
-                          loading: () {
-                            return const Center(child: CircularProgressIndicator());
-                          },
-                        ),
-
-                        noticeData.when(
-                          data: (visitNotice) {
-                            return _buildNoticeTab(visitNotice); // Pass the visit data here
-                          },
-                          error: (error, stackTrace) {
-                            return const Center(child: Text('No data available'));
-                          },
-                          loading: () {
-                            return const Center(child: CircularProgressIndicator());
-                          },
-                        ),
-
-                        closureData.when(
-                          data: (closureDetails) {
-                            return _buildClosureTab(closureDetails); // Pass the visit data here
-                          },
-                          error: (error, stackTrace) {
-                            return const Text('Error loading visit Closure');
-                          },
-                          loading: () {
-                            return const Center(child: CircularProgressIndicator());
-                          },
-                        ),
-
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

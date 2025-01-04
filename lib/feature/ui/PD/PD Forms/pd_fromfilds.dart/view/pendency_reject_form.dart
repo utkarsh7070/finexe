@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
@@ -7,6 +9,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../base/api/dio_exception.dart';
+import '../../../../../base/utils/widget/custom_snackbar.dart';
+import '../../../Common Widgets/simple_dropdown.dart';
+import '../../../dialog/RejectPDFile/rejectpd_file.dart';
 import '../model/Submit Data Models/pendency_reject_modal.dart';
 import '../view_model.dart/pendency_view_modal.dart';
 final isExpPendencyRlProvider = StateProvider<bool>((ref) => false);
@@ -67,11 +73,11 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                 data: (pendencyData) {
                   if (pendencyDetailFormApproveAmount.text.isEmpty) {
                     pendencyDetailFormApproveAmount.text =
-                        pendencyData.approveLoanDetails?.approvedAmount?.toString() ?? '';
+                        pendencyData?.approveLoanDetails?.approvedAmount?.toString() ?? '';
                     pendencyDetailFormFinalDecision.text =
-                        pendencyData.approveLoanDetails?.finalDecision?.toString() ?? '';
+                        pendencyData?.approveLoanDetails?.finalDecision?.toString() ?? '';
                     pendencyDetailFormRemark.text =
-                        pendencyData.remarkByPd.toString() ?? '';
+                        pendencyData?.remarkByPd.toString() ?? '';
                   }
                   return Form(
                     key: _formKey,
@@ -95,19 +101,19 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                           ),
                         ),
                         sizedBoxWithContext(context, 0.03),
+
                         Padding(
                           padding: const EdgeInsets.only(right: 15),
-                          child: CustomTextFormField(
-                            inerHint: 'Final Decision',
-                            onValidate: (value) {
-                              if (value?.trim().isEmpty ?? true) {
-                                return "This is a required field";
-                              }
-                              return null;
-                            },
+                          child: CustomDropDownTextField(
+                            labelText: 'Final Decision',
                             controller: pendencyDetailFormFinalDecision,
-                            textInputAction: TextInputAction.next,
-                            textInputType: TextInputType.name,
+                            items: [
+                              DropDownValueModel(name: "Rejected", value: "Rejected"),
+                              DropDownValueModel(
+                                  name: "Approve With Remark", value: "Approve With Remark"),
+                              DropDownValueModel(
+                                  name: "Approve", value: "Approve"),
+                            ],
                           ),
                         ),
                         sizedBoxWithContext(context, 0.03),
@@ -177,30 +183,14 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                                       .read(postPendencyDetailsProvider(model).future)
                                       .then((response) {
                                     if (response.statusCode == 200) {
-
                                       print(
                                           "Data submitted successfully: ${response.data}");
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: AppColors.green,
-                                          content: Text(
-                                            'Form submitted successfully!',
-                                            style: AppStyles.whiteText16,
-                                          ),
-                                        ),
-                                      );
+                                      showCustomSnackBar(
+                                          context,'Form Saved successfully!', Colors.green);
                                     }
                                   }).catchError((error) {
                                     print("Error: $error");
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: AppColors.red,
-                                        content: Text(
-                                          'Please fill all required details!',
-                                          style: AppStyles.whiteText16,
-                                        ),
-                                      ),
-                                    );
+                                    DioExceptions.fromDioError(error as DioException, context);
                                   });
                                 },
                               );
@@ -265,7 +255,7 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                                     imagePath: 'assets/images/confirmpending.png',
                                     buttonName: 'Yes i Do',
                                     buttonColor: Color(0xFFEE6C52),
-                                    rejectText: "Reject",
+                                    rejectText: "Cancel",
                                     rejectTextColor: Colors.grey,
                                     onReject: () {
                                       Navigator.of(context).pop();
@@ -314,25 +304,31 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                               height: displayHeight(context) * 0.065,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  CustomPopup.showPopup(
-                                    context: context,
-                                    title: 'Rejection Confirm',
-                                    message:
-                                    'This will mark the entry as \n rejected. Are you sure you want to proceed?',
-                                    imagePath: 'assets/images/confirmReject.png',
-                                    buttonName: 'No, I Don\'t',
-                                    buttonColor: Color(0xFFEE6C52),
-                                    rejectText: "Reject",
-                                    rejectTextColor: Colors.grey,
-                                    onReject: () {
-                                      Navigator.of(context).pop();
-                                      // Handle rejection logic here
-                                    },
-                                    onCancel: () {
-                                      Navigator.of(context).pop();
-                                      // Handle cancel logic here
-                                    },
-                                  );
+                                  // CustomPopup.showPopup(
+                                  //   context: context,
+                                  //   title: 'Rejection Confirm',
+                                  //   message:
+                                  //   'This will mark the entry as \n rejected. Are you sure you want to proceed?',
+                                  //   imagePath: 'assets/images/confirmReject.png',
+                                  //   // buttonName: 'No, I Don\'t',
+                                  //   buttonName: 'Reject Form',
+                                  //   buttonColor: Color(0xFFEE6C52),
+                                  //   rejectText: "Cancel",
+                                  //   rejectTextColor: Colors.grey,
+                                  //   onReject: () {
+                                  //     // Handle rejection logic here
+                                  //
+                                  //
+                                  //
+                                  //     Navigator.of(context).pop();
+                                  //
+                                  //   },
+                                  //   onCancel: () {
+                                  //     Navigator.of(context).pop();
+                                  //     // Handle cancel logic here
+                                  //   },
+                                  // );
+                                  PdRijectDialogue.requestRijectDialogue(context: context, customerID:widget.customerId);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
@@ -362,7 +358,9 @@ class _PendencyRejectState extends ConsumerState<PendencyReject> {
                               ),
                             ),
                           ],
-                        )
+                        ),
+                        SizedBox(height: displayHeight(context)*0.04,)
+
                       ],
                     ),
                   );

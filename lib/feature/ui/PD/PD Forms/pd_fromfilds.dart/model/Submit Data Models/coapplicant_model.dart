@@ -147,7 +147,10 @@ class CoItems {
     customerId = json['customerId'];
     pdId = json['pdId'];
     pdType = json['pdType'];
-    coApplicantImage = json['coApplicantImage'].cast<String>();
+    coApplicantImage = json['coApplicantImage'] != null
+        ? List<String>.from(json['coApplicantImage'])
+        : [];
+
     if (json['co_Applicant'] != null) {
       coApplicant = <CoApplicant>[];
       json['co_Applicant'].forEach((v) {
@@ -162,7 +165,7 @@ class CoItems {
     data['customerId'] = this.customerId;
     data['pdId'] = this.pdId;
     data['pdType'] = this.pdType;
-    data['coApplicantImage'] = this.coApplicantImage;
+    data['coApplicantImage'] = coApplicantImage ?? [];
     if (this.coApplicant != null) {
       data['co_Applicant'] = this.coApplicant!.map((v) => v.toJson()).toList();
     }

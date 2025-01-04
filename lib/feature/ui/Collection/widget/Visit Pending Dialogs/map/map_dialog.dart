@@ -1,6 +1,5 @@
 import 'package:finexe/feature/ui/Collection/widget/Visit%20Pending%20Dialogs/map/map_content.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 /*import 'map_content.dart';*/
 
