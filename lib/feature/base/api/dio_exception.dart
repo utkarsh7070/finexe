@@ -91,7 +91,7 @@ class ExceptionHandler {
   // Function to handle Dio exceptions
   void handleDioError(DioException error) {
     String errorMessage = 'Something went wrong';
-
+    print(error.response?.statusCode);
     // Handle different DioException types
     switch (error.type) {
       case DioExceptionType.connectionTimeout:

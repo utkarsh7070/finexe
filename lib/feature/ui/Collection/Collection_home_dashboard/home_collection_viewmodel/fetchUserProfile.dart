@@ -107,17 +107,14 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
       print('punch out response $response');
       if (response.statusCode == 200) {
         showCustomSnackBar(context,response.data['message'], Colors.green);
-        Navigator.pop(context);
         // isPunchOutStatus = true;
         // return response;
       } else {
         showCustomSnackBar(
             context, response.statusMessage.toString(), Colors.red);
-        Navigator.pop(context);
       }
     } catch (error) {
-      DioExceptions.fromDioError(error as DioException, context);
-      Navigator.pop(context);
+     ExceptionHandler().handleError(error);
     }
   }
 }

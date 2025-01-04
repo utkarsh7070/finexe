@@ -111,7 +111,6 @@ class HRMSDashboardScreen extends ConsumerWidget {
                 // backgroundColor: AppColors.primary,
                 // centerTitle: true,
                 leading: Visibility(
-                  replacement: SizedBox(),
                   visible: (role.role.contains('sales') ||
                       role.role.contains('collection') ||
                       role.role.contains('pd') ||
@@ -175,7 +174,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                                   timeShow(
                                       icon: Icons.watch_later_outlined,
                                       label: 'Working HR’S',
-                                      time: '00:00',
+                                      time:hrmsViewModel.hoursCalculate(userProfile.punchInTime,userProfile.punchOutTime)??'00:00',
                                       context: context)
                                 ],
                               ),

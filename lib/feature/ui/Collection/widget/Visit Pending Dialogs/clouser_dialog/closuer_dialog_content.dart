@@ -2,7 +2,6 @@ import 'package:finexe/feature/base/extentions/capital_letter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
 import '../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../base/utils/namespase/display_size.dart';
@@ -146,7 +145,6 @@ class ClosuerDialogContent extends ConsumerWidget {
                   SizedBox(
                     height: displayHeight(context) * 0.01,
                   ),
-
                   AppFloatTextField(
                     focusNode: paymentFocusViewModel.dateClosuerFocusNode,
                     currentState: paymentFocusStates['dateClosuerFocusNode'],
@@ -207,8 +205,8 @@ class ClosuerDialogContent extends ConsumerWidget {
                     bgColor: AppColors.primary,
                     textStyle: AppStyles.buttonLightTextStyle,
                     width: displayWidth(context),
+                    isDisabled:paymentState.isLoading ,
                     onTap: () {
-
                       bool isValidate = paymentViewModel.validateClosuerForm();
                       if (isValidate) {
                         paymentViewModel

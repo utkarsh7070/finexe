@@ -195,11 +195,10 @@ class AllCases extends StateNotifier<CaseModel> {
   }
 
   Future<void> fetchAllCases() async {
-
     state = state.copyWith(isLoading: true);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
-   /* List<String>? role = sharedPreferences.getStringList('roleName');
+    /* List<String>? role = sharedPreferences.getStringList('roleName');
     final Map<String, String> params = {
       'employeeRole': role!.first,
       'status': 'all'
@@ -207,13 +206,14 @@ class AllCases extends StateNotifier<CaseModel> {
 
     List<String>? role = sharedPreferences.getStringList('roleName');
 
-    String employeeRole = role != null && role.contains('sales') ? 'sales' : role?.first ?? '';
+    String employeeRole =
+        role != null && role.contains('sales') ? 'sales' : role?.first ?? '';
 
     final Map<String, dynamic> params = {
       'employeeRole': employeeRole,
       'status': 'all',
       'page': 1,
-      'limit': 10
+      'limit': 20
     };
     print('Params: $params');
 
@@ -230,11 +230,12 @@ class AllCases extends StateNotifier<CaseModel> {
       print(responseModel);
 
       if (responseModel.items.isEmpty) {
-        state = state.copyWith(noDataMessage: "No data available", isLoading: false);
+        state = state.copyWith(
+            noDataMessage: "No data available", isLoading: false);
       } else {
         state = state.copyWith(listData: responseModel.items, isLoading: false);
       }
-    /*  state = state.copyWith(listData: responseModel.items);
+      /*  state = state.copyWith(listData: responseModel.items);
       print(response.statusCode);
       state = state.copyWith(isLoading: false);*/
     } catch (e) {
@@ -254,11 +255,14 @@ class AllCases extends StateNotifier<CaseModel> {
     };*/
     List<String>? role = sharedPreferences.getStringList('roleName');
 
-    String employeeRole = role != null && role.contains('sales') ? 'sales' : role?.first ?? '';
+    String employeeRole =
+        role != null && role.contains('sales') ? 'sales' : role?.first ?? '';
 
-    final Map<String, String> params = {
+    final Map<String, dynamic> params = {
       'employeeRole': employeeRole,
-      'status': 'cibilReject'
+      'status': 'cibilReject',
+      'page': 1,
+      'limit': 20
     };
     print('Params: $params');
     // String? token = speciality.getToken();
@@ -274,7 +278,8 @@ class AllCases extends StateNotifier<CaseModel> {
 
       // Check for empty data
       if (responseModel.items.isEmpty) {
-        state = state.copyWith(noDataMessage: "No data available", isLoading: false);
+        state = state.copyWith(
+            noDataMessage: "No data available", isLoading: false);
       } else {
         state = state.copyWith(listData: responseModel.items, isLoading: false);
       }
@@ -294,7 +299,7 @@ class AllCases extends StateNotifier<CaseModel> {
     state = state.copyWith(isLoading: true);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
-   /* List<String>? role = sharedPreferences.getStringList('roleName');
+    /* List<String>? role = sharedPreferences.getStringList('roleName');
 
     final Map<String, String> params = {
       'employeeRole': role!.first,
@@ -303,11 +308,14 @@ class AllCases extends StateNotifier<CaseModel> {
 
     List<String>? role = sharedPreferences.getStringList('roleName');
 
-    String employeeRole = role != null && role.contains('sales') ? 'sales' : role?.first ?? '';
+    String employeeRole =
+        role != null && role.contains('sales') ? 'sales' : role?.first ?? '';
 
-    final Map<String, String> params = {
+    final Map<String, dynamic> params = {
       'employeeRole': employeeRole,
-      'status': 'cibilOk'
+      'status': 'cibilOk',
+      'page': 1,
+      'limit': 20
     };
     print('Params: $params');
 
@@ -322,17 +330,17 @@ class AllCases extends StateNotifier<CaseModel> {
           GetAllCasesResponseModel.fromJson(response.data);
       print(responseModel.items.first.customerName);
 
-
       // Check for empty data
       if (responseModel.items.isEmpty) {
-        state = state.copyWith(noDataMessage: "No data available", isLoading: false);
+        state = state.copyWith(
+            noDataMessage: "No data available", isLoading: false);
       } else {
         state = state.copyWith(listData: responseModel.items, isLoading: false);
       }
 
-     /* state = state.copyWith(listData: responseModel.items);
+      /* state = state.copyWith(listData: responseModel.items);
       print(response.statusCode);*/
-     // state = state.copyWith(isLoading: false);
+      // state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false);
       throw Exception(e);
@@ -351,11 +359,14 @@ class AllCases extends StateNotifier<CaseModel> {
 
     List<String>? role = sharedPreferences.getStringList('roleName');
 
-    String employeeRole = role != null && role.contains('sales') ? 'sales' : role?.first ?? '';
+    String employeeRole =
+        role != null && role.contains('sales') ? 'sales' : role?.first ?? '';
 
-    final Map<String, String> params = {
+    final Map<String, dynamic> params = {
       'employeeRole': employeeRole,
-      'status': 'cibilPending'
+      'status': 'cibilPending',
+      'page': 1,
+      'limit': 20
     };
     print('Params: $params');
 
@@ -370,24 +381,23 @@ class AllCases extends StateNotifier<CaseModel> {
           GetAllCasesResponseModel.fromJson(response.data);
       print(responseModel);
 
-
-     /* state = state.copyWith(listData: responseModel.items);
+      /* state = state.copyWith(listData: responseModel.items);
       print(response.statusCode);*/
       // Check for empty data
       if (responseModel.items.isEmpty) {
-        state = state.copyWith(noDataMessage: "No data available", isLoading: false);
+        state = state.copyWith(
+            noDataMessage: "No data available", isLoading: false);
       } else {
         state = state.copyWith(listData: responseModel.items, isLoading: false);
       }
 
-     // state = state.copyWith(isLoading: false);
+      // state = state.copyWith(isLoading: false);
     } catch (e) {
       print(e);
       state = state.copyWith(isLoading: false);
       throw Exception(e);
     }
   }
-
 }
 
 class CaseModel {
@@ -395,12 +405,20 @@ class CaseModel {
   final bool isLoading;
   final String noDataMessage;
 
-  CaseModel({this.listData = const [], this.isLoading = false,this.noDataMessage = "",});
+  CaseModel({
+    this.listData = const [],
+    this.isLoading = false,
+    this.noDataMessage = "",
+  });
 
-  CaseModel copyWith({List<Item>? listData, bool? isLoading,String? noDataMessage,}) {
+  CaseModel copyWith({
+    List<Item>? listData,
+    bool? isLoading,
+    String? noDataMessage,
+  }) {
     return CaseModel(
-        listData: listData ?? this.listData,
-        isLoading: isLoading ?? this.isLoading,
+      listData: listData ?? this.listData,
+      isLoading: isLoading ?? this.isLoading,
       noDataMessage: noDataMessage ?? this.noDataMessage,
     );
   }
@@ -500,6 +518,3 @@ final paginatedProvider = StateNotifierProvider<PaginationNotifier<String>,
     return List.generate(10, (index) => 'Item ${index + 1 + (page - 1) * 10}');
   }),
 );
-
-
-

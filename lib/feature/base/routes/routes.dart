@@ -82,15 +82,12 @@ class AppRoutes {
   static const String hrms = '/hrms';
   static const String employeeBasicDetails = '/employeeBasicDetails';
   static const String familyDetails = '/familyDetails';
-    static const String educationalDetails = '/educationalDetails';
-        static const String employmentHistory = '/employmentHistory';
-        static const String uploadDocuments='/uploadDocuments';
-
-    
+  static const String educationalDetails = '/educationalDetails';
+  static const String employmentHistory = '/employmentHistory';
+  static const String uploadDocuments = '/uploadDocuments';
 
   static const String bankDetails = '/bankDetails';
   static const String nomineeInformation = '/nomineeInformation';
-
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -99,7 +96,8 @@ class AppRoutes {
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case collectionHome:
-        return MaterialPageRoute(builder: (_) => const CollectionDashboardScreen());
+        return MaterialPageRoute(
+            builder: (_) => const CollectionDashboardScreen());
       case forgot:
         return MaterialPageRoute(builder: (_) => ForgotPasswordScreen());
       case attendance:
@@ -123,7 +121,8 @@ class AppRoutes {
         final arguments = settings.arguments as Map<String, dynamic>?;
         return PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) {
-                return  ApplicationDetails(arguments??{});},
+              return ApplicationDetails(arguments ?? {});
+            },
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               return FadeTransition(
@@ -204,7 +203,7 @@ class AppRoutes {
       case saleGuarantorForm1:
         return PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
-            const GuarantorDetails(),
+                const GuarantorDetails(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               return FadeTransition(
@@ -244,8 +243,7 @@ class AppRoutes {
             },
             transitionDuration: const Duration(milliseconds: 600));
 
-        case saleApplicationVerify:
-
+      case saleApplicationVerify:
         return PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
                 const ApplicationVerify(),
@@ -263,10 +261,10 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const CollectionCasesScreen());
       // case updateVisit:
       //   return MaterialPageRoute(builder: (_) => const UpdateVisit());
-     /* case moreInfo:
+      /* case moreInfo:
         return MaterialPageRoute(
             builder: (_) => const CollectionMoreInfoScreen());*/
-     /* case moreInfo:
+      /* case moreInfo:
         return MaterialPageRoute(
           builder: (context) => CollectionMoreInfoScreen(
             index: (ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>)['index'] ?? 0,
@@ -276,7 +274,8 @@ class AppRoutes {
       case moreInfo:
         return MaterialPageRoute(
           builder: (context) {
-            final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+            final arguments = ModalRoute.of(context)?.settings.arguments
+                as Map<String, dynamic>?;
 
             // Safely access the index from the arguments, defaulting to 0 if null
             final index = arguments?['index'] ?? 0;
@@ -286,10 +285,16 @@ class AppRoutes {
         );
       case pdfilledform:
         final customerId = settings.arguments as String;
-        return MaterialPageRoute(builder: (_) => PdFilledForm(customerId: customerId,));
+        return MaterialPageRoute(
+            builder: (_) => PdFilledForm(
+                  customerId: customerId,
+                ));
       case pdformscreen:
         final customerId = settings.arguments as String;
-        return MaterialPageRoute(builder: (_) =>  PdFormScreen(customerId: customerId,));
+        return MaterialPageRoute(
+            builder: (_) => PdFormScreen(
+                  customerId: customerId,
+                ));
       case eodscreen:
         return MaterialPageRoute(builder: (_) => const EODScreenAdd());
       case bodscreen:
@@ -304,28 +309,27 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const PdRequestScreen());
       case pdreject:
         return MaterialPageRoute(builder: (_) => const PdRejectScreen());
-        case employeeBasicDetails:
-        return MaterialPageRoute(builder: (_) =>  const EmployeeBasicDetails());
-        case familyDetails:
-        return MaterialPageRoute(builder: (_) =>  const FamilyDetails());
-        case pdComplete:
+      case employeeBasicDetails:
+        return MaterialPageRoute(builder: (_) => const EmployeeBasicDetails());
+      case familyDetails:
+        return MaterialPageRoute(builder: (_) => const FamilyDetails());
+      case pdComplete:
         return MaterialPageRoute(builder: (_) => const PdCompletedScreen());
       case pdapprove:
         return MaterialPageRoute(builder: (_) => const PdApprovedScreen());
-        case hrms:
-        return MaterialPageRoute(builder: (_) =>  const HRMSDashboardScreen());
-        case bankDetails:
-        return MaterialPageRoute(builder: (_) =>   const BankDetails());
+      case hrms:
+        return MaterialPageRoute(builder: (_) => const HRMSDashboardScreen());
+      case bankDetails:
+        return MaterialPageRoute(builder: (_) => const BankDetails());
 
-         case educationalDetails:
-        return MaterialPageRoute(builder: (_) =>   const EducationDetails());
-         case employmentHistory:
-        return MaterialPageRoute(builder: (_) =>   const EmploymentHistory());
-         case uploadDocuments:
-        return MaterialPageRoute(builder: (_) =>   const UploadDocuments());
-        case nomineeInformation:
-        return MaterialPageRoute(builder: (_) =>    NomineeInformation());
-
+      case educationalDetails:
+        return MaterialPageRoute(builder: (_) => const EducationDetails());
+      case employmentHistory:
+        return MaterialPageRoute(builder: (_) => const EmploymentHistory());
+      case uploadDocuments:
+        return MaterialPageRoute(builder: (_) => const UploadDocuments());
+      case nomineeInformation:
+        return MaterialPageRoute(builder: (_) => const NomineeInformation());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
