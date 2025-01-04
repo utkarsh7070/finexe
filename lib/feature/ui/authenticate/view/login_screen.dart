@@ -75,9 +75,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     log('loginState.isLoading:: ${loginState.isLoading}');
 
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: false,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Form(
           // autovalidateMode: AutovalidateMode.onUserInteraction,
           key: _formKey,
@@ -88,7 +88,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: displayHeight(context) * 0.10,
+                  height: displayHeight(context) * 0.05,
                 ),
                 Container(
                   width: displayWidth(context) * 0.20,
@@ -190,7 +190,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   controller: _emailController,
                   textInputAction: TextInputAction.next,
                 ),
-                SizedBox(height: displayHeight(context) * 0.02),
+                SizedBox(height: displayHeight(context) * 0.01),
                 const Text(
                   'Password',
                   //style: AppStyles.headingTextStyleXL,

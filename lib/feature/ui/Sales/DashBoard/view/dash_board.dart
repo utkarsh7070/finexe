@@ -138,8 +138,8 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50)),
                     onPressed: () {
+                      // Navigator.pushNamed(context, AppRoutes.employeeBasicDetails);
                       Navigator.pushNamed(context, AppRoutes.newLone);
-                      // Navigator.pushNamed(context, AppRoutes.newLone);
                     },
                     child: const Icon(
                       Icons.add,

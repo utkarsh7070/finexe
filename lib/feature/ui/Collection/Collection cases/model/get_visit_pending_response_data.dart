@@ -5,15 +5,15 @@ part 'get_visit_pending_response_data.g.dart';
 @JsonSerializable()
 class GetVisitPendingResponseData {
   @JsonKey(name: "status")
-  bool status;
+  bool? status;
   @JsonKey(name: "subCode")
-  int subCode;
+  int? subCode;
   @JsonKey(name: "message")
-  String message;
+  String? message;
   @JsonKey(name: "error")
-  String error;
+  String? error;
   @JsonKey(name: "items")
-  List<Map<String, String>> items;
+  List<Map<dynamic, dynamic>>? items;
 
   GetVisitPendingResponseData({
     required this.status,
@@ -23,7 +23,7 @@ class GetVisitPendingResponseData {
     required this.items,
   });
 
-  factory GetVisitPendingResponseData.fromJson(Map<String, dynamic> json) => _$GetVisitPendingResponseDataFromJson(json);
+  factory GetVisitPendingResponseData.fromJson(Map<dynamic, dynamic> json) => _$GetVisitPendingResponseDataFromJson(json);
 
-  Map<String, dynamic> toJson() => _$GetVisitPendingResponseDataToJson(this);
+  Map<dynamic, dynamic> toJson() => _$GetVisitPendingResponseDataToJson(this);
 }

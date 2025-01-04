@@ -57,7 +57,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     // final socketService = ref.read(socketServiceProvider);
     final data = ref.watch(attendanceProvider);
 
-    print("mp punching status ${checkPunchProvider.punchAllowed}");
+    // print("mp punching status ${checkPunchProvider.punchAllowed}");
     //--------------------------------new code in progress-----------------------------------
 
     // final attendeance
@@ -306,7 +306,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       ),
       
                       Visibility(
-                        visible: !isallowed ,
+                        // visible: !isallowed ,
                         // && selectedOption == 'Punch',
                         child: Container(
                           width: MediaQuery.of(context).size.width * 0.85,
@@ -384,7 +384,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
         ),
         bottomNavigationBar: isallowed != null
             ? Visibility(
-                visible: isallowed && selectedOption == 'Punch',
+                visible:selectedOption == 'Punch',
                 child: Container(
                   color: Colors.white,
                   padding: const EdgeInsets.all(16.0),

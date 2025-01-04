@@ -87,9 +87,10 @@ class _MoreInfoScreen extends ConsumerState<CollectionMoreInfoScreen>  with Sing
     return data.when(
 
       data: (data) {
-        List<ItemsDetails> listOfLists = data.map((map) {
-          return ItemsDetails.fromJson(map);
-        }).toList();
+        List<ItemsDetails> listOfLists = data;
+        // data.map((map) {
+        //   return ItemsDetails.fromJson(map);
+        // }).toList();
 
         final safeIndex = widget.index < listOfLists.length ? widget.index : 0;
         ItemsDetails item = listOfLists[safeIndex];

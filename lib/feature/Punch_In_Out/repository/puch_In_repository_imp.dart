@@ -7,6 +7,8 @@ import 'package:finexe/feature/base/extentions/dio_extension.dart';
 
 // import 'package:finexe_attendance/feature/attendance/model/response_model.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 
 // import '../../constant/api/api.dart';
@@ -27,6 +29,8 @@ class PunchInRepositoryImp extends PunchInRepository {
 
     Position? position = await getCurrentLocation();
     if (position == null) {
+            Fluttertoast.showToast(msg: 'Unable to fetch your location. Please try again.',backgroundColor: Colors.red,fontSize: 18);
+
       return Future.error('Unable to fetch location');
     }
 

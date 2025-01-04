@@ -7,20 +7,20 @@ part of 'get_visit_pending_response_data.dart';
 // **************************************************************************
 
 GetVisitPendingResponseData _$GetVisitPendingResponseDataFromJson(
-        Map<String, dynamic> json) =>
+        Map<dynamic, dynamic> json) =>
     GetVisitPendingResponseData(
       status: json['status'] as bool,
       subCode: (json['subCode'] as num).toInt(),
       message: json['message'] as String,
       error: json['error'] as String,
       items: (json['items'] as List<dynamic>)
-          .map((e) => Map<String, String>.from(e as Map))
+          .map((e) => Map<dynamic, dynamic>.from(e as Map))
           .toList(),
     );
 
-Map<String, dynamic> _$GetVisitPendingResponseDataToJson(
+Map<dynamic, dynamic> _$GetVisitPendingResponseDataToJson(
         GetVisitPendingResponseData instance) =>
-    <String, dynamic>{
+    <dynamic, dynamic>{
       'status': instance.status,
       'subCode': instance.subCode,
       'message': instance.message,

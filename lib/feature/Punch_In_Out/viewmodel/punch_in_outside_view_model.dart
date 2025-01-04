@@ -22,8 +22,8 @@ class PunchInOutSideViewModel {
   // late Timer trackingTimer;
 
   Future<void> punchInOutSideRequestWithRole(String reasonForPunch, BuildContext context) async {
-    bool isSuccess = true;
-    // await punchInOutSideRequest(reasonForPunch, context);
+    bool isSuccess = 
+    await punchInOutSideRequest(reasonForPunch, context);
 
     if (isSuccess) {
       // Fetch roles and handle navigation

@@ -1,5 +1,6 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
@@ -385,7 +386,10 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                     },
                   );
                 },
-                  error: (error, stackTrace) => Text(''),
+                  error: (error, stackTrace) {
+                  ExceptionHandler().handleError(error);
+                  return
+                   Text('');} ,
                   loading: () {
                   return const Center(child: CircularProgressIndicator());
                 },),

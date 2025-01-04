@@ -244,7 +244,7 @@ FutureProvider.autoDispose<List<RefuseItem>>((ref) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String? token = sharedPreferences.getString('token');
   final Map<String, dynamic> queryParam = {
-    'status': 'reject',
+    'status': 'RePd',
     'page': 1,
     'limit': 10,
     'searchQuery': '',
