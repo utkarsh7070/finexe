@@ -1,7 +1,5 @@
 class Api {
   static const String baseUrlProduction = 'https://stageapi.fincooper.in';
-
-
 //  static const String baseUrl ='https://stageapi.fincooper.in/';// Stage URL
   static const String baseUrl ='https://prod.fincooper.in/';// Production URL
 

@@ -40,21 +40,18 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
             onPressed: () => Navigator.pop(context),
           ),
         ),
-      
-      
-      
+
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
           /*  key: _formKey,*/
             child: SingleChildScrollView(
               physics: AlwaysScrollableScrollPhysics(),
-      
               child: Column(
                 children: [
                   const SizedBox(height: 20),
                   TextFormField(
-      
+
                     controller: viewModel.leaveTittleController,
                     decoration: customInputDecoration("Tittle"),
                     maxLines: 1,
@@ -62,9 +59,9 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                         ? "Please enter leave tittle"
                         : null,
                   ),
-      
+
                   const SizedBox(height: 10),
-      
+
                   Row(
                     children: [
                       Expanded(
@@ -99,17 +96,17 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                       ),
                     ],
                   ),
-      
+
                   const SizedBox(height: 10),
-      
+
                   TextFormField(
-      
+
                     readOnly: true,
                     decoration: customInputDecoration(
                       "Start Date",
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.calendar_month,color: AppColors.primary,),
-      
+
                         onPressed: () =>  viewModel.pickDate(context, true),
                       ),
                     ),
@@ -118,7 +115,7 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                           ? DateFormat('yyyy-MM-dd').format(viewModel.startDate!)
                           : '',
                     ),
-      
+
                     validator: (value) => value == null || value.isEmpty
                         ? "Please select a start date"
                         : null,
@@ -130,20 +127,17 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                       "End Date",
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.calendar_month,color: AppColors.primary,),
-      
                         onPressed: () => viewModel.pickDate(context, false),
                       ),
                     ),
                     controller: TextEditingController(
                       text: viewModel.endDate != null
                           ? DateFormat('yyyy-MM-dd').format(viewModel.endDate!)
-      
                           : '',
                     ),
                     validator: (value) => value == null || value.isEmpty
                         ? "Please select an end date"
                         : null,
-      
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -163,7 +157,6 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
                     ),
                     child: const Text("Submit",),
                   ),
-      
                 ],
               ),
             ),

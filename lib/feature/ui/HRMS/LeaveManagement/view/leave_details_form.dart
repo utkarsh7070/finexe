@@ -63,18 +63,19 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                   totalApprove: counters.totalApprove,
                   totalReject: counters.totalReject,
                 ),
-      
+
                 const SizedBox(height: 0),
                 // Header Row
-               // _buildHeader(),
-      
+                // _buildHeader(),
+
+
                 // Leave List
                 Expanded(
                   child: ListView.builder(
                     itemCount: leaveRequests.length,
                     itemBuilder: (context, index) {
                       final leave = leaveRequests[index];
-                     // return _buildLeaveRow(leave);
+                      // return _buildLeaveRow(leave);
                       return _buildLeaveCard(leave,context);
                     },
                   ),
@@ -307,7 +308,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                 ],
               ),
 
-             /* if (leave.approvalByReportingManager == "no")
+              /* if (leave.approvalByReportingManager == "no")
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
                   child: Text(
@@ -324,7 +325,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
 
 
 // Leave Row
- /* Widget _buildLeaveRow(LeaveRequestModel leave) {
+/* Widget _buildLeaveRow(LeaveRequestModel leave) {
    *//* String formatDate(String date) {
       final parsedDate = DateTime.parse(date);
       return DateFormat("dd-MM-yyyy").format(parsedDate);

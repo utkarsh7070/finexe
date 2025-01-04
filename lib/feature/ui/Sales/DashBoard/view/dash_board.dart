@@ -113,20 +113,13 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
   @override
   Widget build(BuildContext context) {
     final tabViewModel = ref.watch(tabViewModelProvider);
-    final checkpunchProvider = ref.watch(attendanceProvider);
+    // final checkpunchProvider = ref.watch(attendanceProvider);
 
     return PopScope(
      canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         SystemNavigator.pop();
       },
-
-      // canPop: () async {
-      //   // Close the app
-      //   SystemNavigator.pop();
-      //   return false; // Prevents back navigation
-      // },
-
       child: NetworkListener(
       context: context,
         child: Scaffold(
@@ -161,7 +154,6 @@ class _DashBoardScreen extends ConsumerState<MyDashBoardWidget>
                 SalesCasesScreen(),
                 LeadListScreen(),
                 SalesProfile(),
-        
               ],
             )),
       ),

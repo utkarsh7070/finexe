@@ -3,8 +3,12 @@ import 'package:finexe/feature/ui/Collection/Collection_home_dashboard/home_coll
 import 'package:finexe/feature/ui/HRMS/EmployeeJoiningForm/view/bank_details.dart';
 import 'package:finexe/feature/ui/HRMS/EmployeeJoiningForm/view/education_details.dart';
 import 'package:finexe/feature/ui/HRMS/EmployeeJoiningForm/view/employee_basic_details.dart';
+
 import 'package:finexe/feature/ui/HRMS/EmployeeJoiningForm/view/employment_history.dart';
 import 'package:finexe/feature/ui/HRMS/EmployeeJoiningForm/view/upload_documents.dart';
+
+import 'package:finexe/feature/ui/HRMS/EmployeeJoiningForm/view/nominee_information.dart';
+
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/view/hrms_dashboard_screen.dart';
 import 'package:finexe/feature/ui/PD/view/pd_completed.dart';
 import 'package:finexe/feature/ui/Sales/NewLone/view/new_loan_screen.dart';
@@ -85,6 +89,7 @@ class AppRoutes {
     
 
   static const String bankDetails = '/bankDetails';
+  static const String nomineeInformation = '/nomineeInformation';
 
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -311,15 +316,15 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) =>  const HRMSDashboardScreen());
         case bankDetails:
         return MaterialPageRoute(builder: (_) =>   const BankDetails());
+
          case educationalDetails:
         return MaterialPageRoute(builder: (_) =>   const EducationDetails());
          case employmentHistory:
         return MaterialPageRoute(builder: (_) =>   const EmploymentHistory());
          case uploadDocuments:
         return MaterialPageRoute(builder: (_) =>   const UploadDocuments());
-
-        
-        
+        case nomineeInformation:
+        return MaterialPageRoute(builder: (_) =>    NomineeInformation());
 
       default:
         return MaterialPageRoute(

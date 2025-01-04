@@ -54,6 +54,7 @@ class AppTextField extends StatelessWidget {
       alignment: Alignment.center,
       child: Center(
         child: TextFormField(
+
           maxLines: maximumLines,
           validator: onValidate,
           // autofocus: true,
