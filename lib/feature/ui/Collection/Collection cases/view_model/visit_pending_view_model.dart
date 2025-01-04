@@ -180,6 +180,7 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
         imageApi = imageResponseModel.items.image;
         print(imageApi);
       }
+      
     } else {
       state = state.copyWith(isLoading: false);
       throw Exception('Failed to load data');
@@ -548,7 +549,6 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
 
 
   //   print('Update EMI Input -${requestModel.toJson()}');
-  //
   //   String? token = speciality.getToken();
   //   final response = await dio.post(Api.updateEmiSubmit,
   //       data: requestModel.toJson(),
@@ -560,18 +560,19 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
   //     print(response.statusMessage);
   //     print(response.statusCode);
   //   }
+
   //
   //   var responseData = response.data;
   //   print('Emi Paid response: $responseData');
   //   var message = responseData['message'];
   //
+
   //   if (response.statusCode == 200 || responseData['status'] == true) {
   //     showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
   //     state = state.copyWith(isButtonVissible: false);
   //     updatePhotoValue(context);
   //     ref.refresh(fetchVisitPendingDataProvider);
   //     ref.invalidate(updateEmiViewModelProvider);
-  //
   //     if (kDebugMode) {
   //       print('EmiUpdateResponse ${response.data}');
   //     }
@@ -582,8 +583,10 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
   //   } else {
   //     throw Exception('Failed to load data');
   //     // return false;
+
   //   }
   // }*/
+
 
   Future<void> updateEmiSubmitButton(
       {required ItemsDetails detail,
@@ -1461,9 +1464,11 @@ void searchupdate(ref, String searchterm, List<ItemsDetails> listOfLists) {
 }
 
 final fetchVisitPendingDataProvider =
-    FutureProvider<List<Map<String, String>>>((ref) async {
+    FutureProvider<List<ItemsDetails>>((ref) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String? token = sharedPreferences.getString('token');
+  print(token);
+
   // final String token =
   //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
   final Map<String, String> queryParam = {"status": "pending"};
@@ -1474,16 +1479,28 @@ final fetchVisitPendingDataProvider =
   print(response.statusCode);
   if (response.statusCode == 200) {
     print(response.data);
+      List<dynamic> itemsList = response.data['items'] as List;
+
+  // Now map this List<dynamic> to List<ItemsDetails>
+  List<ItemsDetails> listOfLists = itemsList.map((map) {
+    return ItemsDetails.fromJson(map);
+  }).toList();
+
+  // For debugging, print the address of the last item
+  // print(listOfLists[listOfLists.length - 1].address);
+
 
     GetVisitPendingResponseData apiResponseList =
         GetVisitPendingResponseData.fromJson(response.data);
+        print('>>>>>>>>>>>>> ${apiResponseList.message}');
 
-    List<ItemsDetails> listOfLists = apiResponseList.items.map((map) {
-      return ItemsDetails.fromJson(map);
-    }).toList();
+    // List<ItemsDetails> listOfLists = response.data['items']!.map((map) {
+    //   return ItemsDetails.fromJson(map);
+    // }).toList();
+    // print(listOfLists[listOfLists.length-1].address);
     ref.read(searchResultsProvider.notifier).state = listOfLists;
-
-    return apiResponseList.items;
+print(' length of the data ${response.data['items'].length}');
+    return listOfLists;
   } else {
     throw Exception('Failed to load data');
   }
@@ -1517,7 +1534,7 @@ FutureProvider<List<Map<String, String>>>((ref) async {
 
 
 final fetchCollectionDueDataProvider =
-    FutureProvider<List<Map<String, String>>>((ref) async {
+    FutureProvider<List<Map<dynamic, dynamic>>>((ref) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String? token = sharedPreferences.getString('token');
   // final String token =
@@ -1531,7 +1548,7 @@ final fetchCollectionDueDataProvider =
     print(response.data);
     GetVisitPendingResponseData apiResponseList =
         GetVisitPendingResponseData.fromJson(response.data);
-    return apiResponseList.items;
+    return apiResponseList.items!;
   } else {
     throw Exception('Failed to load data');
   }

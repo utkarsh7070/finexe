@@ -26,9 +26,11 @@ class VisitPendingScreen extends ConsumerWidget {
      final searchResults = ref.watch(searchResultsProvider);
     return data.when(
       data: (data) {
-        List<ItemsDetails> listOfLists = data.map((map) {
-          return ItemsDetails.fromJson(map);
-        }).toList();
+        List<ItemsDetails> listOfLists = data;
+        // data.map((map) {
+        //   return ItemsDetails.fromJson(map);
+        // }).toList();
+        
 
         List<String> searchItems = listOfLists
             .map((item) => item.customerName ?? '')
@@ -413,7 +415,7 @@ class VisitPendingScreen extends ConsumerWidget {
         );
       },
       error: (error, stackTrace) {
-        return const Text('data');
+        throw error;
       },
       loading: () {
         return const Center(child: CircularProgressIndicator());

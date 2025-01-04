@@ -264,46 +264,46 @@ class HRMSDashboardScreen extends ConsumerWidget {
                         ],
                       ),
                       SizedBox(height: displayHeight(context) * 0.04),
-                      Text(
-                        'Attendance For This Month',
-                        style: AppStyles.cardTextStyle16,
-                      ),
-                      SizedBox(height: displayHeight(context) * 0.02),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          showAttendanceCount(
-                          count: '7878',
-                          label: 'Total Attendance',
-                          context: context,
-                          bgColor: AppColors.primaryBg1,
-                          borderColor: Colors.blue),
-                  showAttendanceCount(
-                      count: '7878',
-                      label: 'Leave Request',
-                      context: context,
-                      bgColor: AppColors.bluePistaLight,
-                      borderColor: AppColors.bluePista)
-                        ],
-                      ),
-                      SizedBox(height: displayHeight(context) * 0.02),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          showAttendanceCount(
-                              count: '7878',
-                              label: 'Total Leaves',
-                              context: context,
-                              bgColor: AppColors.greenDarkLightbg,
-                              borderColor: AppColors.greenDarkLight),
-                          showAttendanceCount(
-                              count: '7878',
-                              label: 'Late Coming',
-                              context: context,
-                              bgColor: AppColors.redLightBg,
-                              borderColor: AppColors.redLight)
-                        ],
-                      ),
+                  //     Text(
+                  //       'Attendance For This Month',
+                  //       style: AppStyles.cardTextStyle16,
+                  //     ),
+                  //     SizedBox(height: displayHeight(context) * 0.02),
+                  //     Row(
+                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //       children: [
+                  //         showAttendanceCount(
+                  //         count: '7878',
+                  //         label: 'Total Attendance',
+                  //         context: context,
+                  //         bgColor: AppColors.primaryBg1,
+                  //         borderColor: Colors.blue),
+                  // showAttendanceCount(
+                  //     count: '7878',
+                  //     label: 'Leave Request',
+                  //     context: context,
+                  //     bgColor: AppColors.bluePistaLight,
+                  //     borderColor: AppColors.bluePista)
+                  //       ],
+                  //     ),
+                  //     SizedBox(height: displayHeight(context) * 0.02),
+                  //     Row(
+                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //       children: [
+                  //         showAttendanceCount(
+                  //             count: '7878',
+                  //             label: 'Total Leaves',
+                  //             context: context,
+                  //             bgColor: AppColors.greenDarkLightbg,
+                  //             borderColor: AppColors.greenDarkLight),
+                  //         showAttendanceCount(
+                  //             count: '7878',
+                  //             label: 'Late Coming',
+                  //             context: context,
+                  //             bgColor: AppColors.redLightBg,
+                  //             borderColor: AppColors.redLight)
+                  //       ],
+                  //     ),
                       // Expanded(
                       //   // child: GridView.builder(
                       //   //   itemCount: 4,

@@ -57,6 +57,7 @@ class UploadBox extends StatelessWidget {
               height: displayHeight(context) * 0.01,
             ),
             Text(subTitle!,
+            textAlign: TextAlign.center,
                 style: AppStyles.subTextStyle.copyWith(color: subTextColor)),
 
             SizedBox(

@@ -22,8 +22,8 @@ class PunchInOutSideViewModel {
   // late Timer trackingTimer;
 
   Future<void> punchInOutSideRequestWithRole(String reasonForPunch, BuildContext context) async {
-    bool isSuccess = true;
-    // await punchInOutSideRequest(reasonForPunch, context);
+    bool isSuccess = 
+    await punchInOutSideRequest(reasonForPunch, context);
 
     if (isSuccess) {
       // Fetch roles and handle navigation
@@ -126,14 +126,14 @@ class PunchInOutSideViewModel {
               (route) => false, // Remove all previous routes
         );
       } 
-      //  else if (roles.contains('creditPd')) {
-      //   log("Navigating to sales dashboard");
-      //   Navigator.pushNamedAndRemoveUntil(
-      //     context,
-      //     AppRoutes.pdscreen, // Sales dashboard route
-      //         (route) => false, // Remove all previous routes
-      //   );
-      // } 
+       else if (roles.contains('creditPd')) {
+        log("Navigating to sales dashboard");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.pdscreen, // Sales dashboard route
+              (route) => false, // Remove all previous routes
+        );
+      } 
       else {
         // Default role navigation
         log('No matching role found, navigating to HRMS');

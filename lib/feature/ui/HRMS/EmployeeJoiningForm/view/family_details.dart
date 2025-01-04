@@ -442,9 +442,10 @@ class FamilyDetails extends ConsumerWidget {
                               visible: index >= 1,
                               child: IconButton(
                                   onPressed: () {
-                                    employeeDataViewModel.removeItem(index);
-                                  },
-                                  icon: const Icon(Icons.minimize)))
+
+                                    employeeDataViewModel.removeFamilyItem(index);
+                                  }, icon: const Icon(Icons.minimize)))
+
                         ],
                       ),
                     ),
@@ -463,7 +464,7 @@ class FamilyDetails extends ConsumerWidget {
                 //validation is remaining
                 label: 'Next',
                 onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.bankDetails);
+                  Navigator.pushNamed(context, AppRoutes.educationalDetails);
                   // employeeDataViewModel.addFamilyMember();
                 },
               )

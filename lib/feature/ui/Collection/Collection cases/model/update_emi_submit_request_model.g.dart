@@ -20,7 +20,7 @@ UpdateEmiSubmitRequestModel _$UpdateEmiSubmitRequestModelFromJson(
       modeOfCollectionId: json['modeOfCollectionId'] as String,
       commonId: json['commonId'] as ObjectId?,
       bankName: json['bankName'] as String,
-      customerEmail: json['customerEmail'] as String,
+      customerEmail: json['customerEmail'] as String?,
       emiReceivedDate: json['emiReceivedDate'] as String,
       remarkByCollection: json['remarkByCollection'] as String,
       partner: json['partner'] as String,

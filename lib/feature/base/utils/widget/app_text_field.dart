@@ -69,6 +69,7 @@ class AppTextField extends StatelessWidget {
           decoration: InputDecoration(
             isDense: true,
               enabledBorder: OutlineInputBorder(
+                
                   borderSide: BorderSide(color: AppColors.subgraytext)),
               floatingLabelBehavior: FloatingLabelBehavior.always,
               labelStyle: TextStyle(color: isError! ? Colors.red : null),

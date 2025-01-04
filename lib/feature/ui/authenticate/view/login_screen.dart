@@ -74,9 +74,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     log('loginState.isLoading:: ${loginState.isLoading}');
 
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: false,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Form(
           // autovalidateMode: AutovalidateMode.onUserInteraction,
           key: _formKey,
