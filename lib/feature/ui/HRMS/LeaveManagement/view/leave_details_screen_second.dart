@@ -11,7 +11,7 @@ class LeaveDetailsScreenSecond extends StatelessWidget {
   final LeaveRequestModel leave;
 
   // Constructor to pass the selected LeaveRequestModel to this screen
-  const LeaveDetailsScreenSecond({Key? key, required this.leave}) : super(key: key);
+  const LeaveDetailsScreenSecond({super.key, required this.leave});
 
   // Helper methods for formatting
   String formatDate(String date) {

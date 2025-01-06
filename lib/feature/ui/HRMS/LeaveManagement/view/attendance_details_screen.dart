@@ -1,5 +1,4 @@
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +18,7 @@ class AttendanceDetailsScreen extends ConsumerStatefulWidget {
 
   final String employeeId;
 
-  AttendanceDetailsScreen({required this.employeeId });
+  const AttendanceDetailsScreen({super.key, required this.employeeId });
 
 }
 

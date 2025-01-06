@@ -27,7 +27,7 @@ class EducationDetails extends ConsumerWidget {
               child: Column(
                 children: [
                   AppListview(
-                      scrollphysics: NeverScrollableScrollPhysics(),
+                      scrollphysics: const NeverScrollableScrollPhysics(),
                       items: employeeDataState.educationalDetail.length,
                       builder: (context, index) {
                         print(index);

@@ -9,7 +9,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../base/api/api.dart';
-import '../../../../base/api/dio.dart';
 import '../../../../base/utils/widget/custom_snackbar.dart';
 import '../../../Sales/SalesOnBoardingForm/model/request_model/aadhaar_number_request_model.dart';
 import '../../../Sales/SalesOnBoardingForm/model/request_model/aadhaar_otp_request_model.dart';
@@ -25,26 +24,26 @@ class EmployeeDetailsControllerNotifier
     extends StateNotifier<EmployeeDetailsController> {
   EmployeeDetailsControllerNotifier()
       : super(EmployeeDetailsController(
-          contactController: TextEditingController(),
-          dobController: TextEditingController(),
-          communicationAddress1Controller: TextEditingController(),
-          communicationAddress2Controller: TextEditingController(),
-          communicationCityController: TextEditingController(),
-          communicationDistrictController: TextEditingController(),
-          communicationPinCodeController: TextEditingController(),
-          communicationStateController: TextEditingController(),
-          emailController: TextEditingController(),
-          fatherNameController: TextEditingController(),
-          fullNameController: TextEditingController(),
-          genderController: TextEditingController(),
-          otpController: TextEditingController(),
-          permanentAddress1Controller: TextEditingController(),
-          permanentAddress2Controller: TextEditingController(),
-          permanentCityController: TextEditingController(),
-          permanentDistrictController: TextEditingController(),
-          permanentPinCodeController: TextEditingController(),
-          permanentStateController: TextEditingController(),
-        ));
+    contactController: TextEditingController(),
+    dobController: TextEditingController(),
+    communicationAddress1Controller: TextEditingController(),
+    communicationAddress2Controller: TextEditingController(),
+    communicationCityController: TextEditingController(),
+    communicationDistrictController: TextEditingController(),
+    communicationPinCodeController: TextEditingController(),
+    communicationStateController: TextEditingController(),
+    emailController: TextEditingController(),
+    fatherNameController: TextEditingController(),
+    fullNameController: TextEditingController(),
+    genderController: TextEditingController(),
+    otpController: TextEditingController(),
+    permanentAddress1Controller: TextEditingController(),
+    permanentAddress2Controller: TextEditingController(),
+    permanentCityController: TextEditingController(),
+    permanentDistrictController: TextEditingController(),
+    permanentPinCodeController: TextEditingController(),
+    permanentStateController: TextEditingController(),
+  ));
 
   @override
   void dispose() {
@@ -144,7 +143,7 @@ bool _validContact(String val) {
 //------------------------end--------------------------------------------------------------
 
 final joiningFormFocusProvider =
-    StateNotifierProvider<JoiningFormFocusProvider, Map<String, bool>>((ref) {
+StateNotifierProvider<JoiningFormFocusProvider, Map<String, bool>>((ref) {
   return JoiningFormFocusProvider();
 });
 
@@ -160,15 +159,15 @@ class JoiningFormFocusProvider extends StateNotifier<Map<String, bool>> {
         religionFocusNode = FocusNode(),
         bloodFocusNode = FocusNode(),
         super({
-          'categoryFocusNode': false,
-          'religionFocusNode': false,
-          'bloodFocusNode': false,
-        }) {
+        'categoryFocusNode': false,
+        'religionFocusNode': false,
+        'bloodFocusNode': false,
+      }) {
     categoryFocusNode.addListener(
-      () => _focusListener('categoryFocusNode', categoryFocusNode),
+          () => _focusListener('categoryFocusNode', categoryFocusNode),
     );
     religionFocusNode.addListener(
-        () => _focusListener('religionFocusNode', religionFocusNode));
+            () => _focusListener('religionFocusNode', religionFocusNode));
     bloodFocusNode
         .addListener(() => _focusListener('bloodFocusNode', bloodFocusNode));
   }
@@ -183,10 +182,10 @@ class JoiningFormFocusProvider extends StateNotifier<Map<String, bool>> {
   @override
   void dispose() {
     categoryFocusNode.removeListener(
-      () => _focusListener('categoryFocusNode', categoryFocusNode),
+          () => _focusListener('categoryFocusNode', categoryFocusNode),
     );
     religionFocusNode.removeListener(
-        () => _focusListener('religionFocusNode', religionFocusNode));
+            () => _focusListener('religionFocusNode', religionFocusNode));
     bloodFocusNode
         .removeListener(() => _focusListener('bloodFocusNode', bloodFocusNode));
     categoryFocusNode.dispose();
@@ -197,63 +196,57 @@ class JoiningFormFocusProvider extends StateNotifier<Map<String, bool>> {
 }
 
 final employeeViewModelProvider =
-    StateNotifierProvider<EmployeeDetailsViewModel, EmployeeDetailsModel>(
+StateNotifierProvider<EmployeeDetailsViewModel, EmployeeDetailsModel>(
         (ref) {
-  final dio = ref.watch(dioProvider);
-  // final checkStatus = ref.watch(checkBoxTermsConditionApplicant);
-  return EmployeeDetailsViewModel(dio);
-});
-
+      final dio = ref.watch(dioProvider);
+      // final checkStatus = ref.watch(checkBoxTermsConditionApplicant);
+      return EmployeeDetailsViewModel(dio);
+    });
 
 class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
   final Dio dio;
 
   EmployeeDetailsViewModel(this.dio)
       : super(EmployeeDetailsModel(
-            additionalFamilyMember: [AdditionalFamilyMemberModel()],
-            nomineeInformation: [NomineeInformationModel()]
-          educationalDetail: [EducationaldetailModel()],
-            employmentHistory: [EmploymentHistoryModel()],
-            documents: List.filled(10, ''),
-            isLoading:List.filled(11, false)
-      ));
+      additionalFamilyMember: [AdditionalFamilyMemberModel()],
+      nomineeInformation: [NomineeInformationModel()],
+      educationalDetail: [EducationaldetailModel()],
+      employmentHistory: [EmploymentHistoryModel()],
+      documents: List.filled(10, ''),
+      isLoading: List.filled(11, false)));
   final TextEditingController dobController = TextEditingController();
-    final SingleValueDropDownController dependentDropdownControllerProvider =
-      SingleValueDropDownController();
-  final SingleValueDropDownController
-      whetherEmployeeDropdownControllerProvider =
-      SingleValueDropDownController();
-  final SingleValueDropDownController gradeDropdownControllerProvider =
-      SingleValueDropDownController();
   final SingleValueDropDownController dependentDropdownControllerProvider =
-      SingleValueDropDownController();
-  final SingleValueDropDownController nominationTypeControllerProvider =
-      SingleValueDropDownController();
+  SingleValueDropDownController();
   final SingleValueDropDownController
-      whetherEmployeeDropdownControllerProvider =
-      SingleValueDropDownController();
+  whetherEmployeeDropdownControllerProvider =
+  SingleValueDropDownController();
+  final SingleValueDropDownController gradeDropdownControllerProvider =
+  SingleValueDropDownController();
+
+  final SingleValueDropDownController nominationTypeControllerProvider =
+  SingleValueDropDownController();
+
   final SingleValueDropDownController categoryControllerProvider =
-      SingleValueDropDownController();
+  SingleValueDropDownController();
   final SingleValueDropDownController religionControllerProvider =
-      SingleValueDropDownController();
+  SingleValueDropDownController();
   final SingleValueDropDownController bloodGroupControllerProvider =
-      SingleValueDropDownController();
+  SingleValueDropDownController();
   AadhaarNumberResponseModel? aadhaarNumberResponseModel;
   AadhaarOtpResponseModel? aadhaarOtpResponseModel;
 
   final TextEditingController permanentAddress1Controller =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController permanentAddress2Controller =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController permanentCityController = TextEditingController();
   final TextEditingController permanentStateController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController permanentDistrictController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController permanentPinCodeController =
-      TextEditingController();
-  final TextEditingController fullNameController =
-      TextEditingController();
+  TextEditingController();
+  final TextEditingController fullNameController = TextEditingController();
 
   List<DropDownValueModel> dependentDropdown = const [
     DropDownValueModel(name: 'Yes', value: 'Yes'),
@@ -268,6 +261,13 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
     DropDownValueModel(name: 'State', value: 'State'),
     DropDownValueModel(name: 'Center', value: 'Center'),
     DropDownValueModel(name: 'Unemployed', value: 'Unemployed'),
+  ];
+
+  List<DropDownValueModel> categoryDropdown = const [
+    DropDownValueModel(name: 'General', value: 'General'),
+    DropDownValueModel(name: 'OBC', value: 'OBC'),
+    DropDownValueModel(name: 'ST', value: 'ST'),
+    DropDownValueModel(name: 'SC', value: 'SC'),
   ];
 
   List<Map<String, String>> documentsName = [
@@ -295,13 +295,8 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
     DropDownValueModel(name: 'B', value: 'B'),
     DropDownValueModel(name: 'C', value: 'C'),
     DropDownValueModel(name: 'D', value: 'D'),
-
-  List<DropDownValueModel> categoryDropdown = const [
-    DropDownValueModel(name: 'General', value: 'General'),
-    DropDownValueModel(name: 'OBC', value: 'OBC'),
-    DropDownValueModel(name: 'ST', value: 'ST'),
-    DropDownValueModel(name: 'SC', value: 'SC'),
   ];
+
   List<DropDownValueModel> religionDropdown = const [
     DropDownValueModel(name: 'Hindu', value: 'Hindu'),
     DropDownValueModel(name: 'Christen', value: 'Christen'),
@@ -337,13 +332,17 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
     super.dispose();
   }
 
-
   // <<<<<><<<<<<<<<<<<<<<employment hisatory >>>>>>>>>>>>>
   void updateCurrentDesignation(String val) {}
+
   void updateLastOrganization(String val) {}
+
   void updateStartDate(String val) {}
+
   void updateEndDate(String val) {}
+
   void updateTotalExperience(String val) {}
+
   void updateCurrentCTC(String val) {}
 
   // <<<<<><<<<<<<<<<<<<<<employment hisatory END>>>>>>>>>>>>>
@@ -351,16 +350,25 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
   // <<<<<<<<<<<<<<<<<<<<<<<<educational detail >>>>>>>>>>>>>>>>>>>>
 
   void updateEducation(String val) {}
+
   void updateNameofboard(String val) {}
+
   void updateMarkobtained(String val) {}
+
   void updatePassingyear(String val) {}
+
   void updateStream(String val) {}
+
   void updategrade(String val) {}
 
   // <<<<<<<<<<<<<<<<<<<<<<<<educational detail END>>>>>>>>>>>>>>>>>>>>
 
   Future<bool> fetchAadhaarNumber(context) async {
-    state = state.copyWith(isLoading: true);
+    state = state.copyWith(isLoading: [
+      ...state.isLoading.sublist(0, 11),
+      true,
+      ...state.isLoading.sublist(10 + 1),
+    ]);
     // await fetchPanVerify(context);
     // on DioException catch (error)
     if (kDebugMode) {
@@ -379,7 +387,11 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
       var message = responseData['message'];
       print(message);
       if (response.statusCode == 400) {
-        state = state.copyWith(isLoading: false);
+        state = state.copyWith(isLoading: [
+          ...state.isLoading.sublist(0, 11),
+          false,
+          ...state.isLoading.sublist(10 + 1),
+        ]);
         showCustomSnackBar(context, message, Colors.red);
         return true;
       }
@@ -389,20 +401,27 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
       if (response.statusCode == 200) {
         aadhaarNumberResponseModel =
             AadhaarNumberResponseModel.fromJson(response.data);
-        state = state.copyWith(isLoading: false);
         return true;
       } else {
-        state = state.copyWith(isLoading: false);
         return false;
       }
     } catch (e) {
-      state = state.copyWith(isLoading: false);
       throw Exception(e);
+    } finally {
+      state = state.copyWith(isLoading: [
+        ...state.isLoading.sublist(0, 11),
+        false,
+        ...state.isLoading.sublist(10 + 1),
+      ]);
     }
   }
 
   Future<bool> submitOtp() async {
-    state = state.copyWith(isLoading: true);
+    state = state.copyWith(isLoading: [
+      ...state.isLoading.sublist(0, 11),
+      true,
+      ...state.isLoading.sublist(10 + 1),
+    ]);
     if (kDebugMode) {
       print(state.otp);
     }
@@ -420,14 +439,13 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
       final response = await dio.post(Api.aadhaarOtpVerify,
           data: aadhaarOtpRequestModel.toJson());
       if (response.statusCode == 200) {
-        state = state.copyWith(isLoading: false);
         aadhaarOtpResponseModel =
             AadhaarOtpResponseModel.fromJson(response.data);
 
         state = state.copyWith(
           fullName: aadhaarOtpResponseModel!.items.msg.name,
           permanentAddress1:
-              '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!.items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark},${aadhaarOtpResponseModel!.items.msg.locality}',
+          '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!.items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark},${aadhaarOtpResponseModel!.items.msg.locality}',
           permanentDistrict: aadhaarOtpResponseModel!.items.msg.district,
           permanentCity: aadhaarOtpResponseModel!.items.msg.villageTownCity,
           permanentPinCode: aadhaarOtpResponseModel!.items.msg.pincode,
@@ -443,17 +461,21 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
         permanentDistrictController.text =
             aadhaarOtpResponseModel!.items.msg.district;
         permanentAddress1Controller.text =
-            '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!.items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark},${aadhaarOtpResponseModel!.items.msg.locality}';
-        fullNameController.text =  aadhaarOtpResponseModel!.items.msg.name;
+        '${aadhaarOtpResponseModel!.items.msg.house}, ${aadhaarOtpResponseModel!.items.msg.street}, ${aadhaarOtpResponseModel!.items.msg.landmark},${aadhaarOtpResponseModel!.items.msg.locality}';
+        fullNameController.text = aadhaarOtpResponseModel!.items.msg.name;
         // AadhaarNumberResponseModel.fromJson(response.data);
         return true;
       } else {
-        state = state.copyWith(isLoading: false);
         return false;
       }
     } catch (e) {
-      state = state.copyWith(isLoading: false);
       throw Exception(e);
+    } finally {
+      state = state.copyWith(isLoading: [
+        ...state.isLoading.sublist(0, 11),
+        false,
+        ...state.isLoading.sublist(10 + 1),
+      ]);
     }
   }
 
@@ -653,13 +675,14 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
 
 // add documents
   Future<void> addDocsMember(int index) async {
-  
-    state = state.copyWith(isLoading: [ ...state.isLoading.sublist(0, index),
-                true,
-                ...state.isLoading.sublist(index + 1),]);
+    state = state.copyWith(isLoading: [
+      ...state.isLoading.sublist(0, index),
+      true,
+      ...state.isLoading.sublist(index + 1),
+    ]);
     try {
       await DocsUploader.uploadImage(dio).then(
-        (value) {
+            (value) {
           if (value != null) {
             state = state.copyWith(
               documents: [
@@ -668,18 +691,17 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
                 ...state.documents.sublist(index + 1),
               ],
             );
-           
-            
           }
         },
       );
     } catch (e) {
       ExceptionHandler().handleError(e);
     } finally {
-     state = state.copyWith(isLoading: [ ...state.isLoading.sublist(0, index),
-                false,
-                ...state.isLoading.sublist(index + 1),]);
-
+      state = state.copyWith(isLoading: [
+        ...state.isLoading.sublist(0, index),
+        false,
+        ...state.isLoading.sublist(index + 1),
+      ]);
     }
   }
 
@@ -690,7 +712,6 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
       AdditionalFamilyMemberModel()
     ]);
   }
-
 
   void removeFamilyItem(int index) {
     state = state.copyWith(additionalFamilyMember: [
@@ -714,6 +735,7 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
         if (i != index) state.educationalDetail[i],
     ]);
   }
+
   // employment history
 
   void addEmpHistory() {
@@ -729,20 +751,22 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
     state = state.copyWith(employmentHistory: [
       for (int i = 0; i < state.employmentHistory.length; i++)
         if (i != index) state.employmentHistory[i],
-
+    ]);
+  }
   void addNominee() {
     state = state.copyWith(nomineeInformation: [
       ...state.nomineeInformation,
       NomineeInformationModel()
     ]);
   }
-
   void removeNominee(int index) {
     state = state.copyWith(nomineeInformation: [
       for (int i = 0; i < state.nomineeInformation.length; i++)
         if (i != index) state.nomineeInformation[i],
     ]);
   }
+
+
 
   // void removeItem(int index) {
   //   state = [
@@ -774,196 +798,6 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
   void updatePan(String pan) {
     final valid = _validatePan(pan);
     state = state.copyWith(aadhaar: pan, isPanValid: valid);
-  }
-}
-
-
-class AdditionalFamilyMemberModel {
-  final String dependentDropdownValue;
-  final String whetherEmployeeDropdownValue;
-  final String additionalFamilyName;
-  final String additionalFamilyRelation;
-  final String additionalFamilyDob;
-  final String additionalFamilyMobile;
-  final String additionalFamilyOccupation;
-  final String additionalFamilyNameOfDepartment;
-  final String additionalFamilyCompanyName;
-  final bool isAdditionalFamilyCompanyName;
-  final bool isAdditionalFamilyNameOfDepartment;
-  final bool isAdditionalFamilyOccupation;
-  final bool isAdditionalFamilyMobile;
-  final bool isAdditionalFamilyDob;
-  final bool isAdditionalFamilyRelation;
-  final bool isAdditionalFamilyName;
-
-  AdditionalFamilyMemberModel(
-      {this.dependentDropdownValue = '',
-      this.whetherEmployeeDropdownValue = '',
-      this.additionalFamilyName = '',
-      this.additionalFamilyRelation = '',
-      this.additionalFamilyDob = '',
-      this.additionalFamilyMobile = '',
-      this.additionalFamilyOccupation = '',
-      this.additionalFamilyNameOfDepartment = '',
-      this.additionalFamilyCompanyName = '',
-      this.isAdditionalFamilyCompanyName = true,
-      this.isAdditionalFamilyNameOfDepartment = true,
-      this.isAdditionalFamilyOccupation = true,
-      this.isAdditionalFamilyMobile = true,
-      this.isAdditionalFamilyDob = true,
-      this.isAdditionalFamilyRelation = true,
-      this.isAdditionalFamilyName = true});
-
-  AdditionalFamilyMemberModel copyWith(
-      String? dependentDropdownValue,
-      String? whetherEmployeeDropdownValue,
-      String? additionalFamilyName,
-      String? additionalFamilyRelation,
-      String? additionalFamilyDob,
-      String? additionalFamilyMobile,
-      String? additionalFamilyOccupation,
-      String? additionalFamilyNameOfDepartment,
-      String? additionalFamilyCompanyName,
-      bool? isAdditionalFamilyCompanyName,
-      bool? isAdditionalFamilyNameOfDepartment,
-      bool? isAdditionalFamilyOccupation,
-      bool? isAdditionalFamilyMobile,
-      bool? isAdditionalFamilyDob,
-      bool? isAdditionalFamilyRelation,
-      bool? isAdditionalFamilyName) {
-    return AdditionalFamilyMemberModel(
-        additionalFamilyCompanyName:
-            additionalFamilyCompanyName ?? this.additionalFamilyCompanyName,
-        additionalFamilyDob: additionalFamilyDob ?? this.additionalFamilyDob,
-        additionalFamilyMobile:
-            additionalFamilyMobile ?? this.additionalFamilyMobile,
-        additionalFamilyName: additionalFamilyName ?? this.additionalFamilyName,
-        additionalFamilyNameOfDepartment: additionalFamilyNameOfDepartment ??
-            this.additionalFamilyNameOfDepartment,
-        additionalFamilyOccupation:
-            additionalFamilyOccupation ?? this.additionalFamilyOccupation,
-        additionalFamilyRelation:
-            additionalFamilyRelation ?? this.additionalFamilyRelation,
-        dependentDropdownValue:
-            dependentDropdownValue ?? this.dependentDropdownValue,
-        isAdditionalFamilyCompanyName:
-            isAdditionalFamilyCompanyName ?? this.isAdditionalFamilyCompanyName,
-        isAdditionalFamilyDob:
-            isAdditionalFamilyDob ?? this.isAdditionalFamilyDob,
-        isAdditionalFamilyMobile:
-            isAdditionalFamilyMobile ?? this.isAdditionalFamilyMobile,
-        isAdditionalFamilyName:
-            isAdditionalFamilyName ?? this.isAdditionalFamilyName,
-        isAdditionalFamilyNameOfDepartment:
-            isAdditionalFamilyNameOfDepartment ??
-                this.isAdditionalFamilyNameOfDepartment,
-        isAdditionalFamilyOccupation:
-            isAdditionalFamilyOccupation ?? this.isAdditionalFamilyOccupation,
-        isAdditionalFamilyRelation:
-            isAdditionalFamilyRelation ?? this.isAdditionalFamilyRelation,
-        whetherEmployeeDropdownValue:
-            whetherEmployeeDropdownValue ?? this.whetherEmployeeDropdownValue);
-  }
-}
-
-class NomineeInformationModel {
-  final String nominationTypeDropdownValue;
-  final String relationWithEmployee;
-  final String nomineeName;
-  final String nomineeAge;
-  final String nomineeAddress;
-  final String nomineeState;
-  final String nomineeDistrict;
-  final String nomineeBlock;
-  final String nomineePanchayat;
-  final String nomineePincode;
-  final String nomineePhoneNumber;
-  final bool isNomineePhoneNumber;
-  final bool isNomineePincode;
-  final bool isNomineePanchayat;
-  final bool isNomineeBlock;
-  final bool isNomineeDistrict;
-  final bool isNomineeState;
-  final bool isNomineeAddress;
-  final bool isNomineeAge;
-  final bool isNomineeName;
-  final bool isRelationWithEmployee;
-  final bool isNominationTypeDropdownValue;
-
-  NomineeInformationModel(
-      {this.nominationTypeDropdownValue = '',
-      this.relationWithEmployee = '',
-      this.nomineeName = '',
-      this.nomineeAge = '',
-      this.nomineeAddress = '',
-      this.nomineeState = '',
-      this.nomineeDistrict = '',
-      this.nomineeBlock = '',
-      this.nomineePanchayat = '',
-      this.nomineePincode = '',
-      this.nomineePhoneNumber = '',
-      this.isNomineePhoneNumber = true,
-      this.isNomineePincode = true,
-      this.isNomineePanchayat = true,
-      this.isNomineeBlock = true,
-      this.isNomineeDistrict = true,
-      this.isNomineeState = true,
-      this.isNomineeAddress = true,
-      this.isNomineeAge = true,
-      this.isNomineeName = true,
-      this.isRelationWithEmployee = true,
-      this.isNominationTypeDropdownValue = true});
-
-  NomineeInformationModel copyWith(
-      String? nominationTypeDropdownValue,
-      String? relationWithEmployee,
-      String? nomineeName,
-      String? nomineeAge,
-      String? nomineeAddress,
-      String? nomineeState,
-      String? nomineeDistrict,
-      String? nomineeBlock,
-      String? nomineePanchayat,
-      String? nomineePincode,
-      String? nomineePhoneNumber,
-      bool? isNomineePhoneNumber,
-      bool? isNomineePincode,
-      bool? isNomineePanchayat,
-      bool? isNomineeBlock,
-      bool? isNomineeDistrict,
-      bool? isNomineeState,
-      bool? isNomineeAddress,
-      bool? isNomineeAge,
-      bool? isNomineeName,
-      bool? isRelationWithEmployee,
-      bool? isNominationTypeDropdownValue) {
-    return NomineeInformationModel(
-        isNominationTypeDropdownValue:
-            isNominationTypeDropdownValue ?? this.isNominationTypeDropdownValue,
-        isNomineeAddress: isNomineeAddress ?? this.isNomineeAddress,
-        isNomineeAge: isNomineeAge ?? this.isNomineeAge,
-        isNomineeBlock: isNomineeBlock ?? this.isNomineeBlock,
-        isNomineeDistrict: isNomineeDistrict ?? this.isNomineeDistrict,
-        isNomineeName: isNomineeName ?? this.isNomineeName,
-        isNomineePanchayat: isNomineePanchayat ?? this.isNomineePanchayat,
-        isNomineePhoneNumber: isNomineePhoneNumber ?? this.isNomineePhoneNumber,
-        isNomineePincode: isNomineePhoneNumber ?? this.isNomineePhoneNumber,
-        isNomineeState: isNomineeState ?? this.isNomineeState,
-        isRelationWithEmployee:
-            isRelationWithEmployee ?? this.isRelationWithEmployee,
-        nominationTypeDropdownValue:
-            nominationTypeDropdownValue ?? this.nominationTypeDropdownValue,
-        nomineeAddress: nomineeAddress ?? this.nomineeAddress,
-        nomineeAge: nomineeAge ?? this.nomineeAge,
-        nomineeBlock: nomineeBlock ?? this.nomineeBlock,
-        nomineeDistrict: nomineeDistrict ?? this.nomineeDistrict,
-        nomineeName: nomineeName ?? this.nomineeName,
-        nomineePanchayat: nomineePanchayat ?? this.nomineePanchayat,
-        nomineePhoneNumber: nomineePhoneNumber ?? this.nomineePhoneNumber,
-        nomineePincode: nomineePincode ?? this.nomineePincode,
-        nomineeState: nomineeState ?? this.nomineeState,
-        relationWithEmployee:
-            relationWithEmployee ?? this.relationWithEmployee);
   }
 }
 

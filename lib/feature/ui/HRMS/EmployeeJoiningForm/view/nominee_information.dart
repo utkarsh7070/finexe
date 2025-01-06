@@ -2,7 +2,6 @@ import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
 import 'package:finexe/feature/base/utils/widget/app_list_view.dart';
 import 'package:flutter/Material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/namespase/display_size.dart';
@@ -22,7 +21,7 @@ class NomineeInformation extends ConsumerWidget{
       ),
       body:
       SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
           children: [
             AppListview(
