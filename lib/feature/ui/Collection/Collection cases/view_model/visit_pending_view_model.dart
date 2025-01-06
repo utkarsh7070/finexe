@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:bson/bson.dart';
@@ -21,7 +20,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
 import '../../../../base/api/dio_exception.dart';
@@ -1192,7 +1190,7 @@ class UpdateEmiModel {
     this.transactionImage = '',
     this.remark = '',
     this.bankName = '',
-    this.receipt = null,
+    this.receipt,
     this.isEmiAmount = true,
     this.isTransactionId = true,
     this.isTransactionImage = false,

@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
@@ -7,7 +6,6 @@ import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/asset_detail_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view_model.dart/asset_details_vmodel.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,7 +16,7 @@ final FetchData = StateProvider<bool>((ref) => false);
 
 class PdAssetsForm extends ConsumerStatefulWidget {
   final String customerId;
-  PdAssetsForm({required this.customerId});
+  const PdAssetsForm({super.key, required this.customerId});
 
   @override
   ConsumerState<PdAssetsForm> createState() => _PdAssetsFormState();
@@ -65,7 +63,7 @@ class _PdAssetsFormState extends ConsumerState<PdAssetsForm> {
   Widget build(BuildContext context) {
     final appState = ref.watch(pdassetDetailsiewModelProvider);
     //getAssetDetailFromProvider
-    final _isExpanded = ref.watch(isAssetProvider);
+    final isExpanded = ref.watch(isAssetProvider);
     // final fetchDataBool = ref.watch(FetchData);
     // if(fetchDataBool)
     final getAssetData = ref.watch(getAssetDetailFromProvider(widget.customerId));
@@ -102,12 +100,13 @@ class _PdAssetsFormState extends ConsumerState<PdAssetsForm> {
            onExpansionChanged: (expanded) {
              ref.read(isAssetProvider.notifier).state = expanded;
              if (expanded) {
-               if(getAssetData.value?.items?.assetDetails!=null)
-               // Trigger data fetch when the tile is expanded
+               if(getAssetData.value?.items?.assetDetails!=null) {
+                 // Trigger data fetch when the tile is expanded
                ref.refresh(getAssetDetailFromProvider(widget.customerId));
+               }
              }
            },
-           initiallyExpanded: _isExpanded,
+           initiallyExpanded: isExpanded,
           children: [
                Form(
                 key: _formKey,
@@ -172,12 +171,12 @@ class _PdAssetsFormState extends ConsumerState<PdAssetsForm> {
                                   memberControllers.removeAt(i);
                                 });
                               },
-                              icon: Icon(Icons.remove_circle_outline,
+                              icon: const Icon(Icons.remove_circle_outline,
                                   color: Colors.red),
                             ),
                           ],
                         )
-                            : SizedBox.shrink()
+                            : const SizedBox.shrink()
                       ],
 
                       Container(

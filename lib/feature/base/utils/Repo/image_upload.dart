@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
-import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
 import 'package:flutter/foundation.dart';
@@ -43,7 +42,7 @@ class DocsUploader {
         return imageResponseModel.items.image;
       }
     } catch (e) {
-      throw e;
+      rethrow;
       // ExceptionHandler().handleError(e);
     }
     }

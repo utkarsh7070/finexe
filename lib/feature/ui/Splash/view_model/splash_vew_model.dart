@@ -4,14 +4,10 @@ import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/api/dio_exception.dart';
 
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
-import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Punch_In_Out/model/check_attendance_responce_model.dart';
 import '../../../base/api/api.dart';
 import '../../../base/utils/namespase/app_constants.dart';
@@ -146,7 +142,7 @@ class ApiService {
   bool isUpdateRequired = false;
 
   Future<SessionModel> fetchPosts(ref) async {
-    
+    final dio = ref.watch(dioProvider);
   List<String>? role = speciality.getRole();
   String? tokens = speciality.getToken();
 
@@ -154,7 +150,7 @@ class ApiService {
   Future<Position> positionFuture = getCurrentLocation();
 
   // Fetch version data concurrently
-  var versionFuture = fetchVersion();
+  var versionFuture = fetchVersion(dio);
   Position position = await positionFuture;
   var versionData = await versionFuture;
 
@@ -165,7 +161,7 @@ class ApiService {
   print('User\'s current location: ${location.toString()}');
 
   if (tokens != null&&versionData['isUpdateRequired']!=null) {
-    final dio = ref.watch(dioProvider);
+
 
     Map<String, String> token = {"token": tokens};
     try {
@@ -202,7 +198,6 @@ class ApiService {
       //   );
       // }
     } catch (e) {
-
       ExceptionHandler().handleError(e);
     }
   
@@ -220,8 +215,8 @@ class ApiService {
 }
 
 
- Future<Map<String, dynamic>> fetchVersion() async {
-  final dio = Dio();
+ Future<Map<String, dynamic>> fetchVersion(Dio dio) async {
+
   try {
     Response versionResponse = await dio.get(Api.getVersion);
     final data = versionResponse.data['items'];

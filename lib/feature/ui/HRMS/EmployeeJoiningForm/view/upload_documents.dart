@@ -1,16 +1,12 @@
-import 'dart:io';
 
-import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/assetsImage/assets_files.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
-import 'package:finexe/feature/base/utils/widget/app_text_filed_login.dart';
 import 'package:finexe/feature/base/utils/widget/upload_box.dart';
 import 'package:finexe/feature/ui/HRMS/EmployeeJoiningForm/view_model/employee_basic_details_view_model.dart';
-import 'package:finexe/feature/ui/HRMS/EmployeeJoiningForm/widget/custom_listview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
@@ -43,7 +39,7 @@ class UploadDocuments extends ConsumerWidget {
                             4.0, // Horizontal spacing between items
                         mainAxisSpacing: 4.0, // Vertical spacing between items
                       ),
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: 10,
                       itemBuilder: (context, index) {
                         String? documentFile =

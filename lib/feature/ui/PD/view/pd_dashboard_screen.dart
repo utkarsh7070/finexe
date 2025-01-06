@@ -41,12 +41,12 @@ class _PdScreenState extends ConsumerState<PdScreen> {
     final pdRequestList = ref.watch(fetchPdRequestListProvider);
     final pdRefuseList = ref.watch(fetchPdRefuseCasetProvider);
     final gridItems = ref.watch(griditemProvider);
-    var _scaffoldKey = GlobalKey<ScaffoldState>();
+    var scaffoldKey = GlobalKey<ScaffoldState>();
     // final pdITems = ref.watch(pdItemsProvider);
     return NetworkListener(
       context: context,
       child: Scaffold(
-        key: _scaffoldKey,
+        key: scaffoldKey,
         drawer: const PdDrawer(),
         appBar: AppBar(
           // automaticallyImplyLeading: true,
@@ -155,8 +155,8 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                             borderRadius: BorderRadius.circular(8),
                             color: const Color(0xffF4F4F4),
                           ),
-                          child:data.isEmpty || data.length==0?
-                          Center(child: Text('No Request avialable'),):
+                          child:data.isEmpty || data.isEmpty?
+                          const Center(child: Text('No Request avialable'),):
                           ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: data.length,
@@ -237,7 +237,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                           ),
                         ),
                     error: (error, stackTrace) {
-                      return Text('');
+                      return const Text('');
                     },
                     loading: () {
                       return const Center(child: CircularProgressIndicator());
@@ -305,8 +305,8 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                 pdRefuseList.when(
                   data: (refuseItemsByPD) {
                   return
-                    refuseItemsByPD.length==0?
-                    Text('No refused cases'):
+                    refuseItemsByPD.isEmpty?
+                    const Text('No refused cases'):
                     ListView.builder(
                     shrinkWrap:
                     true, // Allows ListView to take up only the required height
@@ -389,7 +389,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                   error: (error, stackTrace) {
                   ExceptionHandler().handleError(error);
                   return
-                   Text('');} ,
+                   const Text('');} ,
                   loading: () {
                   return const Center(child: CircularProgressIndicator());
                 },),

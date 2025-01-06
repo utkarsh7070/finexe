@@ -68,7 +68,7 @@ class AppTextField extends StatelessWidget {
           onFieldSubmitted: onFiledSubmitted,
           decoration: InputDecoration(
             isDense: true,
-              enabledBorder: OutlineInputBorder(
+              enabledBorder: const OutlineInputBorder(
                 
                   borderSide: BorderSide(color: AppColors.subgraytext)),
               floatingLabelBehavior: FloatingLabelBehavior.always,

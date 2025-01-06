@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
@@ -17,7 +15,7 @@ class OtpDialogContent extends ConsumerWidget{
     final employeeDataViewModel =  ref.read(employeeViewModelProvider.notifier);
    return Container(
      height: displayHeight(context)*0.45,
-     padding: EdgeInsets.all(16),
+     padding: const EdgeInsets.all(16),
      child:  Column(
        children: [
          Row(

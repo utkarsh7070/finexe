@@ -7,7 +7,6 @@ import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_update_data/view_model.dart/loan_detail_view_modal.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view_model.dart/loan_detail_view_modal.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,7 +18,7 @@ final isExpLoanDetailProvider = StateProvider<bool>((ref) => false);
 class LoanDetailsForm extends ConsumerStatefulWidget {
   // const LoanDetailsForm({super.key});
   final String customerId;
-  LoanDetailsForm({required this.customerId});
+  const LoanDetailsForm({super.key, required this.customerId});
 
   @override
   _LoanDetailsFormState createState() => _LoanDetailsFormState();
@@ -64,7 +63,7 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
   Widget build(BuildContext context) {
     final appState = ref.watch(pdLoanDetailsProvider);
 
-    final _isExpanded = ref.watch(isExpLoanDetailProvider);
+    final isExpanded = ref.watch(isExpLoanDetailProvider);
     final getLoandata = ref.watch(loanDetailsGetProvider(widget.customerId));
 
     return  ExpansionTile(
@@ -80,7 +79,7 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
               ref.refresh(loanDetailsGetProvider(widget.customerId));
             }
           },
-          initiallyExpanded: _isExpanded,
+          initiallyExpanded: isExpanded,
           children: <Widget>[
             getLoandata.when(
                 data: (loanData) {
@@ -104,7 +103,7 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
                         children: [
                           Container(
                             alignment: Alignment.centerLeft,
-                            child: Text(
+                            child: const Text(
                               'Location Details',
                               textAlign: TextAlign.left,
                             ),
@@ -163,7 +162,7 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
                           constSizedbox(context),
                           Container(
                             alignment: Alignment.centerLeft,
-                            child: Text(
+                            child: const Text(
                               'Location Details',
                               textAlign: TextAlign.left,
                             ),
@@ -218,7 +217,7 @@ class _LoanDetailsFormState extends ConsumerState<LoanDetailsForm> {
                           constSizedbox(context),
                           Container(
                             alignment: Alignment.centerLeft,
-                            child: Text(
+                            child: const Text(
                               'Decision & Purpose',
                               textAlign: TextAlign.left,
                             ),

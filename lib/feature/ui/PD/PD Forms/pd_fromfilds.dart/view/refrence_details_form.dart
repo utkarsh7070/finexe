@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
@@ -6,9 +5,6 @@ import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/refrence_form_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view_model.dart/refrence_detail_vmodel.dart';
-import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/referance/referance_details.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,7 +16,7 @@ final isExpRefrenceDetProvider = StateProvider<bool>((ref) => false);
 class RefrenceDetailsForm extends ConsumerStatefulWidget {
   // const RefrenceDetailsForm({super.key});
   final String customerId;
-  RefrenceDetailsForm({required this.customerId});
+  const RefrenceDetailsForm({super.key, required this.customerId});
   @override
   _RefrenceDetailsFormState createState() => _RefrenceDetailsFormState();
 }
@@ -73,7 +69,7 @@ class _RefrenceDetailsFormState extends ConsumerState<RefrenceDetailsForm> {
   Widget build(BuildContext context) {
     final appState = ref.watch(pdRefrenceSubmitProvider);
 
-    final _isExpanded = ref.watch(isExpRefrenceDetProvider);
+    final isExpanded = ref.watch(isExpRefrenceDetProvider);
     final getFormData = ref.watch(getRefrenceDataProvider(widget.customerId));
     // if (kDebugMode) {
     //   print(
@@ -94,12 +90,12 @@ class _RefrenceDetailsFormState extends ConsumerState<RefrenceDetailsForm> {
               ref.refresh(getRefrenceDataProvider(widget.customerId));
             }
           },
-          initiallyExpanded: _isExpanded,
+          initiallyExpanded: isExpanded,
           children: <Widget>[
             getFormData.when(
                 data: (refdata) {
                   if(refdata.items?.referenceDetails != null) {
-                    if (refdata.items!.referenceDetails!.length > 0) {
+                    if (refdata.items!.referenceDetails!.isNotEmpty) {
                       if (!isInitialDataSet && refdata.items != null) {
                         refrenceDetailsForm_refrenceController1.text =
                             refdata.items!.referenceDetails?[0].name ?? '';
@@ -396,7 +392,7 @@ class _RefrenceDetailsFormState extends ConsumerState<RefrenceDetailsForm> {
               //  error: (error, stackTrace) => Center(child: Text('Error: $error')),
               error: (error, stackTrace) {
                 print('Error: $error');
-                return Center(child: Text('faild to get data please try again'));
+                return const Center(child: Text('faild to get data please try again'));
               },
             )
 

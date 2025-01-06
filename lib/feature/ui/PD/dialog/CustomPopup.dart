@@ -14,7 +14,7 @@ class CustomPopup extends StatelessWidget {
 
 
   const CustomPopup({
-    Key? key,
+    super.key,
     required this.title,
     required this.message,
     required this.imagePath,
@@ -24,7 +24,7 @@ class CustomPopup extends StatelessWidget {
     this.buttonColor = Colors.blue, // Default button color
     this.rejectText = "Reject", // Default reject button text
     this.rejectTextColor = Colors.red, // Default reject text color
-  }) : super(key: key);
+  });
 
 
   static void showPopup({

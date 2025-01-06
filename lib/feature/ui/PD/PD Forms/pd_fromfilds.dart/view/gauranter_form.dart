@@ -1,17 +1,11 @@
-import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
-import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
-import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
-import 'package:finexe/feature/base/utils/widget/upload_box.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/simple_dropdown.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view_model.dart/garaunter_view_model.dart';
 // import 'package:finexe/feature/ui/PD/view/common%20imagePicker/image_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,7 +17,7 @@ final isExpGaurantProvider = StateProvider<bool>((ref) => false);
 class GauranterFormScreen extends ConsumerStatefulWidget {
   // const GauranterFormScreen({super.key});
   final String customerId;
-  GauranterFormScreen({required this.customerId});
+  const GauranterFormScreen({super.key, required this.customerId});
   @override
   ConsumerState<GauranterFormScreen> createState() =>
       _GauranterFormScreenState();
@@ -86,7 +80,7 @@ class _GauranterFormScreenState extends ConsumerState<GauranterFormScreen> {
     // final gauranteraImage = ref.watch(gaurnterImageProvider);
     final appState = ref.watch(pdsubmitgauranterProvider);
 
-    final _isExpanded = ref.watch(isExpGaurantProvider);
+    final isExpanded = ref.watch(isExpGaurantProvider);
     return ExpansionTile(
           childrenPadding: const EdgeInsets.only(left: 16, bottom: 0,right: 15),
           shape: const Border(
@@ -100,7 +94,7 @@ class _GauranterFormScreenState extends ConsumerState<GauranterFormScreen> {
               ref.refresh(gauranterrDetailsProvider(widget.customerId));
             }
           },
-          initiallyExpanded: _isExpanded,
+          initiallyExpanded: isExpanded,
           children: <Widget>[
             gauranterDeatils.when(
                 data: (gauranterItems) {
@@ -147,7 +141,7 @@ class _GauranterFormScreenState extends ConsumerState<GauranterFormScreen> {
                           ),
 
                           constSizedbox(context),
-                          Text(
+                          const Text(
                             'Guaranter Image',
                             // textAlign: TextAlign.left,
                           ),
@@ -173,7 +167,7 @@ class _GauranterFormScreenState extends ConsumerState<GauranterFormScreen> {
                             child: CustomDropDownTextField(
                               labelText: 'Gaurantor Type',
                               controller: _gauranterform_gauranterTypeController,
-                              items: [
+                              items: const [
                                 DropDownValueModel(name: "Individual", value: "Individual"),
                                 DropDownValueModel(
                                     name: "Non Individual", value: "Non Individual"),
@@ -189,7 +183,7 @@ class _GauranterFormScreenState extends ConsumerState<GauranterFormScreen> {
                             child: CustomDropDownTextField(
                               labelText: 'Business Type',
                               controller: _gauranterform_bussController,
-                              items: [
+                              items: const [
                                 DropDownValueModel(
                                     name: "Self Employed Proffessional",
                                     value: "Self Employed Proffessional"),
@@ -399,7 +393,7 @@ class _GauranterFormScreenState extends ConsumerState<GauranterFormScreen> {
                           Padding(
                             padding: const EdgeInsets.only(right: 20),
                             child: CustomTextFormField(
-                              textInputType: TextInputType.numberWithOptions(),
+                              textInputType: const TextInputType.numberWithOptions(),
                               controller: _gauranterform_yearsAtcurrentAddress,
                               width: displayWidth(context),
                               inerHint: 'Years at Current Address',
@@ -436,7 +430,7 @@ class _GauranterFormScreenState extends ConsumerState<GauranterFormScreen> {
                             child: CustomDropDownTextField(
                               labelText: 'Residence Type',
                               controller: _gauranterform_residancetypeController,
-                              items: [
+                              items: const [
                                 DropDownValueModel(name: "Owned", value: "Owned"),
                                 DropDownValueModel(name: "Rented", value: "Rented"),
                                 DropDownValueModel(name: "Leased", value: "Leased"),
@@ -506,7 +500,7 @@ class _GauranterFormScreenState extends ConsumerState<GauranterFormScreen> {
                                       'loading'), // Key for progress indicator
                                 ),
                               )
-                                  : Text(
+                                  : const Text(
                                 'Save Form',
                                 style: TextStyle(color: Colors.white),
                               ),

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:finexe/feature/base/api/api.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
@@ -8,7 +7,6 @@ import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/base/utils/widget/upload_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
@@ -23,11 +21,11 @@ class CommonImagePicker extends StatefulWidget {
       onImageUploaded; // Callback to pass uploaded image URL // getting url from uploadimage api
 
   const CommonImagePicker({
-    Key? key,
+    super.key,
     // this.applicantImage,
     required this.applicantImage,
     required this.onImageUploaded,
-  }) : super(key: key);
+  });
 
   @override
   _CommonImagePickerState createState() => _CommonImagePickerState();
@@ -146,7 +144,7 @@ class _CommonImagePickerState extends State<CommonImagePicker> {
   Widget build(BuildContext context) {
     return
       _isLoading
-          ? Container(
+          ? SizedBox(
         height: displayHeight(context) * 0.16,
         width: displayWidth(context) * 0.91,
 
@@ -184,7 +182,7 @@ class _CommonImagePickerState extends State<CommonImagePicker> {
                             builder: (context) => ZoomableImageWidget(
                               ImageUrl: _uploadedImageUrl.isEmpty
                                   ? '${Api.baseUrl}${widget.applicantImage}'
-                                  : '${Api.baseUrl}${_uploadedImageUrl}',
+                                  : '${Api.baseUrl}$_uploadedImageUrl',
                             ),
                           ),
                         );
@@ -192,12 +190,12 @@ class _CommonImagePickerState extends State<CommonImagePicker> {
                       child: CachedNetworkImage(
                         imageUrl: _uploadedImageUrl.isEmpty
                             ? '${Api.baseUrl}${widget.applicantImage}'
-                            : '${Api.baseUrl}${_uploadedImageUrl}',
+                            : '${Api.baseUrl}$_uploadedImageUrl',
                         height: displayHeight(context) * 0.16,
                         width: displayWidth(context) * 0.91,
                         fit: BoxFit.contain,
                         placeholder: (context, url) =>
-                            Center(child: CircularProgressIndicator()),
+                            const Center(child: CircularProgressIndicator()),
                         errorWidget: (context, url, error) => Image.asset(
                           'assets/images/no_internet.jpg',
                           height: 150,
@@ -232,7 +230,7 @@ class _CommonImagePickerState extends State<CommonImagePicker> {
                 Positioned.fill(
                   child: Container(
                     color: Colors.black.withOpacity(0.5),
-                    child: Center(
+                    child: const Center(
                       child: CircularProgressIndicator(
                         valueColor:
                             AlwaysStoppedAnimation<Color>(AppColors.primary),

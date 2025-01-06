@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:finexe/feature/base/api/api.dart';
@@ -19,7 +18,7 @@ import 'milkviewmodel.dart';
 class MilkForm extends ConsumerStatefulWidget {
   // const MilkForm({super.key});
   final String customerId;
-  MilkForm({required this.customerId});
+  const MilkForm({super.key, required this.customerId});
   @override
   _MilkFormState createState() => _MilkFormState();
 }
@@ -75,10 +74,10 @@ class _MilkFormState extends ConsumerState<MilkForm> {
     final imageNotifier = ref.read(imageUploadProvider.notifier);
     final viewModel = ref.read(milkBusinessFormViewModelProvider);
     final milkBusinessAsyncValue = ref.watch(milkBusinessProvider(widget.customerId));
-    print("output for get ${milkBusinessAsyncValue}");
+    print("output for get $milkBusinessAsyncValue");
 
     return milkBusinessAsyncValue.when(
-      loading: () => Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(child: Text('Error: $error')),
       data: (milkBusiness) {
         if (milkForm_numberofyearesDoing.text.isEmpty) {
@@ -283,7 +282,7 @@ class _MilkFormState extends ConsumerState<MilkForm> {
                 constSizedbox(context),
                 Container(
                   alignment: Alignment.centerLeft,
-                  margin: EdgeInsets.only(left: 20),
+                  margin: const EdgeInsets.only(left: 20),
                   child: Text('Animal photo with customer',
                       textAlign: TextAlign.left, style: AppStyles.blackText16),
                 ),
@@ -307,12 +306,12 @@ class _MilkFormState extends ConsumerState<MilkForm> {
                             imageUrl:
                                 //  workPhotosList.length == 0
                                 //     ? '${Api.baseUrl}${agriAndWorkImages.workPhotos![index]}':
-                                '${Api.baseUrl}${image}',
+                                '${Api.baseUrl}$image',
                             height: displayHeight(context) * 0.16,
                             width: displayWidth(context) * 0.91,
                             fit: BoxFit.cover,
                             placeholder: (context, url) =>
-                                Center(child: CircularProgressIndicator()),
+                                const Center(child: CircularProgressIndicator()),
                             errorWidget: (context, url, error) => Image.asset(
                               'assets/images/no_internet.jpg',
                               height: 150,
@@ -343,7 +342,7 @@ class _MilkFormState extends ConsumerState<MilkForm> {
                       ),
                     ],
                   );
-                }).toList(),
+                }),
                 SizedBox(height: displayHeight(context) * 0.01),
                 // Container for uploading new images
                 GestureDetector(
@@ -386,7 +385,7 @@ class _MilkFormState extends ConsumerState<MilkForm> {
                 constSizedbox(context),
                 Container(
                   alignment: Alignment.centerLeft,
-                  margin: EdgeInsets.only(left: 20),
+                  margin: const EdgeInsets.only(left: 20),
                   child: Text('Milk Photos',
                       textAlign: TextAlign.left, style: AppStyles.blackText16),
                 ),

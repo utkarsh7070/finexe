@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
@@ -8,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 class PDFViewerFromUrl extends StatefulWidget {
   final String pdfUrl; // URL of the PDF
 
-  const PDFViewerFromUrl({Key? key, required this.pdfUrl}) : super(key: key);
+  const PDFViewerFromUrl({super.key, required this.pdfUrl});
 
   @override
   State<PDFViewerFromUrl> createState() => _PDFViewerFromUrlState();

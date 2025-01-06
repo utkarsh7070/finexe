@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:ui';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/internetConnection/connection_overlay.dart';
@@ -8,14 +7,12 @@ import 'package:finexe/feature/base/internetConnection/connectivity.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
-import 'package:finexe/feature/ui/Sales/OnBoarding/view_model/on_boarding_view_model.dart';
 import 'package:finexe/feature/ui/Splash/view_model/splash_vew_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:restart_app/restart_app.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -66,7 +63,8 @@ class SplashScreen extends ConsumerWidget {
                       AppRoutes.attendance,
                       (route) => false,
                     );
-                  } else if (isLoggedIn.puntchStatus == null) {
+                  }
+                  else if (isLoggedIn.puntchStatus == null) {
                     retryviewmodel.state = true;
                   } else {
                     SharedPreferences prefs =
@@ -273,16 +271,16 @@ class SplashScreen extends ConsumerWidget {
                 child: Material(
                   child: Column(
                     children: [
-                      Text(
+                      const Text(
                         'Something Went Wrong',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       AppButton(
-                        textStyle: TextStyle(color: Colors.white),
+                        textStyle: const TextStyle(color: Colors.white),
                         label: 'Retry',
                         onTap: () async{
-                              await   Restart.restartApp( );
+                              await Restart.restartApp( );
                           // Restart.restartApp(
                           //   notificationTitle: 'Restarting App',
                           //   notificationBody:

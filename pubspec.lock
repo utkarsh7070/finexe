@@ -1114,6 +1114,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1+1"
+  internet_speed_meter:
+    dependency: "direct main"
+    description:
+      name: internet_speed_meter
+      sha256: "6ed0ac2ab33eb1ecd7cf8673cc2d9909531e7286d777aadfc852dd5d7a0f2610"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.3"
   intl:
     dependency: "direct main"
     description:
@@ -1379,7 +1387,7 @@ packages:
     source: hosted
     version: "0.1.0"
   path:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path
       sha256: "087ce49c3f0dc39180befefc60fdb4acd8f8620e5682fe2476afd0b3688bb4af"

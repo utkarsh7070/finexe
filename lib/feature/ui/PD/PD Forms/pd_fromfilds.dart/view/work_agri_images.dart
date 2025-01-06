@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:finexe/feature/base/api/api.dart';
@@ -20,7 +19,7 @@ final isExpWorkAgriDetailProvider = StateProvider<bool>((ref) => false);
 class WorkAndAgriCultureImages extends ConsumerStatefulWidget {
   // const WorkAndAgriCultureImages({super.key});
   final String customerId;
-  WorkAndAgriCultureImages({required this.customerId});
+  const WorkAndAgriCultureImages({super.key, required this.customerId});
   @override
   ConsumerState<WorkAndAgriCultureImages> createState() =>
       _WorkAndAgriCultureImagesState();
@@ -42,13 +41,13 @@ class _WorkAndAgriCultureImagesState
     // final images = ref.watch(workagriimageUploadProvider);
     final appState = ref.watch(pdsubmitWorkAndAgriImages);
 
-    final _isExpanded = ref.watch(isExpWorkAgriDetailProvider);
+    final isExpanded = ref.watch(isExpWorkAgriDetailProvider);
     final getAgriFormData = ref.watch(getWorkAndImagesProvider(widget.customerId));
     final imageNotifier = ref.read(workagriimageUploadProvider.notifier);
     // final indexzProvider = ref.watch(imageProvbider);
 
     return ExpansionTile(
-          title: Text('Work and Agriculture Images'),
+          title: const Text('Work and Agriculture Images'),
           onExpansionChanged: (expanded) {
             ref.read(isExpWorkAgriDetailProvider.notifier).state = expanded;
             if (expanded) {
@@ -56,7 +55,7 @@ class _WorkAndAgriCultureImagesState
               ref.refresh(getWorkAndImagesProvider(widget.customerId));
             }
           },
-          initiallyExpanded: _isExpanded,
+          initiallyExpanded: isExpanded,
           children: [
             getAgriFormData.when(
                 data: (agriAndWorkImages) {
@@ -69,7 +68,7 @@ class _WorkAndAgriCultureImagesState
                       children: [
 
                         constSizedbox(context),
-                        Text('Landmark Photo'),
+                        const Text('Landmark Photo'),
                         CommonImagePicker(
                           applicantImage: agriAndWorkImages.landmarkPhoto ?? '',
                           onImageUploaded: (imageUrl) {
@@ -83,7 +82,7 @@ class _WorkAndAgriCultureImagesState
                           },
                         ),
                         constSizedbox(context),
-                        Text('Lat Long Photo'),
+                        const Text('Lat Long Photo'),
                         CommonImagePicker(
                           applicantImage: agriAndWorkImages.latLongPhoto ?? '',
                           onImageUploaded: (imageUrl) {
@@ -131,12 +130,12 @@ class _WorkAndAgriCultureImagesState
                                         imageUrl:
                                         //  workPhotosList.length == 0
                                         //     ? '${Api.baseUrl}${agriAndWorkImages.workPhotos![index]}':
-                                        '${Api.baseUrl}${image}',
+                                        '${Api.baseUrl}$image',
                                         height: displayHeight(context) * 0.16,
                                         width: displayWidth(context) * 0.91,
                                         fit: BoxFit.contain,
                                         placeholder: (context, url) =>
-                                            Center(child: CircularProgressIndicator()),
+                                            const Center(child: CircularProgressIndicator()),
                                         errorWidget: (context, url, error) => Image.asset(
                                           'assets/images/no_internet.jpg',
                                           height: 150,
@@ -169,10 +168,10 @@ class _WorkAndAgriCultureImagesState
                               ),
                             ],
                           );
-                        }).toList(),
+                        }),
                         constSizedbox(context),
                         agriAndWorkImages.fourBoundaryPhotos!.length > 3 ?
-                            SizedBox.shrink():
+                            const SizedBox.shrink():
                         GestureDetector(
                           // onTap: () => imageNotifier.pickImage(),
                           onTap: () {
@@ -262,12 +261,12 @@ class _WorkAndAgriCultureImagesState
                                     imageUrl:
                                     //  workPhotosList.length == 0
                                     //     ? '${Api.baseUrl}${agriAndWorkImages.workPhotos![index]}':
-                                    '${Api.baseUrl}${image}',
+                                    '${Api.baseUrl}$image',
                                     height: displayHeight(context) * 0.16,
                                     width: displayWidth(context) * 0.91,
                                     fit: BoxFit.contain,
                                     placeholder: (context, url) =>
-                                        Center(child: CircularProgressIndicator()),
+                                        const Center(child: CircularProgressIndicator()),
                                     errorWidget: (context, url, error) => Image.asset(
                                       'assets/images/no_internet.jpg',
                                       height: 150,
@@ -298,7 +297,7 @@ class _WorkAndAgriCultureImagesState
                               ),
                             ],
                           );
-                        }).toList(),
+                        }),
 
                         constSizedbox(context),
                         GestureDetector(
@@ -338,7 +337,7 @@ class _WorkAndAgriCultureImagesState
                           ),
                         ),
                         constSizedbox(context),
-                        Text('Upload 360° Home Video'),
+                        const Text('Upload 360° Home Video'),
                         CommonVideoPicker(
                           gettingVideoUrlFromServer:
                           agriAndWorkImages.videoUpload ?? '',
@@ -438,7 +437,7 @@ class _WorkAndAgriCultureImagesState
                                   'loading'), // Key for progress indicator
                             ),
                           )
-                              : Text(
+                              : const Text(
                             'Save Form',
                             style: TextStyle(color: Colors.white),
                           ),
@@ -451,7 +450,7 @@ class _WorkAndAgriCultureImagesState
               // error: (error, stackTrace) => Center(child: Text('Error: $error')),
               error: (error, stackTrace) {
                 print('Error: $error');
-                return Center(child: Text('faild to get data please check network'));
+                return const Center(child: Text('faild to get data please check network'));
               },
             )
 

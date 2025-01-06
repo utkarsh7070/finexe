@@ -1,7 +1,6 @@
 
 import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 import 'package:finexe/feature/base/internetConnection/connection_overlay.dart';
-
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
@@ -11,7 +10,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 import 'package:intl/intl.dart';
 import '../../../../base/api/api.dart';
-import '../../../../base/dialog/logout_dialog.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/namespase/app_style.dart';
 import '../../../Collection/Collection_home_dashboard/Widget/punct_in_out_action_dialog_content.dart';
@@ -56,7 +54,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
               // ),
               appBar: AppBar(
                 title: Visibility(
-                  replacement: Text('HRMS'),
+                  replacement: const Text('HRMS'),
                   visible: !(role.role.contains('sales') ||
                       role.role.contains('collection') ||
                       role.role.contains('pd') ||
@@ -125,7 +123,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                 ),
               ),
               body: SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
+                physics: const AlwaysScrollableScrollPhysics(),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -200,7 +198,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                                 activeTrackColor: Colors.red.shade300,
                                 // elevationThumb: 4.8,
                                 height: 60,
-                                thumbPadding: EdgeInsets.all(8),
+                                thumbPadding: const EdgeInsets.all(8),
                                 child: const Text(
                                   "Swipe to Punch Out",
                                   style: TextStyle(
@@ -535,12 +533,12 @@ class HRMSDashboardScreen extends ConsumerWidget {
       required BuildContext context,
       required Color borderColor}) {
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       height: displayHeight(context) * 0.09,
       width: displayWidth(context) * 0.44,
       decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
           border: Border.all(color: borderColor)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

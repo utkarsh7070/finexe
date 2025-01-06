@@ -15,7 +15,7 @@ import '../../pd_view_model/pd_request_viewmodel.dart';
 class RejectpdFileDialogueContent extends ConsumerStatefulWidget {
   final String customerId;
 
-   RejectpdFileDialogueContent({super.key,required this.customerId});
+   const RejectpdFileDialogueContent({super.key,required this.customerId});
 
   @override
   _RejectpdFileDialogueContentState createState() => _RejectpdFileDialogueContentState();
@@ -146,6 +146,6 @@ class _RejectpdFileDialogueContentState extends ConsumerState<RejectpdFileDialog
           ),
         ],
       ),
-    );;
+    );
   }
 }

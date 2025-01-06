@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/model/Submit%20Data%20Models/bank_detail_form_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -85,11 +84,11 @@ class PDBankDetailsViewModel extends StateNotifier<AppState> {
       final response = await dio.post(Api.updatePdReport,
           data: payload, options: Options(headers: {"token": token}));
       print(response.data);
-      print('Payload: ${payload}');
+      print('Payload: $payload');
       if (response.statusCode == 200) {
         BankDetail bankDetailsRespone = BankDetail.fromJson(response.data);
         print('bankdetails form submitted: $response');
-        print('bankDeatils-- ${bankDetailsRespone}');
+        print('bankDeatils-- $bankDetailsRespone');
         state = state.copyWith(isLoading: false);
         return true;
       } else {
@@ -152,5 +151,6 @@ class GauranterrFormDetailsProvider {
 
       return details;
     }
+    return null;
   }
 }

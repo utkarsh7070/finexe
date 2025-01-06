@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 
 import '../../../base/api/dio_exception.dart';
-import '../../../base/service/session_service.dart';
 
 // class PdRequestItem {
 //   final String id;
@@ -70,7 +69,7 @@ final fetchpdRefuseandAcceptListProvider =
   final Map<String, String> queryParam = {"status": "WIP", "searchQuery": ""};
   final dio = ref.read(dioProvider);
   print('Api.getReqRefP:: ${Api.getReqRefP}');
-  print('token:: ${token}');
+  print('token:: $token');
 
   final response = await dio.get(Api.getReqRefP,
       queryParameters: queryParam, options: Options(headers: {"token": token}));
@@ -106,7 +105,7 @@ final acceptpdrequestProvider =
   };
   final dio = ref.read(dioProvider);
   print('Api.getReqRefP:: ${Api.getReqRefP}');
-  print('token:: ${token}');
+  print('token:: $token');
 
   final response = await dio.get(Api.getReqRefP,
       queryParameters: queryParam, options: Options(headers: {"token": token}));
@@ -180,6 +179,7 @@ class RequestApiService {
       }
       return false;
     }
+    return null;
   }
 
 

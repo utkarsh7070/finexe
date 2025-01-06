@@ -1,6 +1,4 @@
-import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/routes/routes.dart';
-import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
 import 'package:finexe/feature/base/utils/widget/app_text_filed_login.dart';
@@ -27,7 +25,7 @@ class EmploymentHistory extends ConsumerWidget {
               child: Column(
                 children: [
                   AppListview(
-                      scrollphysics: NeverScrollableScrollPhysics(),
+                      scrollphysics: const NeverScrollableScrollPhysics(),
                       items:employeeDataState.employmentHistory.length,
                       builder: (context, index) {
                         print(index);

@@ -10,13 +10,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Punch_In_Out/model/check_attendance_responce_model.dart';
 import '../../../Punch_In_Out/repository/puch_In_repository_imp.dart';
 import '../../../base/api/dio_exception.dart';
 import '../../../base/routes/routes.dart';
-import '../../../base/service/background_service.dart';
-import '../../../base/utils/widget/custom_snackbar.dart';
 import '../model/login_response_model.dart';
 
 final userValidationProvider =

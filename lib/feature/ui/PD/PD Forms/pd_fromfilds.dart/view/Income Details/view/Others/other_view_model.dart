@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
@@ -158,6 +157,7 @@ class OtherApiService {
       print('Error occurred: $e');
       throw Exception('Error occurred while fetching other income details: $e');
     }
+    return null;
   }
 
 }

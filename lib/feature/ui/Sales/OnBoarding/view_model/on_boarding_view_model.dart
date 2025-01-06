@@ -213,7 +213,7 @@ class AllCases extends StateNotifier<CaseModel> {
       'employeeRole': employeeRole,
       'status': 'all',
       'page': 1,
-      'limit': 20
+      'limit': 50
     };
     print('Params: $params');
 
@@ -262,7 +262,7 @@ class AllCases extends StateNotifier<CaseModel> {
       'employeeRole': employeeRole,
       'status': 'cibilReject',
       'page': 1,
-      'limit': 20
+      'limit': 50
     };
     print('Params: $params');
     // String? token = speciality.getToken();
@@ -315,7 +315,7 @@ class AllCases extends StateNotifier<CaseModel> {
       'employeeRole': employeeRole,
       'status': 'cibilOk',
       'page': 1,
-      'limit': 20
+      'limit': 50
     };
     print('Params: $params');
 
@@ -366,7 +366,7 @@ class AllCases extends StateNotifier<CaseModel> {
       'employeeRole': employeeRole,
       'status': 'cibilPending',
       'page': 1,
-      'limit': 20
+      'limit': 50
     };
     print('Params: $params');
 

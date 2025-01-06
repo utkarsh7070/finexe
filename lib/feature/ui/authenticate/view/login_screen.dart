@@ -75,7 +75,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     log('loginState.isLoading:: ${loginState.isLoading}');
 
     return NetworkListener(
-      context:context,
+      context: context,
       child: Scaffold(
         // resizeToAvoidBottomInset: false,
         body: Padding(
@@ -90,7 +90,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: displayHeight(context) * 0.05,
+                    height: displayHeight(context) * 0.10,
                   ),
                   Container(
                     width: displayWidth(context) * 0.20,
@@ -102,7 +102,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
 
                   Text(
-                    'WelCome Back',
+                    'WelCome Back \u{1F44B}',
                     style: AppStyles.blackText16
                         .copyWith(fontSize: FontSize.fontSizeL),
                   ),
@@ -133,11 +133,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   //   height: displayHeight(context) * 0.04,
                   // ),
 
-                  Expanded(
+                  Flexible(
+                    fit: FlexFit.loose,
                     child: Lottie.asset(
                       'assets/lottie/login_lottie.json',
                       width: displayWidth(context),
-                      height: displayHeight(context)*0.35,
+                      height: displayHeight(context) * 0.30,
                       // fit: BoxFit.cover,
                     ),
                   ),
@@ -267,9 +268,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               width: 1.0,
                             ),
                           ),
-                           Text(
+                          Text(
                             "Vendor",
-                            style: TextStyle(fontSize: 16.0, color: vendorStateViewModel.state?Colors.blue:Colors.grey),
+                            style: TextStyle(
+                                fontSize: 16.0,
+                                color: vendorStateViewModel.state
+                                    ? Colors.blue
+                                    : Colors.grey),
                           ),
                         ],
                       ),
@@ -380,10 +385,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   ),
                                   Text(
                                     'please wait..',
-                                    style: AppStyles.smallTextStyleRich.copyWith(
-                                        color: AppColors.white,
-                                        fontSize: FontSize.fontSize16,
-                                        fontWeight: FontWeight.w500),
+                                    style: AppStyles.smallTextStyleRich
+                                        .copyWith(
+                                            color: AppColors.white,
+                                            fontSize: FontSize.fontSize16,
+                                            fontWeight: FontWeight.w500),
                                   )
                                 ],
                               ),

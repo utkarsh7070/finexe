@@ -1,17 +1,10 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
-import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
-import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
-import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/applicant_model.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../base/api/dio_exception.dart';
 import '../model/Submit Data Models/applicant_model.dart';
@@ -89,7 +82,7 @@ class PDApplicantViewModel extends StateNotifier<ApplicantState> {
       print(token);
       print(payload);
       print(response.data);
-      print('Payload: ${payload}');
+      print('Payload: $payload');
 
       if (response.statusCode == 200) {
         // Applicant applicantdata = Applicant.fromJson(response.data);
@@ -119,7 +112,7 @@ class PDApplicantViewModel extends StateNotifier<ApplicantState> {
       DioExceptions.fromDioError(error as DioException, context);
       // Handle exceptions and set state to error
       // state = AsyncValue.error(error, stackTrace);
-      print('response.data.message ${error}');
+      print('response.data.message $error');
       return false;
     }
     finally{

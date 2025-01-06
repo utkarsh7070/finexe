@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/model/Submit%20Data%20Models/asset_detail_model.dart';
@@ -50,7 +49,7 @@ class PDAssetDetails extends StateNotifier<ApplicationState> {
       print(token);
       print(payload);
       print(response.data);
-      print('Payload: ${payload}');
+      print('Payload: $payload');
 
       if (response.statusCode == 200) {
         // AssetDetails assetDetails =
@@ -74,7 +73,7 @@ class PDAssetDetails extends StateNotifier<ApplicationState> {
       DioExceptions.fromDioError(error as DioException, context);
       // Handle exceptions and set state to error
       // state = AsyncValue.error(error, stackTrace);
-      print('response.data.message ${error}');
+      print('response.data.message $error');
       return false;
     }
   }
@@ -158,5 +157,6 @@ class AssetFormDetailProvider {
       print('details:: ${details.items?.assetDetails}');
       return details;
     }
+    return null;
   }
 }

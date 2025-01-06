@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class AppButton extends StatelessWidget {
   const AppButton({
-    Key? key,
+    super.key,
     this.label,
     this.onTap,
     this.isFill = false,
@@ -13,7 +13,7 @@ class AppButton extends StatelessWidget {
     this.width,
     this.textStyle,
     this.isDisabled = false,
-  }) : super(key: key);
+  });
 
   final String? label;
   final VoidCallback? onTap;
@@ -27,7 +27,7 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
                 // padding: isFill ? EdgeInsets.zero : const EdgeInsets.symmetric(vertical: 10),
 
       // color: bgColor,

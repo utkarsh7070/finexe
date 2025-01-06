@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:finexe/feature/base/api/api.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
@@ -19,10 +18,10 @@ class CommonFilePicker extends StatefulWidget {
   onFileUploaded; // Callback to pass uploaded file URL
 
   const CommonFilePicker({
-    Key? key,
+    super.key,
     required this.applicantFile,
     required this.onFileUploaded,
-  }) : super(key: key);
+  });
 
   @override
   _CommonFilePickerState createState() => _CommonFilePickerState();
@@ -104,7 +103,7 @@ class _CommonFilePickerState extends State<CommonFilePicker> {
     print(' _uploadedFileUrl::  $_uploadedFileUrl ');
 
     return _isLoading
-        ? Container(
+        ? SizedBox(
            height: displayHeight(context) * 0.16,
            width: displayWidth(context) * 0.91,
            child: const Center(child: CircularProgressIndicator()),
@@ -144,7 +143,7 @@ class _CommonFilePickerState extends State<CommonFilePicker> {
                 // );
                 final pdfUrl = widget.applicantFile.isNotEmpty
                     ? '${Api.baseUrl}${widget.applicantFile}' // Prepend base URL
-                    :  '${Api.baseUrl}${_uploadedFileUrl}';
+                    :  '${Api.baseUrl}$_uploadedFileUrl';
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -158,7 +157,7 @@ class _CommonFilePickerState extends State<CommonFilePicker> {
                 height: displayHeight(context) * 0.16,
                 width: displayWidth(context) * 0.91,
                 color: AppColors.gray,
-                child: Center(
+                child: const Center(
                   child: Icon(
                     Icons.picture_as_pdf,
                     size: 40,
@@ -192,7 +191,7 @@ class _CommonFilePickerState extends State<CommonFilePicker> {
           Positioned.fill(
             child: Container(
               color: Colors.black.withOpacity(0.5),
-              child: Center(
+              child: const Center(
                 child: CircularProgressIndicator(
                   valueColor:
                   AlwaysStoppedAnimation<Color>(AppColors.primary),

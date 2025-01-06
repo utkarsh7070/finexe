@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import '../../../../../../../base/api/api.dart';
@@ -61,7 +60,7 @@ class PDPoliceModel extends StateNotifier<ApplicantState> {
       DioExceptions.fromDioError(error as DioException, context);
       // Handle exceptions and set state to error
       // state = AsyncValue.error(error, stackTrace);
-      print('response.data.message ${error}');
+      print('response.data.message $error');
       return false;
     }
   }

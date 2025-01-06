@@ -6,15 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart'; // Adjust the path
 // import '../../../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../base/utils/widget/custom_snackbar.dart';
-import '../model/Submit Data Models/police_station_model.dart';
-import '../view_model.dart/applicant_view_model.dart';
 import '../view_model.dart/police_view_modal.dart';
 final isExpPoliceStationProvider = StateProvider<bool>((ref) => false);
 
 class PoliceStationForm extends ConsumerStatefulWidget {
   // const PoliceStationForm({super.key});
   final String customerId;
-  PoliceStationForm({required this.customerId});
+  const PoliceStationForm({super.key, required this.customerId});
   @override
   ConsumerState<PoliceStationForm> createState() => _PoliceStationFormState();
 }
@@ -43,9 +41,9 @@ class _PoliceStationFormState extends ConsumerState<PoliceStationForm> {
     // Access the ViewModel's state
     final appState = ref.watch(pdPoliceSubmitDataProvider);
 
-    final _isExpanded = ref.watch(isExpPoliceStationProvider);
+    final isExpanded = ref.watch(isExpPoliceStationProvider);
     final policeDetails = ref.watch(policeDetailsProvider(widget.customerId));
-    print('policegetData:: ${policeDetails}');
+    print('policegetData:: $policeDetails');
 
     return ExpansionTile(
           childrenPadding: const EdgeInsets.only(left: 16, bottom: 10),
@@ -60,7 +58,7 @@ class _PoliceStationFormState extends ConsumerState<PoliceStationForm> {
               ref.refresh(policeDetailsProvider(widget.customerId));
             }
           },
-          initiallyExpanded: _isExpanded,
+          initiallyExpanded: isExpanded,
           children: [
             policeDetails.when(
                 data: (policeData) {

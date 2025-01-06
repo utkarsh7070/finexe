@@ -8,7 +8,6 @@ import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
 import 'package:finexe/feature/ui/PD/Model/pd_pending_response_model.dart';
 import 'package:finexe/feature/ui/PD/pd_view_model/pd_pending_viewmodel.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -157,7 +156,7 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
           future: ref.read(paginatedDataProvider(_currentPage).future),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting && _data.isEmpty) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
@@ -174,7 +173,7 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
                                 top: displayHeight(context) * 0.1,
                                 left: displayWidth(context) * 0.35,
                               ),
-                              child: Text('No Data available'),
+                              child: const Text('No Data available'),
                             )
                           else
                             SizedBox(
@@ -198,7 +197,7 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
                     Positioned(
                       child: Container(
                         color: Colors.white,
-                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
                         child: AdvancedSearch(
                           maxElementsToDisplay: 10,
                           singleItemHeight: displayHeight(context) * 0.28,
@@ -211,7 +210,7 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
                           cursorColor: Colors.blueGrey,
                           autoCorrect: false,
                           focusedBorderColor: Colors.blue,
-                          searchResultsBgColor: const Color(0xFAFAFA),
+                          searchResultsBgColor: const Color(0x00fafafa),
                           disabledBorderColor: Colors.cyan,
                           enabledBorderColor: Colors.black,
                           enabled: true,
@@ -377,7 +376,7 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
                           color: AppColors.red
                         // border: Border.all(color: AppColors.red, width: 1.5)
                       ),
-                      child:  Text(
+                      child:  const Text(
                         'Reject',
                         textAlign: TextAlign.center,
                         style: TextStyle(color: AppColors.white,fontSize: 14,fontWeight: FontWeight.bold),

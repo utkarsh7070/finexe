@@ -4,8 +4,6 @@ import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
 import 'package:flutter/Material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../base/utils/namespase/app_colors.dart';

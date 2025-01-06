@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../base/api/dio_exception.dart';
@@ -37,7 +35,7 @@ class PendencyApiService {
         options: Options(headers: {"token": token}),
       );
 
-      print('Response model: ${model}');
+      print('Response model: $model');
 
       if (response.statusCode == 200) {
 
@@ -107,6 +105,7 @@ class PendencyApiServiceGet {
       // throw Exception("Error fetching loan details: $e");
       return pendencyDetails;
     }
+    return null;
   }
 }
 

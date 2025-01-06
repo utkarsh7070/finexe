@@ -13,17 +13,17 @@ class MilkDataModel {
     subCode = json['subCode'];
     message = json['message'];
     error = json['error'];
-    items = json['items'] != null ? new MilkBusinessModel.fromJson(json['items']) : null;
+    items = json['items'] != null ? MilkBusinessModel.fromJson(json['items']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['subCode'] = this.subCode;
-    data['message'] = this.message;
-    data['error'] = this.error;
-    if (this.items != null) {
-      data['items'] = this.items!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['subCode'] = subCode;
+    data['message'] = message;
+    data['error'] = error;
+    if (items != null) {
+      data['items'] = items!.toJson();
     }
     return data;
   }
