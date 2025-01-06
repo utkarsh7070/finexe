@@ -73,17 +73,9 @@ class OtpDialogContent extends ConsumerWidget{
           AppButton(
              textStyle: const TextStyle(color: AppColors.white),
              onTap: () {
-               // // Navigator.pushNamed(context, AppRoutes.saleCoApplicationForm1);
-               // personalFormViewModel.submitOtp().then(
-               //       (value) {
-               //     if (value) {
-               //       showCustomSnackBar(
-               //           context, 'Otp is verified', Colors.green);
-               //       personalFormViewModel.verifyOtp(value);
-               //
-               //     }
-               //   },
-               // );
+               employeeDataViewModel.submitOtp().then((value) {
+                 Navigator.pop(context);
+               },);
              },
              label: 'Continue',
              width: displayWidth(context),

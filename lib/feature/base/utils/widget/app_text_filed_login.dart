@@ -90,7 +90,7 @@ class AppFloatTextField extends StatelessWidget {
         style: const TextStyle(fontSize: 12),
         textAlignVertical: TextAlignVertical.center,  // Add this property
         decoration: InputDecoration(
-          isDense: false,
+          isDense: true,
           // hintText: inerHint,
           hintStyle: const TextStyle(color: AppColors.textGray),
           floatingLabelStyle: currentState!

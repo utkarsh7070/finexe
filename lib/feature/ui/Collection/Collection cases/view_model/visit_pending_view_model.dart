@@ -549,7 +549,6 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
 
 
   //   print('Update EMI Input -${requestModel.toJson()}');
-
   //   String? token = speciality.getToken();
   //   final response = await dio.post(Api.updateEmiSubmit,
   //       data: requestModel.toJson(),
@@ -562,9 +561,11 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
   //     print(response.statusCode);
   //   }
 
+  //
   //   var responseData = response.data;
   //   print('Emi Paid response: $responseData');
   //   var message = responseData['message'];
+  //
 
   //   if (response.statusCode == 200 || responseData['status'] == true) {
   //     showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
@@ -572,7 +573,6 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
   //     updatePhotoValue(context);
   //     ref.refresh(fetchVisitPendingDataProvider);
   //     ref.invalidate(updateEmiViewModelProvider);
-
   //     if (kDebugMode) {
   //       print('EmiUpdateResponse ${response.data}');
   //     }
@@ -583,8 +583,10 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
   //   } else {
   //     throw Exception('Failed to load data');
   //     // return false;
-    
-  
+
+  //   }
+  // }*/
+
 
   Future<void> updateEmiSubmitButton(
       {required ItemsDetails detail,
