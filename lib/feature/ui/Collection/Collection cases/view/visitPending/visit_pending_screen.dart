@@ -61,7 +61,7 @@ class VisitPendingScreen extends ConsumerWidget {
                   cursorColor: Colors.blueGrey,
                   autoCorrect: false,
                   focusedBorderColor: Colors.blue,
-                  searchResultsBgColor: const Color(0xFAFAFA),
+                  searchResultsBgColor: const Color(0x00fafafa),
                   disabledBorderColor: Colors.cyan,
                   enabledBorderColor: Colors.black,
                   enabled: true,

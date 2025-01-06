@@ -19,8 +19,11 @@ final punchOut = ref.read(apiResponseProvider.notifier);
             style: TextStyle(color: Colors.white),
           ),
           onPressed: ()  {
-             punchOut.clickPunchOut(context);
-             ref.refresh(loginUserProfileProvider);
+             punchOut.clickPunchOut(context).then((value) {
+               Navigator.pop(context);
+               ref.refresh(loginUserProfileProvider);
+             },);
+
             // Navigator.pushNamedAndRemoveUntil(context, AppRoutes.attendance, (route) => true,);
           },
         ),

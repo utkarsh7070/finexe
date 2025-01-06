@@ -5,7 +5,6 @@ import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/simple_dropdown.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,7 +19,7 @@ class CoApplicantForm extends ConsumerStatefulWidget {
 
   // const CoApplicantForm({super.key,});
   final String customerId;
-  CoApplicantForm({required this.customerId});
+  const CoApplicantForm({super.key, required this.customerId});
 
   @override
   _CoApplicantFormState createState() => _CoApplicantFormState();
@@ -126,7 +125,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
     //   coApplicantDetailsProvider(widget.customerId),
     // );
     final coappState = ref.watch(pdCoapplicantViewModelProvider);
-    final _isExpanded = ref.watch(isExpCoappProvider);
+    final isExpanded = ref.watch(isExpCoappProvider);
     // final imageNotifier = ref.read(coAppliocantimageUploadProvider.notifier);
     final coapplicantDetails = ref.watch(
       coApplicantDetailsProvider(widget.customerId),
@@ -143,7 +142,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
                 ref.refresh(coApplicantDetailsProvider(widget.customerId));
               }
             },
-            initiallyExpanded: _isExpanded,
+            initiallyExpanded: isExpanded,
             childrenPadding: const EdgeInsets.only(left: 16, bottom: 0,right: 20),
             shape: const Border(
               bottom: BorderSide(color: AppColors.dividerColor),
@@ -233,7 +232,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
                         ),
                         constSizedbox(context),
 
-                        Text(
+                        const Text(
                           'CoApplicant Image',
                           // textAlign: TextAlign.left,
                         ),
@@ -380,7 +379,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
                         CustomDropDownTextField(
                           labelText: 'Applicant Type',
                           controller: coaaplicantform1_applicantTypeController,
-                          items: [
+                          items: const [
                             DropDownValueModel(name: "Individual", value: "Individual"),
                             DropDownValueModel(
                                 name: "Non Individual", value: "Non Individual"),
@@ -393,7 +392,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
                         CustomDropDownTextField(
                           labelText: 'Business Type',
                           controller: coaaplicantform1_businessTypeController,
-                          items: [
+                          items: const [
                             DropDownValueModel(
                                 name: "Self Employed Proffessional",
                                 value: "Self Employed Proffessional"),
@@ -552,7 +551,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
                         CustomDropDownTextField(
                           labelText: 'Residence Type',
                           controller: coaaplicantform1_residenceTypeController,
-                          items: [
+                          items: const [
                             DropDownValueModel(name: "Owned", value: "Owned"),
                             DropDownValueModel(name: "Rented", value: "Rented"),
                             DropDownValueModel(name: "Leased", value: "Leased"),
@@ -579,7 +578,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
                         ),
                         constSizedbox(context),
 
-                        Text(
+                        const Text(
                           'CoApplicant Image',
                           // textAlign: TextAlign.left,
                         ),
@@ -614,7 +613,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
                         CustomDropDownTextField(
                           labelText: 'Applicant Type',
                           controller: coaaplicantform02_applicantTypeController,
-                          items: [
+                          items: const [
                             DropDownValueModel(name: "Individual", value: "Individual"),
                             DropDownValueModel(
                                 name: "Non Individual", value: "Non Individual"),
@@ -627,7 +626,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
                         CustomDropDownTextField(
                           labelText: 'Business Type',
                           controller: coaaplicantform02_businessTypeController,
-                          items: [
+                          items: const [
                             DropDownValueModel(
                                 name: "Self Employed Proffessional",
                                 value: "Self Employed Proffessional"),
@@ -787,7 +786,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
                         CustomDropDownTextField(
                           labelText: 'Residence Type',
                           controller: coaaplicantform02_residenceTypeController,
-                          items: [
+                          items: const [
                             DropDownValueModel(name: "Owned", value: "Owned"),
                             DropDownValueModel(name: "Rented", value: "Rented"),
                             DropDownValueModel(name: "Leased", value: "Leased"),
@@ -916,7 +915,7 @@ class _CoApplicantFormState extends ConsumerState<CoApplicantForm> {
                               ValueKey('loading'), // Key for progress indicator
                             ),
                           )
-                              : Text(
+                              : const Text(
                             'Save Form',
                             style: TextStyle(color: Colors.white),
                           ),

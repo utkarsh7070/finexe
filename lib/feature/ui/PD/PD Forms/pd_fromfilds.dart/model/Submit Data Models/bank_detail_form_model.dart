@@ -13,17 +13,17 @@ class BankDetailsFormModel {
     subCode = json['subCode'];
     message = json['message'];
     error = json['error'];
-    items = json['items'] != null ? new Items.fromJson(json['items']) : null;
+    items = json['items'] != null ? Items.fromJson(json['items']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['subCode'] = this.subCode;
-    data['message'] = this.message;
-    data['error'] = this.error;
-    if (this.items != null) {
-      data['items'] = this.items!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['subCode'] = subCode;
+    data['message'] = message;
+    data['error'] = error;
+    if (items != null) {
+      data['items'] = items!.toJson();
     }
     return data;
   }
@@ -44,18 +44,18 @@ class Items {
     pdId = json['pdId'];
     pdType = json['pdType'];
     bankDetail = json['bankDetail'] != null
-        ? new BankDetail.fromJson(json['bankDetail'])
+        ? BankDetail.fromJson(json['bankDetail'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['customerId'] = this.customerId;
-    data['pdId'] = this.pdId;
-    data['pdType'] = this.pdType;
-    if (this.bankDetail != null) {
-      data['bankDetail'] = this.bankDetail!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['_id'] = sId;
+    data['customerId'] = customerId;
+    data['pdId'] = pdId;
+    data['pdType'] = pdType;
+    if (bankDetail != null) {
+      data['bankDetail'] = bankDetail!.toJson();
     }
     return data;
   }
@@ -87,13 +87,13 @@ class BankDetail {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['accountHolderName'] = this.accountHolderName;
-    data['nameOfBank'] = this.nameOfBank;
-    data['branchName'] = this.branchName;
-    data['accountNo'] = this.accountNo;
-    data['accountType'] = this.accountType;
-    data['IFSCCode'] = this.iFSCCode;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['accountHolderName'] = accountHolderName;
+    data['nameOfBank'] = nameOfBank;
+    data['branchName'] = branchName;
+    data['accountNo'] = accountNo;
+    data['accountType'] = accountType;
+    data['IFSCCode'] = iFSCCode;
     return data;
   }
 }

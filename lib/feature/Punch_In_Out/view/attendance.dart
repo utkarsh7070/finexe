@@ -2,7 +2,6 @@ import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart
 import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 
-import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
@@ -15,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:one_clock/one_clock.dart';
 import '../../base/utils/widget/custom_text_form.dart';
 import '../../ui/HRMS/LeaveManagement/model/leave_request_model.dart';
 import '../viewmodel/leave_request_home_view_model.dart';
@@ -112,7 +110,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                           },
                           child: Text(
                             selectedOption == 'Punch' ? 'Apply Leave >' : 'Punch >',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 18,
                               color: AppColors.primary,
@@ -146,7 +144,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         child: Container(
                           width: MediaQuery.of(context).size.width * 0.85,
                           // height: MediaQuery.of(context).size.height * 0.18,
-                          padding: EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(10),
@@ -169,12 +167,12 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text(
+                                const Text(
                                   "Leave Request",
                                   style: TextStyle(
                                       fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 Padding(
                                   padding: const EdgeInsets.all(10.0),
                                   child: TextFormField(
@@ -190,7 +188,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                 ),
                                 const SizedBox(height: 16),
                                 AppButton(
-                                  textStyle: TextStyle(color: Colors.white),
+                                  textStyle: const TextStyle(color: Colors.white),
                                   label: 'Submit',
       
                                   onTap: () async {
@@ -923,19 +921,19 @@ void showAttendanceSuccessPopup(BuildContext context, String remark) {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  SizedBox(
                     width: displayWidth(context) * 0.4,
                     child: Row(
                       children: [
                         SizedBox(
                           width: displayWidth(context) * 0.1,
                         ),
-                        Icon(
+                        const Icon(
                           Icons.access_time, // Clock Icon
                           color: Colors.black54,
                         ),
-                        SizedBox(width: 6),
-                        Text(
+                        const SizedBox(width: 6),
+                        const Text(
                           'Time',
                           style: TextStyle(
                             fontSize: 18,
@@ -950,7 +948,7 @@ void showAttendanceSuccessPopup(BuildContext context, String remark) {
                     child: Container(
                       child: Text(
                         DateFormat('hh:mm a').format(DateTime.now()),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w300,
                           color: Colors.black45,
@@ -969,19 +967,19 @@ void showAttendanceSuccessPopup(BuildContext context, String remark) {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  SizedBox(
                     width: displayWidth(context) * 0.4,
                     child: Row(
                       children: [
                         SizedBox(
                           width: displayWidth(context) * 0.1,
                         ),
-                        Icon(
+                        const Icon(
                           Icons.location_on, // Clock Icon
                           color: Colors.black54,
                         ),
-                        SizedBox(width: 6),
-                        Text(
+                        const SizedBox(width: 6),
+                        const Text(
                           'Location',
                           style: TextStyle(
                             fontSize: 18,
@@ -995,7 +993,7 @@ void showAttendanceSuccessPopup(BuildContext context, String remark) {
 
                   Expanded(
                     child: Container(
-                      child: Text(
+                      child: const Text(
                         'Out Side', // Replace with dynamic time if needed
                         style: TextStyle(
                           fontSize: 16,
@@ -1053,19 +1051,19 @@ void showAttendanceSuccessPopup(BuildContext context, String remark) {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  SizedBox(
                     width: displayWidth(context) * 0.4,
                     child: Row(
                       children: [
                         SizedBox(
                           width: displayWidth(context) * 0.1,
                         ),
-                        Icon(
+                        const Icon(
                           Icons.location_pin, // Clock Icon
                           color: Colors.black54,
                         ),
-                        SizedBox(width: 6),
-                        Text(
+                        const SizedBox(width: 6),
+                        const Text(
                           'Remark',
                           style: TextStyle(
                             fontSize: 18,
@@ -1080,7 +1078,7 @@ void showAttendanceSuccessPopup(BuildContext context, String remark) {
                     child: Container(
                       child: Text(
                         remark,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w300,
                           color: Colors.black45,

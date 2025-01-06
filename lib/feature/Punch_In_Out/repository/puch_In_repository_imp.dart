@@ -45,18 +45,10 @@ class PunchInRepositoryImp extends PunchInRepository {
       Response response =
       await dio.get(Api.punchIn,queryParameters: queryParam, options: Options(headers: token));
       log('punchIn api: ${Api.punchIn.toString()}');
-
-      // if (kDebugMode) {
-      //   print(response.data);
-      // }
-      // if (response.statusCode == 500) {
-      //   if (kDebugMode) {
-      //     print('500 error');
-      //   }
-      // } else if (response.statusCode == 404) {
-      //   if (kDebugMode) {}
-      // } else if (response.statusCode == 200){
-        return response;
+      if(response.statusCode == 200){
+        print(response.statusMessage);
+      }
+      return response;
       // }
     } catch (exception) {
       ExceptionHandler().handleError(exception);

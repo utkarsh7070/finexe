@@ -1,17 +1,12 @@
 import 'dart:async';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:internet_speed_meter/internet_speed_meter.dart';
-
- 
 
 class ConnectivityBuilder extends ConsumerStatefulWidget {
   final Widget Function(BuildContext context, List<ConnectivityResult> result,
       )
-      builder;
+  builder;
   const ConnectivityBuilder({super.key, required this.builder,});
 
   @override
@@ -19,7 +14,6 @@ class ConnectivityBuilder extends ConsumerStatefulWidget {
 }
 
 class _ConnectivityBuilderState extends ConsumerState<ConnectivityBuilder> {
-   
 
   List<ConnectivityResult> _connectivityresult = [ConnectivityResult.none];
   //  final InternetSpeedMeter _internetSpeedMeterPlugin = InternetSpeedMeter();
@@ -27,16 +21,16 @@ class _ConnectivityBuilderState extends ConsumerState<ConnectivityBuilder> {
   @override
   void initState() {
 
+
     super.initState();
     // initSpeedMeter();
-
     _initializeConectivity();
     Connectivity().onConnectivityChanged.listen((result) {
-         if (mounted) {
-      setState(() {
-        _connectivityresult = result;
-      });
-         }
+      if (mounted) {
+        setState(() {
+          _connectivityresult = result;
+        });
+      }
     });
   }
 
@@ -67,18 +61,46 @@ class _ConnectivityBuilderState extends ConsumerState<ConnectivityBuilder> {
 
 
 
+//   void initSpeedMeter() async {
+//     try {
+//       _internetSpeedMeterPlugin.getCurrentInternetSpeed().listen((event) {
+//            if (mounted) {
+//         setState(() {
+//           speed = event;
+//         });}
+//         // Since we're using Riverpod, we can update the speed provider here.
+//         // ref.read(internetSpeed.notifier).state = event;
+//       });
+//     } on PlatformException {
+//       if (mounted) {
+//         setState(() {
+//           speed = 'Not find';
+//         });}
+// //
+
+
+//       // Handle any errors related to the speed meter
+//       // ref.read(internetSpeed.notifier).state = 'Error: Unable to measure speed';
+//     }
+//   }
+
+
+
+
+
+
   Future<void> _initializeConectivity() async {
     _connectivityresult = await Connectivity().checkConnectivity();
-       if (mounted) {
-    setState(() {});}
+    if (mounted) {
+      setState(() {});}
   }
+
 
   @override
   Widget build(BuildContext context) {
     return widget.builder(context, _connectivityresult);
   }
 }
-
 
 
 // import 'dart:async';
@@ -124,20 +146,22 @@ class _ConnectivityBuilderState extends ConsumerState<ConnectivityBuilder> {
 //     setState(() {});
 //   }
 
-  // void initSpeedMeter() async {
-  //   try {
-  //     _internetSpeedMeterPlugin.getCurrentInternetSpeed().listen((event) {
-  //       setState(() {
-  //         _currentSpeed = event;
-  //       });
-  //       print('Speed Event: $event');
-  //     });
-  //   } on PlatformException {
-  //     setState(() {
-  //       _currentSpeed = 'Failed to get currentSpeed.';
-  //     });
-  //   }
-  // }
+
+// void initSpeedMeter() async {
+//   try {
+//     _internetSpeedMeterPlugin.getCurrentInternetSpeed().listen((event) {
+//       setState(() {
+//         _currentSpeed = event;
+//       });
+//       print('Speed Event: $event');
+//     });
+//   } on PlatformException {
+//     setState(() {
+//       _currentSpeed = 'Failed to get currentSpeed.';
+//     });
+//   }
+// }
+
 
 //   @override
 //   Widget build(BuildContext context) {

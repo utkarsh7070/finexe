@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
@@ -9,10 +8,9 @@ import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_upda
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/samagra_details_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';import 'package:finexe/feature/base/utils/general/pref_utils.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 
 
 import '../model/Submit Data Models/samagra_details_model.dart';
@@ -226,7 +224,7 @@ class ApplicantState {
     XFile? image,
   }) {
     return ApplicantState(
-      imageLoading: imageloading ?? this.imageLoading,
+      imageLoading: imageloading ?? imageLoading,
       isLoading: isLoading ?? this.isLoading,
       selectedDate: selectedDate ?? this.selectedDate,
       image: image ?? this.image,
@@ -261,7 +259,7 @@ class SamagraFormDetailsProvider {
 
         // Parse the response into the GetApplicantDetailsModel
          details = SamagraDetailsModel.fromJson(responseData);
-        print('Samagra details:: ${details}');
+        print('Samagra details:: $details');
         if (details.items != null) {
           return details;
         } else {
@@ -367,10 +365,6 @@ class SecondImageNotifier extends StateNotifier<XFile?> {
   Future<String> uploadImage(String image) async {
     String? token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY";
-
-    if (token == null) {
-      throw Exception('Token is missing. Please log in again.');
-    }
 
     // state = state.copyWith(isLoading: true);
 

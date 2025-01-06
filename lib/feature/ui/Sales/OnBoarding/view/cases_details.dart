@@ -2,7 +2,6 @@ import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/namespase/display_size.dart';
 import '../../SalesOnBoardingForm/view/Sales_on_boarding_form/applicant_form/appliction_form.dart';
@@ -10,7 +9,6 @@ import '../../SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/
 import '../../SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/dialog/form_completed_dialog.dart';
 import '../../SalesOnBoardingForm/view/Sales_on_boarding_form/guarantor_form/guarantor_form_1.dart';
 import '../model/show_cashes_status_model.dart';
-import '../view_model/cashfree_payment_view_model.dart';
 import '../view_model/showing_cash_status_view_model.dart';
 
 /*class CasesDetails extends ConsumerWidget{

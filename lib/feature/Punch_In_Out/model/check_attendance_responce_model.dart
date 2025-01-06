@@ -11,7 +11,7 @@ class CheckAttendanceResponseModel {
   @JsonKey(name: "message")
   String message;
   @JsonKey(name: "error")
-  String error;
+  String? error;
   @JsonKey(name: "items")
   Items items;
 

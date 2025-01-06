@@ -343,13 +343,8 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                   AppButton(
                     textStyle: AppStyles.buttonLightTextStyle,
                     width: displayWidth(context),
-                    isDisabled: !paymentState.isButtonVissible,
+                    isDisabled: paymentState.isButtonVissible,
                     onTap: () {
-                      if (paymentViewModel.dropDownControllerProvider
-                              .dropDownValue?.value !=
-                          null) {
-                        // print(
-                        //     ' value  ${paymentViewModel.validateForm(paymentViewModel.dropDownControllerProvider.dropDownValue?.value,context)}');
                         final isValid = paymentViewModel.validateForm(
                             paymentViewModel.dropDownControllerProvider
                                 .dropDownValue?.value,context);
@@ -358,12 +353,9 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                             (value) {
 
                               paymentViewModel.updatePhotoValue(context);
-                              // ref.invalidate(updateVisitViewModelProvider);
                             },
                           );
-                          // paymentViewModel.updatePhotoValue('',context);
                         }
-                      }
                     },
                     label: 'Submit',
                   )

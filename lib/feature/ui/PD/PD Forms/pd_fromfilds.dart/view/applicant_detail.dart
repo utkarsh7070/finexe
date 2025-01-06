@@ -1,19 +1,12 @@
-import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
-import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
-import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
-import 'package:finexe/feature/base/utils/widget/app_text_filed_login.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
-import 'package:finexe/feature/base/utils/widget/upload_box.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/simple_dropdown.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/view_model.dart/applicant_view_model.dart';
 // import 'package:finexe/feature/ui/PD/view/common%20imagePicker/image_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,7 +16,7 @@ import '../view_model.dart/applicant_view_model.dart';
 class ApplicantForm extends ConsumerStatefulWidget {
   // const ApplicantForm({super.key});
   final String customerId;
-  ApplicantForm({required this.customerId});
+  const ApplicantForm({super.key, required this.customerId});
 
   @override
   _ApplicantFormState createState() => _ApplicantFormState();
@@ -78,7 +71,7 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
 
   @override
   Widget build(BuildContext context) {
-    final _isExpanded = ref.watch(isAppExpandedProvider);
+    final isExpanded = ref.watch(isAppExpandedProvider);
     final applicantDetails = ref.watch(applicationDetailsProvider(widget.customerId));
     final appState = ref.watch(pdapplicantViewModelProvider);
     // final applicantImage = ref.watch(applicantImageProvider);
@@ -99,7 +92,7 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                 ref.refresh(applicationDetailsProvider(widget.customerId));
               }
             },
-            initiallyExpanded: _isExpanded,
+            initiallyExpanded: isExpanded,
             children: <Widget>[
               applicantDetails.when(
                   data: (applicant) {
@@ -141,7 +134,7 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                           ),
                         ),
 
-                        Text(
+                        const Text(
                           'Applicant Image',
                           // textAlign: TextAlign.left,
                         ),
@@ -166,7 +159,7 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                         CustomDropDownTextField(
                           labelText: 'Applicant Type',
                           controller: applicantTypeController,
-                          items: [
+                          items: const [
                             DropDownValueModel(name: "Individual", value: "Individual"),
                             DropDownValueModel(
                                 name: "Non Individual", value: "Non Individual"),
@@ -179,7 +172,7 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                         CustomDropDownTextField(
                           labelText: 'Business Type',
                           controller: businessTypeController,
-                          items: [
+                          items: const [
                             DropDownValueModel(
                                 name: "Self Employed Proffessional",
                                 value: "Self Employed Proffessional"),
@@ -378,7 +371,7 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
 
                         // Years at Current Address
                         CustomTextFormField(
-                          textInputType: TextInputType.numberWithOptions(),
+                          textInputType: const TextInputType.numberWithOptions(),
                           controller: yearsAtCurrentAddressController,
                           width: displayWidth(context),
                           inerHint: 'Years at Current Address',
@@ -409,7 +402,7 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                         CustomDropDownTextField(
                           labelText: 'Residence Type',
                           controller: residenceTypeController,
-                          items: [
+                          items: const [
                             DropDownValueModel(name: "Owned", value: "Owned"),
                             DropDownValueModel(name: "Rented", value: "Rented"),
                             DropDownValueModel(name: "Leased", value: "Leased"),
@@ -507,7 +500,7 @@ class _ApplicantFormState extends ConsumerState<ApplicantForm> {
                                     'loading'), // Key for progress indicator
                               ),
                             )
-                                : Text(
+                                : const Text(
                               'Save Form',
                               style: TextStyle(color: Colors.white),
                             ),

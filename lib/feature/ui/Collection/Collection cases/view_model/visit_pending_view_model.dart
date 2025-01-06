@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:bson/bson.dart';
@@ -13,6 +12,7 @@ import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_upda
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+
 // import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -20,7 +20,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio.dart';
 import '../../../../base/api/dio_exception.dart';
@@ -31,7 +30,7 @@ import '../model/visit_update_upload_image_responce_model.dart';
 import 'package:path/path.dart' as path;
 
 final updateVisitDropDown = StateProvider<List<DropDownValueModel>>(
-  (ref) {
+      (ref) {
     return [
       const DropDownValueModel(name: 'None', value: "none"),
       const DropDownValueModel(
@@ -45,7 +44,7 @@ final updateVisitDropDown = StateProvider<List<DropDownValueModel>>(
 );
 
 final modeOfCollectionDropDown = StateProvider<List<DropDownValueModel>>(
-  (ref) {
+      (ref) {
     return [
       const DropDownValueModel(name: 'Partner', value: "partner"),
       const DropDownValueModel(name: 'Online', value: "online"),
@@ -55,7 +54,7 @@ final modeOfCollectionDropDown = StateProvider<List<DropDownValueModel>>(
 );
 
 final bankDropDown = StateProvider<List<DropDownValueModel>>(
-  (ref) {
+      (ref) {
     return [
       const DropDownValueModel(name: 'Hdfc', value: "hdfc"),
       const DropDownValueModel(name: 'New Bank', value: "newBank"),
@@ -65,7 +64,7 @@ final bankDropDown = StateProvider<List<DropDownValueModel>>(
 );
 
 final creditDropDown = StateProvider<List<DropDownValueModel>>(
-  (ref) {
+      (ref) {
     return [
       const DropDownValueModel(name: 'Roshan', value: "roshan"),
       const DropDownValueModel(name: 'Sagar', value: "sagar"),
@@ -77,41 +76,41 @@ final creditDropDown = StateProvider<List<DropDownValueModel>>(
 //--------------------drop down----------------------------------
 
 final paymentStatusFocusProviderFocusProvider =
-    StateNotifierProvider<PaymentStatusFocusProvider, Map<String, bool>>((ref) {
+StateNotifierProvider<PaymentStatusFocusProvider, Map<String, bool>>((ref) {
   return PaymentStatusFocusProvider();
 });
 
 final closuerFocusProvider =
-    StateNotifierProvider<ClosuerFocusProvider, Map<String, bool>>((ref) {
+StateNotifierProvider<ClosuerFocusProvider, Map<String, bool>>((ref) {
   return ClosuerFocusProvider();
 });
 
 final closuerViewModelProvider =
-    StateNotifierProvider<ClosuerViewModel, ClosuerModel>((ref) {
+StateNotifierProvider<ClosuerViewModel, ClosuerModel>((ref) {
   final dio = ref.watch(dioProvider);
   return ClosuerViewModel(dio);
 });
 
 final updateEmiFocusProvider =
-    StateNotifierProvider<UpdateEmiFocusProvider, Map<String, bool>>((ref) {
+StateNotifierProvider<UpdateEmiFocusProvider, Map<String, bool>>((ref) {
   return UpdateEmiFocusProvider();
 });
 
 final updateEmiViewModelProvider =
-    StateNotifierProvider.autoDispose<UpdateEmiViewModel, UpdateEmiModel>(
+StateNotifierProvider.autoDispose<UpdateEmiViewModel, UpdateEmiModel>(
         (ref) {
-  final dio = ref.read(dioProvider);
-  return UpdateEmiViewModel(dio);
-});
+      final dio = ref.read(dioProvider);
+      return UpdateEmiViewModel(dio);
+    });
 
 final updateVisitViewModelProvider =
-    StateNotifierProvider.autoDispose<UpdateVisitViewModel, UpdateVisitModel>(
+StateNotifierProvider.autoDispose<UpdateVisitViewModel, UpdateVisitModel>(
         (ref) {
-  final dio = ref.read(dioProvider);
+      final dio = ref.read(dioProvider);
 
-  final position = ref.watch(currentLocationProvider);
-  return UpdateVisitViewModel(dio, position);
-});
+      final position = ref.watch(currentLocationProvider);
+      return UpdateVisitViewModel(dio, position);
+    });
 
 class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
   final Dio dio;
@@ -120,7 +119,7 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
 
   TextEditingController dateController = TextEditingController();
   final SingleValueDropDownController dropDownControllerProvider =
-      SingleValueDropDownController();
+  SingleValueDropDownController();
   final ImagePicker picker = ImagePicker();
 
   UpdateVisitViewModel(this.dio, this.position) : super(UpdateVisitModel());
@@ -137,8 +136,8 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       final isValid = _validateTransactionImage(pickedFile.path);
-      state = state.copyWith(photoFile: pickedFile.path,isPhotoFile: isValid);
-     final imagePath = await compressImage(File(pickedFile.path));
+      state = state.copyWith(photoFile: pickedFile.path, isPhotoFile: isValid);
+      final imagePath = await compressImage(File(pickedFile.path));
       await uploadImage(imagePath!.path);
       return pickedFile;
     }
@@ -156,7 +155,6 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     return compressedBytes;
   }
 
-
   Future<void> uploadImage(String image) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
@@ -172,7 +170,7 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
         data: formData, options: Options(headers: {"token": token}));
     if (response.statusCode == 200) {
       VisitUpdateUploadImageResponseModel imageResponseModel =
-          VisitUpdateUploadImageResponseModel.fromJson(response.data);
+      VisitUpdateUploadImageResponseModel.fromJson(response.data);
       state = state.copyWith(isLoading: false);
       state = state.copyWith(transitionImage: imageResponseModel.items.image);
       if (kDebugMode) {
@@ -180,7 +178,6 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
         imageApi = imageResponseModel.items.image;
         print(imageApi);
       }
-      
     } else {
       state = state.copyWith(isLoading: false);
       throw Exception('Failed to load data');
@@ -214,18 +211,25 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
     } else {}
   }
 
-  bool validateForm(String value, BuildContext context) {
-    switch (value) {
-      case 'CustomerWillPayEmi':
-        return validateCustomerPayForm(context);
-      case 'CustomerWillNotPayEmi':
-        return validateCustomerNotPay(context);
-      case 'CustomerNotContactable':
-        return validateCustomerNotContactable(context);
-      case '':
-        return false;
-      default:
-        return false;
+  bool validateForm(String? value, BuildContext context) {
+    print(value);
+    if (value != null) {
+      switch (value) {
+        case 'CustomerWillPayEmi':
+          return validateCustomerPayForm(context);
+        case 'CustomerWillNotPayEmi':
+          return validateCustomerNotPay(context);
+        case 'CustomerNotContactable':
+          return validateCustomerNotContactable(context);
+        case '':
+          return false;
+        default:
+          return false;
+      }
+    } else {
+      showCustomSnackBar(
+          context, 'Please Select Payment Status', Colors.red.shade200);
+      return false;
     }
   }
 
@@ -278,8 +282,7 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
         throw Exception('Failed to load data');
       }
     } catch (e) {
-      DioExceptions.fromDioError(e as DioException, context);
-      showCustomSnackBar(context, 'something went wrong', Colors.red);
+      ExceptionHandler().handleError(e);
     } finally {
       state = state.copyWith(isButtonVissible: false);
       state = state.copyWith(isLoading: false);
@@ -374,7 +377,7 @@ class UpdateVisitViewModel extends StateNotifier<UpdateVisitModel> {
           context, 'Image is not uploaded in server', Colors.red.shade200);
     }
     state = state.copyWith(
-        // isPaymentStatusValid: isPaymentStatusValid,
+      // isPaymentStatusValid: isPaymentStatusValid,
         isReasonValid: isReasonValid,
         isSolutionValid: isSolutionValid,
         isDateValid: isDateValid,
@@ -443,11 +446,11 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
   UpdateEmiViewModel(this.dio) : super(UpdateEmiModel());
 
   final SingleValueDropDownController modeOfCollectionController =
-      SingleValueDropDownController();
+  SingleValueDropDownController();
   final SingleValueDropDownController bankNameController =
-      SingleValueDropDownController();
+  SingleValueDropDownController();
   final SingleValueDropDownController creditPersonController =
-      SingleValueDropDownController();
+  SingleValueDropDownController();
   final ImagePicker picker = ImagePicker();
   String? imageApi = '';
 
@@ -545,8 +548,8 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         return false;
       default:
         return false;
-    }}
-
+    }
+  }
 
   //   print('Update EMI Input -${requestModel.toJson()}');
   //   String? token = speciality.getToken();
@@ -587,11 +590,9 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
   //   }
   // }*/
 
-
-  Future<void> updateEmiSubmitButton(
-      {required ItemsDetails detail,
-      required BuildContext context,
-      required WidgetRef ref}) async {
+  Future<void> updateEmiSubmitButton({required ItemsDetails detail,
+    required BuildContext context,
+    required WidgetRef ref}) async {
     state = state.copyWith(isButtonVissible: true);
     if (state.isLoading == true) {
       print('Second time click ');
@@ -600,7 +601,9 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     state = state.copyWith(isLoading: true);
     if (kDebugMode) {
       print(
-          'Ld o:-${detail.ld}, customerName:- ${detail.customerName}, mobile:- ${detail.mobile}, commonId:- ${state.commonId}, image:- ${state.transactionImage}');
+          'Ld o:-${detail.ld}, customerName:- ${detail
+              .customerName}, mobile:- ${detail.mobile}, commonId:- ${state
+              .commonId}, image:- ${state.transactionImage}');
     }
     ObjectId? result1 = parseObjectId(state.commonId);
     UpdateEmiSubmitRequestModel requestModel = UpdateEmiSubmitRequestModel(
@@ -637,26 +640,16 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
 
       var responseData = response.data;
       print('Emi Paid response: $responseData');
-      var message = responseData['message'];
 
-      if (response.statusCode == 200 || responseData['status'] == true) {
+      if (response.statusCode == 200) {
         showCustomSnackBar(context, 'Update EMI Submitted', Colors.green);
         updatePhotoValue(context);
         if (kDebugMode) {
           print('EmiUpdateResponse ${response.data}');
         }
-      } else if (response.statusCode == 400 ||
-          responseData['status'] == false) {
-// isLoading = false;
-        showCustomSnackBar(context, message, Colors.red);
-        print('Emi paid message ${response.statusMessage}');
-      } else {
-        throw Exception('Failed to load data');
-// return false;
       }
     } catch (e) {
-      showCustomSnackBar(context, 'Something went wrong', Colors.red);
-      rethrow;
+      ExceptionHandler().handleError(e);
     } finally {
       state = state.copyWith(isButtonVissible: false);
       state = state.copyWith(isLoading: false);
@@ -706,37 +699,42 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     var formData = FormData.fromMap({
       'image': await MultipartFile.fromFile(image),
     });
-    print(image);
-    // final String token =
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
-    final response = await dio.post(Api.uploadImageCollection,
-        data: formData, options: Options(headers: {"token": token}));
-    if (response.statusCode == 200) {
-      print('image url response $response');
-      VisitUpdateUploadImageResponseModel imageResponseModel =
-          VisitUpdateUploadImageResponseModel.fromJson(response.data);
-      state = state.copyWith(isLoading: false);
-      state = state.copyWith(transactionImage: imageResponseModel.items.image);
-      if (kDebugMode) {
-        print('image url ${imageResponseModel.items.image}');
-        print('image url1 ${response.data}');
+    if (kDebugMode) {
+      print(image);
+    }
+    try {
+      final response = await dio.post(Api.uploadImageCollection,
+          data: formData, options: Options(headers: {"token": token}));
+      if (response.statusCode == 200) {
+        print('image url response $response');
+        VisitUpdateUploadImageResponseModel imageResponseModel =
+        VisitUpdateUploadImageResponseModel.fromJson(response.data);
+        state = state.copyWith(isLoading: false);
+        state =
+            state.copyWith(transactionImage: imageResponseModel.items.image);
+        if (kDebugMode) {
+          print('image url ${imageResponseModel.items.image}');
+          print('image url1 ${response.data}');
+        }
+        imageApi = imageResponseModel.items.image;
+        print(imageApi);
       }
-
-      imageApi = imageResponseModel.items.image;
-      print(imageApi);
-    } else {
+    } catch (e) {
+      ExceptionHandler().handleError(e);
+    } finally {
       state = state.copyWith(isLoading: false);
-      throw Exception('Failed to load data');
     }
   }
 
-  Future<void> openFeilds(String id) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
-    state = state.copyWith(modeOfCollectionId: id);
+
+Future<void> openFeilds(String id) async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  String? token = sharedPreferences.getString('token');
+  state = state.copyWith(modeOfCollectionId: id);
+  if (kDebugMode) {
     print('modeOfCollectionId id $id');
-    // const String token =
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
+  }
+  try{
     Response response = await dio.get(Api.getModeById,
         queryParameters: {"modeOfCollectionId": id},
         options: Options(headers: {"token": token}));
@@ -745,7 +743,7 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
     if (response.statusCode == 200) {
       print(response.data);
       GetModeByIdResponseModel apiResponseList =
-          GetModeByIdResponseModel.fromJson(response.data);
+      GetModeByIdResponseModel.fromJson(response.data);
       print("select ${apiResponseList.message}");
       List<DropDownValueModel> list = [];
       print(apiResponseList);
@@ -754,10 +752,9 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
           isExtraFormOpen: apiResponseList.items.modeDetail.extraForm,
           isEmailVisible: apiResponseList.items.modeDetail.email,
           isTransactionImageVisible:
-              apiResponseList.items.modeDetail.transactionImage,
+          apiResponseList.items.modeDetail.transactionImage,
           isTransactionIdVisible:
-              apiResponseList.items.modeDetail.transactionId);
-
+          apiResponseList.items.modeDetail.transactionId);
       if (apiResponseList.items.detail != null) {
         for (final drop in apiResponseList.items.detail ?? []) {
           list.add(DropDownValueModel(name: '${drop.title}', value: drop.id));
@@ -765,39 +762,41 @@ class UpdateEmiViewModel extends StateNotifier<UpdateEmiModel> {
         state = state.copyWith(subDropdown: list);
       }
     }
-  }
-
-  void updateTransactionId(String value) {
-    final isValid = _validateTransactionId(value);
-    state = state.copyWith(transactionId: value, isTransactionId: isValid);
-  }
-
-  void updateEmiAmount(String value) {
-    final isValid = _validateEmiAmount(value);
-    state = state.copyWith(emiAmount: value, isEmiAmount: isValid);
-  }
-
-  void updateTransactionImage(String value) {
-    final isValid = _validateTransactionImage(value);
-    state =
-        state.copyWith(transactionImage: value, isTransactionImage: isValid);
-  }
-
-  void updateRemark(String value) {
-    final isValid = _validateRemark(value);
-    state = state.copyWith(remark: value, isRemark: isValid);
-  }
-
-  void updateBankName(String value) {
-    final isValid = _validateBankName(value);
-    state = state.copyWith(bankName: value, isBankName: isValid);
-  }
-
-  void updateReceipt(String value) {
-    final isValid = _validateReceipt(value);
-    state = state.copyWith(receipt: value, isReceipt: isValid);
+  }catch(e){
+    ExceptionHandler().handleError(e);
   }
 }
+
+void updateTransactionId(String value) {
+  final isValid = _validateTransactionId(value);
+  state = state.copyWith(transactionId: value, isTransactionId: isValid);
+}
+
+void updateEmiAmount(String value) {
+  final isValid = _validateEmiAmount(value);
+  state = state.copyWith(emiAmount: value, isEmiAmount: isValid);
+}
+
+void updateTransactionImage(String value) {
+  final isValid = _validateTransactionImage(value);
+  state =
+      state.copyWith(transactionImage: value, isTransactionImage: isValid);
+}
+
+void updateRemark(String value) {
+  final isValid = _validateRemark(value);
+  state = state.copyWith(remark: value, isRemark: isValid);
+}
+
+void updateBankName(String value) {
+  final isValid = _validateBankName(value);
+  state = state.copyWith(bankName: value, isBankName: isValid);
+}
+
+void updateReceipt(String value) {
+  final isValid = _validateReceipt(value);
+  state = state.copyWith(receipt: value, isReceipt: isValid);
+}}
 
 class ClosuerViewModel extends StateNotifier<ClosuerModel> {
   final Dio dio;
@@ -853,8 +852,12 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
 
   Future<void> visitClosureFormSubmit(BuildContext context,
       {required ItemsDetails data}) async {
+    if (state.isLoading == true) {
+      return;
+    }
+    state = state.copyWith(isLoading: true);
     VisitClosureSubmitRequestModel requestModel =
-        VisitClosureSubmitRequestModel(
+    VisitClosureSubmitRequestModel(
       ld: data.ld!,
       customerName: data.customerName!,
       mobileNo: int.parse(data.mobile!),
@@ -864,22 +867,24 @@ class ClosuerViewModel extends StateNotifier<ClosuerModel> {
     );
 
     String? toke = speciality.getToken();
-    /*final String token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
-    */
-    final response = await dio.post(Api.visitCloseFormSubmit,
-        data: requestModel.toJson(),
-        options: Options(headers: {"token": toke}));
-    print(response.statusMessage);
-    print(response.statusCode);
-    if (response.statusCode == 200) {
-      print('VisitClosureResponse ${response.data}');
-      showCustomSnackBar(context, 'Closure submitted', Colors.green);
+    try {
+      final response = await dio.post(Api.visitCloseFormSubmit,
+          data: requestModel.toJson(),
+          options: Options(headers: {"token": toke}));
       if (kDebugMode) {
-        print('VisitClosureResponse ${response.data}');
+        print(response.statusMessage);
+        print(response.statusCode);
       }
-    } else {
-      throw Exception('Failed to load data');
+      if (response.statusCode == 200) {
+        showCustomSnackBar(context, 'Closure submitted', Colors.green);
+        if (kDebugMode) {
+          print('VisitClosureResponse ${response.data}');
+        }
+      }
+    } catch (e) {
+      ExceptionHandler().handleError(e);
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
   }
 }
@@ -911,26 +916,28 @@ class PaymentStatusFocusProvider extends StateNotifier<Map<String, bool>> {
         reasonFocusNode = FocusNode(),
         solutionFocusNode = FocusNode(),
         super({
-          'paymentStatusFocusNode': false,
-          'paymentAmountFocusNode': false,
-          'dateFocusNode': false,
-          'reasonFocusNode': false,
-          'solutionFocusNode': false,
-        }) {
+        'paymentStatusFocusNode': false,
+        'paymentAmountFocusNode': false,
+        'dateFocusNode': false,
+        'reasonFocusNode': false,
+        'solutionFocusNode': false,
+      }) {
     paymentStatusFocusNode.addListener(
-      () => _focusListener('paymentStatusFocusNode', paymentStatusFocusNode),
+          () =>
+          _focusListener('paymentStatusFocusNode', paymentStatusFocusNode),
     );
     paymentAmountFocusNode.addListener(
-      () => _focusListener('paymentAmountFocusNode', paymentAmountFocusNode),
+          () =>
+          _focusListener('paymentAmountFocusNode', paymentAmountFocusNode),
     );
     dateFocusNode.addListener(
-      () => _focusListener('dateFocusNode', dateFocusNode),
+          () => _focusListener('dateFocusNode', dateFocusNode),
     );
     reasonFocusNode.addListener(
-      () => _focusListener('reasonFocusNode', reasonFocusNode),
+          () => _focusListener('reasonFocusNode', reasonFocusNode),
     );
     solutionFocusNode.addListener(
-      () => _focusListener('solutionFocusNode', solutionFocusNode),
+          () => _focusListener('solutionFocusNode', solutionFocusNode),
     );
   }
 
@@ -944,19 +951,21 @@ class PaymentStatusFocusProvider extends StateNotifier<Map<String, bool>> {
   @override
   void dispose() {
     paymentStatusFocusNode.removeListener(
-      () => _focusListener('paymentStatusFocusNode', paymentStatusFocusNode),
+          () =>
+          _focusListener('paymentStatusFocusNode', paymentStatusFocusNode),
     );
     paymentAmountFocusNode.removeListener(
-      () => _focusListener('paymentAmountFocusNode', paymentAmountFocusNode),
+          () =>
+          _focusListener('paymentAmountFocusNode', paymentAmountFocusNode),
     );
     dateFocusNode.removeListener(
-      () => _focusListener('dateFocusNode', dateFocusNode),
+          () => _focusListener('dateFocusNode', dateFocusNode),
     );
     reasonFocusNode.removeListener(
-      () => _focusListener('reasonFocusNode', reasonFocusNode),
+          () => _focusListener('reasonFocusNode', reasonFocusNode),
     );
     solutionFocusNode.removeListener(
-      () => _focusListener('solutionFocusNode', solutionFocusNode),
+          () => _focusListener('solutionFocusNode', solutionFocusNode),
     );
     paymentStatusFocusNode.dispose();
     paymentAmountFocusNode.dispose();
@@ -978,18 +987,20 @@ class ClosuerFocusProvider extends StateNotifier<Map<String, bool>> {
         dateClosuerFocusNode = FocusNode(),
         reasonClosuerFocusNode = FocusNode(),
         super({
-          'amountClosuerFocusNode': false,
-          'dateClosuerFocusNode': false,
-          'reasonClosuerFocusNode': false,
-        }) {
+        'amountClosuerFocusNode': false,
+        'dateClosuerFocusNode': false,
+        'reasonClosuerFocusNode': false,
+      }) {
     amountClosuerFocusNode.addListener(
-      () => _focusListener('amountClosuerFocusNode', amountClosuerFocusNode),
+          () =>
+          _focusListener('amountClosuerFocusNode', amountClosuerFocusNode),
     );
     dateClosuerFocusNode.addListener(
-      () => _focusListener('dateClosuerFocusNode', dateClosuerFocusNode),
+          () => _focusListener('dateClosuerFocusNode', dateClosuerFocusNode),
     );
     reasonClosuerFocusNode.addListener(
-      () => _focusListener('reasonClosuerFocusNode', reasonClosuerFocusNode),
+          () =>
+          _focusListener('reasonClosuerFocusNode', reasonClosuerFocusNode),
     );
   }
 
@@ -1003,13 +1014,15 @@ class ClosuerFocusProvider extends StateNotifier<Map<String, bool>> {
   @override
   void dispose() {
     amountClosuerFocusNode.removeListener(
-      () => _focusListener('amountClosuerFocusNode', amountClosuerFocusNode),
+          () =>
+          _focusListener('amountClosuerFocusNode', amountClosuerFocusNode),
     );
     dateClosuerFocusNode.removeListener(
-      () => _focusListener('dateClosuerFocusNode', dateClosuerFocusNode),
+          () => _focusListener('dateClosuerFocusNode', dateClosuerFocusNode),
     );
     reasonClosuerFocusNode.removeListener(
-      () => _focusListener('reasonClosuerFocusNode', reasonClosuerFocusNode),
+          () =>
+          _focusListener('reasonClosuerFocusNode', reasonClosuerFocusNode),
     );
     amountClosuerFocusNode.dispose();
     dateClosuerFocusNode.dispose();
@@ -1101,16 +1114,18 @@ class ClosuerModel {
   final bool isAmount;
   final bool isDate;
   final bool isReason;
+  final bool isLoading;
 
-  ClosuerModel(
-      {this.amount = '',
-      this.date = '',
-      this.reason = '',
-      this.isAmount = true,
-      this.isDate = true,
-      this.isReason = true});
+  ClosuerModel({this.isLoading = false,
+    this.amount = '',
+    this.date = '',
+    this.reason = '',
+    this.isAmount = true,
+    this.isDate = true,
+    this.isReason = true});
 
   ClosuerModel copyWith({
+    bool? isLoading,
     String? amount,
     String? reason,
     String? date,
@@ -1119,6 +1134,7 @@ class ClosuerModel {
     bool? isReason,
   }) {
     return ClosuerModel(
+        isLoading: isLoading ?? this.isLoading,
         amount: amount ?? this.amount,
         date: date ?? this.date,
         reason: reason ?? this.reason,
@@ -1156,33 +1172,32 @@ class UpdateEmiModel {
   final bool isEmailVisible;
   final String modeTitle;
 
-  UpdateEmiModel(
-      {this.isButtonVissible = false,
-      this.isTransactionImageVisible = false,
-      this.isReceiptVisible = false,
-      this.isEmailVisible = false,
-      this.isTransactionIdVisible = false,
-      this.modeOfCollectionId = '',
-      this.commonId = '',
-      this.photoFile = '',
-      this.subDropdown = const [],
-      this.dropdownDetail = '',
-      this.modeTitle = '',
-      this.isEmail = false,
-      this.isExtraFormOpen = false,
-      this.emiAmount = '',
-      this.transactionId = '',
-      this.transactionImage = '',
-      this.remark = '',
-      this.bankName = '',
-      this.receipt = null,
-      this.isEmiAmount = true,
-      this.isTransactionId = true,
-      this.isTransactionImage = false,
-      this.isRemark = true,
-      this.isBankName = true,
-      this.isReceipt = true,
-      this.isLoading = false});
+  UpdateEmiModel({this.isButtonVissible = false,
+    this.isTransactionImageVisible = false,
+    this.isReceiptVisible = false,
+    this.isEmailVisible = false,
+    this.isTransactionIdVisible = false,
+    this.modeOfCollectionId = '',
+    this.commonId = '',
+    this.photoFile = '',
+    this.subDropdown = const [],
+    this.dropdownDetail = '',
+    this.modeTitle = '',
+    this.isEmail = false,
+    this.isExtraFormOpen = false,
+    this.emiAmount = '',
+    this.transactionId = '',
+    this.transactionImage = '',
+    this.remark = '',
+    this.bankName = '',
+    this.receipt,
+    this.isEmiAmount = true,
+    this.isTransactionId = true,
+    this.isTransactionImage = false,
+    this.isRemark = true,
+    this.isBankName = true,
+    this.isReceipt = true,
+    this.isLoading = false});
 
   UpdateEmiModel copyWith({
     bool? isButtonVissible,
@@ -1217,9 +1232,9 @@ class UpdateEmiModel {
         isEmailVisible: isEmailVisible ?? this.isEmailVisible,
         isReceiptVisible: isReceiptVisible ?? this.isReceiptVisible,
         isTransactionIdVisible:
-            isTransactionIdVisible ?? this.isTransactionIdVisible,
+        isTransactionIdVisible ?? this.isTransactionIdVisible,
         isTransactionImageVisible:
-            isTransactionImageVisible ?? this.isTransactionImageVisible,
+        isTransactionImageVisible ?? this.isTransactionImageVisible,
         modeOfCollectionId: modeOfCollectionId ?? this.modeOfCollectionId,
         commonId: commonId ?? this.commonId,
         photoFile: photoFile ?? this.photoFile,
@@ -1264,39 +1279,41 @@ class UpdateEmiFocusProvider extends StateNotifier<Map<String, bool>> {
         modeOfCollection = FocusNode(),
         creditPersonFocusNode = FocusNode(),
         super({
-          'emiAmountFocusNode': false,
-          'transactionIdFocusNode': false,
-          'bankNameFocusNode': false,
-          'receiptFocusNode': false,
-          'remarkFocusNode': false,
-          'transactionImageFocusNode': false,
-          'modeOfCollection': false,
-          'creditPersonFocusNode': false,
-        }) {
+        'emiAmountFocusNode': false,
+        'transactionIdFocusNode': false,
+        'bankNameFocusNode': false,
+        'receiptFocusNode': false,
+        'remarkFocusNode': false,
+        'transactionImageFocusNode': false,
+        'modeOfCollection': false,
+        'creditPersonFocusNode': false,
+      }) {
     emiAmountFocusNode.addListener(
-      () => _focusListener('emiAmountFocusNode', emiAmountFocusNode),
+          () => _focusListener('emiAmountFocusNode', emiAmountFocusNode),
     );
     transactionIdFocusNode.addListener(
-      () => _focusListener('transactionIdFocusNode', transactionIdFocusNode),
+          () =>
+          _focusListener('transactionIdFocusNode', transactionIdFocusNode),
     );
     bankNameFocusNode.addListener(
-      () => _focusListener('bankNameFocusNode', bankNameFocusNode),
+          () => _focusListener('bankNameFocusNode', bankNameFocusNode),
     );
     receiptFocusNode.addListener(
-      () => _focusListener('receiptFocusNode', receiptFocusNode),
+          () => _focusListener('receiptFocusNode', receiptFocusNode),
     );
     remarkFocusNode.addListener(
-      () => _focusListener('remarkFocusNode', remarkFocusNode),
+          () => _focusListener('remarkFocusNode', remarkFocusNode),
     );
     transactionImageFocusNode.addListener(
-      () => _focusListener(
-          'transactionImageFocusNode', transactionImageFocusNode),
+          () =>
+          _focusListener(
+              'transactionImageFocusNode', transactionImageFocusNode),
     );
     modeOfCollection.addListener(
-      () => _focusListener('modeOfCollection', modeOfCollection),
+          () => _focusListener('modeOfCollection', modeOfCollection),
     );
     creditPersonFocusNode.addListener(
-      () => _focusListener('creditPersonFocusNode', creditPersonFocusNode),
+          () => _focusListener('creditPersonFocusNode', creditPersonFocusNode),
     );
   }
 
@@ -1310,29 +1327,31 @@ class UpdateEmiFocusProvider extends StateNotifier<Map<String, bool>> {
   @override
   void dispose() {
     emiAmountFocusNode.removeListener(
-      () => _focusListener('emiAmountFocusNode', emiAmountFocusNode),
+          () => _focusListener('emiAmountFocusNode', emiAmountFocusNode),
     );
     transactionIdFocusNode.removeListener(
-      () => _focusListener('transactionIdFocusNode', transactionIdFocusNode),
+          () =>
+          _focusListener('transactionIdFocusNode', transactionIdFocusNode),
     );
     bankNameFocusNode.removeListener(
-      () => _focusListener('bankNameFocusNode', bankNameFocusNode),
+          () => _focusListener('bankNameFocusNode', bankNameFocusNode),
     );
     receiptFocusNode.removeListener(
-      () => _focusListener('receiptFocusNode', receiptFocusNode),
+          () => _focusListener('receiptFocusNode', receiptFocusNode),
     );
     remarkFocusNode.removeListener(
-      () => _focusListener('remarkFocusNode', remarkFocusNode),
+          () => _focusListener('remarkFocusNode', remarkFocusNode),
     );
     transactionImageFocusNode.removeListener(
-      () => _focusListener(
-          'transactionImageFocusNode', transactionImageFocusNode),
+          () =>
+          _focusListener(
+              'transactionImageFocusNode', transactionImageFocusNode),
     );
     modeOfCollection.removeListener(
-      () => _focusListener('modeOfCollection', modeOfCollection),
+          () => _focusListener('modeOfCollection', modeOfCollection),
     );
     creditPersonFocusNode.removeListener(
-      () => _focusListener('creditPersonFocusNode', creditPersonFocusNode),
+          () => _focusListener('creditPersonFocusNode', creditPersonFocusNode),
     );
     emiAmountFocusNode.dispose();
     transactionIdFocusNode.dispose();
@@ -1379,14 +1398,14 @@ final currentLocationProvider = FutureProvider<Position>((ref) async {
   );
   // Return the current position
   Position position =
-      await Geolocator.getCurrentPosition(locationSettings: locationSettings);
+  await Geolocator.getCurrentPosition(locationSettings: locationSettings);
 
   return position;
 });
 
 // Provider to manage the Google Map controller
 final mapControllerProvider =
-    StateProvider.autoDispose<GoogleMapController?>((ref) {
+StateProvider.autoDispose<GoogleMapController?>((ref) {
   return null;
 });
 
@@ -1451,20 +1470,20 @@ final mapControllerProvider =
 //-----------------------------end map--------------------------------------------------------
 final searchResultsProvider = StateProvider<List<ItemsDetails>>((ref) => []);
 
-
 void searchupdate(ref, String searchterm, List<ItemsDetails> listOfLists) {
-
   final filteredResults = listOfLists.where((item) {
-    
     return item.customerName != null &&
-       ( item.customerName!.toLowerCase().contains(searchterm.toLowerCase())|| item.ld!.toLowerCase().contains(searchterm.toLowerCase()));
+        (item.customerName!.toLowerCase().contains(searchterm.toLowerCase()) ||
+            item.ld!.toLowerCase().contains(searchterm.toLowerCase()));
   }).toList();
 
-  ref.read(searchResultsProvider.notifier).state = filteredResults;
+  ref
+      .read(searchResultsProvider.notifier)
+      .state = filteredResults;
 }
 
 final fetchVisitPendingDataProvider =
-    FutureProvider<List<ItemsDetails>>((ref) async {
+FutureProvider<List<ItemsDetails>>((ref) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String? token = sharedPreferences.getString('token');
   print(token);
@@ -1479,35 +1498,33 @@ final fetchVisitPendingDataProvider =
   print(response.statusCode);
   if (response.statusCode == 200) {
     print(response.data);
-      List<dynamic> itemsList = response.data['items'] as List;
+    List<dynamic> itemsList = response.data['items'] as List;
 
-  // Now map this List<dynamic> to List<ItemsDetails>
-  List<ItemsDetails> listOfLists = itemsList.map((map) {
-    return ItemsDetails.fromJson(map);
-  }).toList();
+    // Now map this List<dynamic> to List<ItemsDetails>
+    List<ItemsDetails> listOfLists = itemsList.map((map) {
+      return ItemsDetails.fromJson(map);
+    }).toList();
 
-  // For debugging, print the address of the last item
-  // print(listOfLists[listOfLists.length - 1].address);
-
+    // For debugging, print the address of the last item
+    // print(listOfLists[listOfLists.length - 1].address);
 
     GetVisitPendingResponseData apiResponseList =
-        GetVisitPendingResponseData.fromJson(response.data);
-        print('>>>>>>>>>>>>> ${apiResponseList.message}');
+    GetVisitPendingResponseData.fromJson(response.data);
+    print('>>>>>>>>>>>>> ${apiResponseList.message}');
 
     // List<ItemsDetails> listOfLists = response.data['items']!.map((map) {
     //   return ItemsDetails.fromJson(map);
     // }).toList();
     // print(listOfLists[listOfLists.length-1].address);
-    ref.read(searchResultsProvider.notifier).state = listOfLists;
-print(' length of the data ${response.data['items'].length}');
+    ref
+        .read(searchResultsProvider.notifier)
+        .state = listOfLists;
+    print(' length of the data ${response.data['items'].length}');
     return listOfLists;
   } else {
     throw Exception('Failed to load data');
   }
 });
-
-
-
 
 // Provider for search query state
 /*final searchQueryProvider = StateProvider<String>((ref) => '');
@@ -1532,14 +1549,14 @@ FutureProvider<List<Map<String, String>>>((ref) async {
 //-----------------------------end map--------------------------------------------------------
 // final searchResultsProvider = StateProvider<List<ItemsDetails>>((ref) => []);
 
-
 final fetchCollectionDueDataProvider =
-    FutureProvider<List<Map<dynamic, dynamic>>>((ref) async {
+FutureProvider<List<Map<dynamic, dynamic>>>((ref) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String? token = sharedPreferences.getString('token');
   // final String token =
   //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MjY3Mzc2Njd9.exsdAWj9fWc5LiOcAkFmlgade-POlU8orE8xvgfYXZU";
   final dio = ref.read(dioProvider);
+
   final response = await dio.get(Api.collectionVisitPending,
       options: Options(headers: {"token": token}));
   print(response.statusMessage);
@@ -1547,7 +1564,7 @@ final fetchCollectionDueDataProvider =
   if (response.statusCode == 200) {
     print(response.data);
     GetVisitPendingResponseData apiResponseList =
-        GetVisitPendingResponseData.fromJson(response.data);
+    GetVisitPendingResponseData.fromJson(response.data);
     return apiResponseList.items!;
   } else {
     throw Exception('Failed to load data');
@@ -1557,10 +1574,11 @@ final fetchCollectionDueDataProvider =
 // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2YzlmODJmYjY1ZDhjNGRkMWUzMDQ1NSIsInJvbGVOYW1lIjoiYWRtaW4iLCJpYXQiOjE3MzA3MTYyMzh9.mGoOPIWs1iw1VODnpuRaxTx8Op_HBc-Eb0727uYyoUw
 
 final fetchGetAllModeOfCollectionProvider =
-    FutureProvider<List<ModeItem>>((ref) async {
+FutureProvider<List<ModeItem>>((ref) async {
   final dio = ref.read(dioProvider);
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String? token = sharedPreferences.getString('token');
+  //
   final response = await dio.get(Api.getAllModeOfCollection,
       options: Options(headers: {"token": token}));
   print(response.statusMessage);
@@ -1568,7 +1586,7 @@ final fetchGetAllModeOfCollectionProvider =
   if (response.statusCode == 200) {
     print(response.data);
     CollectionModeResponseModel apiResponseList =
-        CollectionModeResponseModel.fromJson(response.data);
+    CollectionModeResponseModel.fromJson(response.data);
     return apiResponseList.items;
   } else {
     throw Exception('Failed to load data');

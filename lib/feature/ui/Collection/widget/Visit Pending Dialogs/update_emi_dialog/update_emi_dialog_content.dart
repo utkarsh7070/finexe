@@ -3,6 +3,7 @@ import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/utils/widget/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../../base/internetConnection/connection_overlay.dart';
 import '../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../base/utils/namespase/display_size.dart';
@@ -425,7 +426,7 @@ class UpdateEmiDialogContent extends ConsumerWidget {
                       AppButton(
                         textStyle: AppStyles.buttonLightTextStyle,
                         width: displayWidth(context),
-                        isDisabled: !paymentState.isButtonVissible,
+                        isDisabled: paymentState.isButtonVissible,
                         onTap: () {
                           if (paymentViewModel.modeOfCollectionController
                                   .dropDownValue?.name !=
@@ -460,7 +461,9 @@ class UpdateEmiDialogContent extends ConsumerWidget {
       },
       error: (error, stackTrace) {
         print(error.toString());
-        return Text(error.toString());
+        return NoDataFound(retry: true,ontap: () {
+          ref.refresh(fetchGetAllModeOfCollectionProvider);
+        }, );
       },
       loading: () {
         return SizedBox(

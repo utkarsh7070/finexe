@@ -7,11 +7,8 @@ import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/dialog/RejectPDFile/rejectpd_file_dialogue_content.dart';
-import 'package:finexe/feature/ui/PD/dialog/RivertPDFile/rivert_pd_dialogue_content.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../Common Widgets/common_textfield.dart';
 
 class PdRijectDialogue {
   static Future<void> requestRijectDialogue(

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/base/service/session_service.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Collection/Collection%20cases/model/visit_update_upload_image_responce_model.dart';
 import 'package:flutter/Material.dart';
@@ -10,8 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../../../../../../base/api/dio_exception.dart';
-import '../../../../../../../../../base/utils/namespase/app_colors.dart';
-import '../../../../../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../../../../../base/utils/widget/custom_snackbar.dart';
 import '../agri_mode/agriculture_income_form_model.dart';
 
@@ -267,6 +264,7 @@ class ApiService {
       print('Error occurred: $e');
       throw Exception('Error occurred: $e');
     }
+    return null;
   }
 }
 

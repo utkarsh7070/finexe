@@ -14,18 +14,18 @@ class ImageListWidget extends ConsumerWidget {
   final VoidCallback onAddImage; // Callback for adding a new image
 
   const ImageListWidget({
-    Key? key,
+    super.key,
     required this.imageUrls,
     required this.onRemove,
     required this.onAddImage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
 
 
-    bool _isLoading = false; // Track loading state
+    bool isLoading = false; // Track loading state
 
     return Column(
       children: [
@@ -47,12 +47,12 @@ class ImageListWidget extends ConsumerWidget {
                           // ImageUrl: _uploadedImageUrl.isEmpty
                           //     ? '${Api.baseUrl}${widget.applicantImage}'
                           //     : '${Api.baseUrl}${_uploadedImageUrl}',
-                          ImageUrl: '${Api.baseUrl}${imageUrl}',
+                          ImageUrl: '${Api.baseUrl}$imageUrl',
                         ),
                       );
                     },
                     child: CachedNetworkImage(
-                      imageUrl: '${Api.baseUrl}${imageUrl}',
+                      imageUrl: '${Api.baseUrl}$imageUrl',
                       height: displayHeight(context) * 0.16,
                       width: displayWidth(context) * 0.91,
                       fit: BoxFit.cover,
@@ -79,7 +79,7 @@ class ImageListWidget extends ConsumerWidget {
               ),
             ],
           );
-        }).toList(),
+        }),
         // Button to add new image
         SizedBox(height: displayHeight(context) * 0.02),
         GestureDetector(

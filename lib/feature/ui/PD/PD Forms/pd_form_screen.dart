@@ -6,7 +6,6 @@ import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_existing_data/view/pd_existing_data_form.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_update_data_form.dart';
 import 'package:flutter/Material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../pd_view_model/pd_form_viewmodel.dart';
@@ -15,7 +14,7 @@ import '../pd_view_model/pd_form_viewmodel.dart';
 
 class PdFormScreen extends ConsumerStatefulWidget {
   final String customerId;
-  const PdFormScreen({Key? key, required this.customerId}) : super(key: key);
+  const PdFormScreen({super.key, required this.customerId});
 
   @override
   ConsumerState<PdFormScreen> createState() => _PdFormScreenState();

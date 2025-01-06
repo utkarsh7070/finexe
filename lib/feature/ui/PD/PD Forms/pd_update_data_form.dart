@@ -18,10 +18,10 @@ class UpdateDataDorm extends ConsumerWidget {
   // const UpdateDataDorm({super.key});
   final String customerId;
 
-  UpdateDataDorm({required this.customerId});
+  const UpdateDataDorm({super.key, required this.customerId});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print('customerId in UpdateDataDorm:: ${customerId}');
+    print('customerId in UpdateDataDorm:: $customerId');
     // final coApplicantsAsync = ref.watch(coAppl);
     return SingleChildScrollView(
       child:
