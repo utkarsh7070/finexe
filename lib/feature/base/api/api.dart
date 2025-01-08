@@ -7,7 +7,7 @@ class Api {
     // static const String baseUrl = 'https://prod.fincooper.in/';// Production URL
   
   static const String imageBaseUrl = 'https://stageapi.fincooper.in';  // Production URL
-  static const String imageBaseProUrl = 'https://prod.fincooper.in';  // Production URL
+  static const String imageBaseProUrl = 'https://stageapi.fincooper.in'; // Production URL
 
   static const String baseUrlStageCollection = 'https://stageapi.fincooper.in/';
   static const String baseUrlStageProduction ='https://prod.fincooper.in/';

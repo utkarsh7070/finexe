@@ -34,16 +34,16 @@ class AttendanceState {
 
   AttendanceState(
       {this.taskTitle = '',
-        this.taskDescription = '',
-        this.punchAllowed ,
-        this.employeeName = '',
-        this.isLoading = false,
-        this.punchStatus = false,
-        this.currentPosition,
-        this.distanceMessage,
-        this.checkAttendanceResponse,
-        this.employeeId = '',
-        this.token = ''});
+      this.taskDescription = '',
+      this.punchAllowed,
+      this.employeeName = '',
+      this.isLoading = false,
+      this.punchStatus = false,
+      this.currentPosition,
+      this.distanceMessage,
+      this.checkAttendanceResponse,
+      this.employeeId = '',
+      this.token = ''});
 
   AttendanceState copyWith({
     String? taskTitle,
@@ -59,7 +59,7 @@ class AttendanceState {
     CheckAttendanceResponseModel? checkAttendanceResponse,
   }) {
     return AttendanceState(
-      punchAllowed: punchAllowed??this.punchAllowed,
+      punchAllowed: punchAllowed ?? this.punchAllowed,
       taskDescription: taskDescription ?? this.taskDescription,
       taskTitle: taskTitle ?? this.taskTitle,
       employeeId: employeeId ?? this.employeeId,
@@ -70,7 +70,7 @@ class AttendanceState {
       currentPosition: currentPosition ?? this.currentPosition,
       distanceMessage: distanceMessage ?? this.distanceMessage,
       checkAttendanceResponse:
-      checkAttendanceResponse ?? this.checkAttendanceResponse,
+          checkAttendanceResponse ?? this.checkAttendanceResponse,
     );
   }
 }
@@ -88,7 +88,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 
   final TextEditingController taskTitleController = TextEditingController();
   final TextEditingController taskDescriptionController =
-  TextEditingController();
+      TextEditingController();
   String? storedToken;
 
   @override
@@ -108,7 +108,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   Future<void> onAddTask(BuildContext context) async {
     // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     // String? token = sharedPreferences.getString('token');
-    String? token =speciality.getToken();
+    String? token = speciality.getToken();
 
     state = state.copyWith(isLoading: true);
     // state = const AsyncValue.loading();
@@ -139,7 +139,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 
       if (response.statusCode == 200) {
         final addTaskResponseModel =
-        AddTaskResponseModel.fromJson(response.data);
+            AddTaskResponseModel.fromJson(response.data);
         if (kDebugMode) {
           print("Add Task Response: ${response.data}");
         }
@@ -208,7 +208,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     state = state.copyWith(currentPosition: position);
     await getToken();
     await checkPunch().then(
-          (value) {
+      (value) {
         state = state.copyWith(isLoading: false);
         if (kDebugMode) {
           print('puch>>>>>>>> ');
@@ -222,7 +222,6 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     // SharedPreferences preferences = await SessionService.getSession();
     // final String? name = preferences.getString('email');
     final String? name = speciality.getUserEmail();
-
 
     if (kDebugMode) {
       print('set in pinchin screen name $name');
@@ -245,16 +244,19 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 
       try {
         Response response =
-        await _punchInRepository.checkPunch(location, token);
+            await _punchInRepository.checkPunch(location, token);
         print(response.data);
         CheckAttendanceResponseModel checkAttendanceResponse =
-        CheckAttendanceResponseModel.fromJson(response.data);
+            CheckAttendanceResponseModel.fromJson(response.data);
         state =
             state.copyWith(checkAttendanceResponse: checkAttendanceResponse);
-        state =
-            state.copyWith(punchStatus: checkAttendanceResponse.items.punchIn,punchAllowed: checkAttendanceResponse.items.allowed);
+        state = state.copyWith(
+            punchStatus: checkAttendanceResponse.items.punchIn,
+            punchAllowed: checkAttendanceResponse.items.allowed);
         log('punchIn Status: ${checkAttendanceResponse.items.punchIn} punchIn allowed: ${checkAttendanceResponse.items.allowed}');
-        return PunchAttendanceModel(allowed: checkAttendanceResponse.items.allowed, punchIn: checkAttendanceResponse.items.punchIn);
+        return PunchAttendanceModel(
+            allowed: checkAttendanceResponse.items.allowed,
+            punchIn: checkAttendanceResponse.items.punchIn);
       } on DioException catch (error) {
         if (kDebugMode) {
           print(error);
@@ -380,20 +382,19 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 //     print("Location listener set.");
 //   }
 
-
   Future<void> clickPunch(BuildContext context) async {
     // SharedPreferences preferences = await SharedPreferences.getInstance();
-    
-  //   List<String>? role = preferences.getStringList('roleName');
-  //   final String? employeeID = preferences.getString('employeId');
-  //   final String? token = preferences.getString('token');
-  //  final String? roamId =  preferences.getString('roamId');
-  //   final String? trackingMode =  preferences.getString('trackingMode');
+
+    //   List<String>? role = preferences.getStringList('roleName');
+    //   final String? employeeID = preferences.getString('employeId');
+    //   final String? token = preferences.getString('token');
+    //  final String? roamId =  preferences.getString('roamId');
+    //   final String? trackingMode =  preferences.getString('trackingMode');
     List<String>? role = speciality.getRole();
     final String? employeeID = speciality.getEmployeId();
     final String? token = speciality.getToken();
-   final String? roamId = speciality.getRoamId();
-    final String? trackingMode =  speciality.getTrackingMode();
+    final String? roamId = speciality.getRoamId();
+    final String? trackingMode = speciality.getTrackingMode();
 
     if (kDebugMode) {
       print(role?.first);
@@ -402,14 +403,13 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     state = state.copyWith(isLoading: true);
     // if (state.punchStatus) {
     await onPunchIn(context).then(
-          (value) async {
-
+      (value) async {
         if (kDebugMode) {
           print(value);
         }
         if (value!) {
           await checkPunch().then(
-                (value) {
+            (value) {
               state = state.copyWith(punchStatus: value?.punchIn);
             },
           );
@@ -425,7 +425,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.dashBoard, // Admin dashboard route
-                    (route) => false, // Remove all previous routes
+                (route) => false, // Remove all previous routes
               );
 
               break;
@@ -434,7 +434,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.dashBoard, // Sales dashboard route
-                    (route) => false, // Remove all previous routes
+                (route) => false, // Remove all previous routes
               );
               break;
             case 'collection':
@@ -442,7 +442,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.collectionHome,
-                    (route) => false,
+                (route) => false,
               );
               break;
 
@@ -451,7 +451,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.dashBoard, // Collection dashboard route
-                    (route) => false, // Remove all previous routes
+                (route) => false, // Remove all previous routes
               );
               break;
 
@@ -460,7 +460,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.dashBoard, // Collection dashboard route
-                    (route) => false, // Remove all previous routes
+                (route) => false, // Remove all previous routes
               );
               break;
 
@@ -469,25 +469,24 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.dashBoard, // Collection dashboard route
-                    (route) => false, // Remove all previous routes
+                (route) => false, // Remove all previous routes
               );
-              
               break;
-              //   case 'creditPd':
-              // log("Navigating to collection dashboard");
-              // Navigator.pushNamedAndRemoveUntil(
-              //   context,
-              //   AppRoutes.pdscreen, // Collection dashboard route
-              //       (route) => false, // Remove all previous routes
-              // );
-              // break;
+            case 'creditPd':
+              log("Navigating to collection dashboard");
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.pdscreen, // Collection dashboard route
+                (route) => false, // Remove all previous routes
+              );
+              break;
             default:
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.hrms, // Collection dashboard route
-                    (route) => false, // Remove all previous routes
+                (route) => false, // Remove all previous routes
               );
-            // Handle unknown roles or navigate to a default screen
+              // Handle unknown roles or navigate to a default screen
               log('No matching role found');
               break;
           }
@@ -525,10 +524,9 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
       return true;
       // Navigator.pushNamed(context, AppRoutes.eod);
     } catch (error) {
-    ExceptionHandler().handleError(error);
-      
-    }finally{
-state = state.copyWith(isLoading: false);
+      ExceptionHandler().handleError(error);
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
     return false;
   }
@@ -549,7 +547,7 @@ state = state.copyWith(isLoading: false);
       // Punch punchInModel = PunchInModel.fromJson(response.data);
       if (response.statusCode == 200) {
         showCustomSnackBar(context, message, AppColors.green);
-      
+
         // PunchInModel punchInModel = PunchInModel.fromJson(response.data);
       } else {
         showCustomSnackBar(context, message, AppColors.green);
@@ -565,26 +563,21 @@ state = state.copyWith(isLoading: false);
 }
 
 final punchInRepositoryProvider =
-Provider.autoDispose<PunchInRepositoryImp>((ref) {
+    Provider.autoDispose<PunchInRepositoryImp>((ref) {
   return PunchInRepositoryImp(); // Provides instance of PunchInRepository
 });
 
 // Create the AttendanceNotifierProvider
 final attendanceProvider =
-StateNotifierProvider<AttendanceNotifier, AttendanceState>((ref) {
+    StateNotifierProvider<AttendanceNotifier, AttendanceState>((ref) {
   final dio = ref.watch(dioProvider);
   // final socket = ref.watch(socketServiceProvider);
   return AttendanceNotifier(ref.watch(punchInRepositoryProvider), dio);
 });
 
-
-class PunchAttendanceModel{
+class PunchAttendanceModel {
   final bool allowed;
   final bool punchIn;
 
   PunchAttendanceModel({required this.allowed, required this.punchIn});
 }
-
-
-
-

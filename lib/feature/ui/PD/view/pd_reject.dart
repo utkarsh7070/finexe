@@ -88,7 +88,7 @@ class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
               return Column(
                 children: [
                   Expanded(
-                    child: ListView.builder(
+                    child: ListView.builder(controller: _scrollController,
                       shrinkWrap: true,
                       physics: const AlwaysScrollableScrollPhysics(),
                       scrollDirection: Axis.vertical,

@@ -53,7 +53,8 @@ class _CommonImagePickerState extends State<CommonImagePicker> {
 
       if (compressedImage != null) {
         await uploadImage(compressedImage.path);
-        final compressedImagesize = await compressedImage.length(); // Size in bytes
+        final compressedImagesize =
+            await compressedImage.length(); // Size in bytes
 
         print('Compressed image size: ${compressedImagesize / 1024} KB');
       } else {
@@ -68,7 +69,8 @@ class _CommonImagePickerState extends State<CommonImagePicker> {
   Future<XFile?> compressImage(File file) async {
     try {
       final directory = await getTemporaryDirectory();
-      final targetPath = '${directory.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final targetPath =
+          '${directory.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
 
       final result = await FlutterImageCompress.compressAndGetFile(
         file.absolute.path,
@@ -82,7 +84,6 @@ class _CommonImagePickerState extends State<CommonImagePicker> {
       return null;
     }
   }
-
 
   Future<void> uploadImage(String imagePath) async {
     String? token = speciality.getToken();
@@ -142,103 +143,108 @@ class _CommonImagePickerState extends State<CommonImagePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return
-      _isLoading
-          ? SizedBox(
-        height: displayHeight(context) * 0.16,
-        width: displayWidth(context) * 0.91,
-
-        // color: Colors.black.withOpacity(0.5),
-        child: const Center(child: CircularProgressIndicator()),
-      )
-          :
-          widget.applicantImage.isEmpty && _uploadedImageUrl.isEmpty
-        ? GestureDetector(
-          onTap: pickImage,
-          child: UploadBox(
-            isImage: true,
+    return _isLoading
+        ? SizedBox(
             height: displayHeight(context) * 0.16,
             width: displayWidth(context) * 0.91,
-            color: AppColors.buttonBorderGray,
-            iconData: Icons.file_upload_outlined,
-            textColor: AppColors.gray5,
-            subTextColor: AppColors.primary,
-            title: 'Support: JPG, PNG',
-            subTitle: 'Click Image',
-          ),
-        )
-        : Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 15, top: 10),
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child:
-                        GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ZoomableImageWidget(
-                              ImageUrl: _uploadedImageUrl.isEmpty
-                                  ? '${Api.baseUrl}${widget.applicantImage}'
-                                  : '${Api.baseUrl}$_uploadedImageUrl',
+
+            // color: Colors.black.withOpacity(0.5),
+            child: const Center(child: CircularProgressIndicator()),
+          )
+        : widget.applicantImage.isEmpty && _uploadedImageUrl.isEmpty
+            ? GestureDetector(
+                onTap: pickImage,
+                child: UploadBox(
+                  isImage: true,
+                  height: displayHeight(context) * 0.16,
+                  width: displayWidth(context) * 0.91,
+                  color: AppColors.buttonBorderGray,
+                  iconData: Icons.file_upload_outlined,
+                  textColor: AppColors.gray5,
+                  subTextColor: AppColors.primary,
+                  title: 'Support: JPG, PNG',
+                  subTitle: 'Click Image',
+                ),
+              )
+            : Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 15, top: 10),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ZoomableImageWidget(
+                                  ImageUrl: _uploadedImageUrl.isEmpty
+                                      ? '${Api.baseUrl}${widget.applicantImage}'
+                                      : '${Api.baseUrl}$_uploadedImageUrl',
+                                ),
+                              ),
+                            );
+                          },
+                          child: CachedNetworkImage(
+                            imageUrl: _uploadedImageUrl.isEmpty
+                                ? '${Api.baseUrl}${widget.applicantImage}'
+                                : '${Api.baseUrl}$_uploadedImageUrl',
+                            height: displayHeight(context) * 0.16,
+                            width: displayWidth(context) * 0.91,
+                            fit: BoxFit.contain,
+                            placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) => Image.asset(
+                              'assets/images/no_internet.jpg',
+                              height: 150,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        );
-                      },
-                      child: CachedNetworkImage(
-                        imageUrl: _uploadedImageUrl.isEmpty
-                            ? '${Api.baseUrl}${widget.applicantImage}'
-                            : '${Api.baseUrl}$_uploadedImageUrl',
-                        height: displayHeight(context) * 0.16,
-                        width: displayWidth(context) * 0.91,
-                        fit: BoxFit.contain,
-                        placeholder: (context, url) =>
-                            const Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) => Image.asset(
-                          'assets/images/no_internet.jpg',
-                          height: 150,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
+                        )
+                        // ),
+                        ),
+                  ),
+                  Positioned(
+                    right: 10,
+                    top: 3,
+                    child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _selectedImage = null;
+                            _uploadedImageUrl = '';
+                          });
+                          widget.onImageUploaded('');
+                        },
+                        icon: const Icon(
+                          Icons.remove_circle,
+                          color: AppColors.red,
+                        )),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //   // Clear the uploaded image URL
+                    //   },
+                    //   child: Image.asset(
+                    //     'assets/images/remove.png',
+                    //     height: 25,
+                    //     width: 25,
+                    //     fit: BoxFit.cover,
+                    //   ),
+                    // ),
+                  ),
+                  if (_isLoading)
+                    Positioned.fill(
+                      child: Container(
+                        color: Colors.black.withOpacity(0.5),
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                AppColors.primary),
+                          ),
                         ),
                       ),
-                    )
-                    // ),
                     ),
-              ),
-              Positioned(
-                right: 10,
-                top: 3,
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedImage = null;
-                      _uploadedImageUrl = '';
-                    });
-                    widget.onImageUploaded(''); // Clear the uploaded image URL
-                  },
-                  child: Image.asset(
-                    'assets/images/remove.png',
-                    height: 25,
-                    width: 25,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              if (_isLoading)
-                Positioned.fill(
-                  child: Container(
-                    color: Colors.black.withOpacity(0.5),
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(AppColors.primary),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          );
+                ],
+              );
   }
 }
