@@ -480,6 +480,7 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
                 (route) => false, // Remove all previous routes
               );
               break;
+
             default:
               Navigator.pushNamedAndRemoveUntil(
                 context,

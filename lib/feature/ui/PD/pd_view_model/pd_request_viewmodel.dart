@@ -77,7 +77,8 @@ final fetchpdRefuseandAcceptListProvider =
   print(response.statusCode);
   if (response.statusCode == 200) {
     print(response.data);
-    List<dynamic> responseList = response.data['items'] ?? [];
+    List<dynamic> responseList = response.data['items']['items'] ?? [];
+    
 
     // Map the list of dynamic objects to List<PDReqItems>
     List<PDReqItems> apiResponseList =

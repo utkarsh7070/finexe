@@ -76,7 +76,6 @@ class PdRequestScreen extends ConsumerWidget {
 
   itemCard(BuildContext context, PDReqItems pdreitem,
       RequestApiService pdRequestViewModel, ref) {
-
     return Column(
       children: [
         Container(
