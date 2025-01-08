@@ -7,15 +7,32 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../base/api/dio_exception.dart';
+import '../../../../../base/utils/Repo/image_upload.dart';
 import '../model/Submit Data Models/applicant_model.dart';
 
 final isAppExpandedProvider = StateProvider<bool>((ref) => false);
-
 
 class PDApplicantViewModel extends StateNotifier<ApplicantState> {
   final Dio dio;
 
   PDApplicantViewModel(this.dio) : super(ApplicantState());
+
+  Future<void> applicantImage() async {
+    String? image = await DocsUploader.uploadImage(
+        isCompressed: true, compressedValue: 50, byCamera: true, dio: dio);
+    state = state.copyWith(applicantImage: image ?? '');
+  }
+
+  // Future<XFile?> compressImage(File file) async {
+  //   String fileName = path.basename(file.path);
+  //   final String targetPath = '${file.parent.path}/compressed_$fileName';
+  //   final compressedBytes = await FlutterImageCompress.compressAndGetFile(
+  //     file.absolute.path, // Source path
+  //     targetPath, // Target path
+  //     quality: 10, // Compression quality (0-100)
+  //   );
+  //   return compressedBytes;
+  // }
 
   Future<bool> submitpdApplicantForm({
     String? applicantdImage,
@@ -40,8 +57,6 @@ class PDApplicantViewModel extends StateNotifier<ApplicantState> {
     String? educationalDetails,
     String? residenceType,
   }) async {
-
-
     // Set loading state to true
     state = state.copyWith(isLoading: true);
     final applicantdata = Applicant(
@@ -90,11 +105,10 @@ class PDApplicantViewModel extends StateNotifier<ApplicantState> {
 
         state = state.copyWith(isLoading: false);
         return true;
-      }else if (state.isLoading == true) {
+      } else if (state.isLoading == true) {
         print('click second time');
-         return false;
-      }
-      else {
+        return false;
+      } else {
         state = state.copyWith(isLoading: false);
         print('Error while submitting applicant form');
         return false;
@@ -114,10 +128,8 @@ class PDApplicantViewModel extends StateNotifier<ApplicantState> {
       // state = AsyncValue.error(error, stackTrace);
       print('response.data.message $error');
       return false;
-    }
-    finally{
+    } finally {
       state = state.copyWith(isLoading: false);
-
     }
   }
 }
@@ -130,40 +142,38 @@ final pdapplicantViewModelProvider =
   return PDApplicantViewModel(dio);
 });
 
-
-
 class ApplicantState {
-  final bool? isLoading;
-
-  final String? selectedDate;
+  final bool isLoading;
+  final String applicantImage;
+  final String selectedDate;
 
   ApplicantState({
-    this.isLoading,
-    this.selectedDate,
+    this.applicantImage = '',
+    this.isLoading = false,
+    this.selectedDate = '',
   });
 
-  ApplicantState.initial()
-      : isLoading = false,
-        selectedDate = null;
-
   ApplicantState copyWith({
+    String? applicantImage,
     bool? isLoading,
     String? selectedDate,
   }) {
     return ApplicantState(
+      applicantImage: applicantImage ?? this.applicantImage,
       isLoading: isLoading ?? this.isLoading,
       selectedDate: selectedDate ?? this.selectedDate,
     );
   }
 }
+
 // final loanDetailsProvider = FutureProvider.autoDispose
 //     .family<LoanDetails, String>((ref, customerId) async {
 //   final token = speciality.getToken();
 //   final viewModel = LoanDetailsProvider();
 //   return await viewModel.fetchLoanDetails(token, customerId);
 // });
-final applicationDetailsProvider =
-    FutureProvider.autoDispose.family<ApplicantModel,String>((ref,customerId) async {
+final applicationDetailsProvider = FutureProvider.autoDispose
+    .family<ApplicantModel, String>((ref, customerId) async {
   final viewModel = ApplicationFormDetailsProvider();
   return await viewModel.fetchApplicationDetails(customerId);
 });
@@ -173,7 +183,7 @@ class ApplicationFormDetailsProvider {
 
   Future<ApplicantModel> fetchApplicationDetails(String customerId) async {
     String? token = speciality.getToken();
-    ApplicantModel details= ApplicantModel();
+    ApplicantModel details = ApplicantModel();
     // String? token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY3MGY1NjFhZTc2NjMwMjQ0ZGVhNDU1YyIsInJvbGVOYW1lIjoiaW50ZXJuYWxWZW5kb3JBbmRjcmVkaXRQZCIsImlhdCI6MTczMDk1NzUzOH0.p_57wid1GuLPusS29IwyAfQnKR5qfpdDc4CoU2la-qY"; // Replace with a secure way of managing tokens
     print('url: ${Api.getpdformdata}$customerId');
@@ -188,7 +198,7 @@ class ApplicationFormDetailsProvider {
         final Map<String, dynamic> responseData = response.data;
 
         // Parse the response into the GetApplicantDetailsModel
-         details = ApplicantModel.fromJson(responseData);
+        details = ApplicantModel.fromJson(responseData);
 
         if (details.items != null) {
           return details;
@@ -197,14 +207,11 @@ class ApplicationFormDetailsProvider {
           print('Applicant details not found in the response');
           return details;
         }
-      }
-
-      else {
+      } else {
         // throw Exception(
         //     "Failed to load application data: ${response.statusCode}");
         print('Failed to load application data: ${response.statusCode}');
         return details;
-
       }
     }
     // catch (e) {
@@ -219,7 +226,7 @@ class ApplicationFormDetailsProvider {
       print("Error fetching Asset Details: $e");
       // throw Exception("An error occurred: ${e.toString()}");
       print('applicant details:: ${details.items}');
-      return details ;
+      return details;
     }
   }
 }

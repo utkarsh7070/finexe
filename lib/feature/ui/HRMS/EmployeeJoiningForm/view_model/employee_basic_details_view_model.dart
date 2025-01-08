@@ -681,7 +681,7 @@ class EmployeeDetailsViewModel extends StateNotifier<EmployeeDetailsModel> {
       ...state.isLoading.sublist(index + 1),
     ]);
     try {
-      await DocsUploader.uploadImage(dio).then(
+      await DocsUploader.uploadImage(dio: dio,byCamera: false,compressedValue: 10,isCompressed: true).then(
             (value) {
           if (value != null) {
             state = state.copyWith(

@@ -91,8 +91,6 @@ class _PdAssetsFormState extends ConsumerState<PdAssetsForm> {
         isInitialDataSet = true; // Prevent further overwrites
       }
     }
-
-
     return
 
          ExpansionTile(

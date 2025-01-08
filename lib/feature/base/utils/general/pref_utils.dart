@@ -18,6 +18,7 @@ class speciality {
     debugPrint('SharedPreference Initialized');
   }
 
+
   ///will clear all the data stored in preference
   static void clearPreferencesData() async {
     _sharedPreferences!.clear();

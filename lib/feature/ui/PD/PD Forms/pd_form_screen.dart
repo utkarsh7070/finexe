@@ -1,4 +1,3 @@
-
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
@@ -14,6 +13,7 @@ import '../pd_view_model/pd_form_viewmodel.dart';
 
 class PdFormScreen extends ConsumerStatefulWidget {
   final String customerId;
+
   const PdFormScreen({super.key, required this.customerId});
 
   @override
@@ -21,8 +21,6 @@ class PdFormScreen extends ConsumerStatefulWidget {
 }
 
 class _PdFormScreenState extends ConsumerState<PdFormScreen> {
-
-
   @override
   void initState() {
     super.initState();
@@ -34,7 +32,6 @@ class _PdFormScreenState extends ConsumerState<PdFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     print('customerId in PdFormScreen:: ${widget.customerId}');
     final selectedSegment =
         ref.watch(segmentProvider); // Watch the selected segment
@@ -60,7 +57,6 @@ class _PdFormScreenState extends ConsumerState<PdFormScreen> {
         body: SafeArea(
           child: Column(
             children: [
-      
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: CustomSlidingSegmentedControl(
@@ -100,8 +96,10 @@ class _PdFormScreenState extends ConsumerState<PdFormScreen> {
               // const SizedBox(height: 10),
               Expanded(
                 child: selectedSegment == 1
-                    ? PdFilledForm(customerId: widget.customerId) // Show Existing Data
-                    : UpdateDataDorm(customerId: widget.customerId), // Show Update Data
+                    ? PdFilledForm(
+                        customerId: widget.customerId) // Show Existing Data
+                    : UpdateDataDorm(
+                        customerId: widget.customerId), // Show Update Data
               ),
             ],
           ),
