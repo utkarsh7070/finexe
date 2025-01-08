@@ -92,24 +92,23 @@ final applicantProvider = Provider<List<Applicant>>((ref) {
 
 // final currentPageProvider = StateProvider<int>((ref) => 1);
 // updated>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-final searchingitems = StateProvider<List<Item>>( (ref) {
-  return [];
-},);
+final searchingitems = StateProvider<List<Item>>(
+  (ref) {
+    return [];
+  },
+);
 
-// update search items 
+// update search items
 void searchupdate(ref, String searchterm, List<Item> listOfLists) {
   final filteredResults = listOfLists.where((item) {
     return item.customerName != null &&
         (item.customerName!.toLowerCase().contains(searchterm.toLowerCase())
-            // item.ld!.toLowerCase().contains(searchterm.toLowerCase())
-            );
+        // item.ld!.toLowerCase().contains(searchterm.toLowerCase())
+        );
   }).toList();
 
-  ref
-      .read(searchingitems.notifier)
-      .state = filteredResults;
+  ref.read(searchingitems.notifier).state = filteredResults;
 }
-
 
 final paginatedDataProvider =
     FutureProvider.autoDispose.family<List<Item>, int>((ref, page) async {
@@ -123,12 +122,15 @@ final paginatedDataProvider =
     limit: limit,
     searchQuery: '',
   );
+  print(page.toString());
+ if(page==1){
+  ref.read(searchingitems.notifier).state =[];
+ }
 
-  ref.read(searchingitems.notifier).state.addAll(response) ;
+  ref.read(searchingitems.notifier).state.addAll(response);
 
   return response ?? [];
 });
-
 
 final apiPdPendingProvider = Provider<ApiService>((ref) {
   final dio = ref.watch(dioProvider);
@@ -165,10 +167,10 @@ class ApiService {
       );
       PdPendingResponseModel responseModel =
           PdPendingResponseModel.fromJson(response.data);
-      print(response.data);
+      print('data ${response.data}');
 
       if (response.statusCode == 200) {
-        return responseModel.items?.items??[];
+        return responseModel.items?.items ?? [];
       } else {
         throw Exception(
             'Failed to load data with status code: ${response.statusCode}');
@@ -178,5 +180,3 @@ class ApiService {
     }
   }
 }
-
-

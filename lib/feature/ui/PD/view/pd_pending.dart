@@ -171,57 +171,60 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
                 },
                 child: Column(
                   children: [
-                    AdvancedSearch(
-                      maxElementsToDisplay: 0,
-                      singleItemHeight: 50,
-                      borderColor: Colors.grey,
-                      minLettersForSearch: 0,
-                      selectedTextColor: const Color(0xFF3363D9),
-                      fontSize: 14,
-                      borderRadius: 12.0,
-                      hintText: 'Search here',
-                      cursorColor: Colors.blueGrey,
-                      autoCorrect: false,
-                      focusedBorderColor: Colors.blue,
-                      searchResultsBgColor: const Color(0x00fafafa),
-                      disabledBorderColor: Colors.cyan,
-                      enabledBorderColor: Colors.black,
-                      enabled: true,
-                      caseSensitive: false,
-                      inputTextFieldBgColor: Colors.white10,
-                      clearSearchEnabled: true,
-                      itemsShownAtStart: 1,
-                      searchMode: SearchMode.CONTAINS,
-                      showListOfResults: true,
-                      unSelectedTextColor: Colors.black54,
-                      verticalPadding: 10,
-                      horizontalPadding: 10,
-                      hideHintOnTextInputFocus: true,
-                      hintTextColor: Colors.grey,
-                      onItemTap: (index, value) {
-                        if (kDebugMode) {
-                          print("selected item index is $index");
-                        }
-                      },
-                      onSearchClear: () {
-                        FocusManager.instance.primaryFocus!.unfocus();
-                        if (kDebugMode) {
-                          print("Cleared Search");
-                        }
-                      },
-                      onSubmitted: (searchText, listOfResults) {
-                        searchupdate(ref, searchText, paginateddata);
-                      },
-                      onEditingProgress: (searchText, listOfResults) {
-                        searchupdate(ref, searchText, paginateddata);
-                      },
-                      searchItems: [],
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: AdvancedSearch(
+                        maxElementsToDisplay: 0,
+                        singleItemHeight: 50,
+                        borderColor: Colors.grey,
+                        minLettersForSearch: 0,
+                        selectedTextColor: const Color(0xFF3363D9),
+                        fontSize: 14,
+                        borderRadius: 12.0,
+                        hintText: 'Search here',
+                        cursorColor: Colors.blueGrey,
+                        autoCorrect: false,
+                        focusedBorderColor: Colors.blue,
+                        searchResultsBgColor: const Color(0x00fafafa),
+                        disabledBorderColor: Colors.cyan,
+                        enabledBorderColor: Colors.black,
+                        enabled: true,
+                        caseSensitive: false,
+                        inputTextFieldBgColor: Colors.white10,
+                        clearSearchEnabled: true,
+                        itemsShownAtStart: 1,
+                        searchMode: SearchMode.CONTAINS,
+                        showListOfResults: true,
+                        unSelectedTextColor: Colors.black54,
+                        verticalPadding: 10,
+                        horizontalPadding: 10,
+                        hideHintOnTextInputFocus: true,
+                        hintTextColor: Colors.grey,
+                        onItemTap: (index, value) {
+                          if (kDebugMode) {
+                            print("selected item index is $index");
+                          }
+                        },
+                        onSearchClear: () {
+                          FocusManager.instance.primaryFocus!.unfocus();
+                          if (kDebugMode) {
+                            print("Cleared Search");
+                          }
+                        },
+                        onSubmitted: (searchText, listOfResults) {
+                          searchupdate(ref, searchText, paginateddata);
+                        },
+                        onEditingProgress: (searchText, listOfResults) {
+                          searchupdate(ref, searchText, paginateddata);
+                        },
+                        searchItems: [],
+                      ),
                     ),
                     Expanded(
                       // height: displayHeight(context) * 0.8, // Adjust height as needed
                       child: ListView.builder(
-                        padding:
-                            EdgeInsets.only(top: displayHeight(context) * 0.08),
+                        // padding:
+                        //     EdgeInsets.only(top: displayHeight(context) * 0.0),
                         controller: _scrollController,
                         shrinkWrap: true,
                         physics: const AlwaysScrollableScrollPhysics(),
@@ -229,6 +232,8 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
                         itemCount: searcheddata.length,
                         itemBuilder: (context, index) {
                           final applicant = searcheddata[index];
+                                                    print('photo'+applicant.customerPhoto.toString());
+
                           return _buildApplicantDetails(context, applicant);
                         },
                       ),
@@ -411,7 +416,13 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
                           width: displayWidth(context) * 0.12,
                           fit: BoxFit.cover,
                           imageUrl:
-                              '${Api.baseUrl}${applicant.customerPhoto}' ?? '',
+                          // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-C_UAhXq9GfuGO452EEzfbKnh1viQB9EDBQ&s',
+                              '${Api.baseUrl}${applicant.customerPhoto}',
+                              placeholder: (context, url) => Center(child: const CircularProgressIndicator()),
+                              errorWidget: (context, url, error){
+                              
+                                return 
+                                const Icon(Icons.error);} ,
                         ),
                       ),
                       SizedBox(width: displayWidth(context) * 0.03),
