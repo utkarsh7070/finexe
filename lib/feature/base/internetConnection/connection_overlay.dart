@@ -24,7 +24,8 @@ class NoConnectionOverlay extends StatelessWidget {
             child: SizedBox(
               height: displayHeight(context),
               width: displayWidth(context),
-              child: Lottie.asset('assets/lottie/noInternet2.json',
+              child: Lottie.asset('assets/lottie/noInternet2.json',   
+                          
                   fit: BoxFit.contain),
             ),
           ),

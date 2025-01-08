@@ -20,6 +20,7 @@ class NetworkListener extends StatefulWidget {
 
 class _NetworkListenerState extends State<NetworkListener> {
   late final Connectivity _connectivity;
+
   final InternetSpeedMeter _internetSpeedMeterPlugin = InternetSpeedMeter();
   double   speed = 0;
 
@@ -31,8 +32,6 @@ class _NetworkListenerState extends State<NetworkListener> {
     // initSpeedMeter();
 
     _connectivity = Connectivity();
-
-
     _connectivity.onConnectivityChanged.listen((result) {
 
 
@@ -59,6 +58,7 @@ class _NetworkListenerState extends State<NetworkListener> {
     });
   }
 
+
   void initSpeedMeter() async {
     try {
       _internetSpeedMeterPlugin.getCurrentInternetSpeed().listen((event) {
@@ -79,7 +79,9 @@ class _NetworkListenerState extends State<NetworkListener> {
         setState(() {
           speed = 0;
         });}
+
 //
+
 
       // Handle any errors related to the speed meter
       // ref.read(internetSpeed.notifier).state = 'Error: Unable to measure speed';
@@ -87,6 +89,7 @@ class _NetworkListenerState extends State<NetworkListener> {
   }
 
   double _parseSpeedToKbps(String speed) {
+
     // Assuming the speed is in the format of "xxx.xxkbps"
     final regex = RegExp(r'(\d+(\.\d+)?)'); // Match numbers with optional decimal
     final match = regex.firstMatch(speed);
@@ -99,8 +102,6 @@ class _NetworkListenerState extends State<NetworkListener> {
     // Return 0 if the speed format is invalid
     return 0;
   }
-
-
 
   // void _dismissNoConnectionDialog() {
   //   if (!mounted) return; // Check if the widget is still mounted
@@ -201,6 +202,7 @@ class _NetworkListenerState extends State<NetworkListener> {
 
 
 Future<String> getCurrentInternetSpeed() async {
+
   final InternetSpeedMeter internetSpeedMeterPlugin = InternetSpeedMeter();
 
   try {
@@ -210,6 +212,7 @@ Future<String> getCurrentInternetSpeed() async {
     // Return the first speed reading if available
     final speed = await speedStream.first;
     print(speed.toString());
+
 
     // You can choose to return this speed value
     return speed;
@@ -225,6 +228,7 @@ Future<String> getCurrentInternetSpeed() async {
 
 //     try {
 //       _internetSpeedMeterPlugin.getCurrentInternetSpeed().listen((event) {
+
 //            if (mounted) {
 
 //         // Since we're using Riverpod, we can update the speed provider here.
@@ -234,8 +238,10 @@ Future<String> getCurrentInternetSpeed() async {
 //       if (mounted) {
 
 
+
 //         }
 // //
+
 
 //       // Handle any errors related to the speed meter
 //       // ref.read(internetSpeed.notifier).state = 'Error: Unable to measure speed';
