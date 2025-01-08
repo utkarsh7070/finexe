@@ -9,13 +9,13 @@ part of 'pd_pending_response_model.dart';
 PdPendingResponseModel _$PdPendingResponseModelFromJson(
         Map<String, dynamic> json) =>
     PdPendingResponseModel(
-      status: json['status'] as bool,
-      subCode: (json['subCode'] as num).toInt(),
-      message: json['message'] as String,
-      error: json['error'] as String,
-      items: (json['items'] as List<dynamic>)
-          .map((e) => Item.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      status: json['status'] as bool?,
+      subCode: (json['subCode'] as num?)?.toInt(),
+      message: json['message'] as String?,
+      error: json['error'] as String?,
+      items: json['items'] == null
+          ? null
+          : Items.fromJson(json['items'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$PdPendingResponseModelToJson(
@@ -28,12 +28,31 @@ Map<String, dynamic> _$PdPendingResponseModelToJson(
       'items': instance.items,
     };
 
+Items _$ItemsFromJson(Map<String, dynamic> json) => Items(
+      count: (json['count'] as num?)?.toInt(),
+      items: (json['items'] as List<dynamic>?)
+          ?.map((e) => Item.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      pagination: json['pagination'] == null
+          ? null
+          : Pagination.fromJson(json['pagination'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ItemsToJson(Items instance) => <String, dynamic>{
+      'count': instance.count,
+      'items': instance.items,
+      'pagination': instance.pagination,
+    };
+
 Item _$ItemFromJson(Map<String, dynamic> json) => Item(
       id: json['_id'] as String?,
       customerId: json['customerId'] as String?,
       externalVendorId: json['externalVendorId'] as String?,
       partnerNameId: json['partnerNameId'] as String?,
       creditPdId: json['creditPdId'] as String?,
+      creditPdRejectPhoto: (json['creditPdRejectPhoto'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       pdfCreateByCreditPd: json['pdfCreateByCreditPd'] as String?,
       remarkForCreditPd: json['remarkForCreditPd'] as String?,
       statusByCreditPd: json['statusByCreditPd'] as String?,
@@ -52,6 +71,7 @@ Item _$ItemFromJson(Map<String, dynamic> json) => Item(
       customerFatherName: json['customerFatherName'] as String?,
       customerPhoto: json['customerPhoto'] as String?,
       customerAddress: json['customerAddress'] as String?,
+      reasonForReject: json['reasonForReject'] as String?,
     );
 
 Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
@@ -60,6 +80,7 @@ Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
       'externalVendorId': instance.externalVendorId,
       'partnerNameId': instance.partnerNameId,
       'creditPdId': instance.creditPdId,
+      'creditPdRejectPhoto': instance.creditPdRejectPhoto,
       'pdfCreateByCreditPd': instance.pdfCreateByCreditPd,
       'remarkForCreditPd': instance.remarkForCreditPd,
       'statusByCreditPd': instance.statusByCreditPd,
@@ -72,6 +93,7 @@ Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
       'customerFatherName': instance.customerFatherName,
       'customerPhoto': instance.customerPhoto,
       'customerAddress': instance.customerAddress,
+      'reasonForReject': instance.reasonForReject,
     };
 
 ApplicantDetails _$ApplicantDetailsFromJson(Map<String, dynamic> json) =>
@@ -98,4 +120,19 @@ Map<String, dynamic> _$BranchDetailsToJson(BranchDetails instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'name': instance.name,
+    };
+
+Pagination _$PaginationFromJson(Map<String, dynamic> json) => Pagination(
+      currentPage: (json['currentPage'] as num?)?.toInt(),
+      totalPages: (json['totalPages'] as num?)?.toInt(),
+      totalItems: (json['totalItems'] as num?)?.toInt(),
+      itemsPerPage: (json['itemsPerPage'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$PaginationToJson(Pagination instance) =>
+    <String, dynamic>{
+      'currentPage': instance.currentPage,
+      'totalPages': instance.totalPages,
+      'totalItems': instance.totalItems,
+      'itemsPerPage': instance.itemsPerPage,
     };

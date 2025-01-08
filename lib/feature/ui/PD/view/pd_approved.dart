@@ -78,7 +78,7 @@ class _PdApprovedScreen extends ConsumerState<PdApprovedScreen> {
             centerTitle: true,
           ),
           body: FutureBuilder<List<ApproveItem>>(
-              future: ref.read(
+              future: ref.read( 
                   paginatedApprovedDataProvider(_currentPage).future),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting &&

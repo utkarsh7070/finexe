@@ -473,14 +473,14 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
               );
               
               break;
-              //   case 'creditPd':
-              // log("Navigating to collection dashboard");
-              // Navigator.pushNamedAndRemoveUntil(
-              //   context,
-              //   AppRoutes.pdscreen, // Collection dashboard route
-              //       (route) => false, // Remove all previous routes
-              // );
-              // break;
+                case 'creditPd':
+              log("Navigating to collection dashboard");
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.pdscreen, // Collection dashboard route
+                    (route) => false, // Remove all previous routes
+              );
+              break;
             default:
               Navigator.pushNamedAndRemoveUntil(
                 context,

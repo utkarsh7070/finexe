@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
+import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Model/pd_pending_response_model.dart';
 import '../Model/search_list_model.dart';
 
@@ -35,7 +35,8 @@ final applicantProvider = Provider<List<Applicant>>((ref) {
           'https://easy-peasy.ai/cdn-cgi/image/quality=80,format=auto,width=700/https://fdczvxmwwjwpwbeeqcth.supabase.co/storage/v1/object/public/images/50dab922-5d48-4c6b-8725-7fd0755d9334/3a3f2d35-8167-4708-9ef0-bdaa980989f9.png',
     ),
     Applicant(
-      date: null, // No date for this applicant
+      date: null,
+      // No date for this applicant
       name: 'Mohit Verma',
       id: 'LOCAI1008',
       address: 'Gram Panali Panali Rajgarh Madhya Pradesh 465683',
@@ -51,7 +52,8 @@ final applicantProvider = Provider<List<Applicant>>((ref) {
           'https://easy-peasy.ai/cdn-cgi/image/quality=80,format=auto,width=700/https://fdczvxmwwjwpwbeeqcth.supabase.co/storage/v1/object/public/images/50dab922-5d48-4c6b-8725-7fd0755d9334/3a3f2d35-8167-4708-9ef0-bdaa980989f9.png',
     ),
     Applicant(
-      date: null, // Another entry with no date
+      date: null,
+      // Another entry with no date
       name: 'Manish Patidar',
       id: 'LOCAI1010',
       address: 'Gram Panali Panali Rajgarh Madhya Pradesh 465683',
@@ -86,29 +88,49 @@ final applicantProvider = Provider<List<Applicant>>((ref) {
 //   return false;
 // }
 // },);
+// `complete`, `RePd` , `WIP` ,`allCases`
 
-final currentPageProvider = StateProvider<int>((ref) => 1);
+// final currentPageProvider = StateProvider<int>((ref) => 1);
+// updated>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+final searchingitems = StateProvider<List<Item>>( (ref) {
+  return [];
+},);
 
-final paginatedDataProvider = FutureProvider.autoDispose.family<List<Item>, int>((ref,page) async {
+// update search items 
+void searchupdate(ref, String searchterm, List<Item> listOfLists) {
+  final filteredResults = listOfLists.where((item) {
+    return item.customerName != null &&
+        (item.customerName!.toLowerCase().contains(searchterm.toLowerCase())
+            // item.ld!.toLowerCase().contains(searchterm.toLowerCase())
+            );
+  }).toList();
+
+  ref
+      .read(searchingitems.notifier)
+      .state = filteredResults;
+}
+
+final paginatedDataProvider =
+    FutureProvider.autoDispose.family<List<Item>, int>((ref, page) async {
   final apiService = ref.read(apiPdPendingProvider);
   // final page = ref.watch(currentPageProvider);
   const int limit = 10;
-  const String status = 'accept';
+  const String status = 'complete';
   final response = await apiService.fetchData(
     status: status,
     page: page,
     limit: limit,
     searchQuery: '',
   );
-  return response?? [];
-});
+  ref.read(searchingitems.notifier).state.addAll(response) ;
 
+  return response ?? [];
+});
 
 final apiPdPendingProvider = Provider<ApiService>((ref) {
-  final dio= ref.watch(dioProvider);
+  final dio = ref.watch(dioProvider);
   return ApiService();
 });
-
 
 class ApiService {
   final Dio _dio = Dio();
@@ -121,8 +143,7 @@ class ApiService {
     required int limit,
     String searchQuery = '',
   }) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
+    String? token = speciality.getToken();
     if (kDebugMode) {
       print(token);
       print('$status  $page   $limit  $searchQuery');
@@ -130,7 +151,8 @@ class ApiService {
 
     try {
       final response = await _dio.get(
-        Api.pdAssign,options: Options(headers: {'token':token}),
+        Api.pdAssign,
+        options: Options(headers: {'token': token}),
         queryParameters: {
           'status': status,
           'page': page,
@@ -138,89 +160,94 @@ class ApiService {
           'searchQuery': searchQuery,
         },
       );
-      PdPendingResponseModel responseModel =PdPendingResponseModel.fromJson(response.data);
+      PdPendingResponseModel responseModel =
+          PdPendingResponseModel.fromJson(response.data);
       print(response.data);
 
       if (response.statusCode == 200) {
-        return responseModel.items;
+        return responseModel.items?.items??[];
       } else {
-        throw Exception('Failed to load data with status code: ${response.statusCode}');
+        throw Exception(
+            'Failed to load data with status code: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Error fetching data: $e');
     }
   }
 }
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 
 //***************************************for-search-query***************************
 
-final searchCurrentpage = StateProvider<int>((ref) => 1);
-final serchInputProvider = StateProvider<String>((ref) => '');
+// final searchCurrentpage = StateProvider<int>((ref) => 1);
+// final serchInputProvider = StateProvider<String>((ref) => '');
 
-final searchPaginationDataProvider = FutureProvider.autoDispose.family<List<SearchItems>, int>((ref,page) async {
-  final apiService = ref.read(apiSearchdataProvider);
-  // final page = ref.watch(currentPageProvider);
-  final serchInput = ref.watch(serchInputProvider);
-  const int limit = 10;
-  const String status = 'accept';
-  final response = await apiService.fetchSearchData(
-    status: status,
-    page: page,
-    limit: limit,
-    searchQuery: serchInput,
-  );
-  return response?? [];
-});
+// final searchPaginationDataProvider = FutureProvider.autoDispose
+//     .family<List<SearchItems>, int>((ref, page) async {
+//   final apiService = ref.read(apiSearchdataProvider);
+//   // final page = ref.watch(currentPageProvider);
+//   final serchInput = ref.watch(serchInputProvider);
+//   const int limit = 10;
+//   const String status = 'accept';
+//   final response = await apiService.fetchSearchData(
+//     status: status,
+//     page: page,
+//     limit: limit,
+//     searchQuery: serchInput,
+//   );
+//   return response ?? [];
+// });
 
+// final apiSearchdataProvider = Provider<SearchQuearyViewM>((ref) {
+//   // final dio= ref.watch(dioProvider);
+//   return SearchQuearyViewM();
+// });
 
-final apiSearchdataProvider = Provider<SearchQuearyViewM>((ref) {
-  // final dio= ref.watch(dioProvider);
-  return SearchQuearyViewM();
-});
+// class SearchQuearyViewM {
+//   final Dio _dio = Dio();
 
+//   // ApiService();
 
-class SearchQuearyViewM {
-  final Dio _dio = Dio();
+//   Future<List<SearchItems>> fetchSearchData({
+//     required String status,
+//     required int page,
+//     required int limit,
+//     required String searchQuery,
 
-  // ApiService();
+//     // String searchQuery = '',
+//   }) async {
+//     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+//     String? token = sharedPreferences.getString('token');
+//     if (kDebugMode) {
+//       print(token);
+//       print('$status  $page   $limit  $searchQuery');
+//     }
 
-  Future<List<SearchItems>> fetchSearchData({
-    required String status,
-    required int page,
-    required int limit,
-    required String searchQuery,
+//     try {
+//       final response = await _dio.get(
+//         Api.pdAssign,
+//         options: Options(headers: {'token': token}),
+//         queryParameters: {
+//           'status': status,
+//           'page': page,
+//           'limit': limit,
+//           'searchQuery': searchQuery,
+//         },
+//       );
+//       // PdPendingResponseModel responseModel =PdPendingResponseModel.fromJson(response.data);
+//       SearchListModel responseModel = SearchListModel.fromJson(response.data);
+//       print('search data response: ${response.data}');
 
-    // String searchQuery = '',
-  }) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString('token');
-    if (kDebugMode) {
-      print(token);
-      print('$status  $page   $limit  $searchQuery');
-    }
-
-    try {
-      final response = await _dio.get(
-        Api.pdAssign,options: Options(headers: {'token':token}),
-        queryParameters: {
-          'status': status,
-          'page': page,
-          'limit': limit,
-          'searchQuery': searchQuery,
-        },
-      );
-      // PdPendingResponseModel responseModel =PdPendingResponseModel.fromJson(response.data);
-      SearchListModel responseModel =SearchListModel.fromJson(response.data);
-      print('search data response: ${response.data}');
-
-      if (response.statusCode == 200) {
-        // print
-        return responseModel.items;
-      } else {
-        throw Exception('Failed to load data with status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Error fetching data: $e');
-    }
-  }
-}
+//       if (response.statusCode == 200) {
+//         // print
+//         return responseModel.items;
+//       } else {
+//         throw Exception(
+//             'Failed to load data with status code: ${response.statusCode}');
+//       }
+//     } catch (e) {
+//       throw Exception('Error fetching data: $e');
+//     }
+//   }
+// }
