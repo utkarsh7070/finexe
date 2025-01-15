@@ -139,8 +139,6 @@ class ClosuerDialogContent extends ConsumerWidget {
                     errorText: "Payment Amount is a required field",
                     isError: !paymentState.isAmount,
                     textInputAction: TextInputAction.done,
-                    /* textAlignVertical: TextAlignVertical.center, // This aligns the text properly inside the field
-                    contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),*/ // Adjust padding to give more space
                   ),
                   SizedBox(
                     height: displayHeight(context) * 0.01,

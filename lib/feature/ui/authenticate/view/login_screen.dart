@@ -82,6 +82,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       child: Scaffold(
         backgroundColor: AppColors.attendanceBgColor,
         // resizeToAvoidBottomInset: false,
+
         body: SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),
           child: Padding(
@@ -113,6 +114,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                     Text(
                       'WelCome Back \u{1F44B}',
+
                       style: AppStyles.blackText16
                           .copyWith(fontSize: FontSize.fontSizeL),
                     ),

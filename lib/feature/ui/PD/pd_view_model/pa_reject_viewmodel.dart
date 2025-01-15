@@ -70,11 +70,11 @@ import '../Model/pd_reject_response_model.dart';
 final currentRejectPageProvider = StateProvider<int>((ref) => 1);
 //change return type
 final paginatedRejectDataProvider =
-    FutureProvider.autoDispose.family<List<RejectItem>, int>((ref, page) async {
+    FutureProvider.autoDispose.family<List<Item>, int>((ref, page) async {
   final apiService = ref.read(apiPdRejectProvider);
   // final page = ref.watch(currentPageProvider);
   const int limit = 10;
-  const String status = 'approveByReject';
+  const String status = 'RePd';
   final response = await apiService.fetchData(
     status: status,
     page: page,
@@ -94,7 +94,7 @@ class ApiService {
 
   ApiService();
 
-  Future<List<RejectItem>> fetchData({
+  Future<List<Item>?> fetchData({
     required String status,
     required int page,
     required int limit,
@@ -109,7 +109,7 @@ class ApiService {
 
     try {
       final response = await _dio.get(
-        Api.pdAssign,
+        Api.revertByVendor,
         options: Options(headers: {'token': token}),
         queryParameters: {
           'status': status,
@@ -123,7 +123,7 @@ class ApiService {
       print(response.data);
 
       if (response.statusCode == 200) {
-        return responseModel.items;
+        return responseModel.items?.items??[];
       } else {
         throw Exception(
             'Failed to load data with status code: ${response.statusCode}');
@@ -145,12 +145,12 @@ class PdRejectViewModel extends StateNotifier<PdDashBoardData> {
 }
 
 class PdDashBoardData {
-  final List<RejectItem> rejectList;
+  final List<Item> rejectList;
 
   PdDashBoardData({this.rejectList = const []});
 
   PdDashBoardData copyWith({
-    List<RejectItem>? rejectList,
+    List<Item>? rejectList,
   }) {
    return PdDashBoardData(rejectList: rejectList??this.rejectList);
   }

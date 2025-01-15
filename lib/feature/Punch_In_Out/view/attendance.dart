@@ -4,26 +4,29 @@ import 'dart:math';
 import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart';
 import 'package:finexe/feature/base/api/dio_exception.dart';
 
+import 'package:finexe/feature/base/dialog/logout_dialog.dart';
+
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/widget/app_button.dart';
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/view/leave_request_form.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+
 import '../../base/api/api.dart';
+
 import '../../base/utils/widget/custom_text_form.dart';
 import '../../ui/HRMS/LeaveManagement/model/leave_request_model.dart';
 import '../../ui/HRMS/LeaveManagement/style/decoration_text.dart';
 import '../../ui/HRMS/LeaveManagement/style/neumorphic_convex_style.dart';
 import '../viewmodel/leave_request_home_view_model.dart';
 import '../viewmodel/punch_in_outside_view_model.dart';
-import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 
 class AttendanceScreen extends ConsumerStatefulWidget {
   const AttendanceScreen({super.key});
@@ -50,19 +53,16 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     // final _formKey = GlobalKey<FormState>();
     final viewModel = ref.read(leaveRequestHomeViewModelProvider);
     // final punchInOutSideViewModel = ref.read(punchInOutSideViewModelProvider);
-
     final checkPunchProvider = ref.watch(attendanceProvider);
-
     bool? isallowed;
-
-    isallowed =
-    checkPunchProvider.punchAllowed;
-
+    isallowed = checkPunchProvider.punchAllowed;
     // final socketService = ref.read(socketServiceProvider);
     final data = ref.watch(attendanceProvider);
 
+
     final userProfileAsync = ref.watch(loginAttendanceUserProfileProvider);
     final currentTime = ref.watch(clockProvider);
+
 
     // print("mp punching status ${checkPunchProvider.punchAllowed}");
     //--------------------------------new code in progress-----------------------------------
@@ -166,6 +166,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       ? Column(
                     children: [
 
+
                       const SizedBox(height: 39),
 
                       SizedBox(
@@ -179,6 +180,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       ),
 
                       const SizedBox(height: 40),
+
 
                       Visibility(
                         visible: selectedOption == 'Leave',
@@ -233,25 +235,30 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                 ),
                                 const SizedBox(height: 16),
                                 AppButton(
-                                  textStyle: const TextStyle(
-                                      color: Colors.white),
+
+                                  textStyle:
+                                      const TextStyle(color: Colors.white),
+
                                   label: 'Submit',
 
                                   onTap: () async {
                                     print('reasonForLeave Clicked');
                                     // Handle leave submission
-                                    String reasonForLeave = _leaveReasonController
-                                        .text
-                                        .trim()
-                                        .toString();
+                                    String reasonForLeave =
+                                        _leaveReasonController.text
+                                            .trim()
+                                            .toString();
                                     print('reasonForLeave $reasonForLeave');
                                     if (reasonForLeave.isNotEmpty) {
-                                      final DateTime currentDate = DateTime
-                                          .now();
+
+                                      final DateTime currentDate =
+                                          DateTime.now();
+
                                       final String formattedStartDate =
                                       DateFormat('yyyy-MM-dd')
                                           .format(currentDate);
                                       final String formattedEndDate =
+
                                       DateFormat('yyyy-MM-dd')
                                           .format(currentDate);
 
@@ -263,12 +270,17 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                         leaveType: '',
                                         title: '',
 
+
+                                      final leadData = LeaveRequestItem(
+                                        leaveType: '',
+                                        title: '',
                                         startDate: formattedStartDate,
                                         endDate: formattedEndDate,
                                         reasonForLeave: reasonForLeave,
                                       );
 
                                       try {
+
                                         viewModel.submitLeaveHomeRequest(
                                             leadData, context).then((value) {
                                           setState(() {
@@ -276,6 +288,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                             _leaveReasonController.text = '';
                                           });
                                         },);
+
                                       } catch (e) {
                                         ExceptionHandler().handleError(e);
                                         // ScaffoldMessenger.of(context)
@@ -315,6 +328,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                       5, // Adjust the blur radius of the shadow
                                   offset: const Offset(
                                       0, 4), // Adjust the shadow position
+
                                 ),
                               ],
                             ),
@@ -370,6 +384,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         ),*/
                     ],
                   )
+
                       : const SizedBox(),
                 ),
               ),
@@ -458,6 +473,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                           // Handle Punch In Action
                           print("Punch In Swiped");
                         },
+
                       ),
                     ),
 
@@ -620,8 +636,8 @@ void _showCustomBottomSheet(
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
     ),
-    backgroundColor:
-        Colors.transparent, // Make background transparent to see the cross icon
+    backgroundColor: Colors.transparent,
+    // Make background transparent to see the cross icon
     builder: (BuildContext bc) {
       return Padding(
         padding:EdgeInsets.only(
@@ -813,7 +829,8 @@ void showAttendanceSuccessPopup(BuildContext context, String remark) {
 
               // Image
               Image.asset(
-                'assets/images/right_tick.png', // Replace with your success icon image
+                'assets/images/right_tick.png',
+                // Replace with your success icon image
                 height: 150,
                 width: 150,
               ),
@@ -904,7 +921,6 @@ void showAttendanceSuccessPopup(BuildContext context, String remark) {
                       ],
                     ),
                   ),
-
                   Expanded(
                     child: Container(
                       child: const Text(

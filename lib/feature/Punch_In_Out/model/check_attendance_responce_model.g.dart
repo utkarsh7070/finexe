@@ -12,7 +12,7 @@ CheckAttendanceResponseModel _$CheckAttendanceResponseModelFromJson(
       status: json['status'] as bool,
       subCode: (json['subCode'] as num).toInt(),
       message: json['message'] as String,
-      error: json['error'] as String,
+      error: json['error'] as String?,
       items: Items.fromJson(json['items'] as Map<String, dynamic>),
     );
 

@@ -247,7 +247,8 @@ class UpdateVisitDialogContent extends ConsumerWidget {
                         paymentViewModel.dropDownControllerProvider
                                 .dropDownValue?.value ==
                             'CustomerNotContactable',
-                    child: AppFloatTextField(
+                    child:
+                    AppFloatTextField(
                       maxLine: 5,
                       focusNode: paymentFocusViewModel.reasonFocusNode,
                       currentState: paymentFocusStates['reasonFocusNode'],

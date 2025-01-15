@@ -4,27 +4,47 @@ part 'pd_pending_response_model.g.dart';
 @JsonSerializable()
 class PdPendingResponseModel {
   @JsonKey(name: "status")
-  bool status;
+  bool? status;
   @JsonKey(name: "subCode")
-  int subCode;
+  int? subCode;
   @JsonKey(name: "message")
-  String message;
+  String? message;
   @JsonKey(name: "error")
-  String error;
+  String? error;
   @JsonKey(name: "items")
-  List<Item> items;
+  Items? items;
 
   PdPendingResponseModel({
-    required this.status,
-    required this.subCode,
-    required this.message,
-    required this.error,
-    required this.items,
+    this.status,
+    this.subCode,
+    this.message,
+    this.error,
+    this.items,
   });
 
   factory PdPendingResponseModel.fromJson(Map<String, dynamic> json) => _$PdPendingResponseModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$PdPendingResponseModelToJson(this);
+}
+
+@JsonSerializable()
+class Items {
+  @JsonKey(name: "count")
+  int? count;
+  @JsonKey(name: "items")
+  List<Item>? items;
+  @JsonKey(name: "pagination")
+  Pagination? pagination;
+
+  Items({
+    this.count,
+    this.items,
+    this.pagination,
+  });
+
+  factory Items.fromJson(Map<String, dynamic> json) => _$ItemsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ItemsToJson(this);
 }
 
 @JsonSerializable()
@@ -39,6 +59,8 @@ class Item {
   String? partnerNameId;
   @JsonKey(name: "creditPdId")
   String? creditPdId;
+  @JsonKey(name: "creditPdRejectPhoto")
+  List<String>? creditPdRejectPhoto;
   @JsonKey(name: "pdfCreateByCreditPd")
   String? pdfCreateByCreditPd;
   @JsonKey(name: "remarkForCreditPd")
@@ -63,25 +85,29 @@ class Item {
   String? customerPhoto;
   @JsonKey(name: "customerAddress")
   String? customerAddress;
+  @JsonKey(name: "reasonForReject")
+  String? reasonForReject;
 
   Item({
-    required this.id,
-    required this.customerId,
-    required this.externalVendorId,
-    required this.partnerNameId,
-    required this.creditPdId,
-    required this.pdfCreateByCreditPd,
-    required this.remarkForCreditPd,
-    required this.statusByCreditPd,
-    required this.remarkByCreditPd,
-    required this.branchDetails,
-    required this.applicantDetails,
-    required this.customerFinId,
-    required this.customerName,
-    required this.customerMobileNo,
-    required this.customerFatherName,
-    required this.customerPhoto,
-    required this.customerAddress,
+    this.id,
+    this.customerId,
+    this.externalVendorId,
+    this.partnerNameId,
+    this.creditPdId,
+    this.creditPdRejectPhoto,
+    this.pdfCreateByCreditPd,
+    this.remarkForCreditPd,
+    this.statusByCreditPd,
+    this.remarkByCreditPd,
+    this.branchDetails,
+    this.applicantDetails,
+    this.customerFinId,
+    this.customerName,
+    this.customerMobileNo,
+    this.customerFatherName,
+    this.customerPhoto,
+    this.customerAddress,
+    this.reasonForReject,
   });
 
   factory Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
@@ -99,9 +125,9 @@ class ApplicantDetails {
   String? email;
 
   ApplicantDetails({
-    required this.id,
-    required this.fullName,
-    required this.email,
+    this.id,
+    this.fullName,
+    this.email,
   });
 
   factory ApplicantDetails.fromJson(Map<String, dynamic> json) => _$ApplicantDetailsFromJson(json);
@@ -117,11 +143,34 @@ class BranchDetails {
   String? name;
 
   BranchDetails({
-    required this.id,
-    required this.name,
+    this.id,
+    this.name,
   });
 
   factory BranchDetails.fromJson(Map<String, dynamic> json) => _$BranchDetailsFromJson(json);
 
   Map<String, dynamic> toJson() => _$BranchDetailsToJson(this);
+}
+
+@JsonSerializable()
+class Pagination {
+  @JsonKey(name: "currentPage")
+  int? currentPage;
+  @JsonKey(name: "totalPages")
+  int? totalPages;
+  @JsonKey(name: "totalItems")
+  int? totalItems;
+  @JsonKey(name: "itemsPerPage")
+  int? itemsPerPage;
+
+  Pagination({
+    this.currentPage,
+    this.totalPages,
+    this.totalItems,
+    this.itemsPerPage,
+  });
+
+  factory Pagination.fromJson(Map<String, dynamic> json) => _$PaginationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PaginationToJson(this);
 }

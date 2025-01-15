@@ -1,13 +1,8 @@
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/ui/PD/pd_view_model/pd_filled_form_viewmodel.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_existing_data/modal/pd_existing_modal.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_existing_data/view_modal/pd_existing_view_modal.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_existing_data/modal/pd_existing_modal.dart';
-// import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_existing_data/view_modal/pd_existing_view_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../modal/pd_existing_modal.dart';
 import '../view_modal/pd_existing_view_modal.dart';
 
@@ -19,7 +14,6 @@ class PdFilledForm extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     print('customerId in PdFilledForm:: $customerId');
     final customerState = ref.watch(customerDetailProvider);
-
     // Pass customerId to the loanDetailsProvider
     final loanDetailsAsync = ref.watch(loanDetailsProvider(customerId));
     final applicationDetails = ref.watch(applicationDetailsProvider(customerId));
@@ -27,7 +21,6 @@ class PdFilledForm extends ConsumerWidget {
     final guarantorDetails = ref.watch(guarantorDetailsProvider(customerId));
     final cibilDetails = ref.watch(cibilDetailsProvider(customerId));
 
-    // Check if any async operation is loading
     bool isLoading = loanDetailsAsync.isLoading ||
         applicationDetails.isLoading ||
         coApplicants.isLoading ||

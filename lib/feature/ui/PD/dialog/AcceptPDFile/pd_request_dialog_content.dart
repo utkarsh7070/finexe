@@ -35,7 +35,7 @@ class PdRequestDialogContent extends ConsumerWidget{
               }
               pdRequestViewModel.pdRequestAccept(id,context).then((value) {
                 if(value!) {
-                  ref.refresh(fetchpdRefuseandAcceptListProvider);
+                  ref.refresh(fetchpdRefuseandAcceptListProvider(ArgumentModel(page: 1, branchId: 'all', currentPage: 0,filter: '',pageSize: 0)));
                   ref.refresh(fetchPdRequestListProvider);
                   showCustomSnackBar(context, 'Request Accepted', AppColors.green);
                 }

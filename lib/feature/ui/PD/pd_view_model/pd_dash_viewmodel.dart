@@ -78,7 +78,7 @@ final griditemProvider = Provider<List<GridItem>>((ref) {
     GridItem(
       backImage: 'assets/images/green_back.png',
       iconImage: 'assets/images/right.png',
-      title: 'Approved PD',
+      title: 'RePD',
       subtitle: 'Case 180+ Now ',
     ),
     GridItem(

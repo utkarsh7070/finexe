@@ -18,7 +18,7 @@ class PdCompletedScreen extends ConsumerStatefulWidget {
 
 class _PdCompletedScreen extends ConsumerState<PdCompletedScreen> {
   final ScrollController _scrollController = ScrollController();
-  List<CompleteItem> _data = [];
+  List<Item> _data = [];
   int _currentPage = 1;
   bool _isLoadingMore = false;
 
@@ -109,7 +109,7 @@ class _PdCompletedScreen extends ConsumerState<PdCompletedScreen> {
     );
   }
 
-  itemCard(BuildContext context, CompleteItem pdreitem) {
+  itemCard(BuildContext context, Item pdreitem) {
     return Column(
       children: [
         Container(

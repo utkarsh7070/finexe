@@ -68,7 +68,7 @@ class _PdRivertDialogContentState extends ConsumerState<PdRivertDialogContent> {
 
                 pdRequestViewModel.pdRequestRevert(widget.id,reasonOfRivertController.text,context).then((value) {
                   if(value!) {
-                    ref.refresh(fetchpdRefuseandAcceptListProvider);
+                    ref.refresh(fetchpdRefuseandAcceptListProvider(ArgumentModel(page: 1, branchId: 'all',currentPage: 0,filter: '',pageSize: 0)));
                     ref.refresh(fetchPdRequestListProvider);
                     ref.refresh(fetchPdRefuseCasetProvider);
                     showCustomSnackBar(context, 'Rivert Request Sent Succesfully', AppColors.green);
