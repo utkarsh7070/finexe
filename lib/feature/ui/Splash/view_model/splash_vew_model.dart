@@ -77,10 +77,6 @@ class SessionModel {
       this.isUpdateRequired = false});
 }
 
-// final punchInRepositoryProvider = Provider.autoDispose<PunchInRepositoryImp>((ref) {
-//   return PunchInRepositoryImp(); // Provides instance of PunchInRepository
-// });
-
 Future<Position> getCurrentLocation() async {
   await Geolocator.requestPermission();
   LocationSettings locationSettings = const LocationSettings(
@@ -101,13 +97,11 @@ final restart = StateProvider<bool>(
   (ref) => false,
 );
 
-// class VersionCheckState {
-//   final String? apkUrl;
-//   final bool isUpdateRequired;
-//  // static const String staticAppVersion = "1"; // Current app version
-//
-//   VersionCheckState({this.apkUrl, required this.isUpdateRequired});
-// }
+
+final showLogoProvider = StateProvider<bool>((ref) => true);
+final showWelcomeImageProvider = StateProvider<bool>((ref) => false);
+final addressProvider = StateProvider<String>((ref) => "Fetching your location...");
+
 
 class SplashViewModel extends AsyncNotifier<SessionModel> {
   // SplashViewModel() : super(const AsyncValue.loading());
@@ -117,9 +111,18 @@ class SplashViewModel extends AsyncNotifier<SessionModel> {
   FutureOr<SessionModel> build() {
     return _apiService.fetchPosts(ref);
   }
-// void downloadApk(String apkUrl,context){
-//   _apiService.downloadAndInstallApk(apkUrl);
-// }
+
+
+  // Update address in the view model
+  void updateAddress(WidgetRef ref, String newAddress) {
+    ref.read(addressProvider.notifier).state = newAddress;
+  }
+
+  // Toggle logo and welcome image
+  void toggleLogoAndImage(WidgetRef ref) {
+    ref.read(showLogoProvider.notifier).state = false;
+    ref.read(showWelcomeImageProvider.notifier).state = true;
+  }
 }
 
 final downloadProvider = StateProvider.autoDispose<String>(
@@ -131,9 +134,8 @@ final downloadProvider = StateProvider.autoDispose<String>(
 class ApiService {
   ApiService();
 
-  // static const platform = MethodChannel('apk_channel');
-  // final PunchInRepositoryImp repositoryImp = PunchInRepositoryImp();
-  // final Dio _dio = Dio();
+
+
   bool? punchStatus;
   String? apkUrl;
   bool isUpdateRequired = false;
@@ -181,21 +183,10 @@ class ApiService {
           apkUrl: versionData['apkUrl'],
           isUpdateRequired: versionData['isUpdateRequired']??false,
         );
-        // }
-        //  else {
-        //   // Use the ExceptionHandler to handle the error
-        //   ExceptionHandler().handleError(Exception('Failed to check punch-in status'));
-        //   return SessionModel(
-        //     token: true,
-        //     role: role?.first,
-        //     puntchStatus: false,
-        //     apkUrl: versionData['apkUrl'],
-        //     isUpdateRequired: versionData['isUpdateRequired'],
-        //   );
-        // }
-      } catch (e) {
-        ExceptionHandler().handleError(e);
-      }
+
+    } catch (e) {
+      ExceptionHandler().handleError(e);
+
     }
     return SessionModel(
       token: tokens != null,
@@ -205,6 +196,26 @@ class ApiService {
       isUpdateRequired: versionData['isUpdateRequired'],
     );
   }
+
+     return SessionModel(
+    token: tokens != null,
+    role: role?.first,
+    puntchStatus: null,
+    apkUrl: versionData['apkUrl'],
+    isUpdateRequired: versionData['isUpdateRequired'],
+  );
+
+}
+
+ Future<Map<String, dynamic>> fetchVersion(Dio dio) async {
+
+  try {
+    Response versionResponse = await dio.get(Api.getVersion);
+    final data = versionResponse.data['items'];
+    final serverVersion = data['version'];
+    final apkUrl = data['apkUrl'];
+    bool isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
+
 
   Future<Map<String, dynamic>> fetchVersion(Dio dio) async {
     try {
@@ -226,72 +237,9 @@ class ApiService {
     }
   }
 
-// Future<void> downloadAndInstallApk(String apkUrl) async {
-//   try {
-//
-//     const apkPath = '/storage/emulated/0/Download/FinexeApp.apk';
-//         //
-//     final file = File(apkPath);
-//
-//     await _dio.download(apkUrl, file.path);
-//     // Install APK
-//     InstallPlugin.installApk(file.path, appId: "com.example.finexe")
-//         .then((_) => print("APK Installation Started"))
-//         .catchError((e) => print("Error installing APK: $e"));
-//   } catch (e) {
-//     print("Download failed: $e");
-//   }
-// }
-
-// Future<void> downloadApk(String apkUrl,ref,context) async {
-//   try {
-//     final dir = await getExternalStorageDirectory();
-//     final filePath = '${dir!.path}/app_update.apk';
-//     final permission = await Permission.requestInstallPackages.request();
-//     if (permission.isDenied) {
-//       await Permission.requestInstallPackages.request();
-//     } else {
-//       // Check and delete any existing file
-//       final file = File(filePath);
-//       if (await file.exists()) {
-//         await file.delete();
-//       }
-//       // final dio = ref.watch(dioProvider);
-//       await _dio.download(
-//         apkUrl,
-//         filePath,
-//         onReceiveProgress: (received, total) {
-//           if (total != -1) {
-//             final String val = (received / total * 100).toStringAsFixed(0);
-//             ref.watch(downloadProvider.notifier).state = val;
-//             print(
-//                 "Downloading: ${(received / total * 100).toStringAsFixed(0)}%");
-//           }
-//         },
-//       );
-//       // openApk(filePath,context);
-//       installApk(filePath);
-//     }
-//   } catch (e) {
-//     print("Download failed: $e");
-//   }
-// }
-// void openApk(String filePath,context) {
-//   print('openfile $filePath');
-//   OpenFile.open(filePath, type: '.apk').then((value) {
-//     Navigator.pop(context);
-//   },);
-// }
-//
-// Future<void> installApk(String apkPath) async {
-//   try {
-//     await platform.invokeMethod('installApk', {"apkPath": apkPath});
-//   } on PlatformException catch (e) {
-//     throw Exception("Failed to install APK: ${e.message}");
-//   }
-// }
 }
 
-// final isDialogVisible = StateProvider<bool>((ref) {
-//   return false;
-// },);
+}
+
+
+

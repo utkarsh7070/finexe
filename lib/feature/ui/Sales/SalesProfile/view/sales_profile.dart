@@ -1,6 +1,7 @@
 // user_profile_screen.dart
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/internetConnection/connection_overlay.dart';
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
@@ -12,6 +13,7 @@ import 'package:intl/intl.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../../../../base/api/api.dart';
 import '../../../../base/dialog/logout_dialog.dart';
+import '../../../../base/utils/Repo/image_upload.dart';
 import '../../../../base/utils/namespase/app_colors.dart'; // Make sure to import the intl package for date formatting
 
 class SalesProfile extends ConsumerStatefulWidget {
@@ -22,6 +24,7 @@ class SalesProfile extends ConsumerStatefulWidget {
 }
 
 class _SalesProfileState extends ConsumerState<SalesProfile> {
+  late String imageUrl11;
   @override
   void initState() {
     super.initState();
@@ -40,6 +43,8 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
     final checkpunchProvider = ref.watch(attendanceProvider);
 
     print('user profile data $userProfileAsync');
+    final imageState=ref.watch(imageUploadViewModelProvider);
+    final imageStateVieModel=ref.read(imageUploadViewModelProvider.notifier);
 
 
 
@@ -73,7 +78,7 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Display the employee's photo
-                            Center(
+                           /* Center(
                               child: CircleAvatar(
                                 backgroundColor: AppColors.primary,
                                 radius: 50,
@@ -87,7 +92,69 @@ class _SalesProfileState extends ConsumerState<SalesProfile> {
                                 },
       
                               ),
+                            ),*/
+
+                            Center(
+                              child: Stack(
+                                children: [
+
+                                  Visibility(
+                                    visible: imageState!='',
+                                    replacement: CircleAvatar(
+                                      backgroundColor: AppColors.primary,
+                                      radius: 50,
+                                      backgroundImage: userProfile.employeePhoto.isNotEmpty && userProfile.employeePhoto.contains('upload')
+                                          ? NetworkImage('${Api.imageUrl}${userProfile.employeePhoto}')
+                                          : const AssetImage('assets/images/prof.jpeg') as ImageProvider,
+                                      onBackgroundImageError: (error, stackTrace) {
+                                        // Handle error, use a default image
+                                      },
+                                    ),
+                                    child:  CircleAvatar(
+                                    backgroundColor: AppColors.primary,
+                            radius: 50,
+                            backgroundImage:NetworkImage('${Api.imageUrl}${imageState}'),
+
+                        onBackgroundImageError: (error, stackTrace) {
+                          // Handle error, use a default image
+                        },
+                      ),
+
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        // Handle edit action
+                                        imageStateVieModel.clickImage();
+                                      },
+                                      child: Container(
+                                        width: 24,
+                                        height: 24,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white, // Background color for the icon
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.1),
+                                              blurRadius: 4,
+                                              offset: Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Icon(
+                                          Icons.edit,
+                                          size: 16,
+                                          color: AppColors.primary, // Icon color
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
+
                             const SizedBox(height: 16),
       
                             // Display the employee name with father's name

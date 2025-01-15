@@ -158,7 +158,7 @@ class DashBoardSideBar extends ConsumerWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>  const HRMSDashboardScreen(),
+                          builder: (context) =>   HRMSDashboardScreen(),
                         ),
                       );
                     },

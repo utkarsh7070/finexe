@@ -1,9 +1,11 @@
 // user_profile_view_model.dart
 import 'dart:async';
 
+import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/model/hrmsUserProfile.dart';
+import 'package:flutter/Material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
@@ -14,6 +16,9 @@ import '../../../../Punch_In_Out/model/check_attendance_responce_model.dart';
 import '../../../../Punch_In_Out/repository/puch_In_repository_imp.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../../../../base/api/api.dart';
+import '../../../../base/utils/Repo/image_upload.dart';
+import '../../../../base/utils/widget/custom_snackbar.dart';
+import '../model/image_upload_model.dart';
 
 /*final loginUserProfileProvider = StateNotifierProvider<UserProfileNotifier, AsyncValue<LoginUserProfile>>((ref) {
   return UserProfileNotifier();
@@ -195,3 +200,82 @@ final loginUserProfileProvider =
     rethrow; // The FutureProvider will handle this as an AsyncError
   }
 });
+
+
+//...............For Image update.........
+
+
+final imageProvider = StateProvider<String?>((ref) => null);
+
+
+final imageUploadViewModelProvider = StateNotifierProvider<ImageRequestViewModel ,String>((ref) {
+  final dio = ref.watch(dioProvider);
+  return ImageRequestViewModel(dio);
+},);
+
+
+class ImageRequestViewModel extends StateNotifier<String> {
+final Dio _dio;
+  ImageRequestViewModel(this._dio) :super('');
+
+Future<void> clickImage() async {
+
+  final imageUrl = await DocsUploader.uploadImage(_dio);
+  print('uloaded image $imageUrl');
+  if (imageUrl != null) {
+    state = imageUrl;
+    //ref.read(imageProvider)?.state = imageUrl; // Update provider
+    submitProfileUpdateImage(imageUrl);
+  }
+}
+// Form submission logic
+  Future<void> submitProfileUpdateImage(
+      String imageUrl) async {
+    final leaveData = ImageUploadModel(
+      imageNew: imageUrl,
+    );
+
+    try {
+      String? token = speciality.getToken();
+
+      final response = await _dio.post(
+        Api.updateProfileImage,
+        data: leaveData.toJson(),
+        options: Options(headers: {"token": token}),
+      );
+
+      print('image response $response');
+
+      if (response.statusCode == 200) {
+       // leaveSuccess(context);
+       //  showCustomSnackBar(context, 'Image Update', Colors.green);
+        // Navigator.pop(context, true);
+      } else {
+        throw Exception('Failed to submit leave request');
+      }
+    }
+    catch (e) {
+      if (e is DioException) {
+        if (e.response?.statusCode == 400) {
+          // Handle 400 response
+          final errorMessage = e.response?.data['message'] ?? 'Bad Request';
+          print("400 Error: $errorMessage");
+          // showCustomSnackBar(context, errorMessage, Colors.red);
+        } else {
+          // Handle other Dio errors
+          print("DioError: ${e.message}");
+        //   showCustomSnackBar(
+        //       context, "Something went wrong. Please try again.", Colors.red);
+         }
+      } else {
+        // Handle non-Dio errors
+        print("Error submitting form: $e");
+        // showCustomSnackBar(
+        //     context, "An unexpected error occurred.", Colors.red);
+      }
+    }
+  }
+
+
+}
+

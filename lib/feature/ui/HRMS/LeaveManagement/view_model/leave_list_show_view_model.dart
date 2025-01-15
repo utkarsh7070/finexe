@@ -48,3 +48,41 @@ class LeaveRequestDetailsViewModel {
     }
   }
 }
+
+
+//.................Filter Dialoge...........
+
+//.................Filter by status...........
+class LeaveStatusFilterNotifier extends StateNotifier<String?> {
+  LeaveStatusFilterNotifier() : super(null);
+
+  void selectFilter(String? filter) {
+    state = filter;
+  }
+
+  void resetFilter() {
+    state = null;
+  }
+}
+
+final leaveStatusFilterProvider = StateNotifierProvider<LeaveStatusFilterNotifier, String?>((ref) {
+  return LeaveStatusFilterNotifier();
+});
+
+//.................Filter by Type...........
+
+class LeaveTypeFilterNotifier extends StateNotifier<String?> {
+  LeaveTypeFilterNotifier() : super(null);
+
+  void selectFilter(String? filter) {
+    state = filter;
+  }
+
+  void resetFilter() {
+    state = null;
+  }
+}
+
+final leaveTypeFilterProvider = StateNotifierProvider<LeaveTypeFilterNotifier, String?>((ref) {
+  return LeaveTypeFilterNotifier();
+});

@@ -13,15 +13,21 @@ import 'image_picker_service.dart';
 class DocsUploader {
   static final _picker = ImagePickerService.instance;
 
-  // final image = await imagePicker.pickImageFromGallery();
 
-  static Future<String?> uploadImage(
-      {required Dio dio,required bool isCompressed,required int compressedValue,required bool byCamera}) async {
-    final pickedFile;
-    if (byCamera) {
-      pickedFile = await _picker.pickImageFromCamera();
-    } else {
-      pickedFile = await _picker.pickImageFromGallery();
+ static Future<String?> uploadImage(Dio dio) async {
+        final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+   
+     final imagePath = await _compressImage(File(pickedFile.path));
+
+
+    String? token = speciality.getToken();
+    var formData = FormData.fromMap({
+      'image': await MultipartFile.fromFile(imagePath!.path),
+    });
+    if (kDebugMode) {
+      print(imagePath.path);
+
     }
 
     if (pickedFile != null) {

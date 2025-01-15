@@ -318,7 +318,7 @@ class AppRoutes {
       case pdapprove:
         return MaterialPageRoute(builder: (_) => const PdApprovedScreen());
       case hrms:
-        return MaterialPageRoute(builder: (_) => const HRMSDashboardScreen());
+        return MaterialPageRoute(builder: (_) =>  HRMSDashboardScreen());
       case bankDetails:
         return MaterialPageRoute(builder: (_) => const BankDetails());
 

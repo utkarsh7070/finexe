@@ -4,11 +4,14 @@ import 'package:finexe/feature/base/internetConnection/connection_overlay.dart';
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
+import 'package:finexe/feature/ui/HRMS/LeaveManagement/style/neumorphic_convex_style.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+
 import '../../../../base/api/api.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/namespase/app_style.dart';
@@ -48,80 +51,83 @@ class HRMSDashboardScreen extends ConsumerWidget {
             final dateOfBirth = DateFormat('dd/MM/yyyy')
                 .format(DateTime.parse(userProfile.dateOfBirth));
             return Scaffold(
-              // bottomNavigationBar: BottomBar(
-              //   punchInTime: userProfile.punchInTime,
-              //   punchOutTime: userProfile.punchOutTime,
+              backgroundColor: AppColors.attendanceBgColor1,
+
+              appBar: customAppBar(context, role, userProfile),
+              // AppBar(
+              //   flexibleSpace: Container(
+              //     color: AppColors.attendanceBgColor1,
+              //   ),
+              //
+              //   title: Visibility(
+              //     replacement: const Text('HRMS'),
+              //     visible: !(role.role.contains('sales') ||
+              //         role.role.contains('collection') ||
+              //         role.role.contains('pd') ||
+              //         role.role.contains('admin')),
+              //     child: Row(
+              //       children: [
+              //         CircleAvatar(
+              //           backgroundColor: AppColors.primary,
+              //           radius: 20,
+              //           // backgroundImage: NetworkImage(userProfile.employeePhoto),
+              //           backgroundImage: userProfile.employeePhoto.isNotEmpty &&
+              //                   userProfile.employeePhoto.contains('upload')
+              //               ? NetworkImage(
+              //                   '${Api.imageUrl}${userProfile.employeePhoto}')
+              //               : const AssetImage('assets/images/prof.jpeg')
+              //                   as ImageProvider,
+              //           // Placeholder image
+              //           onBackgroundImageError: (error, stackTrace) {
+              //             // Set a default image if the API image fails to load
+              //           },
+              //         ),
+              //         SizedBox(
+              //           width: displayWidth(context) * 0.02,
+              //         ),
+              //         Column(
+              //           crossAxisAlignment: CrossAxisAlignment.start,
+              //           children: [
+              //             Text(
+              //               userProfile.employeName,
+              //               style: AppStyles.TextStyle16,
+              //             ),
+              //             Text(
+              //               userProfile.designationId['name'] ?? '',
+              //               style: AppStyles.blacktext14
+              //                   .copyWith(color: AppColors.gray7),
+              //             )
+              //           ],
+              //         )
+              //       ],
+              //     ),
+              //   ),
+              //   actions: [
+              //     IconButton(
+              //         onPressed: () {
+              //           LogOutDialog.logOutDialog(context: context);
+              //         },
+              //         icon: const Icon(
+              //           Icons.logout,
+              //         ))
+              //   ],
+              //   // const Text("Dashboard", style: TextStyle(color: Colors.white)),
+              //   // backgroundColor: AppColors.primary,
+              //   // centerTitle: true,
+              //   leading: Visibility(
+              //     visible: (role.role.contains('sales') ||
+              //         role.role.contains('collection') ||
+              //         role.role.contains('pd') ||
+              //         role.role.contains('admin')),
+              //     child: IconButton(
+              //       icon: const Icon(
+              //         CupertinoIcons.back,
+              //         color: Colors.black,
+              //       ),
+              //       onPressed: () => Navigator.pop(context),
+              //     ),
+              //   ),
               // ),
-              appBar: AppBar(
-                title: Visibility(
-                  replacement: const Text('HRMS'),
-                  visible: !(role.role.contains('sales') ||
-                      role.role.contains('collection') ||
-                      role.role.contains('pd') ||
-                      role.role.contains('admin')),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: AppColors.primary,
-                        radius: 20,
-                        // backgroundImage: NetworkImage(userProfile.employeePhoto),
-                        backgroundImage: userProfile.employeePhoto.isNotEmpty &&
-                                userProfile.employeePhoto.contains('upload')
-                            ? NetworkImage(
-                                '${Api.imageUrl}${userProfile.employeePhoto}')
-                            : const AssetImage('assets/images/prof.jpeg')
-                                as ImageProvider,
-                        // Placeholder image
-                        onBackgroundImageError: (error, stackTrace) {
-                          // Set a default image if the API image fails to load
-                        },
-                      ),
-                      SizedBox(
-                        width: displayWidth(context) * 0.02,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            userProfile.employeName,
-                            style: AppStyles.TextStyle16,
-                          ),
-                          Text(
-                            userProfile.designationId['name'] ?? '',
-                            style: AppStyles.blacktext14
-                                .copyWith(color: AppColors.gray7),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                actions: [
-                  IconButton(
-                      onPressed: () {
-                        LogOutDialog.logOutDialog(context: context);
-                      },
-                      icon: const Icon(
-                        Icons.logout,
-                      ))
-                ],
-                // const Text("Dashboard", style: TextStyle(color: Colors.white)),
-                // backgroundColor: AppColors.primary,
-                // centerTitle: true,
-                leading: Visibility(
-                  visible: (role.role.contains('sales') ||
-                      role.role.contains('collection') ||
-                      role.role.contains('pd') ||
-                      role.role.contains('admin')),
-                  child: IconButton(
-                    icon: const Icon(
-                      CupertinoIcons.back,
-                      color: Colors.black,
-                    ),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-              ),
               body: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Padding(
@@ -129,15 +135,14 @@ class HRMSDashboardScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Card(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(color: AppColors.boxBorderGray),
-                          borderRadius:
-                              BorderRadius.circular(12), // Rounded corners
-                        ),
+
+                      NeumorphicWidget(
+                          boxShape: NeumorphicBoxShape.roundRect(
+                              BorderRadius.circular(12)),
+
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 16.0,right: 16,bottom: 25,top: 25),
+                          padding: const EdgeInsets.only(
+                              left: 16.0, right: 16, bottom: 25, top: 25),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -149,62 +154,110 @@ class HRMSDashboardScreen extends ConsumerWidget {
                               Text(
                                 'Today Check In ${formatDate(userProfile.punchInTime)}, ${formatTime(userProfile.punchInTime)}',
                                 style: AppStyles.headingTextStyleFooter
-                                    .copyWith(color: AppColors.textDarkGray,fontSize: FontSize.fontSizeXS),
+                                    .copyWith(
+                                        color: AppColors.textDarkGray,
+                                        fontSize: FontSize.fontSizeXS),
                               ),
                               SizedBox(
                                 height: displayHeight(context) * 0.04,
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  timeShow(
-                                      icon: Icons.move_to_inbox_outlined,
-                                      label: 'Check In',
-                                      time: formatTime(userProfile.punchInTime),
-                                      context: context),
-                                  timeShow(
-                                      icon: Icons.outbox_outlined,
-                                      time: formatTime(
-                                        userProfile.punchOutTime,
+                                  NeumorphicWidget(
+                                      depth: -2,
+                                      // Controls the shadow depth
+                                      intensity: 0.7,
+                                      // Controls the shadow intensity
+                                      // Background color
+                                      boxShape: NeumorphicBoxShape.roundRect(
+                                          BorderRadius.circular(12)),
+
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      // Padding inside Neumorphic widget
+                                      child: timeShow(
+                                        icon: Icons.move_to_inbox_outlined,
+                                        label: 'Check In',
+                                        time:
+                                            formatTime(userProfile.punchInTime),
+                                        context: context,
                                       ),
-                                      label: 'Check Out',
-                                      context: context),
-                                  timeShow(
-                                      icon: Icons.watch_later_outlined,
-                                      label: 'Working HR’S',
-                                      time:hrmsViewModel.hoursCalculate(userProfile.punchInTime,userProfile.punchOutTime)??'00:00',
-                                      context: context)
+                                    ),
+                                  ),
+                                  NeumorphicWidget(
+                                    depth: -2,
+                                    // Controls the shadow depth
+                                    intensity: 0.7,
+                                    // Controls the shadow intensity
+                                    // Background color
+                                    boxShape: NeumorphicBoxShape.roundRect(
+                                        BorderRadius.circular(12)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: timeShow(
+                                        icon: Icons.watch_later_outlined,
+                                        label: 'Working HR’S',
+                                        time: hrmsViewModel.hoursCalculate(
+                                                userProfile.punchInTime,
+                                                userProfile.punchOutTime) ??
+                                            '00:00',
+                                        context: context,
+                                      ),
+                                    ),
+                                  ),
+                                  NeumorphicWidget(
+                                    depth: -2,
+                                    // Controls the shadow depth
+                                    intensity: 0.7,
+                                    // Controls the shadow intensity
+                                    // Background color
+                                    boxShape: NeumorphicBoxShape.roundRect(
+                                        BorderRadius.circular(12)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: timeShow(
+                                        icon: Icons.outbox_outlined,
+                                        time: formatTime(
+                                            userProfile.punchOutTime),
+                                        label: 'Check Out',
+                                        context: context,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                               SizedBox(
                                 height: displayHeight(context) * 0.05,
                               ),
                               SwipeButton.expand(
+                                elevationTrack: 10,
                                 width: 500,
                                 thumb: Container(
                                   width: 10, // Adjust the width of the thumb
                                   height: 10, // Adjust the height of the thumb
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: AppColors.attendanceBgColor1,
                                     borderRadius: BorderRadius.circular(
                                         20), // Round the thumb if needed
                                   ),
                                   child: const Icon(
                                     Icons.double_arrow_rounded,
-                                    color: Colors.red,
+                                    color: AppColors.hrmsRedColor,
                                   ),
                                 ),
                                 activeThumbColor: Colors.white,
-                                activeTrackColor: Colors.red.shade300,
+                                activeTrackColor: AppColors.attendanceBgColor1,
                                 // elevationThumb: 4.8,
                                 height: 60,
                                 thumbPadding: const EdgeInsets.all(8),
                                 child: const Text(
                                   "Swipe to Punch Out",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: AppColors.hrmsRedColor,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                                    fontSize: 13,
                                   ),
                                 ),
                                 onSwipe: () {
@@ -219,6 +272,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                           ),
                         ),
                       ),
+                      // ),
                       SizedBox(
                         height: displayHeight(context) * 0.04,
                       ),
@@ -227,238 +281,182 @@ class HRMSDashboardScreen extends ConsumerWidget {
                         style: AppStyles.blackText16,
                       ),
                       SizedBox(height: displayHeight(context) * 0.02),
-                      Row(
-                        children: [
-                          shortNavigation(
-                              icon: CupertinoIcons.calendar,
-                              label: 'Attendance',
-                              onTap: () {
-                                final String employeeId = userProfile
-                                                      .employeeId; // Ensure this field exists in your model
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          AttendanceDetailsScreen(
-                                                              employeeId: employeeId),
-                                                    ),
-                                                  );
-                              }),
-                          SizedBox(
-                            width: displayWidth(context) * 0.10,
-                          ),
-                          shortNavigation(
-                              icon: CupertinoIcons.person,
-                              label: 'Leave',
-                              onTap: () {
-                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const LeaveRequestScreen()),
-                                                  );
-                              })
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.only(right: 36.0),
+                        // Add space on the right
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          // Align cards to the start
+
+
+                          children: [
+                            NeumorphicWidget(
+                              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                              child: SizedBox(
+                                width: displayWidth(context) * 0.3,
+                                // Adjust card width
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: shortNavigation(
+                                    icon: CupertinoIcons.calendar,
+                                    label: 'Attendance',
+                                    onTap: () {
+                                      final String employeeId =
+                                          userProfile.employeeId;
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AttendanceDetailsScreen(
+                                                  employeeId: employeeId),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: displayWidth(context) * 0.05),
+                            // Space between the cards
+                            NeumorphicWidget(
+                              boxShape: NeumorphicBoxShape.roundRect(
+                                  BorderRadius.circular(12)),
+                              child: SizedBox(
+                                width: displayWidth(context) * 0.3,
+                                // Same width as the first card
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: shortNavigation(
+                                    icon: CupertinoIcons.person,
+                                    label: 'Leave',
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                          const LeaveRequestScreen(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+
+                          /*children: [
+                            SizedBox(
+                              width: displayWidth(context) * 0.4,
+                              child: NeumorphicButton(
+                                onPressed: () {
+                                  final String employeeId = userProfile.employeeId;
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AttendanceDetailsScreen(employeeId: employeeId),
+                                    ),
+                                  );
+                                },
+                                style: NeumorphicStyles.neuMorphicButtonStyle(),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: shortNavigation(
+                                    icon: CupertinoIcons.calendar,
+                                    label: 'Attendance',
+                                    onTap: () {
+                                      *//*final String employeeId =
+                                          userProfile.employeeId;
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AttendanceDetailsScreen(
+                                                  employeeId: employeeId),
+                                        ),
+                                      );*//*
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(width: displayWidth(context) * 0.05),
+                            // Space between the cards
+                            SizedBox(
+                              width: displayWidth(context) * 0.3,
+                              height: displayHeight(context) * 0.1,
+                              child: NeumorphicButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const LeaveRequestScreen(),
+                                    ),
+                                  );
+                                },
+                                style: NeumorphicStyles.neuMorphicButtonStyle(),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: shortNavigation(
+                                    icon: CupertinoIcons.person,
+                                    label: 'Leave',
+                                    onTap: () {
+                                      *//* Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LeaveRequestScreen(),
+                                        ),
+                                      );*//*
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],*/
+                        ),
                       ),
+
                       SizedBox(height: displayHeight(context) * 0.04),
-                  //     Text(
-                  //       'Attendance For This Month',
-                  //       style: AppStyles.cardTextStyle16,
-                  //     ),
-                  //     SizedBox(height: displayHeight(context) * 0.02),
-                  //     Row(
-                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //       children: [
-                  //         showAttendanceCount(
-                  //         count: '7878',
-                  //         label: 'Total Attendance',
-                  //         context: context,
-                  //         bgColor: AppColors.primaryBg1,
-                  //         borderColor: Colors.blue),
-                  // showAttendanceCount(
-                  //     count: '7878',
-                  //     label: 'Leave Request',
-                  //     context: context,
-                  //     bgColor: AppColors.bluePistaLight,
-                  //     borderColor: AppColors.bluePista)
-                  //       ],
-                  //     ),
-                  //     SizedBox(height: displayHeight(context) * 0.02),
-                  //     Row(
-                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //       children: [
-                  //         showAttendanceCount(
-                  //             count: '7878',
-                  //             label: 'Total Leaves',
-                  //             context: context,
-                  //             bgColor: AppColors.greenDarkLightbg,
-                  //             borderColor: AppColors.greenDarkLight),
-                  //         showAttendanceCount(
-                  //             count: '7878',
-                  //             label: 'Late Coming',
-                  //             context: context,
-                  //             bgColor: AppColors.redLightBg,
-                  //             borderColor: AppColors.redLight)
-                  //       ],
-                  //     ),
-                      // Expanded(
-                      //   // child: GridView.builder(
-                      //   //   itemCount: 4,
-                      //   //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      //   //       childAspectRatio: 2.3,
-                      //   //       crossAxisCount: 2,
-                      //   //       crossAxisSpacing: 5,
-                      //   //       mainAxisSpacing: 5),
-                      //   //   itemBuilder: (context, index) {
-                      //   //     return
-                      //   //
-                      //   //   },
-                      //   // ),
-                      // )
-
-                      // Expanded(
-                      //   child: Column(
-                      //     children: [
-                      //       Row(
-                      //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      //         children: [
-                      //           ActionButton(
-                      //             icon: Icons.access_time,
-                      //             label: "Attendance",
-                      //             onPressed: () {
-                      //               userProfileAsync.when(
-                      //                 data: (userProfile) {
-                      //                   final String employeeId = userProfile
-                      //                       .employeeId; // Ensure this field exists in your model
-                      //                   Navigator.push(
-                      //                     context,
-                      //                     MaterialPageRoute(
-                      //                       builder: (context) =>
-                      //                           AttendanceDetailsScreen(
-                      //                               employeeId: employeeId),
-                      //                     ),
-                      //                   );
-                      //                 },
-                      //                 loading: () {
-                      //                   ScaffoldMessenger.of(context)
-                      //                       .showSnackBar(
-                      //                     const SnackBar(
-                      //                         content: Text(
-                      //                             'Loading user profile...')),
-                      //                   );
-                      //                 },
-                      //                 error: (error, stack) {
-                      //                   ScaffoldMessenger.of(context)
-                      //                       .showSnackBar(
-                      //                     const SnackBar(
-                      //                         content: Text(
-                      //                             'Failed to load user profile')),
-                      //                   );
-                      //                 },
-                      //               );
-                      //             },
-                      //           ),
-                      //
-                      //           /*ActionButton(
-                      //         icon: Icons.access_time,
-                      //         label: "Attendance", // Added a comma here
-                      //         onPressed: () {
-                      //           Navigator.push(context, MaterialPageRoute(builder: (context) =>  AttendanceDetailsScreen(employeeId:"hello")),);
-                      //         },
-                      //       ),*/
-                      //           ActionButton(
-                      //             icon: Icons.request_page,
-                      //             label: "Leave Request", // Added a comma here
-                      //             onPressed: () {
-                      //               Navigator.push(
-                      //                 context,
-                      //                 MaterialPageRoute(
-                      //                     builder: (context) =>
-                      //                         const LeaveRequestScreen()),
-                      //               );
-                      //             },
-                      //           ),
-                      //         ],
-                      //       ),
-                      //       SizedBox(
-                      //         height: displayHeight(context) * 0.02,
-                      //       ),
-                      //       /*Visibility(
-                      //       visible: !(role.role.contains('sales') || role.role.contains('collection') || role.role.contains('pd') || role.role.contains('admin')),
-                      //       child: */
-                      //       Row(
-                      //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      //         children: [
-                      //           Column(
-                      //             children: [
-                      //               IconButton(
-                      //                 onPressed: () {
-                      //                   _showMyDialog(context);
-                      //                   // hrmsViewModel.onPunchOut(context);
-                      //                   // ref.refresh(loginUserProfileProvider);
-                      //                 },
-                      //                 icon: const Icon(Icons.fingerprint,
-                      //                     size: 40, color: Colors.green),
-                      //               ),
-                      //               const Text('Punch Out')
-                      //             ],
-                      //           ),
-                      //           Column(
-                      //             children: [
-                      //               IconButton(
-                      //                 onPressed: () {
-                      //                   LogOutDialog.logOutDialog(
-                      //                       context: context);
-                      //                 },
-                      //                 icon: const Icon(
-                      //                   Icons.logout,
-                      //                   color: AppColors.primary,
-                      //                 ),
-                      //               ),
-                      //               const Text('Logout')
-                      //             ],
-                      //           ),
-                      //         ],
-                      //       ),
-                      //       // )
-                      //     ],
-                      //   ),
-                      // ),
-
-                      /*BottomBar(employee: userProfileAsync),*/
                     ],
                   ),
                 ),
               ),
               /*BottomBar(employee: userProfileAsync),*/
             );
-      },
-     error: (error, stack) => Scaffold( appBar: AppBar(
-              title:
-              const Text("Dashboard", style: TextStyle(color: Colors.white)),
-              backgroundColor: AppColors.primary,
-              centerTitle: true,
-              leading: Visibility(
-                visible: (role.role.contains('sales') || role.role.contains('collection') || role.role.contains('pd') || role.role.contains('admin')),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
+          },
+          error: (error, stack) => Scaffold(
+              appBar: AppBar(
+                title: const Text("Dashboard",
+                    style: TextStyle(color: Colors.white)),
+                backgroundColor: AppColors.primary,
+                centerTitle: true,
+                leading: Visibility(
+                  visible: (role.role.contains('sales') ||
+                      role.role.contains('collection') ||
+                      role.role.contains('pd') ||
+                      role.role.contains('admin')),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => Navigator.pop(context),
                   ),
-                  onPressed: () => Navigator.pop(context),
                 ),
               ),
-            ),body: NoDataFound(retry: true, ontap: () {
-              ref.refresh(loginUserProfileProvider);
-            },)),
-      loading: () {
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
-      },
-    ));
-
-
+              body: NoDataFound(
+                retry: true,
+                ontap: () {
+                  ref.refresh(loginUserProfileProvider);
+                },
+              )),
+          loading: () {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          },
+        ));
   }
 
   Future<void> _showMyDialog(BuildContext context) async {
@@ -526,6 +524,38 @@ class HRMSDashboardScreen extends ConsumerWidget {
     );
   }
 
+
+ /* Widget shortNavigation(
+      {required Widget icon,
+        required String label,
+        required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        *//*children: [Icon(icon), Text(label)],*//*
+
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 40, // Set the size of the icon container
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey[200], // Background color of the icon container
+            ),
+            child: Center(child: icon), // Custom icon or image widget
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+
+    );
+  }*/
+
   Widget showAttendanceCount(
       {required String count,
       required String label,
@@ -549,6 +579,103 @@ class HRMSDashboardScreen extends ConsumerWidget {
       ),
     );
   }
+
+  PreferredSizeWidget customAppBar(BuildContext context, role ,userProfile){
+    return PreferredSize(preferredSize: Size(displayWidth(context), displayHeight(context)*0.10),
+        child:SafeArea(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(children: [
+                    Visibility(
+                      visible: (role.role.contains('sales') ||
+                          role.role.contains('collection') ||
+                          role.role.contains('pd') ||
+                          role.role.contains('admin')),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(15,0,0,0),
+                        child: SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: NeumorphicWidget(
+                            boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                            child: IconButton(
+                              icon: const Icon(
+                                CupertinoIcons.back,
+                                color: Colors.black,
+                                size: 20,
+                              ),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5,0,0,0,),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: AppColors.primary,
+                            radius: 20,
+                            // backgroundImage: NetworkImage(userProfile.employeePhoto),
+                            backgroundImage: userProfile.employeePhoto.isNotEmpty &&
+                                userProfile.employeePhoto.contains('upload')
+                                ? NetworkImage(
+                                '${Api.imageUrl}${userProfile.employeePhoto}')
+                                : const AssetImage('assets/images/prof.jpeg')
+                            as ImageProvider,
+                            // Placeholder image
+                            onBackgroundImageError: (error, stackTrace) {
+                              // Set a default image if the API image fails to load
+                            },
+                          ),
+                          SizedBox(
+                            width: displayWidth(context) * 0.02,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                userProfile.employeName,
+                                style: AppStyles.TextStyle16,
+                              ),
+                              Text(
+                                userProfile.designationId['name'] ?? '',
+                                style: AppStyles.blacktext14
+                                    .copyWith(color: AppColors.gray7),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+
+                  ],),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0,0,15,0),
+            child: SizedBox(
+              height: 40,
+              width: 40,
+              child: NeumorphicWidget(
+                boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                child: IconButton(
+                    onPressed: () {
+                      LogOutDialog.logOutDialog(context: context);
+                    },
+                    icon: const Icon(
+                      Icons.logout,
+                    )),
+              ),
+            ),
+          )
+                ],
+              ),
+        ) );
+
+  }
+
 }
 
 
