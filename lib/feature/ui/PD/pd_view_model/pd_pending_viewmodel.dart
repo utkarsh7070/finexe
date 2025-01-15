@@ -4,9 +4,7 @@ import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../Model/pd_pending_response_model.dart';
-import '../Model/search_list_model.dart';
 
 class Applicant {
   final String name;
@@ -116,7 +114,7 @@ final paginatedDataProvider =
   final apiService = ref.read(apiPdPendingProvider);
   // final page = ref.watch(currentPageProvider);
   const int limit = 10;
-  const String status = 'complete';
+  const String status = 'WIP';
   final response = await apiService.fetchData(
     status: status,
     page: page,

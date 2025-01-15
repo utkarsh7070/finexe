@@ -1,9 +1,10 @@
 import 'dart:io';
+
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../../base/service/session_service.dart';
+
 import '../../../../../../base/utils/namespase/app_colors.dart';
 import '../../../../../../base/utils/namespase/app_style.dart';
 import '../../../../../../base/utils/namespase/display_size.dart';
@@ -41,17 +42,11 @@ class _GuarantorDetails extends ConsumerState<GuarantorDetails> {
     final formListController = ref.watch(guarantorController);
     final formNotifierController = ref.read(guarantorController.notifier);
 //---------------------------------------------------------------------------------
-//     final isPanIconChange = ref.watch(isGuarantorPanLoading);
-//     final colorChangeState = ref.watch(isGuarantorTickColorChange);
-//     final upload = ref.watch(uploadGuarantorDoc);
-//     // final checkBoxTerms = ref.watch(checkBoxTermsConditionGuarantor);
-//     final selectedValue = ref.watch(guarantorRoleProvider);
-    // final paymentViewModel = ref.read(paymentProvider(context).notifier);
+    final paymentViewModel = ref.read(paymentProvider(context).notifier);
     final getMobileNo = ref.watch(personalDetailViewModelProvider);
     final personalFormState = ref.watch(guarantorViewModelProvider);
     final personalFormViewModel = ref.read(guarantorViewModelProvider.notifier);
     final personalFocusStates = ref.watch(guarantorFocusProvider);
-    // final isRemember = ref.watch(guarantorRememberProvider);
     final personalFocusViewModel = ref.read(guarantorFocusProvider.notifier);
 
     return NetworkListener(
@@ -110,8 +105,8 @@ class _GuarantorDetails extends ConsumerState<GuarantorDetails> {
                                 replacement: SizedBox(
                                   height: displayHeight(context) * 0.16,
                                   width: displayWidth(context),
-                                  child: Image.file(File(
-                                      personalFormState.applicantPhotoFilePath)),
+                                  child: Image.file(File(personalFormState
+                                      .applicantPhotoFilePath)),
                                 ),
                                 child: UploadBox(
                                   isImage: true,
@@ -204,7 +199,8 @@ class _GuarantorDetails extends ConsumerState<GuarantorDetails> {
                                   //     ? displayHeight(context) * 0.09
                                   //     : null,
                                   inerHint: 'Enter Aadhaar Number',
-                                  errorText: "Aadhaar Number is a required field",
+                                  errorText:
+                                      "Aadhaar Number is a required field",
                                   // isError: !applicantFormState.isAadhaarValid,
                                   textInputAction: TextInputAction.done,
                                 ),
@@ -213,7 +209,8 @@ class _GuarantorDetails extends ConsumerState<GuarantorDetails> {
                                 ),
                                 AppFloatTextField(
                                   width: displayWidth(context),
-                                  focusNode: personalFocusViewModel.panFocusNode,
+                                  focusNode:
+                                      personalFocusViewModel.panFocusNode,
                                   currentState:
                                       personalFocusStates['panFocusNode'],
                                   controller: formListController.panController,
@@ -287,73 +284,76 @@ class _GuarantorDetails extends ConsumerState<GuarantorDetails> {
                                       ),
                                 Center(
                                   child: TextButton(
-                                    child: Text(
-                                      'Skip',
-                                      style: AppStyles.nameText.copyWith(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    onPressed: () async {
-                                      String? paymentMode = await SessionService.getPaymentMode();
-                                      if(paymentMode=='Razorpay'){
-      
+                                      child: Text(
+                                        'Skip',
+                                        style: AppStyles.nameText.copyWith(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      onPressed: () async {
+                                        // String? paymentMode =
+                                        //     await SessionService.getPaymentMode();
+                                        // if (paymentMode == 'Razorpay') {
                                         personalFormViewModel
                                             .paymentInitiate()
                                             .then(
-                                              (value) {
+                                          (value) {
                                             if (kDebugMode) {
                                               print(getMobileNo.phoneNumber);
                                             }
                                             if (value.items.customerDetail
-                                                .loginFees !=
+                                                    .loginFees !=
                                                 0) {
-                                              // paymentViewModel.payWithRazorPay(
-                                              //     amount: value.items.customerDetail
-                                              //         .loginFees,
-                                              //     mobile: getMobileNo.phoneNumber,
-                                              //     orderId: value.items
-                                              //         .customerDetail.orderId);
-                                              // FormSubmitDialog().formSubmitDialog(
-                                              //     context: context);
+                                              paymentViewModel.payWithRazorPay(
+                                                  amount: value.items
+                                                      .customerDetail.loginFees,
+                                                  mobile:
+                                                      getMobileNo.phoneNumber,
+                                                  orderId: value.items
+                                                      .customerDetail.orderId);
+                                              FormSubmitDialog()
+                                                  .formSubmitDialog(
+                                                      context: context);
                                             } else {
-                                              FormSubmitDialog().formSubmitDialog(
-                                                  context: context);
+                                              FormSubmitDialog()
+                                                  .formSubmitDialog(
+                                                      context: context);
                                             }
                                           },
                                         );
-      
-                                      }else {
-      
-                                        personalFormViewModel
-                                            .paymentInitiate()
-                                            .then(
-                                              (value) {
-                                            if (kDebugMode) {
-                                              print(getMobileNo.phoneNumber);
-                                            }
-                                            if (value.items.customerDetail
-                                                .loginFees !=
-                                                0) {
-                                              // paymentViewModel.payWithRazorPay(
-                                              //     amount: value.items.customerDetail
-                                              //         .loginFees,
-                                              //     mobile: getMobileNo.phoneNumber,
-                                              //     orderId: value.items
-                                              //         .customerDetail.orderId);
-                                              // FormSubmitDialog().formSubmitDialog(
-                                              //     context: context);
-                                            } else {
-                                              FormSubmitDialog().formSubmitDialog(
-                                                  context: context);
-                                            }
-                                          },
-                                        );
-      
                                       }
-      
-                                    },
-      
-                                   /* onPressed: () async {
+                                      // else {
+                                      //   personalFormViewModel
+                                      //       .paymentInitiate()
+                                      //       .then(
+                                      //     (value) {
+                                      //       if (kDebugMode) {
+                                      //         print(getMobileNo.phoneNumber);
+                                      //       }
+                                      //       if (value.items.customerDetail
+                                      //               .loginFees !=
+                                      //           0) {
+                                      //         paymentViewModel.payWithRazorPay(
+                                      //             amount: value.items
+                                      //                 .customerDetail.loginFees,
+                                      //             mobile:
+                                      //                 getMobileNo.phoneNumber,
+                                      //             orderId: value.items
+                                      //                 .customerDetail.orderId);
+                                      //         FormSubmitDialog()
+                                      //             .formSubmitDialog(
+                                      //                 context: context);
+                                      //       } else {
+                                      //         FormSubmitDialog()
+                                      //             .formSubmitDialog(
+                                      //                 context: context);
+                                      //       }
+                                      //     },
+                                      //   );
+                                      // }
+                                      // },
+
+                                      /* onPressed: () async {
                                       String? paymentMode = await SessionService.getPaymentMode();
                                       personalFormViewModel
                                           .paymentInitiate()
@@ -380,13 +380,8 @@ class _GuarantorDetails extends ConsumerState<GuarantorDetails> {
                                         },
                                       );
                                     },*/
-      
-      
-                                  ),
+                                      ),
                                 )
-      
-      
-      
                               ],
                             ),
                           ]),

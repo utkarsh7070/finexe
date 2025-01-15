@@ -12,15 +12,15 @@ import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 
 // ----------- post api ---------
 final pdLoanDetailsProvider =
-    StateNotifierProvider<PDLoanDetailsModel, ApplicantState>((ref) {
+    StateNotifierProvider<PDLoanDetailsModel, LoanDetailState>((ref) {
   final dio = ref.read(dioProvider);
   return PDLoanDetailsModel(dio);
 });
 
-class PDLoanDetailsModel extends StateNotifier<ApplicantState> {
+class PDLoanDetailsModel extends StateNotifier<LoanDetailState> {
   final Dio dio;
 
-  PDLoanDetailsModel(this.dio) : super(ApplicantState());
+  PDLoanDetailsModel(this.dio) : super(LoanDetailState());
 
   Future<bool> submitLoanDetails({
     required String customerId,
@@ -128,19 +128,19 @@ class loanDetailApi {
 }
 
 // --------------- Common Loader
-class ApplicantState {
+class LoanDetailState {
   final bool? isLoading;
 
-  ApplicantState({
+  LoanDetailState({
     this.isLoading,
   });
 
-  ApplicantState.initial() : isLoading = false;
+  LoanDetailState.initial() : isLoading = false;
 
-  ApplicantState copyWith({
+  LoanDetailState copyWith({
     bool? isLoading,
   }) {
-    return ApplicantState(
+    return LoanDetailState(
       isLoading: isLoading ?? this.isLoading,
       // selectedDate: selectedDate ?? this.selectedDate,
     );

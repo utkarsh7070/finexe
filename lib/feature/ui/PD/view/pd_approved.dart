@@ -18,7 +18,7 @@ class PdApprovedScreen extends ConsumerStatefulWidget {
 
 class _PdApprovedScreen extends ConsumerState<PdApprovedScreen> {
   final ScrollController _scrollController = ScrollController();
-  List<ApproveItem> _data = [];
+  List<Item> _data = [];
   int _currentPage = 1;
   bool _isLoadingMore = false;
 
@@ -77,7 +77,7 @@ class _PdApprovedScreen extends ConsumerState<PdApprovedScreen> {
             title: const Text('Approved PD'),
             centerTitle: true,
           ),
-          body: FutureBuilder<List<ApproveItem>>(
+          body: FutureBuilder<List<Item>>(
               future: ref.read( 
                   paginatedApprovedDataProvider(_currentPage).future),
               builder: (context, snapshot) {
@@ -109,13 +109,11 @@ class _PdApprovedScreen extends ConsumerState<PdApprovedScreen> {
                   );
                 }
               })
-      
-      
       ),
     );
   }
 
-  itemCard(BuildContext context, ApproveItem pdreitem) {
+  itemCard(BuildContext context, Item pdreitem) {
     return Column(
       children: [
         Container(

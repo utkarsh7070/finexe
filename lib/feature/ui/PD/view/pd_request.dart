@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
@@ -9,16 +10,77 @@ import 'package:finexe/feature/ui/PD/pd_view_model/pd_request_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../base/utils/widget/app_button.dart';
 import '../dialog/AcceptPDFile/pd_request_dialog.dart';
-import '../dialog/RivertPDFile/rivert_pd_dialogue.dart';
 
-class PdRequestScreen extends ConsumerWidget {
+class PdRequestScreen extends ConsumerStatefulWidget {
   const PdRequestScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final pditems = ref.watch(fetchpdRefuseandAcceptListProvider);
+  _PdRequestScreen createState() => _PdRequestScreen();
+}
+
+class _PdRequestScreen extends ConsumerState<PdRequestScreen> {
+  final ScrollController _scrollController = ScrollController();
+  List<PDReqItems> _data = [];
+  int _currentPage = 1;
+  bool _isLoadingMore = false;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchInitialData();
+      _scrollController.addListener(_scrollListener);
+    });
+    super.initState();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent &&
+        !_isLoadingMore) {
+      _loadMore();
+    }
+  }
+
+  Future<void> _loadMore() async {
+    if (_isLoadingMore) return;
+    setState(() {
+      _isLoadingMore = true;
+    });
+    final newPage = _currentPage + 1;
+    final response = await ref.read(fetchpdRefuseandAcceptListProvider(
+            ArgumentModel(
+                page: newPage,
+                branchId: 'all',
+                currentPage: 0,
+                filter: '',
+                pageSize: 0))
+        .future);
+    setState(() {
+      _data.addAll(response ?? []);
+      _currentPage = newPage;
+      _isLoadingMore = false;
+    });
+  }
+
+  Future<void> _fetchInitialData() async {
+    final response = await ref.read(fetchpdRefuseandAcceptListProvider(
+            ArgumentModel(page: _currentPage, branchId: 'all', currentPage: 0,filter: '',pageSize: 0))
+        .future);
+    setState(() {
+      _data = response ?? [];
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final page = ref.watch(paginationPageNo);
     final pdRequestViewModel = ref.watch(pdRequestProvider);
+    final itemViewModel = ref.read(itemViewModelProvider.notifier);
+    // final selectedState =  ref.watch(selectedValue);
+    // final selected =  ref.read(selectedValue.notifier);
+    // final dataListProvider = ref.watch(dataList);
 
     return NetworkListener(
       context: context,
@@ -31,46 +93,136 @@ class PdRequestScreen extends ConsumerWidget {
             title: const Text('PD Request'),
             centerTitle: true,
           ),
-          body: pditems.when(
-            data: (pdDataItems) {
-              return Column(
-                children: [
-                  // Text('data'),
-                  Expanded(
-                    child:
-                        // pditems == null // Check for loading state
-                        //     ? Center(child: CircularProgressIndicator())
-                        //     :
-                        pditems.value!.isEmpty // Check for empty state
-                            ? const Center(
-                                child: Text(
-                                  'No PD Requests found',
-                                  style:
-                                      TextStyle(fontSize: 16, color: Colors.grey),
-                                ),
-                              )
-                            : ListView.builder(
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                itemCount: pdDataItems.length,
-                                itemBuilder: (context, index) {
-                                  final applicant = pdDataItems[index];
-                                  return itemCard(context, applicant,
-                                      pdRequestViewModel, ref);
-                                },
-                              ),
+          body: Padding(
+            
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                DropDownTextField(
+                  onChanged: (dropDown) {
+                    if (dropDown != null) {
+                      print('drop down $dropDown');
+                      // paymentViewModel.openFeilds(dropDown.value);
+                    }
+                  },
+                  clearOption: false,
+                  controller: itemViewModel.creditPersonController,
+                  listSpace: 20,
+                  listPadding: ListPadding(top: 20),
+                  enableSearch: false,
+                  dropDownList: dropdownOptions,
+                  listTextStyle:
+                  const TextStyle(color: AppColors.primary),
+                  // dropDownItemCount: data.length,
+                  // textFieldFocusNode:
+                  // paymentFocusViewModel.modeOfCollection,
+                  textFieldDecoration: const InputDecoration(
+                    hintStyle: TextStyle(color: AppColors.textGray),
+                    // floatingLabelStyle:
+                    // paymentFocusStates['modeOfCollection']!
+                    //     ? AppStyles.subHeading
+                    //     .copyWith(color: AppColors.primary)
+                    //     : AppStyles.subHeading,
+                    label: Text(
+                      'Select Branch',
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.buttonBorderGray, width: 1),
+                        borderRadius:
+                        BorderRadius.all(Radius.circular(10))),
+                    // filled: true,
+                    // fillColor: AppColors.gray,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: AppColors.buttonBorderGray, width: 1),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+            
+                    focusedBorder: OutlineInputBorder(
+                        borderSide:
+                        BorderSide(color: Colors.blue, width: 2),
+                        borderRadius:
+                        BorderRadius.all(Radius.circular(10))),
                   ),
-                ],
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stackTrace) => Center(child: Text('Error: $error')),
-            // error: (error, stackTrace) {
-            //   print('Error: $error');
-            //   return Center(
-            //     child: Text('Data not found'),
-            //   );
-            // },
-          )),
+                ),
+                SizedBox(height: displayHeight(context)*0.04,),
+                Expanded(
+                  child: FutureBuilder(
+                    future: ref.read(fetchpdRefuseandAcceptListProvider(
+                            ArgumentModel(page: _currentPage, branchId: 'all',pageSize: 0,filter: '',currentPage: 0))
+                        .future),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting &&
+                          _data.isEmpty) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (!snapshot.hasData) {
+                        return const Center(child: Text('Not found Data'));
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else {
+                        return ListView.builder(
+                          controller: _scrollController,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: _data.length,
+                          itemBuilder: (context, index) {
+                            final applicant = _data[index];
+                            return itemCard(
+                                context, applicant, pdRequestViewModel, ref);
+                          },
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          )
+
+          // pditems.when(
+          //   data: (pdDataItems) {
+          //     return Column(
+          //       children: [
+          //         // Text('data'),
+          //         Expanded(
+          //           child:
+          //               // pditems == null // Check for loading state
+          //               //     ? Center(child: CircularProgressIndicator())
+          //               //     :
+          //               pditems.value!.isEmpty // Check for empty state
+          //                   ? const Center(
+          //                       child: Text(
+          //                         'No PD Requests found',
+          //                         style:
+          //                             TextStyle(fontSize: 16, color: Colors.grey),
+          //                       ),
+          //                     )
+          //                   :
+          //                   ListView.builder(
+          //                       controller: _scrollController,
+          //                       physics: const AlwaysScrollableScrollPhysics(),
+          //                       itemCount: pdDataItems.length,
+          //                       itemBuilder: (context, index) {
+          //                         final applicant = pdDataItems[index];
+          //                         return itemCard(context, applicant,
+          //                             pdRequestViewModel, ref);
+          //                       },
+          //                     ),
+          //         ),
+          //       ],
+          //     );
+          //   },
+          //   loading: () => const Center(child: CircularProgressIndicator()),
+          //   error: (error, stackTrace) => Center(child: Text('Error: $error')),
+          //   // error: (error, stackTrace) {
+          //   //   print('Error: $error');
+          //   //   return Center(
+          //   //     child: Text('Data not found'),
+          //   //   );
+          //   // },
+          // )
+          ),
     );
   }
 
@@ -148,7 +300,7 @@ class PdRequestScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          pdreitem.customerName??'',
+                          pdreitem.customerName ?? '',
                           style: AppStyles.blackText16,
                         ),
                         SizedBox(
@@ -159,7 +311,7 @@ class PdRequestScreen extends ConsumerWidget {
                           style: AppStyles.gray7Text,
                         ),
                         Text(
-                          pdreitem.customerAddress??'NA',
+                          pdreitem.customerAddress ?? 'NA',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: AppStyles.blacktext14,
@@ -172,69 +324,37 @@ class PdRequestScreen extends ConsumerWidget {
               SizedBox(
                 height: displayHeight(context) * 0.02,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-
-                  //Refuse PD
-                  GestureDetector(
-                    onTap: () {
-
-                      // pdRequestViewModel.pdRequestDefuse(pdreitem.customerId!).then(
-                      //   (value) {
-                      //     if (value!) {
-                      //
-                      //       ref.refresh(fetchpdRefuseandAcceptListProvider);
-                      //       ref.refresh(fetchPdRequestListProvider);
-                      //       // ref.re
-                      //       showCustomSnackBar(
-                      //           context, 'Request Rejected', AppColors.green);
-                      //     }
-                      //   },
-                      // );
-                      //  PdRequestDialogue.requestAcceptDialogue(context: context);
-                       PdRivertDialogue.requestRivertDialogue(context: context, id: pdreitem.sId?? '',
-                          ref: ref );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.only(top: 10),
-                      height: 44,
-                      width: displayWidth(context) * 0.3,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: AppColors.red, width: 1.5)),
-                      child: const Text(
-                        'Refuse',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: AppColors.red),
-                      ),
-                    ),
-                  ),
-
-                 //Accept PD
-                  GestureDetector(
-                    onTap: () {
-
-                      PdRequestDialogue.requestAcceptDialogue(
-                          context: context, id: pdreitem.sId ?? '');
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.only(top: 10),
-                      height: 44,
-                      width: displayWidth(context) * 0.3,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          border:
-                              Border.all(color: AppColors.primary, width: 1.5)),
-                      child: const Text(
-                        'Accept',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: AppColors.primary),
-                      ),
-                    ),
-                  ),
-                ],
-              )
+              AppButton(
+                width: displayWidth(context) * 0.80,
+                bgColor: AppColors.white,
+                isBorderColor: true,
+                borderColor: AppColors.primary,
+                label: 'Accept',
+                onTap: () {
+                  PdRequestDialogue.requestAcceptDialogue(
+                      context: context, id: pdreitem.sId ?? '');
+                },
+              ),
+              // GestureDetector(
+              //   onTap: () {
+              //     PdRequestDialogue.requestAcceptDialogue(
+              //         context: context, id: pdreitem.sId ?? '');
+              //   },
+              //   child: Container(
+              //     padding: const EdgeInsets.only(top: 10),
+              //     height: 44,
+              //     width: displayWidth(context) * 0.3,
+              //     decoration: BoxDecoration(
+              //         borderRadius: BorderRadius.circular(30),
+              //         border:
+              //             Border.all(color: AppColors.primary, width: 1.5)),
+              //     child: const Text(
+              //       'Accept',
+              //       textAlign: TextAlign.center,
+              //       style: TextStyle(color: AppColors.primary),
+              //     ),
+              //   ),
+              // )
             ],
           ),
         ),

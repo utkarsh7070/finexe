@@ -30,11 +30,12 @@ class AppFloatTextField extends StatelessWidget {
   final double? height;
   final bool? currentState;
   final int? maxLine;
-  // final String? initialValue;
+final bool? isInitialValue;
+  final String? initialValue;
 
   const AppFloatTextField(
       {super.key,
-        this.textCapitalize = TextCapitalization.none,
+      this.textCapitalize = TextCapitalization.none,
       this.maxLine,
       this.width,
       this.hint,
@@ -44,14 +45,15 @@ class AppFloatTextField extends StatelessWidget {
       this.suffixIcon,
       this.onChange,
       this.isError = false,
+      this.isInitialValue = false,
       this.suffixOnTap,
       this.onTap,
       this.onEditingComplete,
       this.isSuffix = false,
-        this.isReadOnly = false,
+      this.isReadOnly = false,
       this.textInputAction = TextInputAction.done,
       this.textInputType = TextInputType.text,
-      // this.initialValue,
+      this.initialValue,
       this.prefixIcon,
       this.prefixOnTap,
       this.onValidate,
@@ -64,17 +66,15 @@ class AppFloatTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: width ?? displayWidth(context),
-      // decoration: const BoxDecoration(color: AppColors.white),
       height: height ?? displayHeight(context) * 0.06,
-
-      alignment: Alignment.center,
+      // alignment: Alignment.center,
       child: TextFormField(
         onEditingComplete: onEditingComplete,
         textCapitalization: textCapitalize,
         readOnly: isReadOnly,
-        // initialValue: initialValue,
+        initialValue: initialValue,
         maxLines: maxLine,
         focusNode: focusNode,
         onFieldSubmitted: onFiledSubmitted,
@@ -88,7 +88,8 @@ class AppFloatTextField extends StatelessWidget {
         textInputAction: textInputAction,
         keyboardType: textInputType,
         style: const TextStyle(fontSize: 12),
-        textAlignVertical: TextAlignVertical.center,  // Add this property
+        // textAlignVertical: TextAlignVertical.center,
+        // Add this property
         decoration: InputDecoration(
           isDense: true,
           // hintText: inerHint,
@@ -114,7 +115,9 @@ class AppFloatTextField extends StatelessWidget {
                   child: Icon(suffixIcon, color: Colors.grey),
                 )
               : null,
-          contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),  // Add this property
+          // contentPadding:
+          //     const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
+          // Add this property
           enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: AppColors.gray, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(10))),

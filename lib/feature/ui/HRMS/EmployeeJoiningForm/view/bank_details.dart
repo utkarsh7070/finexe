@@ -171,9 +171,7 @@ class BankDetails extends ConsumerWidget {
                   onChange: (value) {
                     employeeDataViewModel.updateEsicNumber(value);
                   },
-                  // height: !personalFormState.isAadhaarValid
-                  //     ? displayHeight(context) * 0.09
-                  //     : null,
+
                   inerHint: 'Height(cm)',
                   errorText: "Height is a required field",
                   // isError: !personalFormState.isAadhaarValid,
@@ -182,16 +180,9 @@ class BankDetails extends ConsumerWidget {
                 ),
                 SizedBox(height: displayHeight(context)*0.01,),
                 AppFloatTextField(
-                  // focusNode:
-                  // personalFocusViewModel.aadhaarFocusNode,
-                  // currentState:
-                  // personalFocusStates['aadhaarFocusNode'],
                   onChange: (value) {
                     employeeDataViewModel.updateCaste(value);
                   },
-                  // height: !personalFormState.isAadhaarValid
-                  //     ? displayHeight(context) * 0.09
-                  //     : null,
                   inerHint: 'Caste',
                   errorText: "Caste is a required field",
                   // isError: !personalFormState.isAadhaarValid,

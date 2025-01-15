@@ -20,7 +20,7 @@ GetVisitPendingResponseData _$GetVisitPendingResponseDataFromJson(
 
 Map<dynamic, dynamic> _$GetVisitPendingResponseDataToJson(
         GetVisitPendingResponseData instance) =>
-    <dynamic, dynamic>{
+    <String, dynamic>{
       'status': instance.status,
       'subCode': instance.subCode,
       'message': instance.message,

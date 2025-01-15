@@ -27,7 +27,7 @@ class PdReject {
 
 final currentCompletedPageProvider = StateProvider<int>((ref) => 1);
 //change return type
-final paginatedCompletedDataProvider = FutureProvider.autoDispose.family<List<CompleteItem>, int>((ref,page) async {
+final paginatedCompletedDataProvider = FutureProvider.autoDispose.family<List<Item>, int>((ref,page) async {
   final apiService = ref.read(apiPdCompletedProvider);
   // final page = ref.watch(currentPageProvider);
   const int limit = 10;
@@ -53,7 +53,7 @@ class ApiService {
 
   ApiService();
 
-  Future<List<CompleteItem>> fetchData({
+  Future<List<Item>> fetchData({
     required String status,
     required int page,
     required int limit,
@@ -80,7 +80,7 @@ class ApiService {
       print(response.data);
 
       if (response.statusCode == 200) {
-        return responseModel.items;
+        return responseModel.items?.items??[];
       } else {
         throw Exception('Failed to load data with status code: ${response.statusCode}');
       }

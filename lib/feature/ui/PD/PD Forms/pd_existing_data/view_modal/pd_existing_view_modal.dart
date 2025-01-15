@@ -126,7 +126,7 @@ class CoApplicantProvider {
   Future<List<CoApplicantDetails>> fetchCoApplicants(String customerId) async {
     try {
       final response = await _dio
-          .get('${Api.getCoApplicantFormDetails}/$customerId');
+          .get('${Api.getCoApplicantFormDetails}$customerId');
       // print(' Co-applicantResponse---: ${response.data['items']}');
 
       if (response.statusCode == 200 && response.data != null) {

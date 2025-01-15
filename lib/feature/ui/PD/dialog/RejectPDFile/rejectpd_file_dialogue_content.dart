@@ -103,7 +103,7 @@ class _RejectpdFileDialogueContentState extends ConsumerState<RejectpdFileDialog
                   ref.read(pdRejectVModelProvider.notifier).rejectPDFormRequest(widget.customerId, rijectReasonController.text,rejectPDFileImageUrl,context,remarkbypdController.text).then(
                           (value) {
                         if(value==true){
-                          ref.refresh(fetchpdRefuseandAcceptListProvider);
+                          ref.refresh(fetchpdRefuseandAcceptListProvider(ArgumentModel(page: 1, branchId: 'all',currentPage: 0,filter: '',pageSize: 0)));
                           ref.refresh(fetchPdRequestListProvider);
                           ref.refresh(fetchPdRefuseCasetProvider);
                           showCustomSnackBar(context, 'Reject Request Sent Succesfully', AppColors.green);

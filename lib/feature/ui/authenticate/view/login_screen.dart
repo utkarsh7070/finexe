@@ -81,7 +81,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         body: Padding(
           padding: const EdgeInsets.all(16),
           child: Form(
-            // autovalidateMode: AutovalidateMode.onUserInteraction,
             key: _formKey,
             child: SizedBox(
               width: displayWidth(context),

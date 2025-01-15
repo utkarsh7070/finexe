@@ -293,7 +293,7 @@ class AppRoutes {
         final customerId = settings.arguments as String;
         return MaterialPageRoute(
             builder: (_) => PdFormScreen(
-                  customerId: customerId,
+                  customerId,
                 ));
       case eodscreen:
         return MaterialPageRoute(builder: (_) => const EODScreenAdd());

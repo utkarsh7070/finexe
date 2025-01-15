@@ -19,7 +19,7 @@ class PdRejectScreen extends ConsumerStatefulWidget {
 
 class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
   final ScrollController _scrollController = ScrollController();
-  List<RejectItem> _data = [];
+  List<Item> _data = [];
   int _currentPage = 1;
   bool _isLoadingMore = false;
 
@@ -63,7 +63,6 @@ class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final pdrejectitems = ref.watch(pdrejectViewModel);
     return NetworkListener(
       context: context,
       child: Scaffold(
@@ -81,7 +80,10 @@ class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
             if (snapshot.connectionState == ConnectionState.waiting &&
                 _data.isEmpty) {
               return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
+            }if(snapshot.hasData){
+              return const Center(child: Text('Not found Data'));
+            }
+            else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             }
             else{
@@ -110,7 +112,7 @@ class _PdRejectScreen extends ConsumerState<PdRejectScreen> {
     );
   }
 
-  itemCard(BuildContext context, RejectItem pdreitem) {
+  itemCard(BuildContext context, Item pdreitem) {
     return Column(
       children: [
         Container(

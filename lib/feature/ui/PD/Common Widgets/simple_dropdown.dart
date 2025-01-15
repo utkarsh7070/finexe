@@ -1,6 +1,6 @@
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_textfield/dropdown_textfield.dart';
 
 class CustomDropDownTextField extends StatelessWidget {
   final List<DropDownValueModel> items;
@@ -23,7 +23,6 @@ class CustomDropDownTextField extends StatelessWidget {
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.07,
           child: DropDownTextField(
-
             clearOption: false,
             enableSearch: false,
             dropDownList: items,
@@ -38,7 +37,8 @@ class CustomDropDownTextField extends StatelessWidget {
                 ),
                 labelStyle: AppStyles.subHeading),
             textStyle: AppStyles.headingTextStyle,
-            initialValue: controller.text, // Set initial value from controller
+            initialValue: controller.text,
+            // Set initial value from controller
             onChanged: (value) {
               controller.text =
                   value?.value ?? ''; // Update controller on change

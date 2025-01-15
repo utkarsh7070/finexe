@@ -37,7 +37,6 @@ class _PdScreenState extends ConsumerState<PdScreen> {
   Widget build(
     BuildContext context,
   ) {
-    // final items = ref.watch(itemProvider);
     final pdRequestList = ref.watch(fetchPdRequestListProvider);
     final pdRefuseList = ref.watch(fetchPdRefuseCasetProvider);
     final gridItems = ref.watch(griditemProvider);
@@ -82,7 +81,6 @@ class _PdScreenState extends ConsumerState<PdScreen> {
           child: Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: Column(
-      
               children: [
                 constantSizedBox(context),
                 // AdvancedSearch(
@@ -171,15 +169,6 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                                 ),
                                 child: Row(
                                   children: [
-                                    // ClipRRect(
-                                    //   borderRadius: BorderRadius.circular(8),
-                                    //   child: Image.network(
-                                    //     item.imageUrl,
-                                    //     width: 56,
-                                    //     height: 56,
-                                    //     fit: BoxFit.cover,
-                                    //   ),
-                                    // ),
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(12),
                                       // child: Image.network(
@@ -414,7 +403,6 @@ class _PdScreenState extends ConsumerState<PdScreen> {
   }
 
   Widget squareBox({
-
     required String backImage,
     required String iconImage,
     required String title,
@@ -427,7 +415,6 @@ class _PdScreenState extends ConsumerState<PdScreen> {
 
     return Stack(
       children: [
-
         GestureDetector(
           onTap: () {
             if (title == 'Approved PD') {

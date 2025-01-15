@@ -64,7 +64,6 @@ class CustomTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-
       maxLength: length,
       readOnly: isReadOnly,
       initialValue: initialValue,

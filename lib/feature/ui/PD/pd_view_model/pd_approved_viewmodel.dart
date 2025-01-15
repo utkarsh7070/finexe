@@ -72,11 +72,11 @@ final pdrejectViewModel = Provider<List<PdApproved>>((ref) {
 final currentPageApprovedProvider = StateProvider<int>((ref) => 1);
 
 final paginatedApprovedDataProvider = FutureProvider.autoDispose
-    .family<List<ApproveItem>, int>((ref, page) async {
+    .family<List<Item>, int>((ref, page) async {
   final apiService = ref.read(apiPdPApprovedProvider);
   // final page = ref.watch(currentPageApprovedProvider);
   const int limit = 10;
-  const String status = 'approve';
+  const String status = 'RePd';
   final response = await apiService.fetchData(
     status: status,
     page: page,
@@ -96,7 +96,7 @@ class ApiApprovedService {
 
   ApiApprovedService(this._dio);
 
-  Future<List<ApproveItem>> fetchData({
+  Future<List<Item>?> fetchData({
     required String status,
     required int page,
     required int limit,
@@ -125,7 +125,7 @@ class ApiApprovedService {
       print(response.data);
 
       if (response.statusCode == 200) {
-        return responseModel.items;
+        return responseModel.items?.items??[];
       } else {
         throw Exception(
             'Failed to load data with status code: ${response.statusCode}');

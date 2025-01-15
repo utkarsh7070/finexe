@@ -13,11 +13,13 @@ class AppButton extends StatelessWidget {
     this.width,
     this.textStyle,
     this.isDisabled = false,
+    this.isBorderColor =  false,
   });
 
   final String? label;
   final VoidCallback? onTap;
   final bool isFill;
+  final bool isBorderColor;
   final double? height;
   final double? width;
   final TextStyle? textStyle;
@@ -39,11 +41,11 @@ class AppButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
 
           backgroundColor: !isFill ? bgColor : null,
-          side: isFill ? BorderSide(color: borderColor ?? Colors.transparent) : null,
+          side: isBorderColor ? BorderSide(color: borderColor ?? Colors.transparent) : null,
           padding: isFill ? EdgeInsets.zero : const EdgeInsets.symmetric(vertical: 10),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-            
+            // side: BorderSide(color: isBorderColor?)
           ),
         ),
         onPressed: isDisabled ? null : onTap,
