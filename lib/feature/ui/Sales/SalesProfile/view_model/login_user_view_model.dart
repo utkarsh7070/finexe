@@ -220,7 +220,7 @@ final Dio _dio;
 
 Future<void> clickImage() async {
 
-  final imageUrl = await DocsUploader.uploadImage(_dio);
+  final imageUrl = await DocsUploader.uploadImage(dio: _dio,byCamera: true,compressedValue: 70,isCompressed: true);
   print('uloaded image $imageUrl');
   if (imageUrl != null) {
     state = imageUrl;

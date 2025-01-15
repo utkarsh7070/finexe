@@ -135,7 +135,6 @@ class ApiService {
   ApiService();
 
 
-
   bool? punchStatus;
   String? apkUrl;
   bool isUpdateRequired = false;
@@ -173,7 +172,7 @@ class ApiService {
 
         // if (response.statusCode == 200) {
         CheckAttendanceResponseModel checkAttendanceResponse =
-            CheckAttendanceResponseModel.fromJson(response.data);
+        CheckAttendanceResponseModel.fromJson(response.data);
         bool? punchStatus = checkAttendanceResponse.items.punchIn;
 
         return SessionModel(
@@ -181,13 +180,20 @@ class ApiService {
           role: role?.first,
           puntchStatus: punchStatus,
           apkUrl: versionData['apkUrl'],
-          isUpdateRequired: versionData['isUpdateRequired']??false,
+          isUpdateRequired: versionData['isUpdateRequired'] ?? false,
         );
-
-    } catch (e) {
-      ExceptionHandler().handleError(e);
-
+      } catch (e) {
+        ExceptionHandler().handleError(e);
+      }
+      return SessionModel(
+        token: tokens != null,
+        role: role?.first,
+        puntchStatus: null,
+        apkUrl: versionData['apkUrl'],
+        isUpdateRequired: versionData['isUpdateRequired'],
+      );
     }
+
     return SessionModel(
       token: tokens != null,
       role: role?.first,
@@ -197,49 +203,28 @@ class ApiService {
     );
   }
 
-     return SessionModel(
-    token: tokens != null,
-    role: role?.first,
-    puntchStatus: null,
-    apkUrl: versionData['apkUrl'],
-    isUpdateRequired: versionData['isUpdateRequired'],
-  );
+      Future<Map<String, dynamic>> fetchVersion(Dio dio) async {
+        try {
+          Response versionResponse = await dio.get(Api.getVersion);
+          final data = versionResponse.data['items'];
+          final serverVersion = data['version'];
+          final apkUrl = data['apkUrl'];
+          bool isUpdateRequired = serverVersion !=
+              AppConstants.staticAppVersion;
 
-}
-
- Future<Map<String, dynamic>> fetchVersion(Dio dio) async {
-
-  try {
-    Response versionResponse = await dio.get(Api.getVersion);
-    final data = versionResponse.data['items'];
-    final serverVersion = data['version'];
-    final apkUrl = data['apkUrl'];
-    bool isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
-
-
-  Future<Map<String, dynamic>> fetchVersion(Dio dio) async {
-    try {
-      Response versionResponse = await dio.get(Api.getVersion);
-      final data = versionResponse.data['items'];
-      final serverVersion = data['version'];
-      final apkUrl = data['apkUrl'];
-      bool isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
-
-      return {'apkUrl': apkUrl, 'isUpdateRequired': isUpdateRequired};
-    } catch (e) {
-      // Use the ExceptionHandler to handle the error uniformly
-      ExceptionHandler().handleError(e);
-      // Return a default value in case of error
-      return {
-        'apkUrl': null,
-        'isUpdateRequired': null,
-      };
+          return {'apkUrl': apkUrl, 'isUpdateRequired': isUpdateRequired};
+        } catch (e) {
+          // Use the ExceptionHandler to handle the error uniformly
+          ExceptionHandler().handleError(e);
+          // Return a default value in case of error
+          return {
+            'apkUrl': null,
+            'isUpdateRequired': null,
+          };
+        }
+      }
     }
-  }
 
-}
-
-}
 
 
 
