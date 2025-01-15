@@ -1,6 +1,8 @@
 
 
 
+import 'dart:async';
+
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +13,8 @@ import '../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/leave_type_response_model.dart';
 import '../model/leave_request_model.dart';
 import 'package:dio/dio.dart';
+
+import 'SuccessDialog.dart';
 
 
 final leaveRequestViewModelProvider = ChangeNotifierProvider.autoDispose((ref) => LeaveRequestViewModel());
@@ -76,8 +80,9 @@ class LeaveRequestViewModel extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        showCustomSnackBar(context, 'Leave Request Submitted', Colors.green);
-        Navigator.pop(context, true);
+        leaveSuccess(context);
+       // showCustomSnackBar(context, 'Leave Request Submitted', Colors.green);
+       // Navigator.pop(context, true);
       } else {
         throw Exception('Failed to submit leave request');
       }
@@ -103,6 +108,27 @@ class LeaveRequestViewModel extends ChangeNotifier {
       }
     }
   }
+
+  void leaveSuccess(BuildContext context) {
+    // Simulating form submission logic here
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return SuccessDialog(
+          title: "Leave Applied Successfully",
+          message: "Your leave has been applied successfully.",
+        );
+      },
+    );
+
+    // Close the dialog automatically after 3 seconds
+    Timer(const Duration(seconds: 3), () {
+      Navigator.of(context).pop(); // Close the dialog
+      Navigator.of(context).pop(true);
+    });
+  }
+
 
 }
 

@@ -58,6 +58,38 @@ extension AppColors on Never {
 
   static const Color lightBlue = Color(0xffdbf0fc);
 
+  static const Color leaveBgColor = Color(0xffFAFAFA);
+  static const Color lightTextColor = Color(0xff7E8488);
+  static const Color darkTextColor = Color(0xff262626);
+
+  static const Color leaveBlueColor = Color(0xff3085FE);
+  static const Color leaveGreenColor = Color(0xff30BEB6);
+  static const Color leaveRedColor = Color(0xffFF7F74);
+  static const Color leaveOrangeColor = Color(0xffFFA500);
+
+  static const Color attendanceBgColor = Color(0xffEDEEF2);
+  static const Color leaveTextColor = Color(0xff475467);
+
+  static const Color attendanceBgColor1 = Color(0xffdfe1e8);
+  static const Color hrmsRedColor = Color(0xffFE6D87);
+
+  static const Color boxTextGrayColor = Color(0xff475467);
+  static const Color hintTextGrayColor = Color(0xff273850);
+
+  static const Color leavePinkColor = Color(0xffFE6D87);
+  static const Color lightExtraTextColor = Color(0xffb9bcbe);
+  static const Color iconBlackColor = Color(0xff475467);
+
+
+
+
+
+
+
+
+
+
+
 // static const Color gray = Colors.grey;
 
 

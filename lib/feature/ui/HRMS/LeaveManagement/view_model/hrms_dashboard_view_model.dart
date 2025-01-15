@@ -72,7 +72,7 @@ class HRMSDashBoardViewModel extends StateNotifier<bool> {
       int hours = difference.inHours;
       int minutes = difference.inMinutes % 60;
 
-      return "$hours:$minutes hours";
+      return "$hours:$minutes";
     } catch (e) {
       // throw Exception(e);
       // Handle invalid input

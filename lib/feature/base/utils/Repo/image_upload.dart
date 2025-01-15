@@ -20,9 +20,6 @@ class DocsUploader {
    
      final imagePath = await _compressImage(File(pickedFile.path));
 
-   
-   
-    
 
     String? token = speciality.getToken();
     var formData = FormData.fromMap({

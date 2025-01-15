@@ -170,3 +170,21 @@ final controllerProvider = Provider<ControllerNotifier>((ref) {
       .dispose()); // Dispose the controller when the provider is no longer used
   return controllerNotifier;
 });
+
+
+//.................Filter Popup Dialoge...........
+class AttendanceFilterNotifier extends StateNotifier<String?> {
+  AttendanceFilterNotifier() : super(null);
+
+  void selectFilter(String? filter) {
+    state = filter;
+  }
+
+  void resetFilter() {
+    state = null;
+  }
+}
+
+final attendanceFilterProvider = StateNotifierProvider<AttendanceFilterNotifier, String?>((ref) {
+  return AttendanceFilterNotifier();
+});

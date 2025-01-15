@@ -96,7 +96,38 @@ class EmployeeDetail {
   }
 }
 
+// OLD DATA
 class AttendanceRecord {
+  final String id;
+  final String date;
+  final String? punchInTime;
+  final String? punchOutTime;
+  final String? workedHour;
+  final String? approvalStatus;
+
+  AttendanceRecord({
+    required this.id,
+    required this.date,
+    this.punchInTime,
+    this.punchOutTime,
+    this.workedHour,
+    this.approvalStatus,
+  });
+
+  factory AttendanceRecord.fromJson(Map<String, dynamic> json) {
+    return AttendanceRecord(
+      id: json['_id'],
+      date: json['date'],
+      punchInTime: json['punchInTime'],
+      punchOutTime: json['punchOutTime'],
+      workedHour: json['workedHour'],
+      approvalStatus: json['approvalStatus'],
+    );
+  }
+}
+
+/*
+class FullAttendanceRecord {
   final String id;
   final String date;
   final String? punchInTime;
@@ -120,4 +151,4 @@ class AttendanceRecord {
       workedHour: json['workedHour'],
     );
   }
-}
+}*/

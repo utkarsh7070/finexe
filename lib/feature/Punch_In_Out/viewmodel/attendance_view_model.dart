@@ -17,6 +17,8 @@ import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/model/add_task_response_model.
 import '../../base/api/api.dart';
 import '../../base/utils/namespase/app_colors.dart';
 import '../../base/utils/widget/custom_snackbar.dart';
+import '../../ui/HRMS/LeaveManagement/model/hrmsUserProfile.dart';
+import '../../ui/Sales/SalesProfile/view_model/login_user_view_model.dart';
 import '../model/response_model.dart';
 
 class AttendanceState {
@@ -74,6 +76,32 @@ class AttendanceState {
     );
   }
 }
+
+
+class ClockNotifier extends StateNotifier<DateTime> {
+  late Timer _timer;
+
+  ClockNotifier() : super(DateTime.now()) {
+    _startClock();
+  }
+
+  void _startClock() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      state = DateTime.now();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+}
+
+final clockProvider = StateNotifierProvider<ClockNotifier, DateTime>(
+      (ref) => ClockNotifier(),
+);
+
 
 // Define the AttendanceNotifier
 class AttendanceNotifier extends StateNotifier<AttendanceState> {
@@ -586,5 +614,90 @@ class PunchAttendanceModel{
 }
 
 
+//.......Attendance login user data.........//
+final loginAttendanceUserProfileProvider =
+FutureProvider.autoDispose<HRMSUserProfile>((ref) async {
+  final punchInRepository = ref.watch(punchInRepositoryProvider);
+  List<String> punchTime = await checkPunchStatus(punchInRepository);
 
+  try {
+    // Fetch the token
+    String? token = speciality.getToken();
+
+    // Make the API call
+    final response = await Dio().get(
+      Api.getEmployeeDetails,
+      options: Options(headers: {"token": token}),
+    );
+
+    // Log the full response to debug
+    print('Response user login: ${response.data}');
+
+    // if (response.statusCode == 200) {
+    // Parse the response and return the data
+    final data = HRMSUserProfile.fromJson(response.data['items']);
+    final returnData = HRMSUserProfile(designationId: data.designationId,
+        punchInTime: punchTime.first,
+        punchOutTime: punchTime.last,
+        mobileNo: data.mobileNo,
+        email: data.email,
+        employeeId: data.employeeId,
+        joiningDate: data.joiningDate,
+        fatherName: data.fatherName,
+        dateOfBirth: data.dateOfBirth,
+        employeePhoto: data.employeePhoto,
+        employeName: data.employeName,
+        employeUniqueId: data.employeUniqueId);
+    print('Login User data response: $data');
+    return returnData;
+
+  } catch (error) {
+    ExceptionHandler().handleError(error);
+
+    // Log the error for debugging
+    print('Error: $error');
+    rethrow; // The FutureProvider will handle this as an AsyncError
+  }
+});
+
+
+//.......Role.........//
+
+/*
+class AttendanceRoleListModel {
+  final List<String> role;
+
+  AttendanceRoleListModel({required this.role});
+}
+
+class AttendanceRoleListNotifier extends StateNotifier<AttendanceRoleListModel> {
+  AttendanceRoleListNotifier() : super(AttendanceRoleListModel(role: [])) {
+    loadRoles();
+  }
+
+  // Initialize SharedPreferences and load roles
+  Future<void> loadRoles() async {
+    // final prefs = await SharedPreferences.getInstance();
+    // List<String>? role = prefs.getStringList('roleName');
+    List<String>? role = speciality.getRole();
+
+    speciality.getRole();
+    state = AttendanceRoleListModel(role: role ?? []);
+    print('Roles loaded: ${state.role}'); // Debug log
+  }
+
+  // Update roles in SharedPreferences and state
+  Future<void> updateRoles(List<String> newRoles) async {
+    speciality.setRole(newRoles);
+    // final prefs = await SharedPreferences.getInstance();
+    // await prefs.setStringList('roleName', newRoles);
+    state = AttendanceRoleListModel(role: newRoles);
+  }
+}
+
+final attendanceRoleListProvider =
+StateNotifierProvider.autoDispose<AttendanceRoleListNotifier, AttendanceRoleListModel>(
+      (ref) => AttendanceRoleListNotifier(),
+);
+*/
 
