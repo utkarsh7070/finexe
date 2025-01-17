@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
@@ -14,29 +13,19 @@ import '../../../base/api/api.dart';
 import '../../../base/utils/widget/app_button.dart';
 import '../../../base/utils/widget/app_text_filed_login.dart';
 
-class PdScreen extends ConsumerStatefulWidget {
+//
+// class PdScreen extends ConsumerStatefulWidget {
+//   const PdScreen({super.key});
+//
+//   @override
+//   ConsumerState<PdScreen> createState() => _PdScreenState();
+// }
+
+class PdScreen extends ConsumerWidget {
   const PdScreen({super.key});
 
   @override
-  ConsumerState<PdScreen> createState() => _PdScreenState();
-}
-
-class _PdScreenState extends ConsumerState<PdScreen> {
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //
-  //   //AddBodDialog().addAlbumDialog(context, ref);
-  //   // ref.read(bodStatusNotifierProvider.notifier).checkBodStatus(context, ref);
-  //
-  //
-  // }
-
-  @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final pdRequestList = ref.watch(fetchPdRequestListProvider);
     final pdRefuseList = ref.watch(fetchPdRefuseCasetProvider);
     final gridItems = ref.watch(griditemProvider);
@@ -146,84 +135,93 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                 ),
                 constantSizedBox(context),
                 pdRequestList.when(
-                    data: (data) =>
-                        Container(
+                    data: (data) => Container(
                           height: displayHeight(context) * 0.1,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: const Color(0xffF4F4F4),
                           ),
-                          child:data.isEmpty || data.isEmpty?
-                          const Center(child: Text('No Request avialable'),):
-                          ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: data.length,
-                            itemBuilder: (context, index) {
-                              final item = data[index];
-                              return Container(
-                                width: displayWidth(context) * 0.4,
-                                margin: const EdgeInsets.all(12.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      // child: Image.network(
-                                      //   pdreitem.customerPhoto!,
-                                      //   height: 62,
-                                      //   width: 62,
-                                      //   fit: BoxFit.cover,
-                                      // ),
-                                      child: CachedNetworkImage(
-                                        //'${Api.baseUrl}${samagradata.sSSMPhoto!}'
-                                        // imageUrl: pdreitem.customerPhoto!,
-                                        imageUrl:
-                                            '${Api.baseUrl}${data[index].customerPhoto!}',
-                                        height: 56,
-                                        width: 56,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) => const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            Image.asset(
-                                          'assets/images/no_internet.jpg',
-                                          height: 56,
-                                          width: 56,
-                                          fit: BoxFit.cover,
-                                        ),
+                          child: data.isEmpty || data.isEmpty
+                              ? const Center(
+                                  child: Text('No Request avialable'),
+                                )
+                              : ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: data.length,
+                                  itemBuilder: (context, index) {
+                                    final item = data[index];
+                                    return Container(
+                                      width: displayWidth(context) * 0.4,
+                                      margin: const EdgeInsets.all(12.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                      child: Row(
                                         children: [
-                                          Text(
-                                            item.customerName ?? '',
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                            overflow: TextOverflow.ellipsis,
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            // child: Image.network(
+                                            //   pdreitem.customerPhoto!,
+                                            //   height: 62,
+                                            //   width: 62,
+                                            //   fit: BoxFit.cover,
+                                            // ),
+                                            child: CachedNetworkImage(
+                                              //'${Api.baseUrl}${samagradata.sSSMPhoto!}'
+                                              // imageUrl: pdreitem.customerPhoto!,
+                                              imageUrl:
+                                                  '${Api.baseUrl}${data[index].customerPhoto!}',
+                                              height: 56,
+                                              width: 56,
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) =>
+                                                  const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Image.asset(
+                                                'assets/images/no_internet.jpg',
+                                                height: 56,
+                                                width: 56,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
                                           ),
-                                          Text(
-                                            item.customerFinId ?? '',
-                                            style:
-                                                const TextStyle(color: Colors.grey),
-                                            overflow: TextOverflow.ellipsis,
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  item.customerName ?? '',
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                Text(
+                                                  item.customerFinId ?? '',
+                                                  style: const TextStyle(
+                                                      color: Colors.grey),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  ],
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                          ),
                         ),
                     error: (error, stackTrace) {
                       return const Text('');
@@ -248,12 +246,12 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                       //   ),
                       // );
                     }),
-      
+
                 // SizedBox(
                 //   height: displayHeight(context) * 0.03,
                 // ),
                 constantSizedBox(context),
-      
+
                 SizedBox(
                   height: displayHeight(context) * 0.47,
                   child: GridView.builder(
@@ -293,101 +291,111 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                 //  constantSizedbox(context),
                 pdRefuseList.when(
                   data: (refuseItemsByPD) {
-                  return
-                    refuseItemsByPD.isEmpty?
-                    const Text('No refused cases'):
-                    ListView.builder(
-                    shrinkWrap:
-                    true, // Allows ListView to take up only the required height
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: refuseItemsByPD.length,
-                    itemBuilder: (context, index) {
-                      final items = refuseItemsByPD[index];
-                      return Container(
-                        height: displayHeight(context) * 0.06,
-                        // width: displayWidth(context) * 0.9,
-                        decoration: const BoxDecoration(color: Colors.white),
-                        margin: EdgeInsets.only(top: displayHeight(context) * 0.02),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                // ClipRRect(
-                                //     borderRadius: BorderRadius.circular(10),
-                                //     child: Image.network(
-                                //       items.imageUrl,
-                                //       height: displayHeight(context) * 0.09,
-                                //       width: displayWidth(context) * 0.12,
-                                //       fit: BoxFit.cover,
-                                //     )),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: CachedNetworkImage(
-                                    imageUrl: items.customerPhoto??'',
-                                    // imageUrl: data[index].customerPhoto??'',
-                                    height: displayHeight(context) * 0.09,
-                                    width: displayWidth(context) * 0.12,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) => const Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                    errorWidget: (context, url, error) => Image.asset(
-                                      'assets/images/no_internet.jpg',
-                                      height: 56,
-                                      width: 56,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: displayWidth(context) * 0.03),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                    return refuseItemsByPD.isEmpty
+                        ? const Text('No refused cases')
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            // Allows ListView to take up only the required height
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: refuseItemsByPD.length,
+                            itemBuilder: (context, index) {
+                              final items = refuseItemsByPD[index];
+                              return Container(
+                                height: displayHeight(context) * 0.06,
+                                // width: displayWidth(context) * 0.9,
+                                decoration:
+                                    const BoxDecoration(color: Colors.white),
+                                margin: EdgeInsets.only(
+                                    top: displayHeight(context) * 0.02),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      items.customerName??'',
-                                      style: AppStyles.blacktext14,
+                                    Row(
+                                      children: [
+                                        // ClipRRect(
+                                        //     borderRadius: BorderRadius.circular(10),
+                                        //     child: Image.network(
+                                        //       items.imageUrl,
+                                        //       height: displayHeight(context) * 0.09,
+                                        //       width: displayWidth(context) * 0.12,
+                                        //       fit: BoxFit.cover,
+                                        //     )),
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: CachedNetworkImage(
+                                            imageUrl: items.customerPhoto ?? '',
+                                            // imageUrl: data[index].customerPhoto??'',
+                                            height:
+                                                displayHeight(context) * 0.09,
+                                            width: displayWidth(context) * 0.12,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) =>
+                                                const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Image.asset(
+                                              'assets/images/no_internet.jpg',
+                                              height: 56,
+                                              width: 56,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                            width:
+                                                displayWidth(context) * 0.03),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              items.customerName ?? '',
+                                              style: AppStyles.blacktext14,
+                                            ),
+                                            Text(
+                                              items.customerFinId ?? '',
+                                              style: AppStyles.subHeading,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      items.customerFinId??'',
-                                      style: AppStyles.subHeading,
-                                    ),
+                                    //SizedBox(width: displayWidth(context) * 0.4),
+                                    GestureDetector(
+                                      onTap: () {
+                                        // Navigator.pushNamed(context, AppRoutes.pdformscreen,arguments: {
+                                        //   'customerId': items.customerId
+                                        // });
+                                        _showCustomBottomSheet(context);
+                                      },
+                                      child: Text(
+                                        'initiate again',
+                                        style: AppStyles.blueText,
+                                      ),
+                                    )
                                   ],
                                 ),
-                              ],
-                            ),
-                            //SizedBox(width: displayWidth(context) * 0.4),
-                            GestureDetector(
-                              onTap: () {
-                                // Navigator.pushNamed(context, AppRoutes.pdformscreen,arguments: {
-                                //   'customerId': items.customerId
-                                // });
-                                _showCustomBottomSheet(context);
-                              },
-                              child: Text(
-                                'initiate again',
-                                style: AppStyles.blueText,
-                              ),
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
+                              );
+                            },
+                          );
+                  },
                   error: (error, stackTrace) {
-                  ExceptionHandler().handleError(error);
-                  return
-                   const Text('');} ,
+                    ExceptionHandler().handleError(error);
+                    return const Text('');
+                  },
                   loading: () {
-                  return const Center(child: CircularProgressIndicator());
-                },),
-                
+                    return const Center(child: CircularProgressIndicator());
+                  },
+                ),
+
                 constantSizedBox(context),
                 // constantSizedBox(context),
                 constantSizedBox(context)
-      
-      
               ],
             ),
           ),
@@ -411,7 +419,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
     required Color titleColor,
     required Color stitleColor,
   }) {
-    final gridItems = ref.watch(griditemProvider);
+    // final gridItems = ref.watch(griditemProvider);
 
     return Stack(
       children: [
@@ -514,7 +522,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                 decoration: BoxDecoration(
                   color: Colors.grey[100],
                   borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(25.0)),
+                      const BorderRadius.vertical(top: Radius.circular(25.0)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -542,7 +550,6 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                       onTap: () {
                         Navigator.pop(context);
                         _showSecondBottomSheet(context);
-
                       },
                       textStyle: AppStyles.buttonLightTextStyle,
                       label: 'Yes, Applicant has it',
@@ -615,7 +622,7 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                 decoration: BoxDecoration(
                   color: Colors.grey[100],
                   borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(25.0)),
+                      const BorderRadius.vertical(top: Radius.circular(25.0)),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -623,7 +630,8 @@ class _PdScreenState extends ConsumerState<PdScreen> {
                   children: [
                     Text(
                       'Do Write your Particular reason for reject this case.',
-                      style: AppStyles.TextStyle16,textAlign: TextAlign.center,
+                      style: AppStyles.TextStyle16,
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
                     const Text('Remark'),
@@ -712,7 +720,4 @@ class _PdScreenState extends ConsumerState<PdScreen> {
       },
     );
   }
-
-
-
 }

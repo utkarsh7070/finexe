@@ -13,7 +13,7 @@ import '../view_model.dart/applicant_view_model.dart';
 class ApplicantForm extends ConsumerWidget {
   final String customerId;
 
-  ApplicantForm({super.key, required this.customerId});
+  const ApplicantForm({super.key, required this.customerId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -5,16 +5,13 @@ import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
-import 'package:finexe/feature/base/utils/widget/app_button.dart';
 import 'package:finexe/feature/ui/PD/Model/pd_pending_response_model.dart';
 import 'package:finexe/feature/ui/PD/pd_view_model/pd_pending_viewmodel.dart';
-import 'package:finexe/feature/ui/Sales/NewLone/view_model/new_loan_view_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../base/api/api.dart';
-import '../Model/search_list_model.dart';
 import '../dialog/RejectPDFile/rejectpd_file.dart';
 
 class PDPendingScreen extends ConsumerStatefulWidget {
@@ -32,7 +29,7 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
   // List<SearchItems> _Searchdata = [];
   // List<SearchItems> _filteredSearchData = [];
 
-  int _currentPage = 1;
+  final int _currentPage = 1;
   // int _searchcurrentPage = 1;
   // bool _isLoadingMore = false;
 
@@ -215,7 +212,7 @@ class _PDPendingScreen extends ConsumerState<PDPendingScreen> {
                       onEditingProgress: (searchText, listOfResults) {
                         searchupdate(ref, searchText, paginateddata);
                       },
-                      searchItems: [],
+                      searchItems: const [],
                     ),
                     Expanded(
                       // height: displayHeight(context) * 0.8, // Adjust height as needed

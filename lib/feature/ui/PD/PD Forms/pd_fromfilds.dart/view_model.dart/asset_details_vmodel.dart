@@ -217,13 +217,13 @@ class AssetsInitialApiCall
   }
 
   Future<PdResponseModel> fetchAssetDetails(
-      String customerId, Dio _dio, PDAssetDetails pdAssetViewModel) async {
+      String customerId, Dio dio, PDAssetDetails pdAssetViewModel) async {
     String? token = speciality.getToken();
     // final details = AssetFormModel.fromJson(responseData);
     PdResponseModel details = PdResponseModel();
 
     try {
-      final response = await _dio.get(
+      final response = await dio.get(
         '${Api.getpdformdata}$customerId',
         options: Options(headers: {"token": token}),
       );

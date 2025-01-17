@@ -1,7 +1,6 @@
 // import 'dart:developer';
 
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
-import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 // import 'package:finexe/feature/base/utils/widget/app_text_filed_login.dart';
 import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
@@ -10,8 +9,6 @@ import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../base/utils/widget/custom_snackbar.dart';
-import '../model/Submit Data Models/loan_detail_modal.dart';
 import '../view_model.dart/loan_detail_view_modal.dart';
 // final isExpLoanDetailProvider = StateProvider<bool>((ref) => false);
 //

@@ -15,7 +15,7 @@ class NeumorphicWidget extends StatelessWidget {
  final Color? color;
 
  const NeumorphicWidget({
-  Key? key,
+  super.key,
   required this.child,
   this.onTap,
   this.depth,
@@ -23,7 +23,7 @@ class NeumorphicWidget extends StatelessWidget {
   this.shape = NeumorphicShape.flat, // Default shape
   required this.boxShape, // Accept shape type (circle, rectangle)
   this.color,
- }) : super(key: key);
+ });
 
  @override
  Widget build(BuildContext context) {
@@ -94,7 +94,7 @@ class NeumorphicStyles {
    depth: depth,
    intensity: intensity,
    color: color ?? AppColors.attendanceBgColor1,
-   boxShape: NeumorphicBoxShape.circle(),
+   boxShape: const NeumorphicBoxShape.circle(),
   );
  }
 }

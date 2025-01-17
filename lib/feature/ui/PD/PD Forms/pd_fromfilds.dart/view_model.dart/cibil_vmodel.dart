@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/api.dart';
 import 'package:finexe/feature/base/api/dio.dart';
-import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/model/Submit%20Data%20Models/cibil_form_model.dart';
 
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/model/Submit%20Data%20Models/refrence_form_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -179,13 +178,13 @@ class CibilInitialApiCall extends FamilyAsyncNotifier<PdResponseModel, String> {
   }
 
   Future<PdResponseModel> fetchApplicationDetails(String customerId,
-      Dio _dio,PDCibilDetails pdCibil) async {
+      Dio dio,PDCibilDetails pdCibil) async {
     String? token = speciality.getToken();
     PdResponseModel cibildetails = PdResponseModel();
     print('urlC: ${Api.getpdformdata}$customerId');
 
     try {
-      final response = await _dio.get(
+      final response = await dio.get(
         '${Api.getpdformdata}$customerId',
         options: Options(headers: {"token": token}),
       );

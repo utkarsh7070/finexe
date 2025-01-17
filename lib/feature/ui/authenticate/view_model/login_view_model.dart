@@ -171,14 +171,16 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
                   AppRoutes.dashBoard, // CIBIL dashboard route
                   (route) => false, // Remove all previous routes
                 );
-              } else if (roles.contains('creditPd')) {
-                log("Navigating to pd dashboard");
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  AppRoutes.pdscreen, // CIBIL dashboard route
-                  (route) => false, // Remove all previous routes
-                );
-              } else {
+              }
+              // else if (roles.contains('creditPd')) {
+              //   log("Navigating to pd dashboard");
+              //   Navigator.pushNamedAndRemoveUntil(
+              //     context,
+              //     AppRoutes.pdscreen, // CIBIL dashboard route
+              //     (route) => false, // Remove all previous routes
+              //   );
+              // }
+              else {
                 // Default role navigation
                 log('No matching role found, navigating to HRMS');
                 Navigator.pushNamedAndRemoveUntil(
@@ -229,10 +231,12 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
       final response =
           await dio.post(Api.login, data: loginRequestModel.toJson());
       var responseData = response.data;
-      print('Login response: $responseData');
+      if (kDebugMode) {
+        print('Login response: $responseData');
+      }
       var message = responseData['message'];
       if (kDebugMode) {
-        print(message);
+        print('response message $message');
       }
       LoginResponseModel loginResponseModel =
           LoginResponseModel.fromJson(response.data);
@@ -241,6 +245,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<DataModel>> {
         loginResponseModel.items.token,
         context,
       );
+      print(responseData);
       if (punchStatus.allowed != null && punchStatus.punchIn != null) {
         state = AsyncValue.data(DataModel(
           allowed: punchStatus.allowed!,
@@ -400,5 +405,7 @@ class PunchModel {
 
   PunchModel({required this.allowed, required this.punchIn});
 }
+
+
 
 enum Role { Employee, Vendor, Lender }

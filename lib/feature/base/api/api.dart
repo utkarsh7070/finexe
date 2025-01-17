@@ -2,11 +2,11 @@ class Api {
   static const String baseUrlProduction = 'https://stageapi.fincooper.in';
 //  static const String baseUrl ='https://stageapi.fincooper.in/';// Stage URL
 //   static const String baseUrl ='https://stageapi.fincooper.in/';// Production URL
-   static const String baseUrl = 'https://prod.fincooper.in/';// Production URL
+   static const String baseUrl = 'https://stageapi.fincooper.in/';// Production URL
    //  static const String baseUrl = 'https://prod.fincooper.in/';// Production URL
 
   static const String imageBaseUrl = 'https://stageapi.fincooper.in';  // Production URL
-  static const String imageBaseProUrl = 'https://stageapi.fincooper.in'; // Production URL
+  static const String imageBaseProUrl = 'https://prod.fincooper.in/'; // Production URL
 
   static const String baseUrlStageCollection = 'https://stageapi.fincooper.in/';
   static const String baseUrlStageProduction ='https://prod.fincooper.in/';
@@ -95,6 +95,7 @@ class Api {
   static const String getEmployeeDetails = '${baseUrl}v1/adminMaster/employe/getEmployeeByToken';
   static const String getAllBranch = '${baseUrl}v1/branch/getAll';
   static const String panFatherName = '${baseUrl}v1/panDetail/PanFatherName';
+  static const String employeeVerify = '${baseUrl}v1/adminMaster/employe/employeeVerify';
 
   //-------------------------------------HRMS------------------------------
   static const String submitLeaveRequest = '${baseUrl}v1/hrms/leave/addEmployeeLeave';

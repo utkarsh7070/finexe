@@ -4,8 +4,7 @@ import 'dart:async';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
-import 'package:finexe/feature/ui/HRMS/LeaveManagement/model/hrmsUserProfile.dart';
-import 'package:flutter/Material.dart';
+import 'package:finexe/feature/ui/HRMS/LeaveManagement/model/hrms_user_profile_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
@@ -17,7 +16,6 @@ import '../../../../Punch_In_Out/repository/puch_In_repository_imp.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../../../../base/api/api.dart';
 import '../../../../base/utils/Repo/image_upload.dart';
-import '../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/image_upload_model.dart';
 
 /*final loginUserProfileProvider = StateNotifierProvider<UserProfileNotifier, AsyncValue<LoginUserProfile>>((ref) {
@@ -176,19 +174,19 @@ final loginUserProfileProvider =
 
     // if (response.statusCode == 200) {
       // Parse the response and return the data
-      final data = HRMSUserProfile.fromJson(response.data['items']);
-      final returnData = HRMSUserProfile(designationId: data.designationId,
+      final data = HRMSUserProfileResponseModel.fromJson(response.data);
+      final returnData = HRMSUserProfile(designationId: {},
           punchInTime: punchTime.first,
           punchOutTime: punchTime.last,
-          mobileNo: data.mobileNo,
-          email: data.email,
-          employeeId: data.employeeId,
-          joiningDate: data.joiningDate,
-          fatherName: data.fatherName,
-          dateOfBirth: data.dateOfBirth,
-          employeePhoto: data.employeePhoto,
-          employeName: data.employeName,
-          employeUniqueId: data.employeUniqueId);
+          mobileNo: data.items?.mobileNo??0,
+          email: data.items?.email??'',
+          employeeId: data.items?.employeeTypeId?.id??'',
+          joiningDate: data.items?.joiningDate.toString()??'',
+          fatherName: data.items?.fatherName??'',
+          dateOfBirth: data.items?.dateOfBirth.toString()??'',
+          employeePhoto: data.items?.employeePhoto??'',
+          employeName: data.items?.employeName??'',
+          employeUniqueId: data.items?.employeUniqueId??'');
       print('Login User data response: $data');
       return returnData;
   

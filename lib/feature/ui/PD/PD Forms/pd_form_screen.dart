@@ -1,5 +1,4 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
-import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
@@ -25,7 +24,7 @@ class PdFormScreen extends ConsumerWidget{
 
   @override
   Widget build(BuildContext context , WidgetRef ref) {
-    print('customerId in PdFormScreen:: ${customerId}');
+    print('customerId in PdFormScreen:: $customerId');
     final selectedSegment =
         ref.watch(segmentProvider); // Watch the selected segment
     final segmentNotifier = ref.read(segmentProvider.notifier);

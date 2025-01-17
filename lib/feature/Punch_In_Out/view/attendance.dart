@@ -1,29 +1,18 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:finexe/feature/Punch_In_Out/viewmodel/attendance_view_model.dart';
-import 'package:finexe/feature/base/api/dio_exception.dart';
-
-import 'package:finexe/feature/base/dialog/logout_dialog.dart';
-
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
-import 'package:finexe/feature/base/utils/widget/app_button.dart';
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/view/leave_request_form.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
-import '../../base/api/api.dart';
-
-import '../../base/utils/widget/custom_text_form.dart';
-import '../../ui/HRMS/LeaveManagement/model/leave_request_model.dart';
-import '../../ui/HRMS/LeaveManagement/style/decoration_text.dart';
+import '../../base/api/api.dart';import '../../ui/HRMS/LeaveManagement/style/decoration_text.dart';
 import '../../ui/HRMS/LeaveManagement/style/neumorphic_convex_style.dart';
 import '../viewmodel/leave_request_home_view_model.dart';
 import '../viewmodel/punch_in_outside_view_model.dart';
@@ -36,10 +25,9 @@ class AttendanceScreen extends ConsumerStatefulWidget {
 }
 
 class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
-  String selectedOption = "Punch";
+  // String selectedOption = "Punch";
   final _leaveReasonController = TextEditingController();
   final _punchReasonController = TextEditingController();
-
 
   @override
   void dispose() {
@@ -53,47 +41,39 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     // final _formKey = GlobalKey<FormState>();
     final viewModel = ref.read(leaveRequestHomeViewModelProvider);
     // final punchInOutSideViewModel = ref.read(punchInOutSideViewModelProvider);
-    final checkPunchProvider = ref.watch(attendanceProvider);
-    bool? isallowed;
-    isallowed = checkPunchProvider.punchAllowed;
-    // final socketService = ref.read(socketServiceProvider);
-    final data = ref.watch(attendanceProvider);
-
-
+    // final checkPunchProvider = ref.watch(attendanceProvider);
+    // final data = ref.watch(attendanceProvider);
     final userProfileAsync = ref.watch(loginAttendanceUserProfileProvider);
     final currentTime = ref.watch(clockProvider);
-
-
     // print("mp punching status ${checkPunchProvider.punchAllowed}");
     //--------------------------------new code in progress-----------------------------------
-
-    // final attendeance
     //---------------------------------------------------------------------------------------
     return NetworkListener(
       context: context,
       child: userProfileAsync.when(
-          data: (userProfile) {
-          return
-            Scaffold(
+        data: (userProfile) {
+          return Scaffold(
               backgroundColor: AppColors.attendanceBgColor,
-              appBar: AppBar(toolbarHeight: 70,
-                bottom: PreferredSize(preferredSize: Size.fromHeight(20), child: SizedBox()),
+              appBar: AppBar(
+                toolbarHeight: 70,
+                bottom: const PreferredSize(
+                    preferredSize: Size.fromHeight(20), child: SizedBox()),
                 title: Row(
                   children: [
                     NeumorphicWidget(
                       intensity: 1.0,
                       shape: NeumorphicShape.convex,
-                      boxShape: NeumorphicBoxShape.circle(),
+                      boxShape: const NeumorphicBoxShape.circle(),
                       child: CircleAvatar(
                         backgroundColor: AppColors.primary,
                         radius: 20,
                         // backgroundImage: NetworkImage(userProfile.employeePhoto),
-                        backgroundImage: userProfile.employeePhoto.isNotEmpty &&
-                            userProfile.employeePhoto.contains('upload')
+                        backgroundImage: userProfile?.employeePhoto != null &&
+                                userProfile?.employeePhoto.contains('upload')
                             ? NetworkImage(
-                            '${Api.imageUrl}${userProfile.employeePhoto}')
+                                '${Api.imageUrl}${userProfile?.employeePhoto}')
                             : const AssetImage('assets/images/prof.jpeg')
-                        as ImageProvider,
+                                as ImageProvider,
                         // Placeholder image
                         onBackgroundImageError: (error, stackTrace) {
                           // Set a default image if the API image fails to load
@@ -107,11 +87,11 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          userProfile.employeName,
+                          userProfile?.employeName ?? '',
                           style: AppStyles.TextStyle16,
                         ),
                         Text(
-                          userProfile.designationId['name'] ?? '',
+                          userProfile?.designationId?.name ?? '',
                           style: AppStyles.blacktext14
                               .copyWith(color: AppColors.gray7),
                         )
@@ -120,7 +100,6 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                   ],
                 ),
                 actions: [
-
                   InkWell(
                     onTap: () {
                       Navigator.push(
@@ -130,11 +109,13 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
 
                       print("Apply Leave clicked");
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                    child: const Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                       child: Text(
-                        selectedOption == 'Punch' ? 'Apply Leave >' : 'Punch >',
-                        style: const TextStyle(
+                        // selectedOption == 'Punch' ?
+                        'Apply Leave >',
+                        // : 'Punch >',
+                        style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                           color: AppColors.leaveTextColor,
@@ -142,169 +123,149 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       ),
                     ),
                   ),
-
-                  /* IconButton(
-                onPressed: () {
-                  LogOutDialog.logOutDialog(context: context);
-                },
-                icon: const Icon(
-                  Icons.logout,
-                  color: AppColors.primary,
-                ),
-              ),*/
                 ],
-
                 flexibleSpace: Container(
                   color: AppColors.attendanceBgColor,
                 ),
               ),
               body: SafeArea(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.only(
-                      left: 15.0, right: 10.0, top: 10.0),
-                  child: isallowed != null
-                      ? Column(
-                    children: [
+                    padding: const EdgeInsets.only(
+                        left: 15.0, right: 10.0, top: 10.0),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 39),
 
-
-                      const SizedBox(height: 39),
-
-                      SizedBox(
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            // Real-time Clock
-                            _buildRealTimeClock(currentTime),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 40),
-
-
-                      Visibility(
-                        visible: selectedOption == 'Leave',
-                        child: Container(
-                          width: MediaQuery
-                              .of(context)
-                              .size
-                              .width * 0.85,
-                          // height: MediaQuery.of(context).size.height * 0.18,
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            // border: Border.all(color: Colors.grey, width: 1),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(
-                                    0.5), // Shadow color with opacity
-                                spreadRadius:
-                                2, // Adjust the spread of the shadow
-                                blurRadius:
-                                5, // Adjust the blur radius of the shadow
-                                offset: const Offset(
-                                    0, 4), // Adjust the shadow position
-                              ),
+                        SizedBox(
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              _buildRealTimeClock(currentTime),
                             ],
                           ),
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  "Leave Request",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 20),
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: TextFormField(
-                                    controller: _leaveReasonController,
-                                    decoration: customInputDecoration(
-                                        "Enter your remark"),
-                                    maxLines: 3,
-                                    // validator: (value) =>
-                                    //     value == null || value.isEmpty
-                                    //         ? "Please enter a reason"
-                                    //         : null,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                AppButton(
-
-                                  textStyle:
-                                      const TextStyle(color: Colors.white),
-
-                                  label: 'Submit',
-
-                                  onTap: () async {
-                                    print('reasonForLeave Clicked');
-                                    // Handle leave submission
-                                    String reasonForLeave =
-                                        _leaveReasonController.text
-                                            .trim()
-                                            .toString();
-                                    print('reasonForLeave $reasonForLeave');
-                                    if (reasonForLeave.isNotEmpty) {
-
-                                      final DateTime currentDate =
-                                          DateTime.now();
-
-                                      final String formattedStartDate =
-                                      DateFormat('yyyy-MM-dd')
-                                          .format(currentDate);
-                                      final String formattedEndDate =
-
-                                      DateFormat('yyyy-MM-dd')
-                                          .format(currentDate);
-
-                                      print(
-                                          'formattedStartDate-$formattedStartDate & formattedEndDate- $formattedEndDate');
-
-                                      final leadData = LeaveRequestItem(
-                                        leaveType: '',
-                                        title: '',
-                                        startDate: formattedStartDate,
-                                        endDate: formattedEndDate,
-                                        reasonForLeave: reasonForLeave,
-                                      );
-
-                                      try {
-
-                                        viewModel.submitLeaveHomeRequest(
-                                            leadData, context).then((value) {
-                                          setState(() {
-                                            selectedOption = 'Punch';
-                                            _leaveReasonController.text = '';
-                                          });
-                                        },);
-
-                                      } catch (e) {
-                                        ExceptionHandler().handleError(e);
-                                        // ScaffoldMessenger.of(context)
-                                        //     .showSnackBar(
-                                        //   SnackBar(content: Text(e.toString())),
-                                        // );
-                                      }
-                                    } else {
-                                      Fluttertoast.showToast(
-                                          msg: 'Please write a reason');
-                                    }
-                                  },
-
-                                ),
-
-                              ],
-                            ),
-                          ),
                         ),
-                      ),
 
-                      /* Visibility(
+                        const SizedBox(height: 40),
+                        // Visibility(
+                        //   visible: selectedOption == 'Leave',
+                        //   child: Container(
+                        //     width: displayWidth(context)* 0.85,
+                        //     // height: MediaQuery.of(context).size.height * 0.18,
+                        //     padding: const EdgeInsets.all(12),
+                        //     decoration: BoxDecoration(
+                        //       color: Colors.white,
+                        //       borderRadius: BorderRadius.circular(10),
+                        //       // border: Border.all(color: Colors.grey, width: 1),
+                        //       boxShadow: [
+                        //         BoxShadow(
+                        //           color: Colors.grey.withOpacity(
+                        //               0.5), // Shadow color with opacity
+                        //           spreadRadius:
+                        //           2, // Adjust the spread of the shadow
+                        //           blurRadius:
+                        //           5, // Adjust the blur radius of the shadow
+                        //           offset: const Offset(
+                        //               0, 4), // Adjust the shadow position
+                        //         ),
+                        //       ],
+                        //     ),
+                        //     child: Center(
+                        //       child: Column(
+                        //         mainAxisAlignment: MainAxisAlignment.center,
+                        //         crossAxisAlignment: CrossAxisAlignment.center,
+                        //         children: [
+                        //           const Text(
+                        //             "Leave Request",
+                        //             style: TextStyle(
+                        //                 fontSize: 18,
+                        //                 fontWeight: FontWeight.bold),
+                        //           ),
+                        //           const SizedBox(height: 20),
+                        //           Padding(
+                        //             padding: const EdgeInsets.all(10.0),
+                        //             child: TextFormField(
+                        //               controller: _leaveReasonController,
+                        //               decoration: customInputDecoration(
+                        //                   "Enter your remark"),
+                        //               maxLines: 3,
+                        //               // validator: (value) =>
+                        //               //     value == null || value.isEmpty
+                        //               //         ? "Please enter a reason"
+                        //               //         : null,
+                        //             ),
+                        //           ),
+                        //           const SizedBox(height: 16),
+                        //           AppButton(
+                        //
+                        //             textStyle:
+                        //                 const TextStyle(color: Colors.white),
+                        //
+                        //             label: 'Submit',
+                        //
+                        //             onTap: () async {
+                        //               print('reasonForLeave Clicked');
+                        //               // Handle leave submission
+                        //               String reasonForLeave =
+                        //                   _leaveReasonController.text
+                        //                       .trim()
+                        //                       .toString();
+                        //               print('reasonForLeave $reasonForLeave');
+                        //               if (reasonForLeave.isNotEmpty) {
+                        //
+                        //                 final DateTime currentDate =
+                        //                     DateTime.now();
+                        //
+                        //                 final String formattedStartDate =
+                        //                 DateFormat('yyyy-MM-dd')
+                        //                     .format(currentDate);
+                        //                 final String formattedEndDate =
+                        //
+                        //                 DateFormat('yyyy-MM-dd')
+                        //                     .format(currentDate);
+                        //
+                        //                 print(
+                        //                     'formattedStartDate-$formattedStartDate & formattedEndDate- $formattedEndDate');
+                        //
+                        //                 final leadData = LeaveRequestItem(
+                        //                   leaveType: '',
+                        //                   title: '',
+                        //                   startDate: formattedStartDate,
+                        //                   endDate: formattedEndDate,
+                        //                   reasonForLeave: reasonForLeave,
+                        //                 );
+                        //
+                        //                 try {
+                        //
+                        //                   viewModel.submitLeaveHomeRequest(
+                        //                       leadData, context).then((value) {
+                        //                     setState(() {
+                        //                       selectedOption = 'Punch';
+                        //                       _leaveReasonController.text = '';
+                        //                     });
+                        //                   },);
+                        //
+                        //                 } catch (e) {
+                        //                   ExceptionHandler().handleError(e);
+                        //                   // ScaffoldMessenger.of(context)
+                        //                   //     .showSnackBar(
+                        //                   //   SnackBar(content: Text(e.toString())),
+                        //                   // );
+                        //                 }
+                        //               } else {
+                        //                 Fluttertoast.showToast(
+                        //                     msg: 'Please write a reason');
+                        //               }
+                        //             },
+                        //
+                        //           ),
+                        //
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+
+                        /* Visibility(
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.85,
                             height: MediaQuery.of(context).size.height * 0.18,
@@ -376,115 +337,65 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                             ),
                           ),
                         ),*/
-                    ],
-                  )
-
-                      : const SizedBox(),
-                ),
+                      ],
+                    )),
               ),
-              bottomNavigationBar: isallowed != null
-                  ? Column(
+              bottomNavigationBar: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Visibility(
-                    visible: selectedOption == 'Punch',
-                    /* child: SwipeButton.expand(
-                        elevationTrack: 10,
-                        width: 500,
-                        thumb: Container(
-                          width: 10, // Adjust the width of the thumb
-                          height: 10, // Adjust the height of the thumb
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(
-                                20), // Round the thumb if needed
-                          ),
-                          child: const Icon(
-                            Icons.double_arrow_rounded,
-                            color: AppColors.primary,
-                          ),
+                  Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: SwipeButton.expand(
+                      elevationTrack: 5,
+                      width: 500,
+                      thumb: Container(
+                        width: 10, // Adjust the width of the thumb
+                        height: 10, // Adjust the height of the thumb
+                        decoration: BoxDecoration(
+                          color: AppColors.attendanceBgColor1,
+                          borderRadius: BorderRadius.circular(
+                              20), // Round the thumb if needed
                         ),
-                        activeThumbColor: Colors.white,
-                        activeTrackColor: AppColors.white,
-                        elevationThumb: 4.8,
-                        height: 60,
-                        child: checkPunchProvider.isLoading
-                            ? const Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColors.primary,
-                                ),
-                              )
-                            : const Text(
-                                "Swipe to Punch In",
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                              ),
-                        onSwipe: () {
-                          ref.read(attendanceProvider.notifier).clickPunch(context);
-                          // Handle Punch In Action
-                          print("Punch In Swiped");
-                        },
-                      ),*/
-
-
-                    child: Padding(
-                      padding: const EdgeInsets.all(30.0),
-                      child: SwipeButton.expand(
-                        elevationTrack: 5,
-                        width: 500,
-                        thumb: Container(
-                          width: 10, // Adjust the width of the thumb
-                          height: 10, // Adjust the height of the thumb
-                          decoration: BoxDecoration(
-                            color: AppColors.attendanceBgColor1,
-                            borderRadius: BorderRadius.circular(
-                                20), // Round the thumb if needed
-                          ),
-                          child: const Icon(
-                            Icons.double_arrow_rounded,
-                            color: Colors.blue,
-                          ),
+                        child: const Icon(
+                          Icons.double_arrow_rounded,
+                          color: Colors.blue,
                         ),
-                        activeThumbColor: AppColors.attendanceBgColor,
-                        activeTrackColor: AppColors.attendanceBgColor,
-                        // elevationThumb: 4.8,
-                        height: 60,
-                        thumbPadding: const EdgeInsets.all(8),
-                        child: const Text(
-                          "Swipe to Punch In",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                          ),
-                        ),
-                        onSwipe: () {
-                          ref.read(attendanceProvider.notifier).clickPunch(
-                              context);
-                          // Handle Punch In Action
-                          print("Punch In Swiped");
-                        },
-
                       ),
+                      activeThumbColor: AppColors.attendanceBgColor,
+                      activeTrackColor: AppColors.attendanceBgColor,
+                      // elevationThumb: 4.8,
+                      height: 60,
+                      thumbPadding: const EdgeInsets.all(8),
+                      child: const Text(
+                        "Swipe to Punch In",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                      onSwipe: () {
+                        ref
+                            .read(attendanceProvider.notifier)
+                            .clickPunch(context);
+                        // Handle Punch In Action
+                        print("Punch In Swiped");
+                      },
                     ),
-
                   ),
-
-                  const SizedBox(height: 10,),
-
-                  Text(
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text(
                     'OR',
                     style: TextStyle(
                       color: Colors.grey, // Optional: For a hyperlink effect
                       fontSize: 13, // Optional: Adjust font size
                     ),
                   ),
-
-                  const SizedBox(height: 20,),
-
+                  const SizedBox(
+                    height: 20,
+                  ),
                   GestureDetector(
                     onTap: () {
                       // Define your click action here
@@ -492,27 +403,26 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                           context, _punchReasonController, ref);
                       //print('Text clicked!');
                     },
-                    child: Text(
+                    child: const Text(
                       'Punch In Out Side',
                       style: TextStyle(
                         decoration: TextDecoration.underline,
-                        color: Colors.grey, // Optional: For a hyperlink effect
+                        color: Colors.grey,
+                        // Optional: For a hyperlink effect
                         fontSize: 13, // Optional: Adjust font size
                       ),
                     ),
                   ),
-
-                  const SizedBox(height: 30,),
-
+                  const SizedBox(
+                    height: 30,
+                  ),
                 ],
-              )
-                  : const SizedBox(),
-
-
-            );
-          },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
+              ));
+        },
+        loading: () => const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
         ),
         error: (error, stackTrace) {
           return Center(
@@ -521,10 +431,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
         },
       ),
     );
-
-
   }
-
 
   // Custom Real-Time Clock Widget
   Widget _buildRealTimeClock(DateTime currentTime) {
@@ -533,12 +440,12 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
       alignment: Alignment.center,
       children: [
         // Clock background
-        Container(
+        SizedBox(
           width: clockRadius * 2,
           height: clockRadius * 2,
           /*width: 200,
           height: 200,*/
-         /* decoration: BoxDecoration(
+          /* decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.white,
             boxShadow: [
@@ -549,11 +456,11 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
               ),
             ],
           ),*/
-            child: Image.asset(
-              "assets/images/clock_new.png", // Replace with your image path
-              fit: BoxFit.cover, // Adjust the fit as needed (cover, contain, etc.)
-            ),
-
+          child: Image.asset(
+            "assets/images/clock_new.png", // Replace with your image path
+            fit:
+                BoxFit.cover, // Adjust the fit as needed (cover, contain, etc.)
+          ),
         ),
         // Hour hand
         _buildHand(
@@ -580,7 +487,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
         Container(
           width: 10,
           height: 10,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.black,
           ),
@@ -588,7 +495,6 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
       ],
     );
   }
-
 
   Widget _buildHand({
     required double length,
@@ -599,9 +505,11 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     return Transform.rotate(
       angle: angle * pi / 180, // Rotate the hand by the given angle
       child: Transform.translate(
-        offset: Offset(0, -30), // Move the hand 10 pixels upward from the center
+        offset: const Offset(0, -30),
+        // Move the hand 10 pixels upward from the center
         child: Align(
-          alignment: Alignment.topCenter, // Align the hand to start from the center
+          alignment: Alignment.topCenter,
+          // Align the hand to start from the center
           child: Container(
             height: length,
             width: thickness,
@@ -614,13 +522,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
       ),
     );
   }
-
-
 }
-
-
-
-
 
 void _showCustomBottomSheet(
     BuildContext context, TextEditingController controller, ref) {
@@ -634,31 +536,35 @@ void _showCustomBottomSheet(
     // Make background transparent to see the cross icon
     builder: (BuildContext bc) {
       return Padding(
-        padding:EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(
-          padding: const EdgeInsets.only(top: 20.0,left: 16,right: 16),
-          height: displayHeight(context) * 0.55, // Adjust height here (75% of screen height)
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.only(top: 20.0, left: 16, right: 16),
+          height: displayHeight(context) * 0.55,
+          // Adjust height here (75% of screen height)
+          decoration: const BoxDecoration(
             color: AppColors.attendanceBgColor1,
-            borderRadius:
-            const BorderRadius.vertical(top: Radius.circular(25.0)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
           ),
-          child:
-          Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Login Time Heading
               const Text(
                 'Log In Time',
-                style: TextStyle(fontSize: 12, ),
+                style: TextStyle(
+                  fontSize: 12,
+                ),
               ),
               SizedBox(height: displayHeight(context) * 0.01),
 
               // Display current time
               Text(
                 DateFormat('hh:mm a').format(DateTime.now()),
-                style: const TextStyle(fontSize: 18, color: Colors.black54,fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.black54,
+                    fontWeight: FontWeight.bold),
               ),
               SizedBox(height: displayHeight(context) * 0.04),
 
@@ -668,8 +574,7 @@ void _showCustomBottomSheet(
                 alignment: Alignment.topLeft,
                 child: Text(
                   'Write Your Attendance Remark',
-                  style:
-                  TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
               ),
               SizedBox(height: displayHeight(context) * 0.02),
@@ -684,11 +589,11 @@ void _showCustomBottomSheet(
                         maxLines: 4,
                         decoration: InputDecoration(
                           hintText: 'Write remark',
-                         *//* border: OutlineInputBorder(
+                         */ /* border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0),
                               borderSide: const BorderSide(
                                 color: Colors.grey,
-                              )),*//*
+                              )),*/ /*
                         ),
                         style: const TextStyle(fontSize: 10, color: Colors.grey),
                       ),
@@ -696,7 +601,8 @@ void _showCustomBottomSheet(
 
               NeumorphicWidget(
                 depth: -2,
-                boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                boxShape:
+                    NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
                 child: TextFormField(
                   controller: controller,
                   decoration: neuMorphicCustomInputDecoration("Write remark"),
@@ -720,7 +626,9 @@ void _showCustomBottomSheet(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.only(top: 10, bottom: 10),
-                        shape: RoundedRectangleBorder(side: BorderSide(color: AppColors.white,width: 2),
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(
+                              color: AppColors.white, width: 2),
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
@@ -733,7 +641,7 @@ void _showCustomBottomSheet(
                             ref
                                 .read(punchInOutSideViewModelProvider)
                                 .punchInOutSideRequestWithRole(
-                                reasonForPunch, context);
+                                    reasonForPunch, context);
                           } catch (e) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(e.toString())),
@@ -741,16 +649,17 @@ void _showCustomBottomSheet(
                           }
                         } else {
                           Fluttertoast.showToast(msg: "Remark can't be empty");
-
                         }
                       },
-
-                      child: const Text("Submit",style: TextStyle(color: Colors.white),),
+                      child: const Text(
+                        "Submit",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
               ),
-             /* AppButton(
+              /* AppButton(
                 onTap: () {
                   String reasonForPunch = controller.text.trim();
 

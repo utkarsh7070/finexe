@@ -120,7 +120,7 @@ class CoApplicantForm extends ConsumerWidget {
   // String coApplicantImageUrl02 = '';
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print('customerId in coapp:: ${customerId}');
+    print('customerId in coapp:: $customerId');
     final coAppState = ref.watch(pdCoApplicantViewModelProvider);
     final coAppStateViewModel =
         ref.read(pdCoApplicantViewModelProvider.notifier);
@@ -151,10 +151,10 @@ class CoApplicantForm extends ConsumerWidget {
               shrinkWrap: true,
               primary: false,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: coapplicantData?.items?.coApplicant?.length ?? 1,
+              itemCount: coapplicantData.items?.coApplicant?.length ?? 1,
               // coapplicantData?.items?.coApplicant?.length,
               itemBuilder: (context, index) {
-                print('lnght ${coapplicantData?.items?.coApplicant?.length}');
+                print('lnght ${coapplicantData.items?.coApplicant?.length}');
                   return Column(
                     children: [
                       Container(

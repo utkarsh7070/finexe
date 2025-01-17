@@ -24,7 +24,7 @@ import '../view_model.dart/asset_details_vmodel.dart';
 class PdAssetsForm extends ConsumerWidget {
   final String customerId;
 
-  PdAssetsForm({required this.customerId, super.key});
+  const PdAssetsForm({required this.customerId, super.key});
 
   // final _formKey = GlobalKey<FormState>();
 //  late TextEditingController pdassetform_nameController = TextEditingController();
@@ -199,7 +199,7 @@ class PdAssetsForm extends ConsumerWidget {
             );
           },
           error: (error, stackTrace) => const Text('data'),
-          loading: () => Center(child: CircularProgressIndicator()),
+          loading: () => const Center(child: CircularProgressIndicator()),
         )
       ],
     );

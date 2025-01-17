@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/Punch_In_Out/model/check_attendance_responce_model.dart';
 import 'package:finexe/feature/Punch_In_Out/repository/puch_In_repository_imp.dart';
@@ -9,16 +10,17 @@ import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
+
 import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/model/add_task_request_model.dart';
 import '../../Eod/AddBOD_dialogue/AddBOD_dialogue/model/add_task_response_model.dart';
 import '../../base/api/api.dart';
 import '../../base/utils/namespase/app_colors.dart';
 import '../../base/utils/widget/custom_snackbar.dart';
-import '../../ui/HRMS/LeaveManagement/model/hrmsUserProfile.dart';
-import '../../ui/Sales/SalesProfile/view_model/login_user_view_model.dart';
+import '../../ui/HRMS/LeaveManagement/model/hrms_user_profile_model.dart';
+import '../../ui/Sales/SalesProfile/view_model/sales_user_view_model.dart';
 import '../model/response_model.dart';
 
 class AttendanceState {
@@ -77,7 +79,6 @@ class AttendanceState {
   }
 }
 
-
 class ClockNotifier extends StateNotifier<DateTime> {
   late Timer _timer;
 
@@ -86,7 +87,7 @@ class ClockNotifier extends StateNotifier<DateTime> {
   }
 
   void _startClock() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       state = DateTime.now();
     });
   }
@@ -99,9 +100,8 @@ class ClockNotifier extends StateNotifier<DateTime> {
 }
 
 final clockProvider = StateNotifierProvider<ClockNotifier, DateTime>(
-      (ref) => ClockNotifier(),
+  (ref) => ClockNotifier(),
 );
-
 
 // Define the AttendanceNotifier
 class AttendanceNotifier extends StateNotifier<AttendanceState> {
@@ -197,54 +197,54 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
     }
   }
 
-  Future<void> getCurrentLocation() async {
-    state = state.copyWith(isLoading: true);
-
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      state = state.copyWith(
-          isLoading: false, distanceMessage: 'Location services are disabled.');
-      return;
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        log('location denied');
-        state = state.copyWith(
-            isLoading: false,
-            distanceMessage: 'Location permissions are denied.');
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      log('LocationPermission.deniedForever');
-      state = state.copyWith(
-          isLoading: false,
-          distanceMessage: 'Location permissions are permanently denied.');
-      return;
-    }
-
-    Position position = await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 100,
-      ),
-    );
-    state = state.copyWith(currentPosition: position);
-    await getToken();
-    await checkPunch().then(
-      (value) {
-        state = state.copyWith(isLoading: false);
-        if (kDebugMode) {
-          print('puch>>>>>>>> ');
-          log('puch>>>>>>>> ');
-        }
-      },
-    );
-  }
+  // Future<void> getCurrentLocation() async {
+  //   state = state.copyWith(isLoading: true);
+  //
+  //   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //   if (!serviceEnabled) {
+  //     state = state.copyWith(
+  //         isLoading: false, distanceMessage: 'Location services are disabled.');
+  //     return;
+  //   }
+  //
+  //   LocationPermission permission = await Geolocator.checkPermission();
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
+  //     if (permission == LocationPermission.denied) {
+  //       log('location denied');
+  //       state = state.copyWith(
+  //           isLoading: false,
+  //           distanceMessage: 'Location permissions are denied.');
+  //       return;
+  //     }
+  //   }
+  //
+  //   if (permission == LocationPermission.deniedForever) {
+  //     log('LocationPermission.deniedForever');
+  //     state = state.copyWith(
+  //         isLoading: false,
+  //         distanceMessage: 'Location permissions are permanently denied.');
+  //     return;
+  //   }
+  //
+  //   Position position = await Geolocator.getCurrentPosition(
+  //     locationSettings: const LocationSettings(
+  //       accuracy: LocationAccuracy.high,
+  //       distanceFilter: 100,
+  //     ),
+  //   );
+  //   state = state.copyWith(currentPosition: position);
+  //   await getToken();
+  //   await checkPunch().then(
+  //     (value) {
+  //       state = state.copyWith(isLoading: false);
+  //       if (kDebugMode) {
+  //         print('puch>>>>>>>> ');
+  //         log('puch>>>>>>>> ');
+  //       }
+  //     },
+  //   );
+  // }
 
   Future<void> getToken() async {
     // SharedPreferences preferences = await SessionService.getSession();
@@ -397,32 +397,25 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
 //     }
 //   }
 //
-//   Future<void> getCurrentLocation1() async {
-//     Position position = await Geolocator.getCurrentPosition(
-//       desiredAccuracy: LocationAccuracy.high,
-//     );
-//     print("Initial location: ${position.latitude}, ${position.longitude}");
-//   }
-//
-//   Future<void> listenToLocationUpdates() async {
-//     print("Setting location listener...");
-//
-//     print("Location listener set.");
-//   }
+  Future<void> getCurrentLocation1() async {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    print("Initial location: ${position.latitude}, ${position.longitude}");
+  }
+
+  Future<void> listenToLocationUpdates() async {
+    print("Setting location listener...");
+
+    print("Location listener set.");
+  }
 
   Future<void> clickPunch(BuildContext context) async {
-    // SharedPreferences preferences = await SharedPreferences.getInstance();
-
-    //   List<String>? role = preferences.getStringList('roleName');
-    //   final String? employeeID = preferences.getString('employeId');
-    //   final String? token = preferences.getString('token');
-    //  final String? roamId =  preferences.getString('roamId');
-    //   final String? trackingMode =  preferences.getString('trackingMode');
     List<String>? role = speciality.getRole();
     final String? employeeID = speciality.getEmployeId();
     final String? token = speciality.getToken();
-    final String? roamId = speciality.getRoamId();
-    final String? trackingMode = speciality.getTrackingMode();
+    // final String? roamId = speciality.getRoamId();
+    // final String? trackingMode = speciality.getTrackingMode();
 
     if (kDebugMode) {
       print(role?.first);
@@ -500,22 +493,20 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
                 (route) => false, // Remove all previous routes
               );
               break;
-            case 'creditPd':
-              log("Navigating to collection dashboard");
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                AppRoutes.pdscreen, // Collection dashboard route
-                (route) => false, // Remove all previous routes
-              );
-              break;
-
+            // case 'creditPd':
+            //   log("Navigating to collection dashboard");
+            //   Navigator.pushNamedAndRemoveUntil(
+            //     context,
+            //     AppRoutes.pdscreen, // Collection dashboard route
+            //     (route) => false, // Remove all previous routes
+            //   );
+            //   break;
             default:
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.hrms, // Collection dashboard route
                 (route) => false, // Remove all previous routes
               );
-              // Handle unknown roles or navigate to a default screen
               log('No matching role found');
               break;
           }
@@ -527,7 +518,8 @@ class AttendanceNotifier extends StateNotifier<AttendanceState> {
   }
 
   Future<bool?> onPunchIn(BuildContext context) async {
-    Map<String, String> token = {"token": "$storedToken"};
+    final String? tokens = speciality.getToken();
+    Map<String, String> token = {"token": state.token};
 
     try {
       log('onPunchIn');
@@ -611,11 +603,9 @@ class PunchAttendanceModel {
   PunchAttendanceModel({required this.allowed, required this.punchIn});
 }
 
-
-
 //.......Attendance login user data.........//
 final loginAttendanceUserProfileProvider =
-FutureProvider.autoDispose<HRMSUserProfile>((ref) async {
+    FutureProvider.autoDispose<HrmsItems?>((ref) async {
   final punchInRepository = ref.watch(punchInRepositoryProvider);
   List<String> punchTime = await checkPunchStatus(punchInRepository);
 
@@ -631,34 +621,44 @@ FutureProvider.autoDispose<HRMSUserProfile>((ref) async {
 
     // Log the full response to debug
     print('Response user login: ${response.data}');
-
+    HRMSUserProfileResponseModel responseModel =
+        HRMSUserProfileResponseModel.fromJson(response.data);
     // if (response.statusCode == 200) {
     // Parse the response and return the data
-    final data = HRMSUserProfile.fromJson(response.data['items']);
-    final returnData = HRMSUserProfile(designationId: data.designationId,
-        punchInTime: punchTime.first,
-        punchOutTime: punchTime.last,
-        mobileNo: data.mobileNo,
-        email: data.email,
-        employeeId: data.employeeId,
-        joiningDate: data.joiningDate,
-        fatherName: data.fatherName,
-        dateOfBirth: data.dateOfBirth,
-        employeePhoto: data.employeePhoto,
-        employeName: data.employeName,
-        employeUniqueId: data.employeUniqueId);
-    print('Login User data response: $data');
-    return returnData;
-
+    // final data = HrmsItems.fromJson(responseModel.data);
+    // response.data['items']
+    // final returnData = HRMSUserProfile(designationId: data.designationId,
+    //     punchInTime: punchTime.first,
+    //     punchOutTime: punchTime.last,
+    //     mobileNo: data.mobileNo,
+    //     email: data.email,
+    //     employeeId: data.employeeId,
+    //     joiningDate: data.joiningDate,
+    //     fatherName: data.fatherName,
+    //     dateOfBirth: data.dateOfBirth,
+    //     employeePhoto: data.employeePhoto,
+    //     employeName: data.employeName,
+    //     employeUniqueId: data.employeUniqueId);
+    print('Login User data response: ${responseModel.items}');
+    return responseModel.items;
   } catch (error) {
+    print('Error: $error');
     ExceptionHandler().handleError(error);
-
     // Log the error for debugging
     print('Error: $error');
-    rethrow; // The FutureProvider will handle this as an AsyncError
+    // The FutureProvider will handle this as an AsyncError
   }
+  return null;
 });
 
+Future<Position> getCurrentLocation() async {
+  await Geolocator.requestPermission();
+  LocationSettings locationSettings = const LocationSettings(
+    accuracy: LocationAccuracy.high,
+    distanceFilter: 100,
+  );
+  return Geolocator.getCurrentPosition(locationSettings: locationSettings);
+}
 
 //.......Role.........//
 
@@ -699,5 +699,3 @@ StateNotifierProvider.autoDispose<AttendanceRoleListNotifier, AttendanceRoleList
       (ref) => AttendanceRoleListNotifier(),
 );
 */
-
-

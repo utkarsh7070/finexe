@@ -15,7 +15,7 @@ class DocsUploader {
   // final image = await imagePicker.pickImageFromGallery();
   static Future<String?> uploadImage(
       {required Dio dio, required bool isCompressed, required int compressedValue, required bool byCamera}) async {
-    final pickedFile;
+    final XFile? pickedFile;
     if (byCamera) {
       pickedFile = await _picker.pickImageFromCamera();
     } else {

@@ -33,7 +33,6 @@ class PunchInRepositoryImp extends PunchInRepository {
 
       return Future.error('Unable to fetch location');
     }
-
     // Construct the query parameters
     Map<String, dynamic> queryParam = { // Action value
       'longitude': position.longitude, // Longitude from the current position

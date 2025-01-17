@@ -107,11 +107,11 @@ class PoliceFormDetailsProvider
   }
 
   Future<PdResponseModel> fetchPoliceDetails(
-      String customerId, Dio _dio, PDPoliceModel pdPoliceModel) async {
+      String customerId, Dio dio, PDPoliceModel pdPoliceModel) async {
     final token = speciality.getToken();
     PdResponseModel details = PdResponseModel();
     try {
-      final response = await _dio.get(
+      final response = await dio.get(
         '${Api.getpdformdata}$customerId',
         options: Options(headers: {"token": token}),
       );

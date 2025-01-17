@@ -228,7 +228,6 @@ class PDCOApplicantViewModel extends StateNotifier<CoApplicantState> {
     // }
     // Add customerId and pdType to the payload
     final payload = {
-      // 'co_Applicant': coApplicatFirstData?.toJson(),
       'co_Applicant': coApplicantUsers?.toList(),
       'customerId': customerId,
       'pdType': pdType,
@@ -294,7 +293,7 @@ class InitialApiCoApplicant
   }
 
   Future<PdResponseModel> fetchCoApplicationDetails(
-      String customerId, _dio, PDCOApplicantViewModel data) async {
+      String customerId, dio, PDCOApplicantViewModel data) async {
     String? token = speciality.getToken();
     // PDCoApplicantSubmitFormModel details = PDCoApplicantSubmitFormModel();
     PdResponseModel pdResponseModel = PdResponseModel();
@@ -302,7 +301,7 @@ class InitialApiCoApplicant
     print('url: ${Api.getpdformdata}$customerId');
 
     try {
-      final response = await _dio.get(
+      final response = await dio.get(
         '${Api.getpdformdata}$customerId',
         options: Options(headers: {"token": token}),
       );

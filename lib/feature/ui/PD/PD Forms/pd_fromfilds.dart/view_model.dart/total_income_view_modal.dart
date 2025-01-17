@@ -124,11 +124,11 @@ class TotalIncomeApi extends FamilyAsyncNotifier<PdResponseModel, String> {
   }
 
   Future<PdResponseModel> fetchIncomeDetails(
-      String customerId, Dio _dio, PDIncomeDetailsModel pdIncomeDetails) async {
+      String customerId, Dio dio, PDIncomeDetailsModel pdIncomeDetails) async {
     final token = speciality.getToken();
     PdResponseModel details = PdResponseModel();
     try {
-      final response = await _dio.get(
+      final response = await dio.get(
         '${Api.getpdformdata}$customerId',
         options: Options(headers: {"token": token}),
       );
@@ -136,11 +136,11 @@ class TotalIncomeApi extends FamilyAsyncNotifier<PdResponseModel, String> {
 
       if (response.statusCode == 200 && response.data != null) {
         final data = response.data['items'];
-
+        details = PdResponseModel.fromJson(data);
+        pdIncomeDetails.updateInitially(details);
         // Parse the data and return the correct model
         if (data != null && data['totalIncomeDetails'] != null) {
-          details = PdResponseModel.fromJson(data);
-          pdIncomeDetails.updateInitially(details);
+
           if (details.items?.totalIncomeDetails != null) {
             return details; // Return the TotalIncomeDetails directly
           } else {

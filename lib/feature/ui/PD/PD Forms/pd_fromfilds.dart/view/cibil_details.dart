@@ -43,7 +43,7 @@ class CibilDetailsForm extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print('customerId in Cibil: ${customerId}');
+    print('customerId in Cibil: $customerId');
     final isExpanded = ref.watch(isExpandedProvider);
     //pdCibilSubmitProvider
     final cibileData = ref.watch(cibilDetailsProvider(customerId));

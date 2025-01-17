@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/dio.dart';
 import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -66,11 +65,13 @@ class SessionModel {
   final bool? puntchStatus;
   final String? apkUrl;
   final bool? isUpdateRequired;
+  final bool? isActiveUser;
 
   // final List<String>?allRoleName;
 
   SessionModel(
-      {this.token = false,
+      {this.isActiveUser = true,
+      this.token = false,
       this.role = '',
       this.puntchStatus = false,
       this.apkUrl = '',
@@ -97,11 +98,10 @@ final restart = StateProvider<bool>(
   (ref) => false,
 );
 
-
 final showLogoProvider = StateProvider<bool>((ref) => true);
 final showWelcomeImageProvider = StateProvider<bool>((ref) => false);
-final addressProvider = StateProvider<String>((ref) => "Fetching your location...");
-
+final addressProvider =
+    StateProvider<String>((ref) => "Fetching your location...");
 
 class SplashViewModel extends AsyncNotifier<SessionModel> {
   // SplashViewModel() : super(const AsyncValue.loading());
@@ -109,9 +109,9 @@ class SplashViewModel extends AsyncNotifier<SessionModel> {
 
   @override
   FutureOr<SessionModel> build() {
-    return _apiService.fetchPosts(ref);
+    final dio = ref.watch(dioProvider);
+    return _apiService.fetchPosts(dio);
   }
-
 
   // Update address in the view model
   void updateAddress(WidgetRef ref, String newAddress) {
@@ -134,97 +134,147 @@ final downloadProvider = StateProvider.autoDispose<String>(
 class ApiService {
   ApiService();
 
-
   bool? punchStatus;
   String? apkUrl;
   bool isUpdateRequired = false;
 
-  Future<SessionModel> fetchPosts(ref) async {
-    final dio = ref.watch(dioProvider);
+  Future<SessionModel> fetchPosts(Dio dio) async {
     List<String>? role = speciality.getRole();
-    String? tokens = speciality.getToken();
+    try {
+      final responses = await Future.wait(
+          [checkActiveUser(dio), checkPunchIn(dio), fetchVersion(dio)]);
 
-    // Check location only if necessary
-    Future<Position> positionFuture = getCurrentLocation();
+      final response1 = responses[0] as bool;
+      final response2 = responses[1] as bool;
+      final response3 = responses[2] as Map<String, dynamic>;
+
+      return SessionModel(
+        token: response1,
+        role: role?.first,
+        puntchStatus: response2,
+        apkUrl: response3['apkUrl'],
+        isUpdateRequired: response3['isUpdateRequired'],
+      );
+    } catch (e) {
+      ExceptionHandler().handleError(e);
+      return SessionModel(
+          token: false,
+          role: role?.first,
+          puntchStatus: false,
+          apkUrl: '',
+          isUpdateRequired: false);
+    }
+    // String? tokens = speciality.getToken();
+    //
+    // // Check location only if necessary
+    // Future<Position> positionFuture = getCurrentLocation();
 
     // Fetch version data concurrently
-    Future<Map<String, dynamic>> versionFuture = fetchVersion(dio);
+    // Future<Map<String, dynamic>> versionFuture = fetchVersion(dio);
+    // // Position position = await positionFuture;
+    // Map<String, dynamic> versionData = await versionFuture;
+    // if (kDebugMode) {
+    //   print(versionData.toString());
+    // }
+    // Map<String, double> location = {
+    //   "latitude": position.latitude,
+    //   "longitude": position.longitude,
+    // };
+    // print('User\'s current location: ${location.toString()}');
+    //
+    // if (tokens != null && versionData['isUpdateRequired'] != null) {
+    //   Map<String, String> token = {"token": tokens};
+    //   try {
+    //     Response response = await dio.get(Api.checkPunchIn,
+    //         queryParameters: location, options: Options(headers: token));
+    //
+    //     if (kDebugMode) {
+    //       print('Response data: $response');
+    //     }
+    //
+    //     // if (response.statusCode == 200) {
+    //     CheckAttendanceResponseModel checkAttendanceResponse =
+    //     CheckAttendanceResponseModel.fromJson(response.data);
+    //     bool? punchStatus = checkAttendanceResponse.items.punchIn;
+    //
+    //     return SessionModel(
+    //       token: true,
+    //       role: role?.first,
+    //       puntchStatus: punchStatus,
+    //       apkUrl: versionData['apkUrl'],
+    //       isUpdateRequired: versionData['isUpdateRequired'] ?? false,
+    //     );
+    //   } catch (e) {
+    //     ExceptionHandler().handleError(e);
+    //   }
+    //   return SessionModel(
+    //     token: tokens != null,
+    //     role: role?.first,
+    //     puntchStatus: null,
+    //     apkUrl: versionData['apkUrl'],
+    //     isUpdateRequired: versionData['isUpdateRequired'],
+    //   );
+    // }
+  }
+
+  Future<bool?> checkPunchIn(Dio dio) async {
+    String? tokens = speciality.getToken();
+    Future<Position> positionFuture = getCurrentLocation();
     Position position = await positionFuture;
-    Map<String, dynamic> versionData = await versionFuture;
-    if (kDebugMode) {
-      print(versionData.toString());
-    }
     Map<String, double> location = {
       "latitude": position.latitude,
       "longitude": position.longitude,
     };
-    print('User\'s current location: ${location.toString()}');
 
-    if (tokens != null && versionData['isUpdateRequired'] != null) {
-      Map<String, String> token = {"token": tokens};
-      try {
-        Response response = await dio.get(Api.checkPunchIn,
-            queryParameters: location, options: Options(headers: token));
-
-        if (kDebugMode) {
-          print('Response data: $response');
-        }
-
-        // if (response.statusCode == 200) {
-        CheckAttendanceResponseModel checkAttendanceResponse =
-        CheckAttendanceResponseModel.fromJson(response.data);
-        bool? punchStatus = checkAttendanceResponse.items.punchIn;
-
-        return SessionModel(
-          token: true,
-          role: role?.first,
-          puntchStatus: punchStatus,
-          apkUrl: versionData['apkUrl'],
-          isUpdateRequired: versionData['isUpdateRequired'] ?? false,
-        );
-      } catch (e) {
-        ExceptionHandler().handleError(e);
-      }
-      return SessionModel(
-        token: tokens != null,
-        role: role?.first,
-        puntchStatus: null,
-        apkUrl: versionData['apkUrl'],
-        isUpdateRequired: versionData['isUpdateRequired'],
-      );
+    Map<String, String> token = {"token": tokens!};
+    try {
+      Response response = await dio.get(Api.checkPunchIn,
+          queryParameters: location, options: Options(headers: token));
+      CheckAttendanceResponseModel checkAttendanceResponse =
+          CheckAttendanceResponseModel.fromJson(response.data);
+      bool? punchStatus = checkAttendanceResponse.items.punchIn;
+      return punchStatus;
+    } catch (e) {
+      ExceptionHandler().handleError(e);
     }
-
-    return SessionModel(
-      token: tokens != null,
-      role: role?.first,
-      puntchStatus: null,
-      apkUrl: versionData['apkUrl'],
-      isUpdateRequired: versionData['isUpdateRequired'],
-    );
+    return null;
   }
 
-      Future<Map<String, dynamic>> fetchVersion(Dio dio) async {
-        try {
-          Response versionResponse = await dio.get(Api.getVersion);
-          final data = versionResponse.data['items'];
-          final serverVersion = data['version'];
-          final apkUrl = data['apkUrl'];
-          bool isUpdateRequired = serverVersion !=
-              AppConstants.staticAppVersion;
-
-          return {'apkUrl': apkUrl, 'isUpdateRequired': isUpdateRequired};
-        } catch (e) {
-          // Use the ExceptionHandler to handle the error uniformly
-          ExceptionHandler().handleError(e);
-          // Return a default value in case of error
-          return {
-            'apkUrl': null,
-            'isUpdateRequired': null,
-          };
+  Future<bool?> checkActiveUser(Dio dio) async {
+    String? tokens = speciality.getToken();
+    if (tokens != null) {
+      Map<String, String> token = {"token": tokens};
+      try {
+        Response response =
+            await dio.get(Api.employeeVerify, options: Options(headers: token));
+        if (response.data['items']['employeDetail'] == false) {
+          speciality.clearPreferencesData();
         }
+        return response.data['items']['employeDetail'];
+      } catch (error) {
+        ExceptionHandler().handleError(error);
       }
     }
+    return false;
+  }
 
+  Future<Map<String, dynamic>> fetchVersion(Dio dio) async {
+    try {
+      Response versionResponse = await dio.get(Api.getVersion);
+      final data = versionResponse.data['items'];
+      final serverVersion = data['version'];
+      final apkUrl = data['apkUrl'];
+      bool isUpdateRequired = serverVersion != AppConstants.staticAppVersion;
 
-
-
+      return {'apkUrl': apkUrl, 'isUpdateRequired': isUpdateRequired};
+    } catch (e) {
+      // Use the ExceptionHandler to handle the error uniformly
+      ExceptionHandler().handleError(e);
+      // Return a default value in case of error
+      return {
+        'apkUrl': null,
+        'isUpdateRequired': null,
+      };
+    }
+  }
+}

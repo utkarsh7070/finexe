@@ -1,18 +1,16 @@
 import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
 import '../../../../Punch_In_Out/repository/puch_In_repository_imp.dart';
 import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../../../../base/api/dio.dart';
 import '../../../../base/api/dio_exception.dart';
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/widget/custom_snackbar.dart';
-import '../../../Sales/SalesProfile/view_model/login_user_view_model.dart';
+import '../../../Sales/SalesProfile/view_model/sales_user_view_model.dart';
 
 final hrmsDashBordProvider =
     StateNotifierProvider<HRMSDashBoardViewModel, bool>(

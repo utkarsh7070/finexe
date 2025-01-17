@@ -8,7 +8,6 @@ import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/pendency_
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/police_station_form.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/property_colaterals.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/refrence_details_form.dart';
-import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/samagra_details_form.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view/total_income_form.dart';
 import 'package:finexe/feature/ui/PD/PD%20Forms/pd_fromfilds.dart/view_model.dart/pd_update_data_view_model.dart';
 import 'package:flutter/foundation.dart';

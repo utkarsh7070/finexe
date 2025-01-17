@@ -278,7 +278,7 @@ class ItemViewModel extends StateNotifier<AsyncValue<List<PDReqItems>>> {
   bool get hasMore => _hasMore;
 
   Future<void> fetchItems({String? filter, bool reset = false}) async {
-    final RequestApiService _repository = RequestApiService(dio);
+    final RequestApiService repository = RequestApiService(dio);
     if (reset) {
       state = const AsyncValue.loading();
       _currentPage = 1;
@@ -290,7 +290,7 @@ class ItemViewModel extends StateNotifier<AsyncValue<List<PDReqItems>>> {
 
     _currentFilter = filter;
     try {
-      final newItems = await _repository.pdRequestItem(ArgumentModel(
+      final newItems = await repository.pdRequestItem(ArgumentModel(
           page: _currentPage,
           branchId: 'all',
           currentPage: _currentPage,

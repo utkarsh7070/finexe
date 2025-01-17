@@ -1,18 +1,14 @@
 import 'dart:ui';
-
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
 import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/widget/dropdown_style.dart';
-import '../../../Sales/SalesProfile/view_model/login_user_view_model.dart';
+import '../../../Sales/SalesProfile/view_model/sales_user_view_model.dart';
 import '../model/attendance_listing_model.dart';
 import '../view_model/attendance_listing_view_model.dart';
-
-
 
 class AttendanceDetailsScreen extends ConsumerStatefulWidget {
   // const AttendanceDetailsScreen({Key? key}) : super(key: key);
@@ -22,7 +18,7 @@ class AttendanceDetailsScreen extends ConsumerStatefulWidget {
 
   final String employeeId;
 
-  AttendanceDetailsScreen({required this.employeeId });
+  const AttendanceDetailsScreen({super.key, required this.employeeId });
 
 }
 
@@ -117,7 +113,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensures space between text and icon
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1, // Adjust flex as needed for column width
                           child: Text(
                             "My Attendance",
@@ -132,7 +128,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                             onTap: () {
                               showFilterModal(context,ref);
                             },
-                            child:Icon(CupertinoIcons.square_list,size: 30,),
+                            child:const Icon(CupertinoIcons.square_list,size: 30,),
                           ),
                         ),
                       ],
@@ -140,7 +136,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                   ),
 
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
                   Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -149,8 +145,8 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                         color: Colors.grey.shade100,
                         border: Border(top: BorderSide(color: Colors.grey.shade300)),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -286,7 +282,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                 flex: 2,
                 child: Text(
                   formatDate(leave.date),
-                  style: TextStyle(fontSize: 14),
+                  style: const TextStyle(fontSize: 14),
                   textAlign: TextAlign.start,
                 ),
               ),
@@ -294,7 +290,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                 flex: 2,
                 child: Text(
                   (leave.workedHour == null || leave.workedHour!.isEmpty) ? '0' : leave.workedHour!,
-                  style: TextStyle(fontSize: 14),
+                  style: const TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -309,7 +305,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                       color: Colors.green, // Background color
                       borderRadius: BorderRadius.circular(5), // Circular corners
                     ),// Optional padding
-                    child: Text(
+                    child: const Text(
                       "P",
                       style: TextStyle(fontSize: 14, color: Colors.white), // Text with white color
                       textAlign: TextAlign.center,
@@ -339,7 +335,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
       try {
         final parsedDate = DateTime.parse(date);
         final day = DateFormat('EEEE').format(parsedDate); // Gets the full day name (e.g., "Saturday")
-        return "$day";
+        return day;
       } catch (e) {
         debugPrint("Invalid date format: $date. Error: $e");
         return "Invalid Date"; // Fallback value
@@ -355,8 +351,8 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(1),
+          const Padding(
+            padding: EdgeInsets.all(1),
             child: Row(
               children: [
                 Expanded(
@@ -393,16 +389,16 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                 Expanded(
                   flex: 2, // Adjust flex as needed for column width
                   child: Text(
-                    formatDate(leave.date!),
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    formatDate(leave.date),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.start,
                   ),
                 ),
                 Expanded(
                   flex: 2,
                   child: Text(
-                    formatDateWithDay(leave.date!),
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    formatDateWithDay(leave.date),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -410,15 +406,15 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                   flex: 2,
                   child: Text(
                     leave.approvalStatus ?? 'N/A',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.end,
                   ),
                 ),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(1,5,0,0),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(1,5,0,0),
             child: Row(
               children: [
                 Expanded(
@@ -456,7 +452,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                   flex: 2, // Adjust flex as needed for column width
                   child: Text(
                     formatTime(leave.punchInTime!),
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.start,
                   ),
                 ),
@@ -464,7 +460,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                   flex: 2,
                   child: Text(
                     formatTime(leave.punchOutTime!),
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -472,7 +468,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                   flex: 2,
                   child: Text(
                     leave.workedHour ?? 'N/A',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.end,
                   ),
                 ),
@@ -494,8 +490,8 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
           child: Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            padding: const EdgeInsets.all(16),
+            decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             ),
@@ -505,23 +501,23 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                 Container(
                   width: 50,
                   height: 5,
-                  margin: EdgeInsets.only(bottom: 16),
+                  margin: const EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   "Filter By",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 5),
-                Text(
+                const SizedBox(height: 5),
+                const Text(
                   "Attendance status",
                   style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Consumer(
                   builder: (context, ref, _) {
                     final selectedFilter = ref.watch(attendanceFilterProvider);
@@ -540,7 +536,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                             ),
                           ),
                           Expanded(
-                            child: Text(label, style: TextStyle(fontSize: 14)),
+                            child: Text(label, style: const TextStyle(fontSize: 14)),
                           ),
                         ],
                       );
@@ -552,7 +548,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                       childAspectRatio: 2.5,
                       mainAxisSpacing: 5,
                       crossAxisSpacing: 5,
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       children: [
                         filterOption("Present"),
                         filterOption("Absent"),
@@ -566,7 +562,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                     );
                   },
                 ),
-                SizedBox(height: 80),
+                const SizedBox(height: 80),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -578,7 +574,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.grey[300],
                         ),
-                        child: Text("Reset", style: TextStyle(color: Colors.black)),
+                        child: const Text("Reset", style: TextStyle(color: Colors.black)),
                       ),
                     ),
                     const SizedBox(width: 30),
