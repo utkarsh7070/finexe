@@ -3,16 +3,13 @@ import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import '../../../../../../../../../../base/utils/namespase/app_colors.dart';
-// import '../../../../../../../../../../base/utils/namespase/display_size.dart';
 import '../../view_model/income_form_viewmodel.dart';
+import '../Agriculutre/agriculture_form.dart';
 import '../Others/others.dart';
 import '../Salary Income/salary_income.dart';
-import '../Agriculutre/agriculture_form.dart';
-import '../Milk Form/milk_form.dart'; // Import the provider created above
+import '../Milk Form/milk_form.dart';
 
 class IncomeDetailForm extends ConsumerWidget {
-  // const IncomeDetailForm({super.key});
   final String customerId;
   const IncomeDetailForm({super.key, required this.customerId});
   @override
@@ -82,7 +79,7 @@ class IncomeDetailForm extends ConsumerWidget {
 
                 // Dynamic TextField based on Income Type
                 if (incomeState.selectedIncomeSource?.value == '2') ...[
-                  AgricultureIncomeDetail(customerId: customerId)
+                  // AgricultureIncomeDetail(customerId: customerId)
                 ] else if (incomeState.selectedIncomeSource?.value == '3') ...[
                   MilkForm(customerId: customerId)
                 ] else if (incomeState.selectedIncomeSource?.value == '4') ...[

@@ -70,7 +70,7 @@ class CibilDetailsForm extends ConsumerWidget {
                 children: [
                   constSizedbox(context),
                   AppFloatTextField(
-                    initialValue: appState.totalLoans,
+                    initialValue: cibileDataForm.items?.cibilAnalysis?.totalLoans,
                     textInputType: TextInputType.number,
                     inerHint: 'No. of total loan',
                     errorText: "total loan is a required field",
@@ -82,7 +82,7 @@ class CibilDetailsForm extends ConsumerWidget {
                   ),
                   constSizedbox(context),
                   AppFloatTextField(
-                    initialValue: appState.detailsOfCurrentLoans,
+                    initialValue: cibileDataForm.items?.cibilAnalysis?.detailsOfCurrentLoans,
                     // width: displayWidth(context) * 0.8,
                     inerHint: 'Current loan detail’s',
                     errorText: "Current loan detail’s is a required field",
@@ -94,7 +94,7 @@ class CibilDetailsForm extends ConsumerWidget {
                   ),
                   constSizedbox(context),
                   AppFloatTextField(
-                    initialValue: appState.reasonforDpd,
+                    initialValue: cibileDataForm.items?.cibilAnalysis?.reasonforDpd,
                     // width: displayWidth(context) * 0.8,
                     inerHint: 'Reason for DPD',
                     errorText: "Reason for DPD is a required field",

@@ -65,11 +65,8 @@ class Api {
 
   static const String getAllocationDashboard =
       '${baseUrl}v1/googleSheet/getAllocationDashboard';
-
   static const String imageUrl = baseUrl;
-
   static const String getVisitDetail = '${baseUrl}v1/googleSheet/visitDetail';
-
   static const String getVisitCollection =
       '${baseUrl}v1/googleSheet/collectionDetail';
   static const String getVisitClosure =
@@ -80,15 +77,8 @@ class Api {
   static const String updateProfile = '${baseUrl}v1/adminMaster/employe/update';
   static const String updatePassword = '${baseUrl}v1/login/updatePassword';
   static const String paymentAmount = '${baseUrl}v1/salesMan/paymentInitiate';
-
   static const String cashfreePaymentAmount = '${baseUrl}v1/salesMan/CashFreePaymentInitiate';
-
   static const String allCases = '${baseUrl}v1/calculator/getCustomer';
-  // static const String salesNew = '${baseUrl}v1/calculator/getCustomer?employeeRole=sales&status=salesNew';
-  // static const String salesToCibil = '${baseUrl}v1/calculator/getCustomer?status=salesToCibil';
-  // static const String cibilPending = '${baseUrl}v1/calculator/getCustomer?employeeRole=sales&status=cibilPending';
-  // static const String cibilOk = '${baseUrl}v1/calculator/getCustomer?employeeRole=sales&status=cibilOk';
-  // static const String cibilReject = '${baseUrl}v1/calculator/getCustomer';
   static const String salesDashboardData = '${baseUrl}v1/salesMan/listAllProductLogin';
   static const String leadFormSubmit = '${baseUrl}v1/salesMan/leadGenerate';
   static const String leadShowPendingList = '${baseUrl}v1/salesMan/leadGenerateList';
@@ -107,11 +97,6 @@ class Api {
   static const String getAllLeaveType = '${baseUrl}v1/leaveType/getAllLeaveType';
   static const String updateProfileImage = '${baseUrl}v1/adminMaster/employe/updateEmployeePhoto';
 
-  /*employeePhoto*/
-
-
-
-  // http://localhost:5500/v1/calculator/getCustomer?employeeRole=sales&status=all__
 //----------------------------------EOD/BOD--------------------------------------------------
   static const String addTask = '${baseUrl}v1/bodEod/add';
   static const String getAllTask = '${baseUrl}v1/bodEod/getBy';

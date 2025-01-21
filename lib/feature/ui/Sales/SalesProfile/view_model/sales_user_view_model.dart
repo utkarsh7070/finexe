@@ -175,12 +175,12 @@ final loginUserProfileProvider =
     // if (response.statusCode == 200) {
       // Parse the response and return the data
       final data = HRMSUserProfileResponseModel.fromJson(response.data);
-      final returnData = HRMSUserProfile(designationId: {},
+      final returnData = HRMSUserProfile(designationId: data.items?.designationId?.name??'',
           punchInTime: punchTime.first,
           punchOutTime: punchTime.last,
           mobileNo: data.items?.mobileNo??0,
           email: data.items?.email??'',
-          employeeId: data.items?.employeeTypeId?.id??'',
+          employeeId: data.items?.id??'',
           joiningDate: data.items?.joiningDate.toString()??'',
           fatherName: data.items?.fatherName??'',
           dateOfBirth: data.items?.dateOfBirth.toString()??'',

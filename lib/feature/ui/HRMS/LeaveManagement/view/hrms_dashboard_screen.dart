@@ -2,6 +2,7 @@
 import 'package:finexe/feature/base/dialog/logout_dialog.dart';
 import 'package:finexe/feature/base/internetConnection/connection_overlay.dart';
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
+import 'package:finexe/feature/base/routes/routes.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/style/neumorphic_convex_style.dart';
@@ -614,20 +615,25 @@ class HRMSDashboardScreen extends ConsumerWidget {
                       padding: const EdgeInsets.fromLTRB(5,0,0,0,),
                       child: Row(
                         children: [
-                          CircleAvatar(
-                            backgroundColor: AppColors.primary,
-                            radius: 20,
-                            // backgroundImage: NetworkImage(userProfile.employeePhoto),
-                            backgroundImage: userProfile.employeePhoto.isNotEmpty &&
-                                userProfile.employeePhoto.contains('upload')
-                                ? NetworkImage(
-                                '${Api.imageUrl}${userProfile.employeePhoto}')
-                                : const AssetImage('assets/images/prof.jpeg')
-                            as ImageProvider,
-                            // Placeholder image
-                            onBackgroundImageError: (error, stackTrace) {
-                              // Set a default image if the API image fails to load
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, AppRoutes.hrmsProfileUpdate);
                             },
+                            child: CircleAvatar(
+                              backgroundColor: AppColors.primary,
+                              radius: 20,
+                              // backgroundImage: NetworkImage(userProfile.employeePhoto),
+                              backgroundImage: userProfile.employeePhoto.isNotEmpty &&
+                                  userProfile.employeePhoto.contains('upload')
+                                  ? NetworkImage(
+                                  '${Api.imageUrl}${userProfile.employeePhoto}')
+                                  : const AssetImage('assets/images/prof.jpeg')
+                              as ImageProvider,
+                              // Placeholder image
+                              onBackgroundImageError: (error, stackTrace) {
+                                // Set a default image if the API image fails to load
+                              },
+                            ),
                           ),
                           SizedBox(
                             width: displayWidth(context) * 0.02,
@@ -641,7 +647,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                                 style: AppStyles.TextStyle16,
                               ),
                               Text(
-                                userProfile.designationId['name'] ?? '',
+                                userProfile.designationId ?? '',
                                 style: AppStyles.blacktext14
                                     .copyWith(color: AppColors.gray7),
                               )

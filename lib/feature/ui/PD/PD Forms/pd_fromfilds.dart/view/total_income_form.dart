@@ -1,3 +1,4 @@
+import 'package:finexe/feature/base/extentions/validation_extension.dart';
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
@@ -71,21 +72,11 @@ class TotalIncomeDetailsForm
       children: <Widget>[
         incomeDetails.when(
           data: (incomeData) {
-            // if (totalincomeForm_yearlyIncomeController.text.isEmpty) {
-            //   totalincomeForm_expensesYearlyController.text =
-            //       incomeData.totalIncomeDetails?.totalExpensesYearly ?? '';
-            //   totalincomeForm_expensesMonthlyController.text =
-            //       incomeData.totalIncomeDetails?.totalExpensesMonthly ?? '';
-            //   totalincomeForm_yearlyIncomeController.text =
-            //       incomeData.totalIncomeDetails?.totalYearlyIncome ?? '';
-            //   totalincomeForm_monthlyIncomeController.text =
-            //       incomeData.totalIncomeDetails?.totalMonthlyIncome ?? '';
-            // }
             return Column(
               children: [
                 constSizedbox(context),
                 AppFloatTextField(
-                  initialValue: appState.totalYearlyIncome,
+                  initialValue: incomeData.items?.totalIncomeDetails?.totalYearlyIncome,
                   onChange: (value) {
                     appStateVieModel.updateTotalYearlyIncome(value);
                   },
@@ -93,88 +84,46 @@ class TotalIncomeDetailsForm
                   textInputType: TextInputType.number,
                   // isError: coappvalidate,
                   inerHint: 'Yearly Income',
-
-                  // onValidate: (value) {
-                  //   if (value!.trim().isEmpty) {
-                  //     return "This is a required field";
-                  //   }
-                  //   return null;
-                  // },
-                  // controller: totalincomeForm_yearlyIncomeController,
                   textInputAction: TextInputAction.next,
                 ),
                 constSizedbox(context),
                 AppFloatTextField(
-                  initialValue: appState.totalMonthlyIncome,
+                  initialValue:incomeData.items?.totalIncomeDetails?.totalMonthlyIncome,
+                  // appState.totalMonthlyIncome,
                   onChange: (value) {
                     appStateVieModel.updateTotalMonthlyIncome(value);
                   },
-
                   textInputType: TextInputType.number,
                   inerHint: 'Monthly Income',
-                  // onValidate: (value) {
-                  //   if (value!.trim().isEmpty) {
-                  //     return "This is a required field";
-                  //   }
-                  //   return null;
-                  // },
-                  // controller: totalincomeForm_monthlyIncomeController,
-                  // textInputAction: TextInputAction.next,
                 ),
                 constSizedbox(context),
                 AppFloatTextField(
-                  initialValue: appState.totalExpensesYearly,
+                  initialValue: incomeData.items?.totalIncomeDetails?.totalExpensesYearly,
                   textInputType: TextInputType.number,
                   // width: constraints.maxWidth,
                   inerHint: 'Expenses Yearly',
                   onChange: (value) {
                     appStateVieModel.updateTotalExpensesYearly(value);
                   },
-                  // onValidate: (value) {
-                  //   if (value!.trim().isEmpty) {
-                  //     return "This is a required field";
-                  //   }
-                  //   return null;
-                  // },
-                  // controller:
-                  //     totalincomeForm_expensesYearlyController,
+                  onValidate: (value) {
+                    return null;
+                  },
                   textInputAction: TextInputAction.next,
                 ),
                 constSizedbox(context),
                 AppFloatTextField(
-                  initialValue: appState.totalExpensesMonthly,
+                  initialValue: incomeData.items?.totalIncomeDetails?.totalExpensesMonthly,
                   textInputType: TextInputType.number,
                   // width: constraints.maxWidth,
                   inerHint: 'Expenses Monthly',
                   onChange: (value) {
                     appStateVieModel.updateTotalExpensesMonthly(value);
                   },
-                  // onValidate: (value) {
-                  //   if (value!.trim().isEmpty) {
-                  //     return "This is a required field";
-                  //   }
-                  //   return null;
-                  // },
-                  // controller:
-                  //     totalincomeForm_expensesMonthlyController,
                   textInputAction: TextInputAction.next,
                 ),
                 constSizedbox(context),
                 ElevatedButton(
                   onPressed: () async {
-                    // if (_formKey.currentState!.validate()) {
-                      // final incomeDetails = TotalIncomeDetails(
-                      //   totalYearlyIncome:
-                      //       totalincomeForm_yearlyIncomeController.text,
-                      //   totalMonthlyIncome:
-                      //       totalincomeForm_monthlyIncomeController.text,
-                      //   totalExpensesYearly:
-                      //       totalincomeForm_expensesYearlyController.text,
-                      //   totalExpensesMonthly:
-                      //       totalincomeForm_expensesMonthlyController.text,
-                      // );
-
-                      // Call the provider method with the `TotalIncomeDetails` object
                       await ref
                           .read(pdIncomeDetailsProvider.notifier)
                           .submitIncomeDetails(

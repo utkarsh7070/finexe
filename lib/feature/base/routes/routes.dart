@@ -10,6 +10,7 @@ import 'package:finexe/feature/ui/HRMS/EmployeeJoiningForm/view/upload_documents
 import 'package:finexe/feature/ui/HRMS/EmployeeJoiningForm/view/nominee_information.dart';
 
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/view/hrms_dashboard_screen.dart';
+import 'package:finexe/feature/ui/HRMS/LeaveManagement/view/hrms_profile_update_view.dart';
 import 'package:finexe/feature/ui/PD/view/pd_completed.dart';
 import 'package:finexe/feature/ui/Sales/NewLone/view/new_loan_screen.dart';
 import 'package:finexe/feature/ui/Sales/SalesOnBoardingForm/view/Sales_on_boarding_form/co-applicant_form/co_applicant_screen.dart';
@@ -80,6 +81,7 @@ class AppRoutes {
   static const String getalltask = '/getalltask'; //CustomerDetail
   static const String pdfilledform = '/pdfilledform';
   static const String hrms = '/hrms';
+  static const String hrmsProfileUpdate = '/hrmsProfileUpdate';
   static const String employeeBasicDetails = '/employeeBasicDetails';
   static const String familyDetails = '/familyDetails';
   static const String educationalDetails = '/educationalDetails';
@@ -330,6 +332,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const UploadDocuments());
       case nomineeInformation:
         return MaterialPageRoute(builder: (_) => const NomineeInformation());
+        case hrmsProfileUpdate:
+        return MaterialPageRoute(builder: (_) => const HrmsProfileUpdateView());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

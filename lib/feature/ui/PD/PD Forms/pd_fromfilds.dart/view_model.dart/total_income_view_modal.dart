@@ -119,12 +119,12 @@ class TotalIncomeApi extends FamilyAsyncNotifier<PdResponseModel, String> {
   @override
   FutureOr<PdResponseModel> build(String arg) {
     final dio = ref.watch(dioProvider);
-    final pdIncomeDetails = ref.read(pdIncomeDetailsProvider.notifier);
-    return fetchIncomeDetails(arg, dio, pdIncomeDetails);
+    // final pdIncomeDetails = ref.read(pdIncomeDetailsProvider.notifier);
+    return fetchIncomeDetails(arg, dio);
   }
 
   Future<PdResponseModel> fetchIncomeDetails(
-      String customerId, Dio dio, PDIncomeDetailsModel pdIncomeDetails) async {
+      String customerId, Dio dio) async {
     final token = speciality.getToken();
     PdResponseModel details = PdResponseModel();
     try {
@@ -135,20 +135,20 @@ class TotalIncomeApi extends FamilyAsyncNotifier<PdResponseModel, String> {
       print('---> Income API Response: ${response.data}');
 
       if (response.statusCode == 200 && response.data != null) {
-        final data = response.data['items'];
-        details = PdResponseModel.fromJson(data);
-        pdIncomeDetails.updateInitially(details);
+        details = PdResponseModel.fromJson(response.data);
+        // pdIncomeDetails.updateInitially(details);
+        return details;
         // Parse the data and return the correct model
-        if (data != null && data['totalIncomeDetails'] != null) {
-
-          if (details.items?.totalIncomeDetails != null) {
-            return details; // Return the TotalIncomeDetails directly
-          } else {
-            throw Exception("Income details are missing in the response.");
-          }
-        } else {
-          throw Exception("Total income details not found in the response.");
-        }
+        // if (data != null && data['totalIncomeDetails'] != null) {
+        //
+        //   if (details.items?.totalIncomeDetails != null) {
+        //     return details; // Return the TotalIncomeDetails directly
+        //   } else {
+        //     throw Exception("Income details are missing in the response.");
+        //   }
+        // } else {
+        //   throw Exception("Total income details not found in the response.");
+        // }
       } else {
         throw Exception(
           "Failed to load income data. Status code: ${response.statusCode}",

@@ -2,8 +2,14 @@
 
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/dio_exception.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+
+final getCurrentLocationProvider = Provider<Future<Position?>>((ref) {
+  return getCurrentLocation();
+});
 
 Future<Position?> getCurrentLocation() async {
   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();

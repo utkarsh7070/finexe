@@ -456,7 +456,7 @@ class HRMSUserProfile {
   final String employeUniqueId;
   final String punchInTime;
   final String punchOutTime;
-  final Map<String,dynamic> designationId;
+  final String designationId;
 
 
   HRMSUserProfile({
@@ -487,7 +487,7 @@ class HRMSUserProfile {
       fatherName: json['fatherName'] ?? '',
       employeePhoto: json['employeePhoto'] ?? '',
       employeUniqueId: json['employeUniqueId'] ?? '',
-      designationId: json['designationId'] ?? [],
+      designationId: json['designationId'] ?? '',
     );
   }
 
