@@ -81,6 +81,7 @@ extension AppColors on Never {
   static const Color iconBlackColor = Color(0xff475467);
 
 
+  static const Color lightOrangeColor = Color(0xfffaf1ee);
 
 
 

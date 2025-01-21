@@ -10,13 +10,13 @@ import '../../../../../base/utils/general/pref_utils.dart';
 final getUpdatedDataProvider =
     FutureProvider.autoDispose.family<Items, String>(
   (ref, customerId) async {
-    final _dio = ref.watch(dioProvider);
+    final dio = ref.watch(dioProvider);
     String? token = speciality.getToken();
     if (kDebugMode) {
       print('url: ${Api.getpdformdata}$customerId');
     }
     try {
-      final response = await _dio.get(
+      final response = await dio.get(
         '${Api.getpdformdata}$customerId',
         options: Options(headers: {"token": token}),
       );

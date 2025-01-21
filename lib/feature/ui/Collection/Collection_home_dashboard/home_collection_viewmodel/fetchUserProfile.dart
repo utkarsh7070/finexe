@@ -8,8 +8,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../Punch_In_Out/viewmodel/attendance_view_model.dart';
 import '../../../../base/api/api.dart';
 import '../../../../base/api/dio_exception.dart';
 import '../../../../base/utils/widget/custom_snackbar.dart';
@@ -100,23 +102,41 @@ class ApiResponseNotifier extends StateNotifier<AsyncValue<UserProfile>> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString('token');
     print('token of employee punchout $token');
+
+
+    Position? position = await getCurrentLocation();
+    if (position == null) {
+      return Future.error('Unable to fetch location');
+    }
+
+    // Construct the query parameters
+    Map<String, dynamic> queryParam = {
+      'longitude': position.longitude, // Longitude from the current position
+      'latitude': position.latitude, // Latitude from the current position
+    };
+    print('token $token');
+    print('Query Parameters OUT Side: $queryParam');
+
+
     try {
-      final response = await dio.get(Api.punchOut,
-          options: Options(headers: {'token': token}));
-      log('punchOut api: ${Api.punchOut.toString()}');
+      final response = await dio.get(Api.punchOut,queryParameters: queryParam,
+          options: Options(headers: {'token': token},validateStatus: (status) => true,));
+    //  log('punchOut api: ${Api.punchOut.toString()}');
       print('punch out response $response');
       if (response.statusCode == 200) {
         showCustomSnackBar(context,response.data['message'], Colors.green);
         // isPunchOutStatus = true;
         // return response;
       } else {
-        showCustomSnackBar(
-            context, response.statusMessage.toString(), Colors.red);
+        /*showCustomSnackBar(
+            context, response.statusMessage.toString(), Colors.red);*/
+        showCustomSnackBar(context,response.data['message'], Colors.red);
       }
     } catch (error) {
      ExceptionHandler().handleError(error);
     }
   }
+
 }
 
 // Future<void> logoutSession() async {

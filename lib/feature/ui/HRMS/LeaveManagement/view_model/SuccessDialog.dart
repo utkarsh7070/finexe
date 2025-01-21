@@ -6,7 +6,7 @@ class SuccessDialog extends StatelessWidget {
   final String title;
   final String message;
 
-  const SuccessDialog({Key? key, required this.title, required this.message}) : super(key: key);
+  const SuccessDialog({super.key, required this.title, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class SuccessDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 20),
-            Icon(Icons.check_circle, color: Colors.blue, size: 64),
+            const Icon(Icons.check_circle, color: Colors.blue, size: 64),
             const SizedBox(height: 16),
             Text(
               title,

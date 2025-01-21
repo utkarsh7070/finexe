@@ -115,7 +115,7 @@ class LeaveRequestViewModel extends ChangeNotifier {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return SuccessDialog(
+        return const SuccessDialog(
           title: "Leave Applied Successfully",
           message: "Your leave has been applied successfully.",
         );

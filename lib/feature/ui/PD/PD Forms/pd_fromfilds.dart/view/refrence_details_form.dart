@@ -74,8 +74,6 @@ class RefrenceDetailsForm extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appState = ref.watch(pdRefrenceSubmitProvider);
     final appStateViewModel = ref.read(pdRefrenceSubmitProvider.notifier);
-
-    // final isExpanded = ref.watch(isExpRefrenceDetProvider);
     final getFormData = ref.watch(getRefrenceDataProvider(customerId));
 
     return ExpansionTile(

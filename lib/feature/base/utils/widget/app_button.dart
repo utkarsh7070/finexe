@@ -31,15 +31,11 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
                 // padding: isFill ? EdgeInsets.zero : const EdgeInsets.symmetric(vertical: 10),
-
       // color: bgColor,
       height: height,
       width: width,
       child: ElevatedButton(
-
-
         style: ElevatedButton.styleFrom(
-
           backgroundColor: !isFill ? bgColor : null,
           side: isBorderColor ? BorderSide(color: borderColor ?? Colors.transparent) : null,
           padding: isFill ? EdgeInsets.zero : const EdgeInsets.symmetric(vertical: 10),

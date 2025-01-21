@@ -12,7 +12,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../base/api/dio_exception.dart';
 import '../../../../../base/utils/widget/custom_snackbar.dart';
 import '../model/Submit Data Models/pd_response_model.dart';
-import '../model/Submit Data Models/refrence_form_model.dart';
 
 class PDRefrenceDetails extends StateNotifier<ReferenceApplicationState> {
   final Dio dio;
@@ -158,14 +157,14 @@ class RefFormDetailProvider
     return fetchRefDetails(arg, dio, referenceUpdateViewModel);
   }
 
-  Future<PdResponseModel> fetchRefDetails(String custId, Dio _dio,
+  Future<PdResponseModel> fetchRefDetails(String custId, Dio dio,
       PDRefrenceDetails referenceUpdateViewModel) async {
     String? token = speciality.getToken();
     PdResponseModel refernceFormData = PdResponseModel();
     print('url: ${Api.getpdformdata}$custId');
 
     try {
-      final response = await _dio.get(
+      final response = await dio.get(
         '${Api.getpdformdata}$custId',
         options: Options(headers: {"token": token}),
       );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../Sales/SalesProfile/view_model/login_user_view_model.dart';
+import '../../../Sales/SalesProfile/view_model/sales_user_view_model.dart';
 import '../home_collection_viewmodel/fetchUserProfile.dart';
 
 class PunchOutActionContent extends ConsumerWidget{

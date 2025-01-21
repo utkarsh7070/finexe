@@ -1,16 +1,21 @@
 import 'dart:ui';
 
+import 'package:custom_date_range_picker/custom_date_range_picker.dart';
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_date_range_picker/flutter_date_range_picker.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
 import '../../../../base/utils/namespase/app_colors.dart';
-import '../../../../base/utils/widget/dropdown_style.dart';
-import '../../../Sales/SalesProfile/view_model/login_user_view_model.dart';
+import '../../../../base/utils/namespase/display_size.dart';
+import '../../../../base/utils/widget/neuphormic_dropdown_style.dart';
+import '../../../Sales/SalesProfile/view_model/sales_user_view_model.dart';
 import '../model/attendance_listing_model.dart';
+import '../style/neumorphic_convex_style.dart';
 import '../view_model/attendance_listing_view_model.dart';
+import 'package:flutter_date_pickers/flutter_date_pickers.dart' as dp;
 
 
 
@@ -27,8 +32,9 @@ class AttendanceDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScreen> {
-  int? selectedRowIndex; // Track the selected row index
-  String? selectedFilter; // Add this to manage the selected value
+
+  DateTime? startDate = DateTime.now().subtract(const Duration(days: 7));
+  DateTime? endDate = DateTime.now();
 
   @override
   void initState() {
@@ -45,21 +51,16 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
 
     // Access ControllerNotifier to get monthController
     final controllerNotifier = ref.watch(controllerProvider);
-
     final attendanceAsync = ref.watch(attendanceListingProvider(widget.employeeId));
+
+    final selectedButton = ref.watch(selectedButtonProvider);
 
     return NetworkListener(
       context: context,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Attendance Details",style: TextStyle(color: Colors.white)),
-          backgroundColor: AppColors.primary,
-          centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back,color: Colors.white,),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
+        backgroundColor: AppColors.attendanceBgColor1,
+        appBar:customAppBar(context),
+
         body: attendanceAsync.when(
           data: (leaveData) {
             final counters = leaveData["counters"] as AttendanceItems?;
@@ -67,147 +68,283 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
             if (counters == null) {
               return const Center(child: Text("No attendance data available."));
             }
-            return Padding(
+            return SingleChildScrollView(
               padding: const EdgeInsets.all(10.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: displayHeight(context),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
 
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10,20,10,0),
-                    child: DropdownButtonFormField<String>(
-                      value: controllerNotifier.monthController.text.isEmpty ? null : controllerNotifier.monthController.text,
-                      onChanged: (value) {
-                        if (value != null) {
-                          controllerNotifier.monthController.text = value;
-                          ref.read(attendanceListingProvider(widget.employeeId).notifier).fetchAttendanceRequests(widget.employeeId);
-                        }
-                      },
-                      items: controllerNotifier.monthOptions.map((String option) {
-                        return DropdownMenuItem<String>(
-                          value: option,
-                          child: Text(option),
-                        );
-                      }).toList(),
-                      decoration: dropdownDecoration('Select Month'),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5,0,5,0),
+                      child: NeumorphicWidget(
+                        depth: -2,
+                        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                        child: DropdownButtonFormField<String>(
+                          value: controllerNotifier.monthController.text.isEmpty ? null : controllerNotifier.monthController.text,
+                          onChanged: (value) {
+                            if (value != null) {
+                              controllerNotifier.monthController.text = value;
+                              ref.read(attendanceListingProvider(widget.employeeId).notifier).fetchAttendanceRequests(widget.employeeId);
+                            }
+                          },
+                          items: controllerNotifier.monthOptions.map((String option) {
+                            return DropdownMenuItem<String>(
+                              value: option,
+                              child: Text(option),
+                            );
+                          }).toList(),
+                          decoration: neudropdownDecoration('Select Month'),
 
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please select a month';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-                  // Counters at the top
-                  _buildCounters(
-                    totalLeave: counters.monthDays,
-                    punchCount: counters.punchCount,
-                    sundayPresentCount: counters.sundayPresentCount,
-                    totalReject: counters.absentDays,
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensures space between text and icon
-                      children: [
-                        Expanded(
-                          flex: 1, // Adjust flex as needed for column width
-                          child: Text(
-                            "My Attendance",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.start,
-                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select a month';
+                            }
+                            return null;
+                          },
                         ),
-                        SizedBox(
-                          width: 30, // Fixed width for the icon
-                          height: 30, // Fixed height for the icon
-                          child: GestureDetector(
-                            onTap: () {
-                              showFilterModal(context,ref);
-                            },
-                            child:Icon(CupertinoIcons.square_list,size: 30,),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-
-                  SizedBox(height: 20),
-
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        border: Border(top: BorderSide(color: Colors.grey.shade300)),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
+                    ),
+
+                    SizedBox(height: displayHeight(context)*0.01),
+                    // Counters at the top
+                    _buildCounters(
+                      totalLeave: counters.monthDays,
+                      punchCount: counters.punchCount,
+                      sundayPresentCount: counters.sundayPresentCount,
+                      totalReject: counters.absentDays,
+                    ),
+
+                    SizedBox(height:displayHeight(context)*0.01),
+
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensures space between text and icon
+                        children: [
+                          const Expanded(
+                            flex: 1, // Adjust flex as needed for column width
+                            child: Text(
+                              "My Attendance",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.start,
+                            ),
+                          ),
+
+                          SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: NeumorphicWidget(
+                              boxShape: const NeumorphicBoxShape.circle(),
+                              child: IconButton(
+                                icon: Image.asset(
+                                  'assets/images/filter_icon_image.png', // Path to your custom image
+                                  width: 20, // Adjust width
+                                  height: 20, // Adjust height
+                                  fit: BoxFit.contain, // Ensures the image fits properly
+                                ),
+                                onPressed: () {
+                                  showFilterModal(context,ref);
+                                },
+                              ),
+                            ),
+                          ),
+
+                          /*  SizedBox(
+                            width: 30, // Fixed width for the icon
+                            height: 30, // Fixed height for the icon
+                            child: GestureDetector(
+                              onTap: () {
+                                showFilterModal(context,ref);
+                              },
+                              child:Icon(CupertinoIcons.square_list,size: 30,),
+                            ),
+                          ),*/
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height:displayHeight(context)*0.01),
+
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: NeumorphicWidget(
+                        depth: -2, // Adjust for inner/outer shadow
+                        color: AppColors.attendanceBgColor1,
+                        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(16)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Expanded(
-                              flex: 2, // Adjust flex as needed for column width
-                              child: Text(
-                                "Date",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.start,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                "Work Hours",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                "Attendance",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.end,
-                              ),
-                            ),
+                            _buildButton(context, ref, "Last Days", 0, selectedButton),
+                            _buildButton(context, ref, "This Month", 1, selectedButton),
+                            _buildButton(context, ref, "Custom", 2, selectedButton),
                           ],
                         ),
                       ),
                     ),
-                  ),
 
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: leaveRequests.length,
-                      itemBuilder: (context, index) {
-                        final leave = leaveRequests[index];
-                        final isSelected = selectedRowIndex == index;
-                        return Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedRowIndex = isSelected ? null : index;
-                                });
-                              },
-                              child: _buildLeaveRow(leave),
+                    SizedBox(height:displayHeight(context)*0.01),
+
+                    /*
+                    Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.attendanceHeaderGrayColor,
+                                border: Border(top: BorderSide(color: AppColors.attendanceHeaderGrayColor)),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      flex: 2, // Adjust flex as needed for column width
+                                      child: Text(
+                                        "Date",
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        "Work Hours",
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        "Attendance",
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.end,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                            if (isSelected) _buildDetailCard1(leave), // Show detail card if selected
-                          ],
-                        );
-                      },
-                    ),
-                  ),
+                          ),
 
-                ],
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: leaveRequests.length,
+                              itemBuilder: (context, index) {
+                                final leave = leaveRequests[index];
+                                final isSelected = ref.watch(selectedRowProvider) == index;
+
+                                return Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        // Toggle selected row using Riverpod
+                                        ref.read(selectedRowProvider.notifier).toggleSelectedRow(index);
+                                      },
+                                      child: _buildLeaveRow(leave),
+                                    ),
+                                    if (isSelected) _buildDetailCard1(leave), // Show detail card if selected
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),*/
+
+                    // Padding(
+                    //   padding: const EdgeInsets.all(10.0),
+                    //   child: Container(
+                    //     decoration: BoxDecoration(
+                    //       color: AppColors.attendanceHeaderGrayColor,
+                    //       border: Border(top: BorderSide(color: AppColors.attendanceHeaderGrayColor)),
+                    //     ),
+                    //     child: Padding(
+                    //       padding: const EdgeInsets.all(5.0),
+                    //       child:,
+                    //     ),
+                    //   ),
+                    // ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: NeumorphicWidget(
+                          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              children: [
+                                const Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      flex: 2, // Adjust flex as needed for column width
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          "Date",
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        "Work Hours",
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        "Attendance",
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.end,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: displayHeight(context)*0.01,),
+                                Expanded(
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    primary: false,
+                                    itemCount: leaveRequests.length,
+                                    itemBuilder: (context, index) {
+                                      final leave = leaveRequests[index];
+                                      final isSelected = ref.watch(selectedRowProvider) == index;
+
+                                      return Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              // Toggle selected row using Riverpod
+                                              ref.read(selectedRowProvider.notifier).toggleSelectedRow(index);
+                                            },
+                                            child: _buildLeaveRow(leave),
+                                          ),
+                                          if (isSelected) _buildDetailCard1(leave), // Show detail card if selected
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -220,42 +357,168 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
   }
 
 
+
+  Widget _buildButton(
+      BuildContext context,
+      WidgetRef ref,
+      String label,
+      int index,
+      int selectedButton,
+      )
+  {
+    final isSelected = selectedButton == index;
+    return GestureDetector(
+      onTap: () async {
+        ref.read(selectedButtonProvider.notifier).state = index;
+
+        if (index == 0) {
+
+        }
+        else if (index == 1) {
+
+        } else if (index == 2) {
+
+          showCustomDateRangePicker(
+            context,
+            dismissible: true,
+            minimumDate: DateTime.now().subtract(const Duration(days: 30)),
+            maximumDate: DateTime.now().add(const Duration(days: 30)),
+            endDate: endDate,
+            startDate: startDate,
+            backgroundColor: AppColors.attendanceBgColor1,
+            primaryColor: AppColors.primary,
+            onApplyClick: (start, end) {
+              setState(() {
+                endDate = end;
+                startDate = start;
+              });
+            },
+            onCancelClick: () {
+              setState(() {
+                endDate = null;
+                startDate = null;
+              });
+            },
+          );
+
+        } else {
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Neumorphic(
+          style: NeumorphicStyle(
+            depth: isSelected ? 5 : 0, // Inner shadow for selected, outer for others
+            color: isSelected ? AppColors.attendanceBgColor1 : AppColors.attendanceBgColor1,
+            boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: isSelected ? Colors.blue : Colors.black54,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  PreferredSizeWidget customAppBar(BuildContext context,) {
+    return PreferredSize(
+      preferredSize: Size(displayWidth(context), displayHeight(context) * 0.09),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Back button on the left
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 5.0),
+                  child: SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: NeumorphicWidget(
+                      depth: 10,
+                      boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: AppColors.darkTextColor,size: 25,),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // Title in the center
+              const Text(
+                "Attendance",
+                style: TextStyle(
+                  color: AppColors.black2,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+
+              // Icons on the right
+
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   // Counter Section
   Widget _buildCounters({
     required int totalLeave,
     required int punchCount,
     required int totalReject, required int sundayPresentCount,
   }) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10,0,10,0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildCounter("Total", totalLeave, Colors.blue),
-          _buildCounter("Punch", punchCount, Colors.green),
-          _buildCounter("Sunday", sundayPresentCount, Colors.green),
-          _buildCounter("Absent", totalReject, Colors.red),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildCounter("Total", totalLeave/*, Colors.blue*/),
+        _buildCounter("Punch", punchCount/*, Colors.green*/),
+        _buildCounter("Sunday", sundayPresentCount/*, Colors.green*/),
+        _buildCounter("Absent", totalReject/*, Colors.red*/),
+      ],
     );
   }
 
-  Widget _buildCounter(String label, int value, Color color) {
+  Widget _buildCounter(String label, int value/*, Color color*/) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.fromLTRB(0,5,0,0),
+      /* decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        children: [
-          Text(
-            "$value",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color),
+      ),*/
+      child: SizedBox(
+        height: 80,
+        width: 70,
+        child: NeumorphicWidget(
+          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center, // Centers vertically
+            crossAxisAlignment: CrossAxisAlignment.center, // Centers horizontally
+            children: [
+              Text(
+                "$value",
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold/*, color: color*/),
+              ),
+              const SizedBox(height: 4),
+              Text(label, style: const TextStyle(fontSize: 14)),
+            ],
           ),
-          const SizedBox(height: 4),
-          Text(label, style: const TextStyle(fontSize: 14)),
-        ],
+        ),
       ),
     );
   }
@@ -286,7 +549,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                 flex: 2,
                 child: Text(
                   formatDate(leave.date),
-                  style: TextStyle(fontSize: 14),
+                  style: const TextStyle(fontSize: 14),
                   textAlign: TextAlign.start,
                 ),
               ),
@@ -294,11 +557,11 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                 flex: 2,
                 child: Text(
                   (leave.workedHour == null || leave.workedHour!.isEmpty) ? '0' : leave.workedHour!,
-                  style: TextStyle(fontSize: 14),
+                  style: const TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
               ),
-              Expanded(
+               Expanded(
                 flex: 2,
                 child: Align(
                   alignment: Alignment.centerRight,
@@ -306,10 +569,11 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                     width: 30, // Fixed width for the green box
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.green, // Background color
+                      color: Colors.green,
+
                       borderRadius: BorderRadius.circular(5), // Circular corners
                     ),// Optional padding
-                    child: Text(
+                    child: const Text(
                       "P",
                       style: TextStyle(fontSize: 14, color: Colors.white), // Text with white color
                       textAlign: TextAlign.center,
@@ -317,8 +581,12 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                   ),
                 ),
               ),
+
+
             ],
           ),
+          SizedBox(height: 15,),
+          Divider(color: Colors.grey,height: 0.2,thickness: 0.2,),
         ],
       ),
     );
@@ -355,8 +623,8 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(1),
+          const Padding(
+            padding: EdgeInsets.all(1),
             child: Row(
               children: [
                 Expanded(
@@ -394,7 +662,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                   flex: 2, // Adjust flex as needed for column width
                   child: Text(
                     formatDate(leave.date!),
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.start,
                   ),
                 ),
@@ -402,7 +670,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                   flex: 2,
                   child: Text(
                     formatDateWithDay(leave.date!),
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -410,15 +678,15 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                   flex: 2,
                   child: Text(
                     leave.approvalStatus ?? 'N/A',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.end,
                   ),
                 ),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(1,5,0,0),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(1,5,0,0),
             child: Row(
               children: [
                 Expanded(
@@ -456,7 +724,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                   flex: 2, // Adjust flex as needed for column width
                   child: Text(
                     formatTime(leave.punchInTime!),
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.start,
                   ),
                 ),
@@ -464,7 +732,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                   flex: 2,
                   child: Text(
                     formatTime(leave.punchOutTime!),
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -472,7 +740,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                   flex: 2,
                   child: Text(
                     leave.workedHour ?? 'N/A',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.end,
                   ),
                 ),
@@ -494,9 +762,9 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
           child: Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            decoration: const BoxDecoration(
+              color: AppColors.attendanceBgColor1,
               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             ),
             child: Column(
@@ -505,23 +773,39 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                 Container(
                   width: 50,
                   height: 5,
-                  margin: EdgeInsets.only(bottom: 16),
+                  margin: const EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: AppColors.attendanceBgColor1,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                SizedBox(height: 10),
-                Text(
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: NeumorphicButton(
+                    style: NeumorphicStyles.neuMorphicButtonStyle(),
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: Image.asset('assets/images/cancel_gray.png', fit: BoxFit.contain),
+                    ),
+                    /* icon:Image.asset('assets/images/cancel_gray.png',width: 20,height: 20,),*/
+                    /* icon: const Icon(Icons.cancel, color: AppColors.darkTextColor,size: 25,),*/
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  // ),
+                ),
+
+                const SizedBox(height: 10),
+                const Text(
                   "Filter By",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 5),
-                Text(
+                const SizedBox(height: 5),
+                const Text(
                   "Attendance status",
                   style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Consumer(
                   builder: (context, ref, _) {
                     final selectedFilter = ref.watch(attendanceFilterProvider);
@@ -540,7 +824,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                             ),
                           ),
                           Expanded(
-                            child: Text(label, style: TextStyle(fontSize: 14)),
+                            child: Text(label, style: const TextStyle(fontSize: 14)),
                           ),
                         ],
                       );
@@ -552,7 +836,7 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                       childAspectRatio: 2.5,
                       mainAxisSpacing: 5,
                       crossAxisSpacing: 5,
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       children: [
                         filterOption("Present"),
                         filterOption("Absent"),
@@ -566,34 +850,47 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
                     );
                   },
                 ),
-                SizedBox(height: 80),
+                const SizedBox(height: 80),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: ElevatedButton(
+
+                    SizedBox(
+                      width: displayWidth(context)* 0.4,
+                      height: displayHeight(context) * 0.08,
+                      child: NeumorphicButton(
+                        style: NeumorphicStyle(
+                          shape: NeumorphicShape.flat,
+                          color: AppColors.attendanceBgColor1,
+                          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                        ),
                         onPressed: () {
                           ref.read(attendanceFilterProvider.notifier).resetFilter();
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey[300],
-                        ),
-                        child: Text("Reset", style: TextStyle(color: Colors.black)),
+
+                        child: const Center(child: Text("Reset", style: TextStyle(color: Colors.black))),
                       ),
                     ),
                     const SizedBox(width: 30),
-                    Expanded(
-                      child: ElevatedButton(
+
+                    SizedBox(
+                      width: displayWidth(context)* 0.4,
+                      height: displayHeight(context) * 0.08,
+                      child: NeumorphicButton(
+                        style: NeumorphicStyle(
+                          shape: NeumorphicShape.flat,
+                          color: AppColors.primary,
+                          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                          //border: NeumorphicBorder()
+                        ),
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                        ),
-                        child: const Text("Apply"),
+
+                        child: const Center(child: Text("Apply",style: TextStyle(color: Colors.white))),
                       ),
                     ),
+
                   ],
                 ),
               ],
@@ -606,6 +903,9 @@ class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScree
 
 
 }
+
+
+
 
 /*class _AttendanceDetailsScreenState extends ConsumerState<AttendanceDetailsScreen> {
 

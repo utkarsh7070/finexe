@@ -15,7 +15,7 @@ class NeumorphicWidget extends StatelessWidget {
  final Color? color;
 
  const NeumorphicWidget({
-  Key? key,
+  super.key,
   required this.child,
   this.onTap,
   this.depth,
@@ -23,7 +23,7 @@ class NeumorphicWidget extends StatelessWidget {
   this.shape = NeumorphicShape.flat, // Default shape
   required this.boxShape, // Accept shape type (circle, rectangle)
   this.color,
- }) : super(key: key);
+ });
 
  @override
  Widget build(BuildContext context) {
@@ -82,6 +82,29 @@ class NeumorphicStyles {
   );
  }
 
+ static NeumorphicStyle neuMorphicButtonStyle3({
+  NeumorphicShape shape = NeumorphicShape.concave,
+  double depth = -5,
+  double intensity = 0.9,
+  LightSource lightSource = LightSource.topLeft,
+  oppositeShadowLightSource = false,
+  shadowLightColorEmboss= AppColors.primary ,
+  Color? color,
+  BorderRadiusGeometry borderRadius = const BorderRadius.all(Radius.circular(12)),
+ }) {
+  return NeumorphicStyle(
+   shape: shape, // Shape of the Neumorphic button
+   depth: depth, // Depth effect
+   intensity: intensity, // Intensity of the effect
+   lightSource: lightSource, // Light source direction
+   color: color ?? AppColors.attendanceBgColor1, // Default color
+   boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)), // Rounded corners
+  );
+ }
+
+
+
+
  // Circle style
  static NeumorphicStyle neuMorphicCircleStyle({
   NeumorphicShape shape = NeumorphicShape.flat,
@@ -94,7 +117,7 @@ class NeumorphicStyles {
    depth: depth,
    intensity: intensity,
    color: color ?? AppColors.attendanceBgColor1,
-   boxShape: NeumorphicBoxShape.circle(),
+   boxShape: const NeumorphicBoxShape.circle(),
   );
  }
 }

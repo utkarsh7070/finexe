@@ -42,9 +42,11 @@ class AttendanceState {
   }
 }
 
+final selectedButtonProvider = StateProvider<int>((ref) => 0);
+
 final attendanceListingProvider = StateNotifierProvider.family<
     AttendanceNotifier, AsyncValue<Map<String, dynamic>>, String>(
-  (ref, employeeId) {
+      (ref, employeeId) {
     final controllerNotifier = ref.read(controllerProvider);
     final notifier = AttendanceNotifier(controllerNotifier.monthController);
     notifier.fetchAttendanceRequests(employeeId);
@@ -66,6 +68,8 @@ class AttendanceNotifier
 
       String? token = speciality.getToken();
 
+      print('fetch token $token');
+
       // Check if monthController.text is empty (no month selected)
       if (monthController.text.isEmpty) {
         // Set current month as default if no month is selected
@@ -75,7 +79,7 @@ class AttendanceNotifier
       // Get the selected month from the controller
       String selectedMonth = monthController.text;
       int monthNumber =
-          _getMonthNumber(selectedMonth); // Convert to numeric representation
+      _getMonthNumber(selectedMonth); // Convert to numeric representation
 
       final response = await _dio.get(
         Api.getAttendanceDetails,
@@ -92,8 +96,8 @@ class AttendanceNotifier
       if (response.statusCode == 200 && response.data != null) {
         final data = response.data['items'];
         final attendanceList = (data?['attendanceRecords'] as List<dynamic>?)
-                ?.map((e) => AttendanceRecord.fromJson(e))
-                .toList() ??
+            ?.map((e) => AttendanceRecord.fromJson(e))
+            .toList() ??
             <AttendanceRecord>[];
 
         final counters = data != null ? AttendanceItems.fromJson(data) : null;
@@ -187,4 +191,20 @@ class AttendanceFilterNotifier extends StateNotifier<String?> {
 
 final attendanceFilterProvider = StateNotifierProvider<AttendanceFilterNotifier, String?>((ref) {
   return AttendanceFilterNotifier();
+});
+
+
+
+// StateNotifier to manage selected row index
+class SelectedRowNotifier extends StateNotifier<int?> {
+  SelectedRowNotifier() : super(null);
+
+  void toggleSelectedRow(int index) {
+    state = (state == index) ? null : index; // Toggle selection
+  }
+}
+
+// Provider for SelectedRowNotifier
+final selectedRowProvider = StateNotifierProvider<SelectedRowNotifier, int?>((ref) {
+  return SelectedRowNotifier();
 });

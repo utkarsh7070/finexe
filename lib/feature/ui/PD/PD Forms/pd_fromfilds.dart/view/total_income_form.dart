@@ -1,14 +1,12 @@
 import 'package:finexe/feature/base/utils/namespase/app_colors.dart';
 import 'package:finexe/feature/base/utils/namespase/app_style.dart';
 import 'package:finexe/feature/base/utils/namespase/display_size.dart';
-import 'package:finexe/feature/ui/PD/Common%20Widgets/common_textfield.dart';
 // import 'package:finexe/feature/ui/PD/view/PD%20Form/pd_fromfilds.dart/pd_update_data/model/Submit%20Data%20Models/total_income_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../base/utils/widget/app_text_filed_login.dart';
 import '../../../../../base/utils/widget/custom_snackbar.dart';
-import '../model/Submit Data Models/total_income_modal.dart';
 import '../view_model.dart/total_income_view_modal.dart';
 
 // final isExpTotalIncomeProvider = StateProvider<bool>((ref) => false);
@@ -27,7 +25,7 @@ class TotalIncomeDetailsForm
     extends ConsumerWidget{
   final String customerId;
 
-  TotalIncomeDetailsForm({super.key, required this.customerId});
+  const TotalIncomeDetailsForm({super.key, required this.customerId});
   // final TextEditingController totalincomeForm_yearlyIncomeController =
   //     TextEditingController();
   // final TextEditingController totalincomeForm_monthlyIncomeController =

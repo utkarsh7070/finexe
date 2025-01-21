@@ -1,8 +1,6 @@
 import 'dart:ui';
 
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -141,7 +139,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                        width: 40,
                        height: 40,
                        child: NeumorphicWidget(
-                        boxShape: NeumorphicBoxShape.circle(),
+                        boxShape: const NeumorphicBoxShape.circle(),
                         child: IconButton(
                           icon: Image.asset(
                             'assets/images/filter_icon_image.png', // Path to your custom image
@@ -162,7 +160,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                       width: 40,
                       height: 40,
                       child: NeumorphicWidget(
-                        boxShape: NeumorphicBoxShape.circle(),
+                        boxShape: const NeumorphicBoxShape.circle(),
                         child: IconButton(
                           icon: Image.asset(
                             'assets/images/circle_plus_icon.png',
@@ -257,7 +255,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                   const SizedBox(height: 1),
                   Text(
                     "$value",
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: AppColors.darkTextColor,
@@ -338,7 +336,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
             BoxShadow(
               color: Colors.black.withOpacity(0.02), // Custom shadow color
               blurRadius: 12, // Shadow spread and blur
-              offset: Offset(0, 0), // No offset for shadow
+              offset: const Offset(0, 0), // No offset for shadow
             ),
           ],
         ),
@@ -359,7 +357,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             "Date",
                             style: TextStyle(
                               fontSize: 12.25,
@@ -409,7 +407,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                         ),*/
                        /* child:*/
                       Neumorphic(
-                        style: NeumorphicStyles.neuMorphicButtonStyle(),
+                        style: NeumorphicStyles.neuMorphicButtonStyle3(),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
@@ -433,7 +431,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             "Apply Days",
                             style: TextStyle(
                               fontSize: 12.25,
@@ -456,7 +454,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(
+                          const Text(
                             "Approved By",
                             style: TextStyle(
                               fontSize: 12.25,
@@ -497,7 +495,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
           filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
           child: Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.attendanceBgColor1,
               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             ),
@@ -564,7 +562,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                             ),
                           ),
                           Expanded(
-                            child: Text(label, style: TextStyle(fontSize: 14)),
+                            child: Text(label, style: const TextStyle(fontSize: 14)),
                           ),
                         ],
                       );
@@ -607,7 +605,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                             ),
                           ),
                           Expanded(
-                            child: Text(label, style: TextStyle(fontSize: 14)),
+                            child: Text(label, style: const TextStyle(fontSize: 14)),
                           ),
                         ],
                       );
@@ -631,7 +629,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
 
-                     Container(
+                     SizedBox(
                        width: displayWidth(context)* 0.4,
                        height: displayHeight(context) * 0.08,
                        child: NeumorphicButton(
@@ -645,12 +643,12 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                           ref.read(leaveTypeFilterProvider.notifier).resetFilter();
                         },
 
-                        child: Center(child: const Text("Reset", style: TextStyle(color: Colors.black))),
+                        child: const Center(child: Text("Reset", style: TextStyle(color: Colors.black))),
                       ),
                     ),
                     const SizedBox(width: 30),
 
-                    Container(
+                    SizedBox(
                       width: displayWidth(context)* 0.4,
                       height: displayHeight(context) * 0.08,
                       child: NeumorphicButton(
@@ -664,7 +662,7 @@ class _LeaveRequestScreenState extends ConsumerState<LeaveRequestScreen> {
                           Navigator.pop(context);
                         },
 
-                        child: Center(child: const Text("Apply",style: TextStyle(color: Colors.white))),
+                        child: const Center(child: Text("Apply",style: TextStyle(color: Colors.white))),
                       ),
                     ),
 

@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 import '../namespase/app_colors.dart';
 import '../namespase/display_size.dart';
-
 
 class AppTextFieldNew extends StatelessWidget {
   final String? hint;
@@ -52,62 +50,58 @@ class AppTextFieldNew extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Neumorphic(
-      style: NeumorphicStyle(
+      padding: const EdgeInsets.only(left: 08),
+      style: NeumorphicStyle(color: AppColors.attendanceBgColor,
         shape: NeumorphicShape.concave,
-        depth: -2, // Negative depth for an indented look
+        depth: -2,
+        // Negative depth for an indented look
         intensity: 0.9,
-        lightSource: LightSource.topLeft,oppositeShadowLightSource: false,shadowLightColorEmboss: AppColors.white ,
+        lightSource: LightSource.topLeft,
+        oppositeShadowLightSource: false,
+        shadowLightColorEmboss: AppColors.white,
         boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
       ),
-      child: Container(
-        padding: const EdgeInsets.all(0.5),
-        child: Container(
-          decoration: BoxDecoration(
-            color: AppColors.attendanceBgColor,
-            borderRadius: BorderRadius.circular(12),
-            border: isError!
-                ? Border.all(color: Colors.red, width: 2) // Error border
-                : null, // No border initially
-          ),
-          child: TextFormField(
-            maxLines: maximumLines,
-            validator: onValidate,
-            obscureText: obscureText,
-            onTap: onTap,
-            onChanged: onChange,
-            controller: controller,
-            cursorColor: Colors.blue,
-            textInputAction: textInputAction,
-            keyboardType: textInputType,
-            onFieldSubmitted: onFiledSubmitted,
-            decoration: InputDecoration(
-              isDense: true,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
-              hintText: hint,
-              hintStyle: TextStyle(color: AppColors.grayColor3),
-              errorText: isError! ? errorText : null,
-              prefixIcon: isPrefix!
-                  ? InkWell(
-                onTap: prefixOnTap,
-                child: Icon(prefixIcon, color: Colors.blue),
-              )
-                  : null,
-              suffixIcon: isSuffix!
-                  ? InkWell(
-                onTap: suffixOnTap,
-                child: Icon(suffixIcon, color: Colors.blue),
-              )
-                  : null,
-              border: InputBorder.none, // No visible border
-            ),
+      child: SizedBox(
+        width: displayWidth(context),
+        height: height ?? displayHeight(context) * 0.07,
+        child: TextFormField(
+          maxLines: maximumLines,
+          validator: onValidate,
+          obscureText: obscureText,
+          onTap: onTap,
+          onChanged: onChange,
+          controller: controller,
+          cursorColor: Colors.blue,
+          textInputAction: textInputAction,
+          keyboardType: textInputType,
+          onFieldSubmitted: onFiledSubmitted,
+          textAlignVertical: TextAlignVertical.center,
+          decoration: InputDecoration(
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            // isDense: true,
+            hintText: hint,
+            // contentPadding: const EdgeInsets.only(top: 12),
+            hintStyle: const TextStyle(color: AppColors.grayColor3),
+            errorText: isError! ? errorText : null,
+            prefixIcon: isPrefix!
+                ? InkWell(
+                    onTap: prefixOnTap,
+                    child: Icon(prefixIcon, color: Colors.blue),
+                  )
+                : null,
+            suffixIcon: isSuffix!
+                ? InkWell(
+                    onTap: suffixOnTap,
+                    child: Icon(suffixIcon, color: Colors.blue),
+                  )
+                : null,
+            border: InputBorder.none, // No visible border
           ),
         ),
       ),
     );
   }
-
 }
-
 
 /*class AppTextFieldNew extends StatelessWidget {
   final String? hint;
@@ -185,9 +179,9 @@ class AppTextFieldNew extends StatelessWidget {
 
             decoration: InputDecoration(
               isDense: true,
-                *//*enabledBorder: const OutlineInputBorder(
+                */ /*enabledBorder: const OutlineInputBorder(
 
-                    borderSide: BorderSide(color: AppColors.subgraytext)),*//*
+                    borderSide: BorderSide(color: AppColors.subgraytext)),*/ /*
               //  floatingLabelBehavior: FloatingLabelBehavior.always,
                 labelStyle: TextStyle(color: isError! ? Colors.red : null),
                 prefixIcon: isPrefix!

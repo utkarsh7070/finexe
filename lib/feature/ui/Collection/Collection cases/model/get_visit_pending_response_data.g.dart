@@ -18,7 +18,7 @@ GetVisitPendingResponseData _$GetVisitPendingResponseDataFromJson(
           .toList(),
     );
 
-Map<dynamic, dynamic> _$GetVisitPendingResponseDataToJson(
+Map<String, dynamic> _$GetVisitPendingResponseDataToJson(
         GetVisitPendingResponseData instance) =>
     <String, dynamic>{
       'status': instance.status,

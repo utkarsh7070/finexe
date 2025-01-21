@@ -6,7 +6,6 @@ import 'package:finexe/feature/base/utils/namespase/display_size.dart';
 import 'package:finexe/feature/base/utils/namespase/font_size.dart';
 import 'package:finexe/feature/ui/HRMS/LeaveManagement/style/neumorphic_convex_style.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 import 'package:intl/intl.dart';
@@ -17,9 +16,10 @@ import '../../../../base/utils/namespase/app_colors.dart';
 import '../../../../base/utils/namespase/app_style.dart';
 import '../../../Collection/Collection_home_dashboard/Widget/punct_in_out_action_dialog_content.dart';
 import '../../../Collection/Collection_home_dashboard/home_collection_viewmodel/fetchUserProfile.dart';
-import '../../../Sales/SalesProfile/view_model/login_user_view_model.dart';
+import '../../../Sales/SalesProfile/view_model/sales_user_view_model.dart';
 import '../view_model/hrms_dashboard_view_model.dart';
 import 'attendance_details_screen.dart';
+import 'hrms_profile_update_view.dart';
 import 'leave_details_form.dart';
 
 class HRMSDashboardScreen extends ConsumerWidget {
@@ -54,80 +54,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
               backgroundColor: AppColors.attendanceBgColor1,
 
               appBar: customAppBar(context, role, userProfile),
-              // AppBar(
-              //   flexibleSpace: Container(
-              //     color: AppColors.attendanceBgColor1,
-              //   ),
-              //
-              //   title: Visibility(
-              //     replacement: const Text('HRMS'),
-              //     visible: !(role.role.contains('sales') ||
-              //         role.role.contains('collection') ||
-              //         role.role.contains('pd') ||
-              //         role.role.contains('admin')),
-              //     child: Row(
-              //       children: [
-              //         CircleAvatar(
-              //           backgroundColor: AppColors.primary,
-              //           radius: 20,
-              //           // backgroundImage: NetworkImage(userProfile.employeePhoto),
-              //           backgroundImage: userProfile.employeePhoto.isNotEmpty &&
-              //                   userProfile.employeePhoto.contains('upload')
-              //               ? NetworkImage(
-              //                   '${Api.imageUrl}${userProfile.employeePhoto}')
-              //               : const AssetImage('assets/images/prof.jpeg')
-              //                   as ImageProvider,
-              //           // Placeholder image
-              //           onBackgroundImageError: (error, stackTrace) {
-              //             // Set a default image if the API image fails to load
-              //           },
-              //         ),
-              //         SizedBox(
-              //           width: displayWidth(context) * 0.02,
-              //         ),
-              //         Column(
-              //           crossAxisAlignment: CrossAxisAlignment.start,
-              //           children: [
-              //             Text(
-              //               userProfile.employeName,
-              //               style: AppStyles.TextStyle16,
-              //             ),
-              //             Text(
-              //               userProfile.designationId['name'] ?? '',
-              //               style: AppStyles.blacktext14
-              //                   .copyWith(color: AppColors.gray7),
-              //             )
-              //           ],
-              //         )
-              //       ],
-              //     ),
-              //   ),
-              //   actions: [
-              //     IconButton(
-              //         onPressed: () {
-              //           LogOutDialog.logOutDialog(context: context);
-              //         },
-              //         icon: const Icon(
-              //           Icons.logout,
-              //         ))
-              //   ],
-              //   // const Text("Dashboard", style: TextStyle(color: Colors.white)),
-              //   // backgroundColor: AppColors.primary,
-              //   // centerTitle: true,
-              //   leading: Visibility(
-              //     visible: (role.role.contains('sales') ||
-              //         role.role.contains('collection') ||
-              //         role.role.contains('pd') ||
-              //         role.role.contains('admin')),
-              //     child: IconButton(
-              //       icon: const Icon(
-              //         CupertinoIcons.back,
-              //         color: Colors.black,
-              //       ),
-              //       onPressed: () => Navigator.pop(context),
-              //     ),
-              //   ),
-              // ),
+
               body: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Padding(
@@ -135,7 +62,6 @@ class HRMSDashboardScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
                       NeumorphicWidget(
                           boxShape: NeumorphicBoxShape.roundRect(
                               BorderRadius.circular(12)),
@@ -231,42 +157,51 @@ class HRMSDashboardScreen extends ConsumerWidget {
                               SizedBox(
                                 height: displayHeight(context) * 0.05,
                               ),
-                              SwipeButton.expand(
-                                elevationTrack: 10,
-                                width: 500,
-                                thumb: Container(
-                                  width: 10, // Adjust the width of the thumb
-                                  height: 10, // Adjust the height of the thumb
-                                  decoration: BoxDecoration(
+
+
+                              NeumorphicWidget(
+                                depth: 5,
+                                shape: NeumorphicShape.flat,
+                                boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(30)),
+                                child: SwipeButton.expand(
+                                  elevationTrack: 0,
+                                  width: 500,
+                                  thumb: NeumorphicWidget(
+                                    depth: -2,
+                                    shape: NeumorphicShape.concave,
                                     color: AppColors.attendanceBgColor1,
-                                    borderRadius: BorderRadius.circular(
-                                        20), // Round the thumb if needed
+                                    boxShape: const NeumorphicBoxShape.circle(),
+                                    child: Container(
+                                      width: 14, // Adjust the width of the thumb
+                                      height: 14, // Adjust the height of the thumb
+
+                                      child: const Icon(
+                                        Icons.double_arrow_rounded,
+                                        color: AppColors.hrmsRedColor,
+                                      ),
+                                    ),
                                   ),
-                                  child: const Icon(
-                                    Icons.double_arrow_rounded,
-                                    color: AppColors.hrmsRedColor,
+                                  activeThumbColor: Colors.white,
+                                  activeTrackColor: AppColors.attendanceBgColor1,
+                                  // elevationThumb: 4.8,
+                                  height: 60,
+                                  thumbPadding: const EdgeInsets.all(8),
+                                  child: const Text(
+                                    "Swipe to Punch Out",
+                                    style: TextStyle(
+                                      color: AppColors.hrmsRedColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
                                   ),
+                                  onSwipe: () {
+                                    punchOut.clickPunchOut(context);
+                                    ref.refresh(loginUserProfileProvider);
+                                    // ref.read(attendanceProvider.notifier).clickPunch(context);
+                                    // Handle Punch In Action
+                                    print("Punch In Swiped");
+                                  },
                                 ),
-                                activeThumbColor: Colors.white,
-                                activeTrackColor: AppColors.attendanceBgColor1,
-                                // elevationThumb: 4.8,
-                                height: 60,
-                                thumbPadding: const EdgeInsets.all(8),
-                                child: const Text(
-                                  "Swipe to Punch Out",
-                                  style: TextStyle(
-                                    color: AppColors.hrmsRedColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                onSwipe: () {
-                                  punchOut.clickPunchOut(context);
-                                  ref.refresh(loginUserProfileProvider);
-                                  // ref.read(attendanceProvider.notifier).clickPunch(context);
-                                  // Handle Punch In Action
-                                  print("Punch In Swiped");
-                                },
                               ),
                             ],
                           ),
@@ -288,7 +223,6 @@ class HRMSDashboardScreen extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           // Align cards to the start
 
-
                           children: [
                             NeumorphicWidget(
                               boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
@@ -303,6 +237,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                                     onTap: () {
                                       final String employeeId =
                                           userProfile.employeeId;
+                                      print('Employee id ${userProfile.employeeId}');
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -344,76 +279,6 @@ class HRMSDashboardScreen extends ConsumerWidget {
                             ),
                           ],
 
-                          /*children: [
-                            SizedBox(
-                              width: displayWidth(context) * 0.4,
-                              child: NeumorphicButton(
-                                onPressed: () {
-                                  final String employeeId = userProfile.employeeId;
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => AttendanceDetailsScreen(employeeId: employeeId),
-                                    ),
-                                  );
-                                },
-                                style: NeumorphicStyles.neuMorphicButtonStyle(),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: shortNavigation(
-                                    icon: CupertinoIcons.calendar,
-                                    label: 'Attendance',
-                                    onTap: () {
-                                      *//*final String employeeId =
-                                          userProfile.employeeId;
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              AttendanceDetailsScreen(
-                                                  employeeId: employeeId),
-                                        ),
-                                      );*//*
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            SizedBox(width: displayWidth(context) * 0.05),
-                            // Space between the cards
-                            SizedBox(
-                              width: displayWidth(context) * 0.3,
-                              height: displayHeight(context) * 0.1,
-                              child: NeumorphicButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const LeaveRequestScreen(),
-                                    ),
-                                  );
-                                },
-                                style: NeumorphicStyles.neuMorphicButtonStyle(),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: shortNavigation(
-                                    icon: CupertinoIcons.person,
-                                    label: 'Leave',
-                                    onTap: () {
-                                      *//* Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const LeaveRequestScreen(),
-                                        ),
-                                      );*//*
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],*/
                         ),
                       ),
 
@@ -615,24 +480,34 @@ class HRMSDashboardScreen extends ConsumerWidget {
                       padding: const EdgeInsets.fromLTRB(5,0,0,0,),
                       child: Row(
                         children: [
-                          CircleAvatar(
-                            backgroundColor: AppColors.primary,
-                            radius: 20,
-                            // backgroundImage: NetworkImage(userProfile.employeePhoto),
-                            backgroundImage: userProfile.employeePhoto.isNotEmpty &&
-                                userProfile.employeePhoto.contains('upload')
-                                ? NetworkImage(
-                                '${Api.imageUrl}${userProfile.employeePhoto}')
-                                : const AssetImage('assets/images/prof.jpeg')
-                            as ImageProvider,
-                            // Placeholder image
-                            onBackgroundImageError: (error, stackTrace) {
-                              // Set a default image if the API image fails to load
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const HrmsProfileUpdateView()));
                             },
+                            child: CircleAvatar(
+                              backgroundColor: AppColors.primary,
+                              radius: 20,
+                              // backgroundImage: NetworkImage(userProfile.employeePhoto),
+                              backgroundImage: userProfile.employeePhoto.isNotEmpty &&
+                                  userProfile.employeePhoto.contains('upload')
+                                  ? NetworkImage(
+                                  '${Api.imageUrl}${userProfile.employeePhoto}')
+                                  : const AssetImage('assets/images/prof.jpeg')
+                              as ImageProvider,
+                              // Placeholder image
+                              onBackgroundImageError: (error, stackTrace) {
+                                // Set a default image if the API image fails to load
+                              },
+                            ),
                           ),
+
                           SizedBox(
                             width: displayWidth(context) * 0.02,
                           ),
+
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -642,7 +517,7 @@ class HRMSDashboardScreen extends ConsumerWidget {
                                 style: AppStyles.TextStyle16,
                               ),
                               Text(
-                                userProfile.designationId['name'] ?? '',
+                                userProfile.designationId ?? '',
                                 style: AppStyles.blacktext14
                                     .copyWith(color: AppColors.gray7),
                               )

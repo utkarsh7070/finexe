@@ -2,7 +2,6 @@
 
 
 import 'package:finexe/feature/base/internetConnection/networklistener.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
 
@@ -78,13 +77,13 @@ class LeaveDetailsScreenSecond extends StatelessWidget {
 
                         const SizedBox(height: 10),
 
-                        Text("Title", style: TextStyle(color: AppColors.lightTextColor,fontSize: 12),),
+                        const Text("Title", style: TextStyle(color: AppColors.lightTextColor,fontSize: 12),),
                         Text(leave.title ?? "N/A", style: const TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.bold),),
                         const Divider(color: Colors.grey, thickness: 0.5, height: 16, endIndent: 0,),// Space between the divider and text above),
 
                         const SizedBox(height: 16),
 
-                        Text("Leave Type", style: TextStyle(color: AppColors.lightTextColor,fontSize: 12),),
+                        const Text("Leave Type", style: TextStyle(color: AppColors.lightTextColor,fontSize: 12),),
                         Text(leave.leaveType!.isNotEmpty ? leave.leaveType! : "N/A",
                           style: const TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.bold),
                         ),
@@ -92,26 +91,26 @@ class LeaveDetailsScreenSecond extends StatelessWidget {
 
                         const SizedBox(height: 16),
 
-                        Text("Approved By", style: TextStyle(color: AppColors.lightTextColor,fontSize: 12),),
+                        const Text("Approved By", style: TextStyle(color: AppColors.lightTextColor,fontSize: 12),),
                         Text(leave.reportingManagerName ?? "N/A", style: const TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.bold),),
                         const Divider(color: Colors.grey, thickness: 0.5, height: 16,endIndent: 0,),
 
                         const SizedBox(height: 16),
 
-                        Text("Approval Status", style: TextStyle(color: AppColors.lightTextColor,fontSize: 12),),
+                        const Text("Approval Status", style: TextStyle(color: AppColors.lightTextColor,fontSize: 12),),
                         Text(getApprovalStatus(leave.approvalByReportingManager), style: const TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.bold),),
                         const Divider(color: Colors.grey, thickness: 0.5, height: 16,indent: 20,),
 
 
                         const SizedBox(height: 16),
 
-                        Text("Date Range", style: TextStyle(color: AppColors.lightTextColor,fontSize: 12),),
+                        const Text("Date Range", style: TextStyle(color: AppColors.lightTextColor,fontSize: 12),),
                         Text("${formatDate(leave.startDate)} - ${formatDate(leave.endDate)}", style: const TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.bold),),
                         const Divider(color: Colors.grey, thickness: 0.5, height: 16,endIndent: 0,),
 
                         const SizedBox(height: 16),
 
-                        Text("Reason for Leave:", style: TextStyle(color: AppColors.lightTextColor,fontSize: 12),),
+                        const Text("Reason for Leave:", style: TextStyle(color: AppColors.lightTextColor,fontSize: 12),),
                         Text(leave.reasonForLeave ?? "", style: const TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.bold),),
                         const Divider(color: Colors.grey, thickness: 0.5, height: 16,endIndent: 0,),
 

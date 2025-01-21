@@ -37,6 +37,7 @@
 // Define GridItem model
 import 'package:dio/dio.dart';
 import 'package:finexe/feature/base/api/dio.dart';
+import 'package:finexe/feature/base/api/dio_exception.dart';
 import 'package:finexe/feature/base/utils/general/pref_utils.dart';
 import 'package:finexe/feature/ui/Sales/OnBoarding/model/get_all_cases_response_model.dart';
 import 'package:flutter/material.dart';
@@ -239,8 +240,9 @@ class AllCases extends StateNotifier<CaseModel> {
       print(response.statusCode);
       state = state.copyWith(isLoading: false);*/
     } catch (e) {
+      ExceptionHandler().handleError(e);
       state = state.copyWith(isLoading: false);
-      throw Exception(e);
+      // throw Exception(e);
     }
   }
 

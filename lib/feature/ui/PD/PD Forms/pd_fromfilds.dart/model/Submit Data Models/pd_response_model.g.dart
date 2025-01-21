@@ -223,7 +223,8 @@ PdApplicant _$PdApplicantFromJson(Map<String, dynamic> json) => PdApplicant(
       guarantorType: json['guarantorType'] as String?,
     );
 
-Map<String, dynamic> _$PdApplicantToJson(PdApplicant instance) => <String, dynamic>{
+Map<String, dynamic> _$PdApplicantToJson(PdApplicant instance) =>
+    <String, dynamic>{
       'applicantType': instance.applicantType,
       'businessType': instance.businessType,
       'occupation': instance.occupation,
